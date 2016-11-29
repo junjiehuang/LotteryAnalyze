@@ -30,16 +30,27 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rearValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.crossValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(597, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(771, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -51,33 +62,86 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnData,
-            this.Number});
+            this.Number,
+            this.andValue,
+            this.rearValue,
+            this.crossValue,
+            this.group6,
+            this.group3,
+            this.group1});
             this.dataGridView1.Location = new System.Drawing.Point(0, 28);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(597, 333);
+            this.dataGridView1.Size = new System.Drawing.Size(771, 266);
             this.dataGridView1.TabIndex = 1;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(39, 21);
+            this.toolStripMenuItem1.Text = "File";
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // ColumnData
             // 
-            this.ColumnData.HeaderText = "期号";
+            this.ColumnData.HeaderText = "id";
             this.ColumnData.Name = "ColumnData";
             // 
             // Number
             // 
-            this.Number.HeaderText = "奖号";
+            this.Number.HeaderText = "number";
             this.Number.Name = "Number";
+            // 
+            // andValue
+            // 
+            this.andValue.HeaderText = "和值";
+            this.andValue.Name = "andValue";
+            // 
+            // rearValue
+            // 
+            this.rearValue.HeaderText = "合值";
+            this.rearValue.Name = "rearValue";
+            // 
+            // crossValue
+            // 
+            this.crossValue.HeaderText = "跨度";
+            this.crossValue.Name = "crossValue";
+            // 
+            // group6
+            // 
+            this.group6.HeaderText = "组六";
+            this.group6.Name = "group6";
+            // 
+            // group3
+            // 
+            this.group3.HeaderText = "组三";
+            this.group3.Name = "group3";
+            // 
+            // group1
+            // 
+            this.group1.HeaderText = "豹子";
+            this.group1.Name = "group1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(597, 361);
+            this.ClientSize = new System.Drawing.Size(771, 361);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -88,8 +152,16 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnData;
         private System.Windows.Forms.DataGridViewTextBoxColumn Number;
+        private System.Windows.Forms.DataGridViewTextBoxColumn andValue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rearValue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn crossValue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn group6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn group3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn group1;
     }
 }
 
