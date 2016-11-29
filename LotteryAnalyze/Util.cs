@@ -38,5 +38,52 @@ namespace LotteryAnalyze
             sr.Close();
             return true;
         }
+
+        public static int CharValue(char ch)
+        {
+            int value = ch - '0';
+            return value;
+        }
+
+        public static int CalAndValue(string str)
+        {
+            int curId = str.Length - 1;
+            int ge = CharValue(str[curId]); curId--;
+            int shi = CharValue(str[curId]); curId--;
+            int bai = CharValue(str[curId]); curId--;
+            return ge + shi + bai;
+        }
+
+        public static int CalRearValue(string str)
+        {
+            int andValue = CalAndValue(str);
+            int rearValue = andValue % 10;
+            return rearValue;
+        }
+
+        public static int CalCrossValue(string str)
+        {
+            int curId = str.Length - 1;
+            int ge = CharValue(str[curId]); curId--;
+            int shi = CharValue(str[curId]); curId--;
+            int bai = CharValue(str[curId]); curId--;
+            int abs1 = Math.Abs(ge - shi);
+            int abs2 = Math.Abs(ge - bai);
+            int abs3 = Math.Abs(shi - bai);
+            return Math.Max( abs3, Math.Max(abs1, abs2) );
+        }
+
+        public static int GetGroupType(string str)
+        {
+            int curId = str.Length - 1;
+            int ge = CharValue(str[curId]); curId--;
+            int shi = CharValue(str[curId]); curId--;
+            int bai = CharValue(str[curId]); curId--;
+            if (ge == shi && ge == bai)
+                return 1;
+            if (ge == shi || ge == bai || shi == bai)
+                return 2;
+            return 3;
+        }
     }
 }

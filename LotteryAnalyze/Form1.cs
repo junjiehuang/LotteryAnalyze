@@ -66,7 +66,14 @@ namespace LotteryAnalyze
             for (int i = 0; i < data.datas.Count; ++i)
             {
                 DataItem di = data.datas[i];
-                object[] objs = new object[] { di.id, di.lotteryNumber, };
+                int andValue = Util.CalAndValue(di.lotteryNumber);
+                int rearValue = Util.CalRearValue(di.lotteryNumber);
+                int crossValue = Util.CalCrossValue(di.lotteryNumber);
+                int groupType = Util.GetGroupType(di.lotteryNumber);
+                string g6 = groupType == 3 ? "组6" : "";
+                string g3 = groupType == 2 ? "组3" : "";
+                string g1 = groupType == 1 ? "豹子" : "";
+                object[] objs = new object[] { di.id, di.lotteryNumber, andValue, rearValue, crossValue, g6, g3, g1, };
                 dataGridView1.Rows.Add( objs );
             }
         }

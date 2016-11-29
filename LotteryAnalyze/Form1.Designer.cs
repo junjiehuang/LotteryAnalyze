@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -54,6 +54,21 @@
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(39, 21);
+            this.toolStripMenuItem1.Text = "File";
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
             // dataGridView1
             // 
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -75,60 +90,53 @@
             this.dataGridView1.Size = new System.Drawing.Size(771, 266);
             this.dataGridView1.TabIndex = 1;
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(39, 21);
-            this.toolStripMenuItem1.Text = "File";
-            // 
-            // openToolStripMenuItem
-            // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
             // ColumnData
             // 
             this.ColumnData.HeaderText = "id";
             this.ColumnData.Name = "ColumnData";
+            this.ColumnData.Width = 60;
             // 
             // Number
             // 
             this.Number.HeaderText = "number";
             this.Number.Name = "Number";
+            this.Number.Width = 60;
             // 
             // andValue
             // 
             this.andValue.HeaderText = "和值";
             this.andValue.Name = "andValue";
+            this.andValue.Width = 60;
             // 
             // rearValue
             // 
             this.rearValue.HeaderText = "合值";
             this.rearValue.Name = "rearValue";
+            this.rearValue.Width = 60;
             // 
             // crossValue
             // 
             this.crossValue.HeaderText = "跨度";
             this.crossValue.Name = "crossValue";
+            this.crossValue.Width = 60;
             // 
             // group6
             // 
             this.group6.HeaderText = "组六";
             this.group6.Name = "group6";
+            this.group6.Width = 60;
             // 
             // group3
             // 
             this.group3.HeaderText = "组三";
             this.group3.Name = "group3";
+            this.group3.Width = 60;
             // 
             // group1
             // 
             this.group1.HeaderText = "豹子";
             this.group1.Name = "group1";
+            this.group1.Width = 60;
             // 
             // Form1
             // 
