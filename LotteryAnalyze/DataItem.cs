@@ -8,11 +8,31 @@ namespace LotteryAnalyze
     public class DataItem
     {
         public int id;
+        public string idTag;
         public string lotteryNumber;
+        public int andValue;
+        public int rearValue;
+        public int crossValue;
+        public int groupType;
 
         public DataItem()
         {
+        }
 
+        public int GetGeNumber()
+        {
+            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 1]);
+            return value;
+        }
+        public int GetShiNumber()
+        {
+            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 2]);
+            return value;
+        }
+        public int GetBaiNumber()
+        {
+            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 3]);
+            return value;
         }
     }
 
@@ -31,6 +51,8 @@ namespace LotteryAnalyze
         public Dictionary<int, OneDayDatas> allDatas = new Dictionary<int, OneDayDatas>();
         public List<int> indexs = new List<int>();
 
+        public Dictionary<int, string> mFileMetaInfo = new Dictionary<int, string>();
+
         public DataManager()
         {
         }
@@ -40,17 +62,21 @@ namespace LotteryAnalyze
             allDatas.Clear();
         }
 
-        public void LoadAllDatas(ref List<string> fileNames, ref List<string> dataPaths)
+        public void LoadAllDatas(ref List<int> selectIDs)
         {
-            for (int i = 0; i < fileNames.Count; ++i)
+            for (int i = 0; i < selectIDs.Count; ++i)
             {
-                OneDayDatas data = null;
-                string fullPath = dataPaths[i] + fileNames[i] + ".txt";
-                int dateID = int.Parse(fileNames[i]);
-                if (Util.ReadFile(fullPath, ref data))
-                {
-                    allDatas.Add(dateID, data);
-                }
+                int key = selectIDs[i];
+                LoadData(key);
+            }
+        }
+        public void LoadData(int key)
+        {
+            OneDayDatas data = null;
+            string fullPath = mFileMetaInfo[key];
+            if (Util.ReadFile(key, fullPath, ref data))
+            {
+                allDatas.Add(key, data);
             }
         }
     }

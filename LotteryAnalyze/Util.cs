@@ -8,7 +8,7 @@ namespace LotteryAnalyze
 {
     public class Util
     {
-        public static bool ReadFile(string filePath, ref OneDayDatas datas)
+        public static bool ReadFile(int fileID, string filePath, ref OneDayDatas datas)
         {
             String line;
             StreamReader sr = null;
@@ -32,6 +32,11 @@ namespace LotteryAnalyze
                     DataItem item = new DataItem();
                     item.id = int.Parse(strs[0]);
                     item.lotteryNumber = strs[1];
+                    item.idTag = fileID.ToString() + "-" + strs[0];
+                    item.andValue = Util.CalAndValue(item.lotteryNumber);
+                    item.rearValue = Util.CalRearValue(item.lotteryNumber);
+                    item.crossValue = Util.CalCrossValue(item.lotteryNumber);
+                    item.groupType = Util.GetGroupType(item.lotteryNumber);
                     datas.datas.Add(item);
                 }
             }
@@ -84,6 +89,18 @@ namespace LotteryAnalyze
             if (ge == shi || ge == bai || shi == bai)
                 return 2;
             return 3;
+        }
+
+        // 获取整数srcNumber第index（从右向左数, index >= 0）位上的数字
+        public static int GetNumberByPos(int srcNumber, int index)
+        {
+            string str = srcNumber.ToString();
+            if (index >= str.Length)
+                return 0;
+            int realIndex = str.Length - index - 1;
+            char ch = str[realIndex];
+            int chValue = CharValue(ch);
+            return chValue;
         }
     }
 }

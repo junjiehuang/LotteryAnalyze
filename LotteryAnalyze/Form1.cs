@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace LotteryAnalyze
 {
@@ -19,63 +20,118 @@ namespace LotteryAnalyze
             InitializeComponent();
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void addFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "data files|*.txt";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                dataMgr.indexs.Clear();
-
-                List<string> names = new List<string>();
-                List<string> paths = new List<string>();
-                int count = 0;
                 for (int i = 0; i < openFileDialog.FileNames.Length; ++i)
                 {
                     string[] strs = openFileDialog.FileNames[i].Split('\\');
-                    string path = "";
-                    for (int j = 0; j < strs.Length - 1; ++j)
-                    {
-                        path += strs[j] + "\\";
-                    }
                     string fileName = strs[strs.Length - 1];
                     strs = fileName.Split('.');
-                    paths.Add(path);
-                    names.Add(strs[0]);
-                    ++count;
 
                     int id = int.Parse(strs[0]);
-                    dataMgr.indexs.Add(id);
+                    if (dataMgr.mFileMetaInfo.ContainsKey(id) == false)
+                    {
+                        dataMgr.mFileMetaInfo.Add(id, openFileDialog.FileNames[i]);
+                    }
                 }
 
-                dataMgr.indexs.Sort();
-                dataMgr.LoadAllDatas(ref names, ref paths);
-                curPage = 0;
-
-                RefreshUI();
+                RefreshFileList();
             }
         }
 
-        void RefreshUI()
+        void RefreshFileList()
         {
-            dataGridView1.Rows.Clear();
-            int key = dataMgr.indexs[curPage];
-            OneDayDatas data = dataMgr.allDatas[key];
-            for (int i = 0; i < data.datas.Count; ++i)
+            listViewFileList.Items.Clear();
+            foreach (int key in dataMgr.mFileMetaInfo.Keys)
             {
-                DataItem di = data.datas[i];
-                int andValue = Util.CalAndValue(di.lotteryNumber);
-                int rearValue = Util.CalRearValue(di.lotteryNumber);
-                int crossValue = Util.CalCrossValue(di.lotteryNumber);
-                int groupType = Util.GetGroupType(di.lotteryNumber);
-                string g6 = groupType == 3 ? "组6" : "";
-                string g3 = groupType == 2 ? "组3" : "";
-                string g1 = groupType == 1 ? "豹子" : "";
-                object[] objs = new object[] { di.id, di.lotteryNumber, andValue, rearValue, crossValue, g6, g3, g1, };
-                dataGridView1.Rows.Add( objs );
+                ListViewItem item = new ListViewItem();
+                item.Name = key.ToString();
+                item.Text = key.ToString();
+                item.Tag = key;
+                listViewFileList.Items.Add(item);
             }
+        }
+
+        void RefreshDataView()
+        {
+            dataGridViewLotteryDatas.Rows.Clear();
+            foreach( int key in dataMgr.allDatas.Keys )
+            {
+                OneDayDatas data = dataMgr.allDatas[key];
+                for (int i = 0; i < data.datas.Count; ++i)
+                {
+                    DataItem di = data.datas[i];
+                    string g6 = di.groupType == 3 ? "组6" : "";
+                    string g3 = di.groupType == 2 ? "组3" : "";
+                    string g1 = di.groupType == 1 ? "豹子" : "";
+                    object[] objs = new object[] { di.idTag, di.lotteryNumber, di.andValue, di.rearValue, di.crossValue, g6, g3, g1, };
+                    dataGridViewLotteryDatas.Rows.Add(objs);
+                }
+            }
+        }
+
+        private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = "";
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.ShowNewFolderButton = false;
+            folderBrowserDialog.SelectedPath = System.Environment.CurrentDirectory;
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                path = folderBrowserDialog.SelectedPath;
+
+                DirectoryInfo di = new DirectoryInfo(path);
+                LoopSearchFolder(di);
+                RefreshFileList();
+            }
+        }
+
+        void LoopSearchFolder(DirectoryInfo parentDirInfo)
+        {
+            FileInfo[] files = parentDirInfo.GetFiles();
+            DirectoryInfo[] dirs = parentDirInfo.GetDirectories();
+            for (int i = 0; i < files.Length; ++i)
+            {
+                string[] strs = files[i].FullName.Split('\\');
+                string fileName = strs[strs.Length - 1];
+                strs = fileName.Split('.');
+
+                int id = int.Parse(strs[0]);
+                if (dataMgr.mFileMetaInfo.ContainsKey(id) == false)
+                {
+                    dataMgr.mFileMetaInfo.Add(id, files[i].FullName);
+                }
+            }
+            for (int i = 0; i < dirs.Length; ++i)
+            {
+                LoopSearchFolder(dirs[i]);
+            }
+        }
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataMgr.mFileMetaInfo.Clear();
+            dataMgr.indexs.Clear();
+            dataMgr.allDatas.Clear();
+        }
+
+        private void addToSimulatePoolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataMgr.ClearAllDatas();
+            for (int i = 0; i < listViewFileList.SelectedItems.Count; ++i)
+            {
+                ListViewItem item = listViewFileList.SelectedItems[i];
+                int key = (int)(item.Tag);
+                dataMgr.LoadData(key);
+            }
+            RefreshDataView();
         }
     }
 }
