@@ -12,7 +12,7 @@ namespace LotteryAnalyze
 
     public class KillNumberByDateValue : KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList)
+        public void KillNumber(DataItem item, ref List<int> killList)
         {
             int dateRearValue = Util.GetNumberByPos(item.id, 0);
             if (killList.Contains(dateRearValue) == false)
@@ -22,7 +22,7 @@ namespace LotteryAnalyze
 
     public class KillNumberByAndValue : KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList)
+        public void KillNumber(DataItem item, ref List<int> killList)
         {
 
         }
@@ -30,7 +30,7 @@ namespace LotteryAnalyze
 
     public class KillNumberByRearValue : KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList)
+        public void KillNumber(DataItem item, ref List<int> killList)
         {
             if (killList.Contains(item.rearValue) == false)
                 killList.Add(item.rearValue);
@@ -39,7 +39,7 @@ namespace LotteryAnalyze
 
     public class KillNumberByCrossValue : KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList)
+        public void KillNumber(DataItem item, ref List<int> killList)
         {
 
         }
@@ -47,7 +47,7 @@ namespace LotteryAnalyze
 
     public class KillNumberByReverseSelect : KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList)
+        public void KillNumber(DataItem item, ref List<int> killList)
         {
             int ge = item.GetGeNumber();
             int shi = item.GetShiNumber();
