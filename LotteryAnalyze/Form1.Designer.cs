@@ -35,6 +35,19 @@
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewLotteryDatas = new System.Windows.Forms.DataGridView();
+            this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rearValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.crossValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.right = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wrong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listViewFileList = new System.Windows.Forms.ListView();
@@ -51,19 +64,6 @@
             this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonExecSimulate = new System.Windows.Forms.Button();
-            this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rearValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.crossValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.right = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wrong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -148,182 +148,6 @@
             this.dataGridViewLotteryDatas.Size = new System.Drawing.Size(584, 181);
             this.dataGridViewLotteryDatas.TabIndex = 1;
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Location = new System.Drawing.Point(0, 29);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControlSimulator);
-            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(771, 385);
-            this.splitContainer1.SplitterDistance = 187;
-            this.splitContainer1.TabIndex = 2;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.listViewFileList);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.dataGridViewLotteryDatas);
-            this.splitContainer2.Size = new System.Drawing.Size(771, 187);
-            this.splitContainer2.SplitterDistance = 177;
-            this.splitContainer2.TabIndex = 0;
-            // 
-            // listViewFileList
-            // 
-            this.listViewFileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewFileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-            this.listViewFileList.ContextMenuStrip = this.contextMenuStripListView;
-            this.listViewFileList.FullRowSelect = true;
-            this.listViewFileList.GridLines = true;
-            this.listViewFileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.listViewFileList.Location = new System.Drawing.Point(4, 4);
-            this.listViewFileList.Name = "listViewFileList";
-            this.listViewFileList.Size = new System.Drawing.Size(170, 180);
-            this.listViewFileList.TabIndex = 0;
-            this.listViewFileList.UseCompatibleStateImageBehavior = false;
-            this.listViewFileList.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 200;
-            // 
-            // contextMenuStripListView
-            // 
-            this.contextMenuStripListView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addToSimulatePoolToolStripMenuItem});
-            this.contextMenuStripListView.Name = "contextMenuStripListView";
-            this.contextMenuStripListView.Size = new System.Drawing.Size(137, 26);
-            // 
-            // addToSimulatePoolToolStripMenuItem
-            // 
-            this.addToSimulatePoolToolStripMenuItem.Name = "addToSimulatePoolToolStripMenuItem";
-            this.addToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.addToSimulatePoolToolStripMenuItem.Text = "放入模拟池";
-            this.addToSimulatePoolToolStripMenuItem.Click += new System.EventHandler(this.addToSimulatePoolToolStripMenuItem_Click);
-            // 
-            // tabControlSimulator
-            // 
-            this.tabControlSimulator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlSimulator.Controls.Add(this.tabPageKillNumberStrategySetting);
-            this.tabControlSimulator.Controls.Add(this.tabPageSimulator);
-            this.tabControlSimulator.Location = new System.Drawing.Point(4, 4);
-            this.tabControlSimulator.Name = "tabControlSimulator";
-            this.tabControlSimulator.SelectedIndex = 0;
-            this.tabControlSimulator.Size = new System.Drawing.Size(764, 190);
-            this.tabControlSimulator.TabIndex = 0;
-            // 
-            // tabPageKillNumberStrategySetting
-            // 
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.dataGridViewKillNumberStrategy);
-            this.tabPageKillNumberStrategySetting.Location = new System.Drawing.Point(4, 22);
-            this.tabPageKillNumberStrategySetting.Name = "tabPageKillNumberStrategySetting";
-            this.tabPageKillNumberStrategySetting.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKillNumberStrategySetting.Size = new System.Drawing.Size(756, 164);
-            this.tabPageKillNumberStrategySetting.TabIndex = 0;
-            this.tabPageKillNumberStrategySetting.Text = "杀号策略";
-            this.tabPageKillNumberStrategySetting.UseVisualStyleBackColor = true;
-            // 
-            // dataGridViewKillNumberStrategy
-            // 
-            this.dataGridViewKillNumberStrategy.AllowUserToAddRows = false;
-            this.dataGridViewKillNumberStrategy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewKillNumberStrategy.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewKillNumberStrategy.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.id,
-            this.name,
-            this.desc});
-            this.dataGridViewKillNumberStrategy.Location = new System.Drawing.Point(0, 0);
-            this.dataGridViewKillNumberStrategy.Name = "dataGridViewKillNumberStrategy";
-            this.dataGridViewKillNumberStrategy.RowTemplate.Height = 23;
-            this.dataGridViewKillNumberStrategy.Size = new System.Drawing.Size(753, 167);
-            this.dataGridViewKillNumberStrategy.TabIndex = 0;
-            this.dataGridViewKillNumberStrategy.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKillNumberStrategy_CellEndEdit);
-            // 
-            // id
-            // 
-            this.id.HeaderText = "序号";
-            this.id.Name = "id";
-            // 
-            // name
-            // 
-            this.name.HeaderText = "策略名称";
-            this.name.Name = "name";
-            // 
-            // desc
-            // 
-            this.desc.HeaderText = "描述";
-            this.desc.Name = "desc";
-            this.desc.Width = 1000;
-            // 
-            // tabPageSimulator
-            // 
-            this.tabPageSimulator.Controls.Add(this.richTextBoxResult);
-            this.tabPageSimulator.Controls.Add(this.progressBar1);
-            this.tabPageSimulator.Controls.Add(this.buttonExecSimulate);
-            this.tabPageSimulator.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSimulator.Name = "tabPageSimulator";
-            this.tabPageSimulator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSimulator.Size = new System.Drawing.Size(756, 164);
-            this.tabPageSimulator.TabIndex = 1;
-            this.tabPageSimulator.Text = "模拟器";
-            this.tabPageSimulator.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxResult
-            // 
-            this.richTextBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBoxResult.Location = new System.Drawing.Point(0, 53);
-            this.richTextBoxResult.Name = "richTextBoxResult";
-            this.richTextBoxResult.Size = new System.Drawing.Size(756, 111);
-            this.richTextBoxResult.TabIndex = 2;
-            this.richTextBoxResult.Text = "";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(0, 29);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(756, 23);
-            this.progressBar1.TabIndex = 1;
-            // 
-            // buttonExecSimulate
-            // 
-            this.buttonExecSimulate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExecSimulate.Location = new System.Drawing.Point(0, 4);
-            this.buttonExecSimulate.Name = "buttonExecSimulate";
-            this.buttonExecSimulate.Size = new System.Drawing.Size(756, 23);
-            this.buttonExecSimulate.TabIndex = 0;
-            this.buttonExecSimulate.Text = "开始模拟";
-            this.buttonExecSimulate.UseVisualStyleBackColor = true;
-            this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
-            // 
             // ColumnData
             // 
             this.ColumnData.HeaderText = "id";
@@ -401,6 +225,185 @@
             this.profit.HeaderText = "收益";
             this.profit.Name = "profit";
             this.profit.ReadOnly = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 28);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControlSimulator);
+            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer1.Size = new System.Drawing.Size(771, 387);
+            this.splitContainer1.SplitterDistance = 187;
+            this.splitContainer1.TabIndex = 2;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.listViewFileList);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.dataGridViewLotteryDatas);
+            this.splitContainer2.Size = new System.Drawing.Size(771, 187);
+            this.splitContainer2.SplitterDistance = 177;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // listViewFileList
+            // 
+            this.listViewFileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewFileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.listViewFileList.ContextMenuStrip = this.contextMenuStripListView;
+            this.listViewFileList.FullRowSelect = true;
+            this.listViewFileList.GridLines = true;
+            this.listViewFileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewFileList.Location = new System.Drawing.Point(4, 4);
+            this.listViewFileList.Name = "listViewFileList";
+            this.listViewFileList.Size = new System.Drawing.Size(170, 180);
+            this.listViewFileList.TabIndex = 0;
+            this.listViewFileList.UseCompatibleStateImageBehavior = false;
+            this.listViewFileList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            this.columnHeader1.Width = 200;
+            // 
+            // contextMenuStripListView
+            // 
+            this.contextMenuStripListView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToSimulatePoolToolStripMenuItem});
+            this.contextMenuStripListView.Name = "contextMenuStripListView";
+            this.contextMenuStripListView.Size = new System.Drawing.Size(137, 26);
+            // 
+            // addToSimulatePoolToolStripMenuItem
+            // 
+            this.addToSimulatePoolToolStripMenuItem.Name = "addToSimulatePoolToolStripMenuItem";
+            this.addToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.addToSimulatePoolToolStripMenuItem.Text = "放入模拟池";
+            this.addToSimulatePoolToolStripMenuItem.Click += new System.EventHandler(this.addToSimulatePoolToolStripMenuItem_Click);
+            // 
+            // tabControlSimulator
+            // 
+            this.tabControlSimulator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControlSimulator.Controls.Add(this.tabPageKillNumberStrategySetting);
+            this.tabControlSimulator.Controls.Add(this.tabPageSimulator);
+            this.tabControlSimulator.Location = new System.Drawing.Point(4, 4);
+            this.tabControlSimulator.Name = "tabControlSimulator";
+            this.tabControlSimulator.SelectedIndex = 0;
+            this.tabControlSimulator.Size = new System.Drawing.Size(764, 192);
+            this.tabControlSimulator.TabIndex = 0;
+            // 
+            // tabPageKillNumberStrategySetting
+            // 
+            this.tabPageKillNumberStrategySetting.Controls.Add(this.dataGridViewKillNumberStrategy);
+            this.tabPageKillNumberStrategySetting.Location = new System.Drawing.Point(4, 22);
+            this.tabPageKillNumberStrategySetting.Name = "tabPageKillNumberStrategySetting";
+            this.tabPageKillNumberStrategySetting.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageKillNumberStrategySetting.Size = new System.Drawing.Size(756, 166);
+            this.tabPageKillNumberStrategySetting.TabIndex = 0;
+            this.tabPageKillNumberStrategySetting.Text = "杀号策略";
+            this.tabPageKillNumberStrategySetting.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewKillNumberStrategy
+            // 
+            this.dataGridViewKillNumberStrategy.AllowUserToAddRows = false;
+            this.dataGridViewKillNumberStrategy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewKillNumberStrategy.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewKillNumberStrategy.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.id,
+            this.name,
+            this.desc});
+            this.dataGridViewKillNumberStrategy.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewKillNumberStrategy.Name = "dataGridViewKillNumberStrategy";
+            this.dataGridViewKillNumberStrategy.RowTemplate.Height = 23;
+            this.dataGridViewKillNumberStrategy.Size = new System.Drawing.Size(753, 169);
+            this.dataGridViewKillNumberStrategy.TabIndex = 0;
+            this.dataGridViewKillNumberStrategy.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKillNumberStrategy_CellEndEdit);
+            // 
+            // id
+            // 
+            this.id.HeaderText = "序号";
+            this.id.Name = "id";
+            // 
+            // name
+            // 
+            this.name.HeaderText = "策略名称";
+            this.name.Name = "name";
+            // 
+            // desc
+            // 
+            this.desc.HeaderText = "描述";
+            this.desc.Name = "desc";
+            this.desc.Width = 1000;
+            // 
+            // tabPageSimulator
+            // 
+            this.tabPageSimulator.Controls.Add(this.richTextBoxResult);
+            this.tabPageSimulator.Controls.Add(this.progressBar1);
+            this.tabPageSimulator.Controls.Add(this.buttonExecSimulate);
+            this.tabPageSimulator.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSimulator.Name = "tabPageSimulator";
+            this.tabPageSimulator.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSimulator.Size = new System.Drawing.Size(756, 164);
+            this.tabPageSimulator.TabIndex = 1;
+            this.tabPageSimulator.Text = "模拟器";
+            this.tabPageSimulator.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxResult
+            // 
+            this.richTextBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxResult.Location = new System.Drawing.Point(0, 53);
+            this.richTextBoxResult.Name = "richTextBoxResult";
+            this.richTextBoxResult.Size = new System.Drawing.Size(756, 111);
+            this.richTextBoxResult.TabIndex = 2;
+            this.richTextBoxResult.Text = "";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(0, 29);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(756, 23);
+            this.progressBar1.TabIndex = 1;
+            // 
+            // buttonExecSimulate
+            // 
+            this.buttonExecSimulate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExecSimulate.Location = new System.Drawing.Point(0, 4);
+            this.buttonExecSimulate.Name = "buttonExecSimulate";
+            this.buttonExecSimulate.Size = new System.Drawing.Size(756, 23);
+            this.buttonExecSimulate.TabIndex = 0;
+            this.buttonExecSimulate.Text = "开始模拟";
+            this.buttonExecSimulate.UseVisualStyleBackColor = true;
+            this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
             // 
             // Form1
             // 

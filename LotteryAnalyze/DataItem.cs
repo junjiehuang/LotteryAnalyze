@@ -8,13 +8,13 @@ namespace LotteryAnalyze
     public struct SimData
     {
         public bool isPredictRight;
-        public int cost;
-        public int reward;
-        public int costTotal;
-        public int rewardTotal;
-        public int predictCount;
-        public int rightCount;
-        public int profit;
+        public long cost;
+        public long reward;
+        public long costTotal;
+        public long rewardTotal;
+        public long predictCount;
+        public long rightCount;
+        public long profit;
 
         public void Reset()
         {
@@ -87,7 +87,7 @@ namespace LotteryAnalyze
         public DataItem GetPrevItem(DataItem curItem)
         {
             if (curItem.id > 1)
-                return datas[curItem.id - 1];
+                return datas[curItem.id - 2];
             else
             {
                 OneDayDatas prevODD = DataManager.GetInst().GetPrevOneDayDatas(this);
@@ -104,7 +104,7 @@ namespace LotteryAnalyze
         public List<int> indexs = new List<int>();
         public Dictionary<int, string> mFileMetaInfo = new Dictionary<int, string>();
         public SimData simData;
-        public int curProfit = 0;
+        public long curProfit = 0;
 
         DataManager()
         {
@@ -157,6 +157,16 @@ namespace LotteryAnalyze
             }
             return null;
         }
+        public DataItem GetPrevItem(DataItem curItem)
+        {
+            DataItem prevItem = curItem.parent.GetPrevItem(curItem);
+            if (prevItem != null)
+                return prevItem;
+            OneDayDatas prevODD = GetPrevOneDayDatas(curItem.parent);
+            if (prevODD != null)
+                return prevODD.GetTailItem();
+            return null;
+        }
     }
 
     public enum SimState
@@ -166,11 +176,48 @@ namespace LotteryAnalyze
         eFinished,
     }
 
+    public class WrongInfo
+    {
+        public long costTotal;
+        public string startTag;
+        public int round;
+
+        public WrongInfo()
+        {
+            costTotal = 0;
+            round = 0;
+            startTag = "";
+        }
+        public void CopyFrom(WrongInfo other)
+        {
+            costTotal = other.costTotal;
+            startTag = other.startTag;
+            round = other.round;
+        }
+    }
+
     public class Simulator
     {
         static SimState curState = SimState.eNotStart;
         static int curSimIndex = -1;
         static int curItemIndex = -1;
+        static int curRatio = 1;
+        static bool enableDoubleRatioIfFailed = true;
+
+        public static WrongInfo maxCost = new WrongInfo();
+        public static WrongInfo maxRound = new WrongInfo();
+        static WrongInfo curCal = new WrongInfo();
+        static bool startCount = false;
+
+        public static void StepRatio()
+        {
+            if (enableDoubleRatioIfFailed)
+                curRatio *= 2;
+        }
+        public static void ResetRatio()
+        {
+            curRatio = 1;
+        }
 
         public static void StartSimulate()
         {
@@ -192,6 +239,7 @@ namespace LotteryAnalyze
             curItemIndex = 0;
             curSimIndex = 0;
             mgr.curProfit = 0;
+            startCount = true;
             curState = SimState.eSimulating;
         }
 
@@ -209,15 +257,55 @@ namespace LotteryAnalyze
                         for (int i = 0; i < odd.datas.Count; ++i)
                         {
                             DataItem item = odd.datas[i];
-                            Util.SimKillNumberAndCheckResult(item, 1);
+                            bool curResult = Util.SimKillNumberAndCheckResult(item, curRatio);
                             Program.mainForm.RefreshResultItem(curItemIndex, item);
                             ++curItemIndex;
+
+                            if (startCount && !curResult)
+                            {
+                                startCount = false;
+                                curCal.costTotal = item.simData.cost;
+                                curCal.startTag = item.idTag;
+                                curCal.round = 1;
+                            }
+                            else
+                            {
+                                DataItem prev = DataManager.GetInst().GetPrevItem(item);
+                                if (prev != null)
+                                {
+                                    if (prev.simData.isPredictRight && !item.simData.isPredictRight)
+                                    {
+                                        curCal.costTotal = item.simData.cost;
+                                        curCal.startTag = item.idTag;
+                                        curCal.round = 1;
+                                    }
+                                    else if (!prev.simData.isPredictRight && item.simData.isPredictRight)
+                                    {
+                                        if (maxCost.costTotal < curCal.costTotal)
+                                            maxCost.CopyFrom(curCal);
+                                        if (maxRound.round < curCal.round)
+                                            maxRound.CopyFrom(curCal);
+                                    }
+                                    else if (!prev.simData.isPredictRight && !item.simData.isPredictRight)
+                                    {
+                                        curCal.round++;
+                                        curCal.costTotal += item.simData.cost;
+                                    }
+                                }
+                            }
                         }
                     }
                     ++curSimIndex;
                 }
                 if (curSimIndex == mgr.indexs.Count)
+                {
+                    if (maxCost.costTotal < curCal.costTotal)
+                        maxCost.CopyFrom(curCal);
+                    if (maxRound.round < curCal.round)
+                        maxRound.CopyFrom(curCal);
                     curState = SimState.eFinished;
+                    Program.mainForm.RefreshResultPanel();
+                }
             }
         }
     }

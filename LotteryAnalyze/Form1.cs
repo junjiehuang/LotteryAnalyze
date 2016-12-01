@@ -101,7 +101,18 @@ namespace LotteryAnalyze
             c4.Value = item.simData.reward;
             DataGridViewCell c5 = row.Cells[12];
             c5.Value = item.simData.profit;
-            progressBar1.Value = (int)((float)(itemIndex) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
+            progressBar1.Value = (int)((float)(itemIndex+1) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
+        }
+        public void RefreshResultPanel()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("连错最大损失值 : " + Simulator.maxCost.costTotal + "\n");
+            sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
+            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
+            sb.Append("最长连错损失值 : " + Simulator.maxCost.costTotal + "\n");
+            sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
+            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n");
+            richTextBoxResult.Text = sb.ToString();
         }
 
         private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)

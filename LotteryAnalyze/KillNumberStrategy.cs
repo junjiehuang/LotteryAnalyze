@@ -52,9 +52,12 @@ namespace LotteryAnalyze
         }
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
-            int dateRearValue = Util.GetNumberByPos(item.id, 0);
-            if (killList.Contains(dateRearValue) == false)
-                killList.Add(dateRearValue);
+            int dateGeValue = Util.GetNumberByPos(item.id, 0);
+            //int dateShiValue = Util.GetNumberByPos(item.id, 1);
+            if (killList.Contains(dateGeValue) == false)
+                killList.Add(dateGeValue);
+            //if (killList.Contains(dateShiValue) == false)
+            //    killList.Add(dateShiValue);
         }
     }
 
@@ -103,9 +106,12 @@ namespace LotteryAnalyze
         }
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
-            int ge = item.GetGeNumber();
-            int shi = item.GetShiNumber();
-            int bai = item.GetBaiNumber();
+            DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
+            if (prevItem == null)
+                return;
+            int ge = prevItem.GetGeNumber();
+            int shi = prevItem.GetShiNumber();
+            int bai = prevItem.GetBaiNumber();
             if (killList.Contains(ge) == false)
                 killList.Add(ge);
             if (killList.Contains(shi) == false)

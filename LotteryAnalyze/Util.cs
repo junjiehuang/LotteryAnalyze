@@ -166,6 +166,11 @@ namespace LotteryAnalyze
                 item.parent.simData.rightCount++;
                 DataManager.GetInst().simData.rewardTotal += item.simData.reward;
                 DataManager.GetInst().simData.rightCount++;
+                Simulator.ResetRatio();
+            }
+            else
+            {
+                Simulator.StepRatio();
             }
             DataManager.GetInst().curProfit += -item.simData.cost + item.simData.reward;
             item.simData.profit = DataManager.GetInst().curProfit;
