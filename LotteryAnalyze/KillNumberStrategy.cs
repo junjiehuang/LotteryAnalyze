@@ -5,14 +5,52 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
-    public interface KillNumberStrategy
+    public class KillNumberStrategy
     {
-        void KillNumber(DataItem item, ref List<int> killList);
+        public bool active = false;
+        virtual public void KillNumber(DataItem item, ref List<int> killList) {}
+    }
+
+    public class KillNumberStrategyManager
+    {
+        public Dictionary<string, KillNumberStrategy> funcList = new Dictionary<string, KillNumberStrategy>();
+
+        KillNumberStrategyManager()
+        {
+            funcList.Add("杀期号个位", new KillNumberByDateValue());
+            funcList.Add("和值杀号", new KillNumberByAndValue());
+            funcList.Add("杀上期合值", new KillNumberByRearValue());
+            funcList.Add("跨度杀号", new KillNumberByCrossValue());
+            funcList.Add("杀上期出的号", new KillNumberByReverseSelect());
+        }
+
+        static KillNumberStrategyManager sInst = null;
+        public static KillNumberStrategyManager GetInst()
+        {
+            if (sInst == null)
+                sInst = new KillNumberStrategyManager();
+            return sInst;
+        }
+
+        public void KillNumber(DataItem item, ref List<int> killList)
+        {
+            foreach (KillNumberStrategy strategy in funcList.Values)
+            {
+                if (strategy != null && strategy.active)
+                {
+                    strategy.KillNumber(item, ref killList);
+                }
+            }
+        }
     }
 
     public class KillNumberByDateValue : KillNumberStrategy
     {
-        public void KillNumber(DataItem item, ref List<int> killList)
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByDateValue).ToString();
+        }
+        public override void KillNumber(DataItem item, ref List<int> killList)
         {
             int dateRearValue = Util.GetNumberByPos(item.id, 0);
             if (killList.Contains(dateRearValue) == false)
@@ -22,7 +60,11 @@ namespace LotteryAnalyze
 
     public class KillNumberByAndValue : KillNumberStrategy
     {
-        public void KillNumber(DataItem item, ref List<int> killList)
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByAndValue).ToString();
+        }
+        public override void KillNumber(DataItem item, ref List<int> killList)
         {
 
         }
@@ -30,7 +72,11 @@ namespace LotteryAnalyze
 
     public class KillNumberByRearValue : KillNumberStrategy
     {
-        public void KillNumber(DataItem item, ref List<int> killList)
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByRearValue).ToString();
+        }
+        public override void KillNumber(DataItem item, ref List<int> killList)
         {
             if (killList.Contains(item.rearValue) == false)
                 killList.Add(item.rearValue);
@@ -39,7 +85,11 @@ namespace LotteryAnalyze
 
     public class KillNumberByCrossValue : KillNumberStrategy
     {
-        public void KillNumber(DataItem item, ref List<int> killList)
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByCrossValue).ToString();
+        }
+        public override void KillNumber(DataItem item, ref List<int> killList)
         {
 
         }
@@ -47,7 +97,11 @@ namespace LotteryAnalyze
 
     public class KillNumberByReverseSelect : KillNumberStrategy
     {
-        public void KillNumber(DataItem item, ref List<int> killList)
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByReverseSelect).ToString();
+        }
+        public override void KillNumber(DataItem item, ref List<int> killList)
         {
             int ge = item.GetGeNumber();
             int shi = item.GetShiNumber();

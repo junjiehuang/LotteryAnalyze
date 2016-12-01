@@ -13,6 +13,7 @@ namespace LotteryAnalyze
             String line;
             StreamReader sr = null;
             datas = new OneDayDatas();
+            datas.dateID = fileID;
 
             try
             {
@@ -37,6 +38,8 @@ namespace LotteryAnalyze
                     item.rearValue = Util.CalRearValue(item.lotteryNumber);
                     item.crossValue = Util.CalCrossValue(item.lotteryNumber);
                     item.groupType = Util.GetGroupType(item.lotteryNumber);
+                    item.parent = datas;
+                    item.GetValuesInThreePos();
                     datas.datas.Add(item);
                 }
             }
@@ -101,6 +104,72 @@ namespace LotteryAnalyze
             char ch = str[realIndex];
             int chValue = CharValue(ch);
             return chValue;
+        }
+
+        public static int GetCost(int numCount, int ratio)
+        {
+            int containsCount = 10 - numCount;
+            switch (containsCount)
+            {
+                case 3: return 2 * ratio;
+                case 4: return 8 * ratio;
+                case 5: return 20 * ratio;
+                case 6: return 40 * ratio;
+                case 7: return 70 * ratio;
+                case 8: return 112 * ratio;
+                case 9: return 168 * ratio;
+                case 10: return 240 * ratio;
+            }
+            return 0;
+        }
+
+        public static int GetReward(int groupID, int ratio)
+        {
+            switch (groupID)
+            {
+                case 1: return 0;
+                case 2: return 576 * ratio;
+                case 3: return 288 * ratio;
+            }
+            return 0;
+        }
+
+        public static bool SimKillNumberAndCheckResult(DataItem item, int ratio)
+        {
+            List<int> killNums = new List<int>();
+            KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
+            bool isRight = (item.groupType == 3);
+            if (isRight)
+            {
+                for (int i = 0; i < killNums.Count; ++i)
+                {
+                    int killNum = killNums[i];
+                    // kill wrong number
+                    if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                    {
+                        isRight = false;
+                        break;
+                    }
+                }
+            }
+            item.simData.isPredictRight = isRight;
+            item.simData.reward = 0;
+            item.simData.cost = GetCost(killNums.Count, ratio);
+            item.parent.simData.costTotal += item.simData.cost;
+            item.parent.simData.predictCount++;
+            DataManager.GetInst().simData.costTotal += item.simData.cost;
+            DataManager.GetInst().simData.predictCount++;
+            if (isRight)
+            {
+                item.simData.reward = GetReward(item.groupType, ratio);
+                item.parent.simData.rewardTotal += item.simData.reward;
+                item.parent.simData.rightCount++;
+                DataManager.GetInst().simData.rewardTotal += item.simData.reward;
+                DataManager.GetInst().simData.rightCount++;
+            }
+            DataManager.GetInst().curProfit += -item.simData.cost + item.simData.reward;
+            item.simData.profit = DataManager.GetInst().curProfit;
+            return isRight;
         }
     }
 }
