@@ -8,6 +8,7 @@ namespace LotteryAnalyze
     public class KillNumberStrategy
     {
         public bool active = false;
+        virtual public string DESC() { return ""; }
         virtual public void KillNumber(DataItem item, ref List<int> killList) {}
     }
 
@@ -18,9 +19,9 @@ namespace LotteryAnalyze
         KillNumberStrategyManager()
         {
             funcList.Add("杀期号个位", new KillNumberByDateValue());
-            funcList.Add("和值杀号", new KillNumberByAndValue());
-            funcList.Add("杀上期合值", new KillNumberByRearValue());
-            funcList.Add("跨度杀号", new KillNumberByCrossValue());
+            //funcList.Add("和值杀号", new KillNumberByAndValue());
+            funcList.Add("杀上期合值", new KillNumberByLastRearValue());
+            //funcList.Add("跨度杀号", new KillNumberByCrossValue());
             funcList.Add("杀上期出的号", new KillNumberByReverseSelect());
         }
 
@@ -46,6 +47,9 @@ namespace LotteryAnalyze
 
     public class KillNumberByDateValue : KillNumberStrategy
     {
+        static string sDesc = "把当期序号的个位数杀掉。";
+        public override string DESC() { return sDesc; }
+
         public static string GetTypeName()
         {
             return typeof(KillNumberByDateValue).ToString();
@@ -61,45 +65,54 @@ namespace LotteryAnalyze
         }
     }
 
-    public class KillNumberByAndValue : KillNumberStrategy
+    //public class KillNumberByAndValue : KillNumberStrategy
+    //{
+    //    public static string GetTypeName()
+    //    {
+    //        return typeof(KillNumberByAndValue).ToString();
+    //    }
+    //    public override void KillNumber(DataItem item, ref List<int> killList)
+    //    {
+
+    //    }
+    //}
+
+    public class KillNumberByLastRearValue : KillNumberStrategy
     {
+        static string sDesc = "把上期出号的合值杀掉。";
+        public override string DESC() { return sDesc; }
+
         public static string GetTypeName()
         {
-            return typeof(KillNumberByAndValue).ToString();
+            return typeof(KillNumberByLastRearValue).ToString();
         }
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
-
+            DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
+            if (prevItem == null)
+                return;
+            if (killList.Contains(prevItem.rearValue) == false)
+                killList.Add(prevItem.rearValue);
         }
     }
 
-    public class KillNumberByRearValue : KillNumberStrategy
-    {
-        public static string GetTypeName()
-        {
-            return typeof(KillNumberByRearValue).ToString();
-        }
-        public override void KillNumber(DataItem item, ref List<int> killList)
-        {
-            if (killList.Contains(item.rearValue) == false)
-                killList.Add(item.rearValue);
-        }
-    }
+    //public class KillNumberByCrossValue : KillNumberStrategy
+    //{
+    //    public static string GetTypeName()
+    //    {
+    //        return typeof(KillNumberByCrossValue).ToString();
+    //    }
+    //    public override void KillNumber(DataItem item, ref List<int> killList)
+    //    {
 
-    public class KillNumberByCrossValue : KillNumberStrategy
-    {
-        public static string GetTypeName()
-        {
-            return typeof(KillNumberByCrossValue).ToString();
-        }
-        public override void KillNumber(DataItem item, ref List<int> killList)
-        {
-
-        }
-    }
+    //    }
+    //}
 
     public class KillNumberByReverseSelect : KillNumberStrategy
     {
+        static string sDesc = "把上期出的各位数字杀掉。";
+        public override string DESC() { return sDesc; }
+
         public static string GetTypeName()
         {
             return typeof(KillNumberByReverseSelect).ToString();

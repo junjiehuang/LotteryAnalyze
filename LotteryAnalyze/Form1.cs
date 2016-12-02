@@ -21,7 +21,7 @@ namespace LotteryAnalyze
             {
                 int rowID = dataGridViewKillNumberStrategy.Rows.Count;
                 KillNumberStrategy strategy = funcList[key];
-                object[] parms = new object[]{ strategy.active, key, key, };
+                object[] parms = new object[] { strategy.active, key, strategy.DESC(), };
                 dataGridViewKillNumberStrategy.Rows.Add(parms);
                 DataGridViewRow row = dataGridViewKillNumberStrategy.Rows[rowID];
                 row.Tag = strategy;
@@ -79,39 +79,57 @@ namespace LotteryAnalyze
                 for (int i = 0; i < data.datas.Count; ++i)
                 {
                     DataItem di = data.datas[i];
-                    string g6 = di.groupType == 3 ? "组6" : "";
-                    string g3 = di.groupType == 2 ? "组3" : "";
-                    string g1 = di.groupType == 1 ? "豹子" : "";
+                    string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
+                    string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
+                    string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";
                     object[] objs = new object[] { di.idTag, di.lotteryNumber, di.andValue, di.rearValue, di.crossValue, g6, g3, g1, };
                     dataGridViewLotteryDatas.Rows.Add(objs);
                 }
             }
         }
-
+        public void ResetResult()
+        {
+            for (int i = 0; i < dataGridViewLotteryDatas.RowCount; ++i)
+            {
+                DataGridViewRow row = dataGridViewLotteryDatas.Rows[i];
+                for (int j = 0; j < 6; ++j)
+                {
+                    int col = 8 + j;
+                    DataGridViewCell cell = row.Cells[col];
+                    cell.Value = "";
+                }
+            }
+            progressBar1.Value = progressBar1.Minimum;
+        }
         public void RefreshResultItem(int itemIndex, DataItem item)
         {
             DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
-            DataGridViewCell c1 = row.Cells[8];
-            c1.Value = item.simData.isPredictRight ? "对" : "";
-            DataGridViewCell c2 = row.Cells[9];
-            c2.Value = !item.simData.isPredictRight ? "错" : "";
-            DataGridViewCell c3 = row.Cells[10];
+            int curCol = 8;
+            DataGridViewCell cell = row.Cells[curCol++];
+            cell.Value = item.simData.killList;
+            DataGridViewCell c1 = row.Cells[curCol++];
+            c1.Value = item.simData.predictResult == TestResultType.eTRTSuccess ? "对" : "";
+            DataGridViewCell c2 = row.Cells[curCol++];
+            c2.Value = item.simData.predictResult == TestResultType.eTRTFailed ? "错" : "";
+            DataGridViewCell c3 = row.Cells[curCol++];
             c3.Value = item.simData.cost;
-            DataGridViewCell c4 = row.Cells[11];
+            DataGridViewCell c4 = row.Cells[curCol++];
             c4.Value = item.simData.reward;
-            DataGridViewCell c5 = row.Cells[12];
+            DataGridViewCell c5 = row.Cells[curCol++];
             c5.Value = item.simData.profit;
-            progressBar1.Value = (int)((float)(itemIndex+1) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
+            progressBar1.Value = progressBar1.Minimum + (int)((float)(itemIndex+1) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
         }
         public void RefreshResultPanel()
         {
+            DataManager mgr = DataManager.GetInst();
             StringBuilder sb = new StringBuilder();
             sb.Append("连错最大损失值 : " + Simulator.maxCost.costTotal + "\n");
             sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
             sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
             sb.Append("最长连错损失值 : " + Simulator.maxCost.costTotal + "\n");
             sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
-            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n");
+            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
+            sb.Append("准确率 : " + (float)mgr.simData.rightCount / (float)mgr.simData.predictCount * 100 + "%\n");
             richTextBoxResult.Text = sb.ToString();
         }
 
@@ -160,6 +178,9 @@ namespace LotteryAnalyze
             dataMgr.mFileMetaInfo.Clear();
             dataMgr.indexs.Clear();
             dataMgr.allDatas.Clear();
+            dataGridViewLotteryDatas.Rows.Clear();
+            progressBar1.Value = progressBar1.Minimum;
+            richTextBoxResult.Text = "";
         }
 
         private void addToSimulatePoolToolStripMenuItem_Click(object sender, EventArgs e)

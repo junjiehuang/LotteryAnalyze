@@ -35,19 +35,6 @@
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewLotteryDatas = new System.Windows.Forms.DataGridView();
-            this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rearValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.crossValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.right = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wrong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listViewFileList = new System.Windows.Forms.ListView();
@@ -64,6 +51,20 @@
             this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonExecSimulate = new System.Windows.Forms.Button();
+            this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rearValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.crossValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.group1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.killNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.right = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wrong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -137,6 +138,7 @@
             this.group6,
             this.group3,
             this.group1,
+            this.killNum,
             this.right,
             this.wrong,
             this.cost,
@@ -147,84 +149,6 @@
             this.dataGridViewLotteryDatas.RowTemplate.Height = 23;
             this.dataGridViewLotteryDatas.Size = new System.Drawing.Size(584, 181);
             this.dataGridViewLotteryDatas.TabIndex = 1;
-            // 
-            // ColumnData
-            // 
-            this.ColumnData.HeaderText = "id";
-            this.ColumnData.Name = "ColumnData";
-            this.ColumnData.Width = 60;
-            // 
-            // Number
-            // 
-            this.Number.HeaderText = "number";
-            this.Number.Name = "Number";
-            this.Number.Width = 60;
-            // 
-            // andValue
-            // 
-            this.andValue.HeaderText = "和值";
-            this.andValue.Name = "andValue";
-            this.andValue.Width = 60;
-            // 
-            // rearValue
-            // 
-            this.rearValue.HeaderText = "合值";
-            this.rearValue.Name = "rearValue";
-            this.rearValue.Width = 60;
-            // 
-            // crossValue
-            // 
-            this.crossValue.HeaderText = "跨度";
-            this.crossValue.Name = "crossValue";
-            this.crossValue.Width = 60;
-            // 
-            // group6
-            // 
-            this.group6.HeaderText = "组六";
-            this.group6.Name = "group6";
-            this.group6.Width = 60;
-            // 
-            // group3
-            // 
-            this.group3.HeaderText = "组三";
-            this.group3.Name = "group3";
-            this.group3.Width = 60;
-            // 
-            // group1
-            // 
-            this.group1.HeaderText = "豹子";
-            this.group1.Name = "group1";
-            this.group1.Width = 60;
-            // 
-            // right
-            // 
-            this.right.HeaderText = "对";
-            this.right.Name = "right";
-            this.right.ReadOnly = true;
-            // 
-            // wrong
-            // 
-            this.wrong.HeaderText = "错";
-            this.wrong.Name = "wrong";
-            this.wrong.ReadOnly = true;
-            // 
-            // cost
-            // 
-            this.cost.HeaderText = "花费";
-            this.cost.Name = "cost";
-            this.cost.ReadOnly = true;
-            // 
-            // reward
-            // 
-            this.reward.HeaderText = "奖励";
-            this.reward.Name = "reward";
-            this.reward.ReadOnly = true;
-            // 
-            // profit
-            // 
-            this.profit.HeaderText = "收益";
-            this.profit.Name = "profit";
-            this.profit.ReadOnly = true;
             // 
             // splitContainer1
             // 
@@ -368,7 +292,7 @@
             this.tabPageSimulator.Location = new System.Drawing.Point(4, 22);
             this.tabPageSimulator.Name = "tabPageSimulator";
             this.tabPageSimulator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSimulator.Size = new System.Drawing.Size(756, 164);
+            this.tabPageSimulator.Size = new System.Drawing.Size(756, 166);
             this.tabPageSimulator.TabIndex = 1;
             this.tabPageSimulator.Text = "模拟器";
             this.tabPageSimulator.UseVisualStyleBackColor = true;
@@ -404,6 +328,91 @@
             this.buttonExecSimulate.Text = "开始模拟";
             this.buttonExecSimulate.UseVisualStyleBackColor = true;
             this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
+            // 
+            // ColumnData
+            // 
+            this.ColumnData.HeaderText = "id";
+            this.ColumnData.Name = "ColumnData";
+            this.ColumnData.Width = 60;
+            // 
+            // Number
+            // 
+            this.Number.HeaderText = "number";
+            this.Number.Name = "Number";
+            this.Number.Width = 60;
+            // 
+            // andValue
+            // 
+            this.andValue.HeaderText = "和值";
+            this.andValue.Name = "andValue";
+            this.andValue.Width = 60;
+            // 
+            // rearValue
+            // 
+            this.rearValue.HeaderText = "合值";
+            this.rearValue.Name = "rearValue";
+            this.rearValue.Width = 60;
+            // 
+            // crossValue
+            // 
+            this.crossValue.HeaderText = "跨度";
+            this.crossValue.Name = "crossValue";
+            this.crossValue.Width = 60;
+            // 
+            // group6
+            // 
+            this.group6.HeaderText = "组六";
+            this.group6.Name = "group6";
+            this.group6.Width = 60;
+            // 
+            // group3
+            // 
+            this.group3.HeaderText = "组三";
+            this.group3.Name = "group3";
+            this.group3.Width = 60;
+            // 
+            // group1
+            // 
+            this.group1.HeaderText = "豹子";
+            this.group1.Name = "group1";
+            this.group1.Width = 60;
+            // 
+            // killNum
+            // 
+            this.killNum.HeaderText = "杀号";
+            this.killNum.Name = "killNum";
+            // 
+            // right
+            // 
+            this.right.HeaderText = "对";
+            this.right.Name = "right";
+            this.right.ReadOnly = true;
+            this.right.Width = 50;
+            // 
+            // wrong
+            // 
+            this.wrong.HeaderText = "错";
+            this.wrong.Name = "wrong";
+            this.wrong.ReadOnly = true;
+            this.wrong.Width = 50;
+            // 
+            // cost
+            // 
+            this.cost.HeaderText = "花费";
+            this.cost.Name = "cost";
+            this.cost.ReadOnly = true;
+            // 
+            // reward
+            // 
+            this.reward.HeaderText = "奖励";
+            this.reward.Name = "reward";
+            this.reward.ReadOnly = true;
+            // 
+            // profit
+            // 
+            this.profit.HeaderText = "收益";
+            this.profit.Name = "profit";
+            this.profit.ReadOnly = true;
             // 
             // Form1
             // 
@@ -468,6 +477,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn group6;
         private System.Windows.Forms.DataGridViewTextBoxColumn group3;
         private System.Windows.Forms.DataGridViewTextBoxColumn group1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn killNum;
         private System.Windows.Forms.DataGridViewTextBoxColumn right;
         private System.Windows.Forms.DataGridViewTextBoxColumn wrong;
         private System.Windows.Forms.DataGridViewTextBoxColumn cost;

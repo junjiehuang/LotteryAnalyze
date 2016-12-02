@@ -6,6 +6,20 @@ using System.IO;
 
 namespace LotteryAnalyze
 {
+    public enum GroupType
+    {
+        eGT1 = 1,
+        eGT3 = 2,
+        eGT6 = 3,
+    }
+
+    public enum TestResultType
+    {
+        eTRTFailed,
+        eTRTSuccess,
+        eTRTIgnore,
+    }
+
     public class Util
     {
         public static bool ReadFile(int fileID, string filePath, ref OneDayDatas datas)
@@ -81,17 +95,19 @@ namespace LotteryAnalyze
             return Math.Max( abs3, Math.Max(abs1, abs2) );
         }
 
-        public static int GetGroupType(string str)
+
+
+        public static GroupType GetGroupType(string str)
         {
             int curId = str.Length - 1;
             int ge = CharValue(str[curId]); curId--;
             int shi = CharValue(str[curId]); curId--;
             int bai = CharValue(str[curId]); curId--;
             if (ge == shi && ge == bai)
-                return 1;
+                return GroupType.eGT1;
             if (ge == shi || ge == bai || shi == bai)
-                return 2;
-            return 3;
+                return GroupType.eGT3;
+            return GroupType.eGT6;
         }
 
         // 获取整数srcNumber第index（从右向左数, index >= 0）位上的数字
@@ -106,40 +122,104 @@ namespace LotteryAnalyze
             return chValue;
         }
 
-        public static int GetCost(int numCount, int ratio)
+        public static int GetCost(int numCount, int ratio, GroupType gt)
         {
             int containsCount = 10 - numCount;
-            switch (containsCount)
+            if (gt == GroupType.eGT6)
             {
-                case 3: return 2 * ratio;
-                case 4: return 8 * ratio;
-                case 5: return 20 * ratio;
-                case 6: return 40 * ratio;
-                case 7: return 70 * ratio;
-                case 8: return 112 * ratio;
-                case 9: return 168 * ratio;
-                case 10: return 240 * ratio;
+                switch (containsCount)
+                {
+                    case 3: return 2 * ratio;
+                    case 4: return 8 * ratio;
+                    case 5: return 20 * ratio;
+                    case 6: return 40 * ratio;
+                    case 7: return 70 * ratio;
+                    case 8: return 112 * ratio;
+                    case 9: return 168 * ratio;
+                    case 10: return 240 * ratio;
+                }
+            }
+            else if (gt == GroupType.eGT3)
+            {
+                switch (containsCount)
+                {
+                    case 2: return 4 * ratio;
+                    case 3: return 12 * ratio;
+                    case 4: return 24 * ratio;
+                    case 5: return 40 * ratio;
+                    case 6: return 60 * ratio;
+                    case 7: return 84 * ratio;
+                    case 8: return 112 * ratio;
+                    case 9: return 144 * ratio;
+                    case 10: return 180 * ratio;
+                }
             }
             return 0;
         }
 
-        public static int GetReward(int groupID, int ratio)
+        public static int GetReward(GroupType groupID, int ratio)
         {
             switch (groupID)
             {
-                case 1: return 0;
-                case 2: return 576 * ratio;
-                case 3: return 288 * ratio;
+                case GroupType.eGT1: return 0;
+                case GroupType.eGT3: return 576 * ratio;
+                case GroupType.eGT6: return 288 * ratio;
             }
             return 0;
         }
 
-        public static bool SimKillNumberAndCheckResult(DataItem item, int ratio)
+
+        public static TestResultType SimKillGroup2OnGroup1Out(DataItem item, int ratio)
+        {
+            DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
+            if (prevItem == null)
+                return TestResultType.eTRTIgnore;
+            if (prevItem.groupType == GroupType.eGT1 || Simulator.isCurKillGroup3)
+            {
+                if (prevItem.groupType == GroupType.eGT1 )
+                    Simulator.isCurKillGroup3 = true;
+                item.simData.cost = GetCost(0, ratio, GroupType.eGT3);
+                item.parent.simData.costTotal += item.simData.cost;
+                item.parent.simData.predictCount++;
+                DataManager.GetInst().simData.costTotal += item.simData.cost;
+                DataManager.GetInst().simData.predictCount++;
+                if (item.groupType == GroupType.eGT3)
+                {
+                    Simulator.isCurKillGroup3 = false;
+                    item.simData.reward = GetReward(item.groupType, ratio);
+                    item.parent.simData.rewardTotal += item.simData.reward;
+                    item.parent.simData.rightCount++;
+                    DataManager.GetInst().simData.rewardTotal += item.simData.reward;
+                    DataManager.GetInst().simData.rightCount++;
+                    Simulator.ResetRatio();
+                    item.simData.predictResult = TestResultType.eTRTSuccess;
+                }
+                else
+                {
+                    Simulator.StepRatio();
+                    item.simData.predictResult = TestResultType.eTRTFailed;
+                }
+                DataManager.GetInst().curProfit += -item.simData.cost + item.simData.reward;                
+            }
+            else
+            {
+                item.simData.predictResult = TestResultType.eTRTIgnore;
+            }
+            item.simData.profit = DataManager.GetInst().curProfit;
+            return item.simData.predictResult;
+        }
+
+        public static TestResultType SimKillNumberAndCheckResult(DataItem item, int ratio)
         {
             List<int> killNums = new List<int>();
             KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
-            bool isRight = (item.groupType == 3);
-            if (isRight)
+            item.simData.killList = "";
+            for (int i = 0; i < killNums.Count; ++i)
+            {
+                item.simData.killList += killNums[i] + ",";
+            }
+            bool isRight = true;
+            if (item.groupType == GroupType.eGT6)
             {
                 for (int i = 0; i < killNums.Count; ++i)
                 {
@@ -152,9 +232,9 @@ namespace LotteryAnalyze
                     }
                 }
             }
-            item.simData.isPredictRight = isRight;
+            item.simData.predictResult = isRight ? TestResultType.eTRTSuccess : TestResultType.eTRTFailed;
             item.simData.reward = 0;
-            item.simData.cost = GetCost(killNums.Count, ratio);
+            item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT6);
             item.parent.simData.costTotal += item.simData.cost;
             item.parent.simData.predictCount++;
             DataManager.GetInst().simData.costTotal += item.simData.cost;
@@ -174,7 +254,7 @@ namespace LotteryAnalyze
             }
             DataManager.GetInst().curProfit += -item.simData.cost + item.simData.reward;
             item.simData.profit = DataManager.GetInst().curProfit;
-            return isRight;
+            return item.simData.predictResult;
         }
     }
 }

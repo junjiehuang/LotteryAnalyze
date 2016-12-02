@@ -7,7 +7,8 @@ namespace LotteryAnalyze
 {
     public struct SimData
     {
-        public bool isPredictRight;
+        public string killList;
+        public TestResultType predictResult;
         public long cost;
         public long reward;
         public long costTotal;
@@ -18,8 +19,9 @@ namespace LotteryAnalyze
 
         public void Reset()
         {
-            isPredictRight = false;
+            predictResult = TestResultType.eTRTIgnore;
             cost = reward = costTotal = rewardTotal = predictCount = rightCount = profit = 0;
+            killList = null;
         }
     }
 
@@ -33,7 +35,7 @@ namespace LotteryAnalyze
         public int andValue;
         public int rearValue;
         public int crossValue;
-        public int groupType;
+        public GroupType groupType;
         public List<int> valuesInThreePos = new List<int>();
 
         public SimData simData;
@@ -209,6 +211,9 @@ namespace LotteryAnalyze
         static WrongInfo curCal = new WrongInfo();
         static bool startCount = false;
 
+        public static bool isCurKillGroup3 = false;
+        static bool testSimKillGroup3OnGroup1Out = true;
+
         public static void StepRatio()
         {
             if (enableDoubleRatioIfFailed)
@@ -240,6 +245,8 @@ namespace LotteryAnalyze
             curSimIndex = 0;
             mgr.curProfit = 0;
             startCount = true;
+            ResetRatio();
+            Program.mainForm.ResetResult();
             curState = SimState.eSimulating;
         }
 
@@ -257,11 +264,15 @@ namespace LotteryAnalyze
                         for (int i = 0; i < odd.datas.Count; ++i)
                         {
                             DataItem item = odd.datas[i];
-                            bool curResult = Util.SimKillNumberAndCheckResult(item, curRatio);
+                            TestResultType curResult = TestResultType.eTRTIgnore;
+                            if (testSimKillGroup3OnGroup1Out)
+                                curResult = Util.SimKillGroup2OnGroup1Out(item, curRatio);
+                            else
+                                curResult = Util.SimKillNumberAndCheckResult(item, curRatio);
                             Program.mainForm.RefreshResultItem(curItemIndex, item);
                             ++curItemIndex;
 
-                            if (startCount && !curResult)
+                            if (startCount && curResult == TestResultType.eTRTFailed )
                             {
                                 startCount = false;
                                 curCal.costTotal = item.simData.cost;
@@ -273,20 +284,20 @@ namespace LotteryAnalyze
                                 DataItem prev = DataManager.GetInst().GetPrevItem(item);
                                 if (prev != null)
                                 {
-                                    if (prev.simData.isPredictRight && !item.simData.isPredictRight)
+                                    if (prev.simData.predictResult == TestResultType.eTRTSuccess && curResult == TestResultType.eTRTFailed)
                                     {
                                         curCal.costTotal = item.simData.cost;
                                         curCal.startTag = item.idTag;
                                         curCal.round = 1;
                                     }
-                                    else if (!prev.simData.isPredictRight && item.simData.isPredictRight)
+                                    else if (prev.simData.predictResult == TestResultType.eTRTFailed && item.simData.predictResult == TestResultType.eTRTSuccess)
                                     {
                                         if (maxCost.costTotal < curCal.costTotal)
                                             maxCost.CopyFrom(curCal);
                                         if (maxRound.round < curCal.round)
                                             maxRound.CopyFrom(curCal);
                                     }
-                                    else if (!prev.simData.isPredictRight && !item.simData.isPredictRight)
+                                    else if (prev.simData.predictResult == TestResultType.eTRTFailed && item.simData.predictResult == TestResultType.eTRTFailed)
                                     {
                                         curCal.round++;
                                         curCal.costTotal += item.simData.cost;
