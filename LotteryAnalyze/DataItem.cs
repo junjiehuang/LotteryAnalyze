@@ -205,14 +205,10 @@ namespace LotteryAnalyze
         static int curItemIndex = -1;
         static int curRatio = 1;
         static bool enableDoubleRatioIfFailed = true;
-
-        public static WrongInfo maxCost = new WrongInfo();
-        public static WrongInfo maxRound = new WrongInfo();
-        static WrongInfo curCal = new WrongInfo();
-        static bool startCount = false;
-
+        static WrongInfo curCal = null;
         public static bool isCurKillGroup3 = false;
         static bool testSimKillGroup3OnGroup1Out = true;
+        public static List<WrongInfo> allWrongInfos = new List<WrongInfo>();
 
         public static void StepRatio()
         {
@@ -222,6 +218,27 @@ namespace LotteryAnalyze
         public static void ResetRatio()
         {
             curRatio = 1;
+        }
+        public static void SortWrongInfos(bool byRound)
+        {
+            if (byRound)
+            {
+                allWrongInfos.Sort((x, y) =>
+                {
+                    if (x.round > y.round)
+                        return -1;
+                    return 1;
+                });
+            }
+            else
+            {
+                allWrongInfos.Sort((x, y) =>
+                {
+                    if (x.costTotal > y.costTotal)
+                        return -1;
+                    return 1;
+                });
+            }
         }
 
         public static void StartSimulate()
@@ -244,10 +261,10 @@ namespace LotteryAnalyze
             curItemIndex = 0;
             curSimIndex = 0;
             mgr.curProfit = 0;
-            startCount = true;
             ResetRatio();
             Program.mainForm.ResetResult();
             curState = SimState.eSimulating;
+            allWrongInfos.Clear();
         }
 
         public static void UpdateSimulate()
@@ -272,36 +289,28 @@ namespace LotteryAnalyze
                             Program.mainForm.RefreshResultItem(curItemIndex, item);
                             ++curItemIndex;
 
-                            if (startCount && curResult == TestResultType.eTRTFailed )
+                            if (curCal == null && curResult != TestResultType.eTRTIgnore)
                             {
-                                startCount = false;
+                                curCal = new WrongInfo();
                                 curCal.costTotal = item.simData.cost;
                                 curCal.startTag = item.idTag;
                                 curCal.round = 1;
+                                allWrongInfos.Add(curCal);
+                                if (curResult == TestResultType.eTRTSuccess)
+                                    curCal = null;
                             }
-                            else
+                            else if( curCal != null )
                             {
-                                DataItem prev = DataManager.GetInst().GetPrevItem(item);
-                                if (prev != null)
+                                if (curResult == TestResultType.eTRTFailed)
                                 {
-                                    if (prev.simData.predictResult == TestResultType.eTRTSuccess && curResult == TestResultType.eTRTFailed)
-                                    {
-                                        curCal.costTotal = item.simData.cost;
-                                        curCal.startTag = item.idTag;
-                                        curCal.round = 1;
-                                    }
-                                    else if (prev.simData.predictResult == TestResultType.eTRTFailed && item.simData.predictResult == TestResultType.eTRTSuccess)
-                                    {
-                                        if (maxCost.costTotal < curCal.costTotal)
-                                            maxCost.CopyFrom(curCal);
-                                        if (maxRound.round < curCal.round)
-                                            maxRound.CopyFrom(curCal);
-                                    }
-                                    else if (prev.simData.predictResult == TestResultType.eTRTFailed && item.simData.predictResult == TestResultType.eTRTFailed)
-                                    {
-                                        curCal.round++;
-                                        curCal.costTotal += item.simData.cost;
-                                    }
+                                    curCal.round++;
+                                    curCal.costTotal += item.simData.cost;
+                                }
+                                else if (curResult == TestResultType.eTRTSuccess)
+                                {
+                                    curCal.round++;
+                                    curCal.costTotal += item.simData.cost;
+                                    curCal = null;
                                 }
                             }
                         }
@@ -310,10 +319,7 @@ namespace LotteryAnalyze
                 }
                 if (curSimIndex == mgr.indexs.Count)
                 {
-                    if (maxCost.costTotal < curCal.costTotal)
-                        maxCost.CopyFrom(curCal);
-                    if (maxRound.round < curCal.round)
-                        maxRound.CopyFrom(curCal);
+                    curCal = null;
                     curState = SimState.eFinished;
                     Program.mainForm.RefreshResultPanel();
                 }

@@ -123,13 +123,21 @@ namespace LotteryAnalyze
         {
             DataManager mgr = DataManager.GetInst();
             StringBuilder sb = new StringBuilder();
-            sb.Append("连错最大损失值 : " + Simulator.maxCost.costTotal + "\n");
-            sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
-            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
-            sb.Append("最长连错损失值 : " + Simulator.maxCost.costTotal + "\n");
-            sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
-            sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
+            //sb.Append("连错最大损失值 : " + Simulator.maxCost.costTotal + "\n");
+            //sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
+            //sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
+            //sb.Append("最长连错损失值 : " + Simulator.maxCost.costTotal + "\n");
+            //sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
+            //sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
             sb.Append("准确率 : " + (float)mgr.simData.rightCount / (float)mgr.simData.predictCount * 100 + "%\n");
+            Simulator.SortWrongInfos(true);
+            for (int i = 0; i < Simulator.allWrongInfos.Count; ++i)
+            {
+                WrongInfo wi = Simulator.allWrongInfos[i];
+                sb.Append("损失值\t: " + wi.costTotal + "\n");
+                sb.Append("起始期号\t: " + wi.startTag + "\n");
+                sb.Append("连错期数\t: " + wi.round + "\n\n");
+            }
             richTextBoxResult.Text = sb.ToString();
         }
 
