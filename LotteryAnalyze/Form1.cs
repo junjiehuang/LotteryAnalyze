@@ -26,6 +26,12 @@ namespace LotteryAnalyze
                 DataGridViewRow row = dataGridViewKillNumberStrategy.Rows[rowID];
                 row.Tag = strategy;
             }
+            comboBoxKillGroup.SelectedIndex = 2;
+        }
+
+        public KillType GetCurSelectedKillType()
+        {
+            return (KillType)comboBoxKillGroup.SelectedIndex;
         }
 
         private void addFilesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -106,7 +112,14 @@ namespace LotteryAnalyze
             DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
             int curCol = 8;
             DataGridViewCell cell = row.Cells[curCol++];
-            cell.Value = item.simData.killList;
+            string kt = "";
+            switch (item.simData.killType)
+            {
+                case KillType.eKTGroup3: kt = "杀组三 "; break;
+                case KillType.eKTGroup6: kt = "杀组六 "; break;
+                case KillType.eKTNone: kt = "忽略 "; break;
+            }
+            cell.Value = kt + item.simData.killList;
             DataGridViewCell c1 = row.Cells[curCol++];
             c1.Value = item.simData.predictResult == TestResultType.eTRTSuccess ? "对" : "";
             DataGridViewCell c2 = row.Cells[curCol++];

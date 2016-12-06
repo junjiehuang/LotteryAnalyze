@@ -168,16 +168,52 @@ namespace LotteryAnalyze
             return 0;
         }
 
+        public static TestResultType SimKillBlendGroup(DataItem item, int ratio)
+        {
+            TestResultType curResult = TestResultType.eTRTIgnore;
+            if (Simulator.curKillType == KillType.eKTGroup6)
+            {
+                curResult = SimKillNumberAndCheckResult(item, ratio);
+                if (curResult == TestResultType.eTRTFailed)
+                {
+                    Simulator.g6Round++;
+                    if (Simulator.g6Round > 3)
+                    {
+                        Simulator.curKillType = KillType.eKTGroup3;
+                        Simulator.g3Round = 0;
+                    }
+                }
+            }
+            else if (Simulator.curKillType == KillType.eKTGroup3)
+            {
+                curResult = SimKillGroup3OnGroup1Out(item, ratio);
+                if (curResult == TestResultType.eTRTFailed)
+                {
+                    Simulator.g3Round++;
+                    if (Simulator.g3Round > 3)
+                    {
+                        Simulator.curKillType = KillType.eKTGroup6;
+                        Simulator.g6Round = 0;
+                    }
+                }
+            }
+            if (curResult == TestResultType.eTRTSuccess)
+            {
+                Simulator.g3Round = Simulator.g6Round = 0;
+            }
+            return curResult;
+        }
 
-        public static TestResultType SimKillGroup2OnGroup1Out(DataItem item, int ratio)
+        public static TestResultType SimKillGroup3OnGroup1Out(DataItem item, int ratio)
         {
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
             if (prevItem == null)
                 return TestResultType.eTRTIgnore;
-            if (prevItem.groupType == GroupType.eGT1 || Simulator.isCurKillGroup3)
+            if (prevItem.groupType == GroupType.eGT1 || Simulator.isCurKillGroup3 || Simulator.curKillType == KillType.eKTGroup3)
             {
                 if (prevItem.groupType == GroupType.eGT1 )
                     Simulator.isCurKillGroup3 = true;
+                item.simData.killType = KillType.eKTGroup3;
                 item.simData.cost = GetCost(0, ratio, GroupType.eGT3);
                 item.parent.simData.costTotal += item.simData.cost;
                 item.parent.simData.predictCount++;
@@ -232,6 +268,10 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            else
+                isRight = false;
+
+            item.simData.killType = KillType.eKTGroup6;
             item.simData.predictResult = isRight ? TestResultType.eTRTSuccess : TestResultType.eTRTFailed;
             item.simData.reward = 0;
             item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT6);

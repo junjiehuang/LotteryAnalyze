@@ -16,6 +16,7 @@ namespace LotteryAnalyze
         public long predictCount;
         public long rightCount;
         public long profit;
+        public KillType killType;
 
         public void Reset()
         {
@@ -198,6 +199,14 @@ namespace LotteryAnalyze
         }
     }
 
+    public enum KillType
+    {
+        eKTGroup3 = 0,
+        eKTGroup6,
+        eKTBlend,
+        eKTNone,
+    }
+    
     public class Simulator
     {
         static SimState curState = SimState.eNotStart;
@@ -207,13 +216,21 @@ namespace LotteryAnalyze
         static bool enableDoubleRatioIfFailed = true;
         static WrongInfo curCal = null;
         public static bool isCurKillGroup3 = false;
-        static bool testSimKillGroup3OnGroup1Out = true;
         public static List<WrongInfo> allWrongInfos = new List<WrongInfo>();
+        public static KillType killType = KillType.eKTGroup3;
+        public static int maxRatio = 32;
+        public static int g3Round = 0;
+        public static int g6Round = 0;
+        public static KillType curKillType = KillType.eKTGroup6;
 
         public static void StepRatio()
         {
             if (enableDoubleRatioIfFailed)
+            {
                 curRatio *= 2;
+                if (maxRatio > 0 && curRatio > maxRatio)
+                    curRatio = maxRatio;
+            }
         }
         public static void ResetRatio()
         {
@@ -265,6 +282,13 @@ namespace LotteryAnalyze
             Program.mainForm.ResetResult();
             curState = SimState.eSimulating;
             allWrongInfos.Clear();
+            g3Round = 0;
+            g6Round = 0;            
+            killType = Program.mainForm.GetCurSelectedKillType();
+            if (killType == KillType.eKTBlend)
+                curKillType = KillType.eKTGroup6;
+            else
+                curKillType = KillType.eKTNone;
         }
 
         public static void UpdateSimulate()
@@ -282,10 +306,12 @@ namespace LotteryAnalyze
                         {
                             DataItem item = odd.datas[i];
                             TestResultType curResult = TestResultType.eTRTIgnore;
-                            if (testSimKillGroup3OnGroup1Out)
-                                curResult = Util.SimKillGroup2OnGroup1Out(item, curRatio);
-                            else
+                            if (killType == KillType.eKTGroup3)
+                                curResult = Util.SimKillGroup3OnGroup1Out(item, curRatio);
+                            else if (killType == KillType.eKTGroup6)
                                 curResult = Util.SimKillNumberAndCheckResult(item, curRatio);
+                            else if (killType == KillType.eKTBlend)
+                                curResult = Util.SimKillBlendGroup(item, curRatio);
                             Program.mainForm.RefreshResultItem(curItemIndex, item);
                             ++curItemIndex;
 
