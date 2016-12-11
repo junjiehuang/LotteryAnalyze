@@ -213,7 +213,7 @@ namespace LotteryAnalyze
         static int curSimIndex = -1;
         static int curItemIndex = -1;
         static int curRatio = 1;
-        static bool enableDoubleRatioIfFailed = true;
+        public static bool enableDoubleRatioIfFailed = true;
         static WrongInfo curCal = null;
         public static bool isCurKillGroup3 = false;
         public static List<WrongInfo> allWrongInfos = new List<WrongInfo>();

@@ -23,6 +23,7 @@ namespace LotteryAnalyze
             funcList.Add("杀上期合值", new KillNumberByLastRearValue());
             //funcList.Add("跨度杀号", new KillNumberByCrossValue());
             funcList.Add("杀上期出的号", new KillNumberByReverseSelect());
+            funcList.Add("杀上期非重邻号", new KillNumberByReverseRepeatRelate());
         }
 
         static KillNumberStrategyManager sInst = null;
@@ -131,6 +132,47 @@ namespace LotteryAnalyze
                 killList.Add(shi);
             if (killList.Contains(bai) == false)
                 killList.Add(bai);
+        }
+    }
+
+    public class KillNumberByReverseRepeatRelate : KillNumberStrategy
+    {
+        static string sDesc = "杀非上期的重号邻号";
+        public override string DESC() { return sDesc; }
+        static List<int> sFullList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, };
+
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByReverseRepeatRelate).ToString();
+        }
+
+        public override void KillNumber(DataItem item, ref List<int> killList)
+        {
+            DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
+            if (prevItem == null)
+                return;
+            int ge = prevItem.GetGeNumber();
+            int shi = prevItem.GetShiNumber();
+            int bai = prevItem.GetBaiNumber();
+            killList.AddRange(sFullList);
+            KillNum(ref killList, ge);
+            KillNum(ref killList, shi);
+            KillNum(ref killList, bai);
+        }
+        void KillNum(ref List<int> killList, int num)
+        {
+            if (killList.Contains(num))
+                killList.Remove(num);
+            int preNum = num - 1;
+            if (preNum < 0)
+                preNum = 9;
+            if (killList.Contains(preNum))
+                killList.Remove(preNum);
+            int nexNum = num + 1;
+            if (nexNum > 9)
+                nexNum = 0;
+            if (killList.Contains(nexNum))
+                killList.Remove(nexNum);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace LotteryAnalyze
                 row.Tag = strategy;
             }
             comboBoxKillGroup.SelectedIndex = 2;
+            Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
         }
 
         public KillType GetCurSelectedKillType()
@@ -236,6 +237,11 @@ namespace LotteryAnalyze
             {
                 Simulator.StartSimulate();
             }
+        }
+
+        private void checkBoxDoubleRatio_Click(object sender, EventArgs e)
+        {
+            Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
         }
 
     }

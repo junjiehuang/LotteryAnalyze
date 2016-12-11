@@ -29,12 +29,33 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.addFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewLotteryDatas = new System.Windows.Forms.DataGridView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.listViewFileList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextMenuStripListView = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToSimulatePoolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabControlSimulator = new System.Windows.Forms.TabControl();
+            this.tabPageKillNumberStrategySetting = new System.Windows.Forms.TabPage();
+            this.comboBoxKillGroup = new System.Windows.Forms.ComboBox();
+            this.dataGridViewKillNumberStrategy = new System.Windows.Forms.DataGridView();
+            this.id = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPageSimulator = new System.Windows.Forms.TabPage();
+            this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.buttonExecSimulate = new System.Windows.Forms.Button();
+            this.checkBoxDoubleRatio = new System.Windows.Forms.CheckBox();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,23 +70,6 @@
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.listViewFileList = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStripListView = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.addToSimulatePoolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControlSimulator = new System.Windows.Forms.TabControl();
-            this.tabPageKillNumberStrategySetting = new System.Windows.Forms.TabPage();
-            this.dataGridViewKillNumberStrategy = new System.Windows.Forms.DataGridView();
-            this.id = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPageSimulator = new System.Windows.Forms.TabPage();
-            this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.buttonExecSimulate = new System.Windows.Forms.Button();
-            this.comboBoxKillGroup = new System.Windows.Forms.ComboBox();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -150,91 +154,6 @@
             this.dataGridViewLotteryDatas.RowTemplate.Height = 23;
             this.dataGridViewLotteryDatas.Size = new System.Drawing.Size(584, 181);
             this.dataGridViewLotteryDatas.TabIndex = 1;
-            // 
-            // ColumnData
-            // 
-            this.ColumnData.HeaderText = "id";
-            this.ColumnData.Name = "ColumnData";
-            this.ColumnData.Width = 60;
-            // 
-            // Number
-            // 
-            this.Number.HeaderText = "number";
-            this.Number.Name = "Number";
-            this.Number.Width = 60;
-            // 
-            // andValue
-            // 
-            this.andValue.HeaderText = "和值";
-            this.andValue.Name = "andValue";
-            this.andValue.Width = 60;
-            // 
-            // rearValue
-            // 
-            this.rearValue.HeaderText = "合值";
-            this.rearValue.Name = "rearValue";
-            this.rearValue.Width = 60;
-            // 
-            // crossValue
-            // 
-            this.crossValue.HeaderText = "跨度";
-            this.crossValue.Name = "crossValue";
-            this.crossValue.Width = 60;
-            // 
-            // group6
-            // 
-            this.group6.HeaderText = "组六";
-            this.group6.Name = "group6";
-            this.group6.Width = 60;
-            // 
-            // group3
-            // 
-            this.group3.HeaderText = "组三";
-            this.group3.Name = "group3";
-            this.group3.Width = 60;
-            // 
-            // group1
-            // 
-            this.group1.HeaderText = "豹子";
-            this.group1.Name = "group1";
-            this.group1.Width = 60;
-            // 
-            // killNum
-            // 
-            this.killNum.HeaderText = "杀号";
-            this.killNum.Name = "killNum";
-            // 
-            // right
-            // 
-            this.right.HeaderText = "对";
-            this.right.Name = "right";
-            this.right.ReadOnly = true;
-            this.right.Width = 50;
-            // 
-            // wrong
-            // 
-            this.wrong.HeaderText = "错";
-            this.wrong.Name = "wrong";
-            this.wrong.ReadOnly = true;
-            this.wrong.Width = 50;
-            // 
-            // cost
-            // 
-            this.cost.HeaderText = "花费";
-            this.cost.Name = "cost";
-            this.cost.ReadOnly = true;
-            // 
-            // reward
-            // 
-            this.reward.HeaderText = "奖励";
-            this.reward.Name = "reward";
-            this.reward.ReadOnly = true;
-            // 
-            // profit
-            // 
-            this.profit.HeaderText = "收益";
-            this.profit.Name = "profit";
-            this.profit.ReadOnly = true;
             // 
             // splitContainer1
             // 
@@ -327,6 +246,7 @@
             // 
             // tabPageKillNumberStrategySetting
             // 
+            this.tabPageKillNumberStrategySetting.Controls.Add(this.checkBoxDoubleRatio);
             this.tabPageKillNumberStrategySetting.Controls.Add(this.comboBoxKillGroup);
             this.tabPageKillNumberStrategySetting.Controls.Add(this.dataGridViewKillNumberStrategy);
             this.tabPageKillNumberStrategySetting.Location = new System.Drawing.Point(4, 22);
@@ -336,6 +256,20 @@
             this.tabPageKillNumberStrategySetting.TabIndex = 0;
             this.tabPageKillNumberStrategySetting.Text = "杀号策略";
             this.tabPageKillNumberStrategySetting.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxKillGroup
+            // 
+            this.comboBoxKillGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxKillGroup.FormattingEnabled = true;
+            this.comboBoxKillGroup.Items.AddRange(new object[] {
+            "匹配组三",
+            "匹配组六",
+            "交叉匹配"});
+            this.comboBoxKillGroup.Location = new System.Drawing.Point(0, 4);
+            this.comboBoxKillGroup.Name = "comboBoxKillGroup";
+            this.comboBoxKillGroup.Size = new System.Drawing.Size(363, 20);
+            this.comboBoxKillGroup.TabIndex = 1;
             // 
             // dataGridViewKillNumberStrategy
             // 
@@ -416,20 +350,113 @@
             this.buttonExecSimulate.UseVisualStyleBackColor = true;
             this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
             // 
-            // comboBoxKillGroup
+            // checkBoxDoubleRatio
             // 
-            this.comboBoxKillGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.checkBoxDoubleRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxKillGroup.FormattingEnabled = true;
-            this.comboBoxKillGroup.Items.AddRange(new object[] {
-            "匹配组三",
-            "匹配组六",
-            "交叉匹配"});
-            this.comboBoxKillGroup.Location = new System.Drawing.Point(0, 4);
-            this.comboBoxKillGroup.Name = "comboBoxKillGroup";
-            this.comboBoxKillGroup.Size = new System.Drawing.Size(753, 20);
-            this.comboBoxKillGroup.TabIndex = 1;
+            this.checkBoxDoubleRatio.AutoSize = true;
+            this.checkBoxDoubleRatio.Location = new System.Drawing.Point(370, 5);
+            this.checkBoxDoubleRatio.Name = "checkBoxDoubleRatio";
+            this.checkBoxDoubleRatio.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxDoubleRatio.TabIndex = 2;
+            this.checkBoxDoubleRatio.Text = "是否倍投";
+            this.checkBoxDoubleRatio.UseVisualStyleBackColor = true;
+            this.checkBoxDoubleRatio.Click += new System.EventHandler(this.checkBoxDoubleRatio_Click);
+            // 
+            // ColumnData
+            // 
+            this.ColumnData.HeaderText = "id";
+            this.ColumnData.Name = "ColumnData";
+            this.ColumnData.Width = 60;
+            // 
+            // Number
+            // 
+            this.Number.HeaderText = "number";
+            this.Number.Name = "Number";
+            this.Number.Width = 60;
+            // 
+            // andValue
+            // 
+            this.andValue.HeaderText = "和值";
+            this.andValue.Name = "andValue";
+            this.andValue.Width = 60;
+            // 
+            // rearValue
+            // 
+            this.rearValue.HeaderText = "合值";
+            this.rearValue.Name = "rearValue";
+            this.rearValue.Width = 60;
+            // 
+            // crossValue
+            // 
+            this.crossValue.HeaderText = "跨度";
+            this.crossValue.Name = "crossValue";
+            this.crossValue.Width = 60;
+            // 
+            // group6
+            // 
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            this.group6.DefaultCellStyle = dataGridViewCellStyle1;
+            this.group6.HeaderText = "组六";
+            this.group6.Name = "group6";
+            this.group6.Width = 60;
+            // 
+            // group3
+            // 
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.group3.DefaultCellStyle = dataGridViewCellStyle2;
+            this.group3.HeaderText = "组三";
+            this.group3.Name = "group3";
+            this.group3.Width = 60;
+            // 
+            // group1
+            // 
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Green;
+            this.group1.DefaultCellStyle = dataGridViewCellStyle3;
+            this.group1.HeaderText = "豹子";
+            this.group1.Name = "group1";
+            this.group1.Width = 60;
+            // 
+            // killNum
+            // 
+            this.killNum.HeaderText = "杀号";
+            this.killNum.Name = "killNum";
+            // 
+            // right
+            // 
+            this.right.HeaderText = "对";
+            this.right.Name = "right";
+            this.right.ReadOnly = true;
+            this.right.Width = 50;
+            // 
+            // wrong
+            // 
+            this.wrong.HeaderText = "错";
+            this.wrong.Name = "wrong";
+            this.wrong.ReadOnly = true;
+            this.wrong.Width = 50;
+            // 
+            // cost
+            // 
+            this.cost.HeaderText = "花费";
+            this.cost.Name = "cost";
+            this.cost.ReadOnly = true;
+            // 
+            // reward
+            // 
+            this.reward.HeaderText = "奖励";
+            this.reward.Name = "reward";
+            this.reward.ReadOnly = true;
+            // 
+            // profit
+            // 
+            this.profit.HeaderText = "收益";
+            this.profit.Name = "profit";
+            this.profit.ReadOnly = true;
             // 
             // Form1
             // 
@@ -455,6 +482,7 @@
             this.contextMenuStripListView.ResumeLayout(false);
             this.tabControlSimulator.ResumeLayout(false);
             this.tabPageKillNumberStrategySetting.ResumeLayout(false);
+            this.tabPageKillNumberStrategySetting.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKillNumberStrategy)).EndInit();
             this.tabPageSimulator.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -486,6 +514,8 @@
         private System.Windows.Forms.RichTextBox richTextBoxResult;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonExecSimulate;
+        private System.Windows.Forms.ComboBox comboBoxKillGroup;
+        private System.Windows.Forms.CheckBox checkBoxDoubleRatio;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnData;
         private System.Windows.Forms.DataGridViewTextBoxColumn Number;
         private System.Windows.Forms.DataGridViewTextBoxColumn andValue;
@@ -500,7 +530,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cost;
         private System.Windows.Forms.DataGridViewTextBoxColumn reward;
         private System.Windows.Forms.DataGridViewTextBoxColumn profit;
-        private System.Windows.Forms.ComboBox comboBoxKillGroup;
     }
 }
 
