@@ -222,14 +222,21 @@ namespace LotteryAnalyze
         public static int g3Round = 0;
         public static int g6Round = 0;
         public static KillType curKillType = KillType.eKTGroup6;
+        static int DoubleGap = 1;
 
         public static void StepRatio()
         {
             if (enableDoubleRatioIfFailed)
             {
-                curRatio *= 2;
-                if (maxRatio > 0 && curRatio > maxRatio)
-                    curRatio = maxRatio;
+                if (DoubleGap > 0)
+                    --DoubleGap;
+                else
+                {
+                    DoubleGap = 1;
+                    curRatio *= 2;
+                    if (maxRatio > 0 && curRatio > maxRatio)
+                        curRatio = maxRatio;
+                }
             }
         }
         public static void ResetRatio()

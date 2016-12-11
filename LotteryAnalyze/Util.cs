@@ -174,10 +174,10 @@ namespace LotteryAnalyze
             if (Simulator.curKillType == KillType.eKTGroup6)
             {
                 curResult = SimKillNumberAndCheckResult(item, ratio);
-                if (curResult == TestResultType.eTRTFailed)
+                if (curResult == TestResultType.eTRTFailed || item.groupType == GroupType.eGT1)
                 {
                     Simulator.g6Round++;
-                    if (Simulator.g6Round > 3)
+                    if (Simulator.g6Round > 2 || item.groupType == GroupType.eGT1)
                     {
                         Simulator.curKillType = KillType.eKTGroup3;
                         Simulator.g3Round = 0;
@@ -190,7 +190,7 @@ namespace LotteryAnalyze
                 if (curResult == TestResultType.eTRTFailed)
                 {
                     Simulator.g3Round++;
-                    if (Simulator.g3Round > 3)
+                    if (Simulator.g3Round > 2)
                     {
                         Simulator.curKillType = KillType.eKTGroup6;
                         Simulator.g6Round = 0;
