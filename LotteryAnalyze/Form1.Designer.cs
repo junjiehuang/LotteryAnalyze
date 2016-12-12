@@ -70,6 +70,8 @@
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxFirmRatio = new System.Windows.Forms.TextBox();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -246,6 +248,8 @@
             // 
             // tabPageKillNumberStrategySetting
             // 
+            this.tabPageKillNumberStrategySetting.Controls.Add(this.textBoxFirmRatio);
+            this.tabPageKillNumberStrategySetting.Controls.Add(this.label1);
             this.tabPageKillNumberStrategySetting.Controls.Add(this.checkBoxDoubleRatio);
             this.tabPageKillNumberStrategySetting.Controls.Add(this.comboBoxKillGroup);
             this.tabPageKillNumberStrategySetting.Controls.Add(this.dataGridViewKillNumberStrategy);
@@ -458,6 +462,29 @@
             this.profit.Name = "profit";
             this.profit.ReadOnly = true;
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(463, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "固定倍率：";
+            // 
+            // textBoxFirmRatio
+            // 
+            this.textBoxFirmRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFirmRatio.Location = new System.Drawing.Point(526, 3);
+            this.textBoxFirmRatio.Name = "textBoxFirmRatio";
+            this.textBoxFirmRatio.Size = new System.Drawing.Size(100, 21);
+            this.textBoxFirmRatio.TabIndex = 4;
+            this.textBoxFirmRatio.TextChanged += new System.EventHandler(this.textBoxFirmRatio_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -530,6 +557,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cost;
         private System.Windows.Forms.DataGridViewTextBoxColumn reward;
         private System.Windows.Forms.DataGridViewTextBoxColumn profit;
+        private System.Windows.Forms.TextBox textBoxFirmRatio;
+        private System.Windows.Forms.Label label1;
     }
 }
 

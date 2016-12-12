@@ -23,7 +23,8 @@ namespace LotteryAnalyze
             funcList.Add("杀上期合值", new KillNumberByLastRearValue());
             //funcList.Add("跨度杀号", new KillNumberByCrossValue());
             funcList.Add("杀上期出的号", new KillNumberByReverseSelect());
-            funcList.Add("杀上期非重邻号", new KillNumberByReverseRepeatRelate());
+            funcList.Add("杀上2期非重邻号", new KillNumberByLast2ReverseRepeatRelateNum());
+            funcList.Add("杀上期非重邻号", new KillNumberByLastReverseRepeatRelateNum());
         }
 
         static KillNumberStrategyManager sInst = null;
@@ -135,15 +136,15 @@ namespace LotteryAnalyze
         }
     }
 
-    public class KillNumberByReverseRepeatRelate : KillNumberStrategy
+    public class KillNumberByLast2ReverseRepeatRelateNum : KillNumberStrategy
     {
-        static string sDesc = "杀非上期的重号邻号";
+        static string sDesc = "杀上2期的重邻号之外的号";
         public override string DESC() { return sDesc; }
         static List<int> sFullList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, };
 
         public static string GetTypeName()
         {
-            return typeof(KillNumberByReverseRepeatRelate).ToString();
+            return typeof(KillNumberByLast2ReverseRepeatRelateNum).ToString();
         }
 
         public override void KillNumber(DataItem item, ref List<int> killList)
@@ -151,13 +152,11 @@ namespace LotteryAnalyze
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
             if (prevItem == null)
                 return;
-            int ge = prevItem.GetGeNumber();
-            int shi = prevItem.GetShiNumber();
-            int bai = prevItem.GetBaiNumber();
             killList.AddRange(sFullList);
-            KillNum(ref killList, ge);
-            KillNum(ref killList, shi);
-            KillNum(ref killList, bai);
+            KillNumByItem(prevItem, ref killList);
+            DataItem prevPrevItem = DataManager.GetInst().GetPrevItem(prevItem);
+            if( prevPrevItem != null )
+                KillNumByItem(prevPrevItem, ref killList);
         }
         void KillNum(ref List<int> killList, int num)
         {
@@ -173,6 +172,60 @@ namespace LotteryAnalyze
                 nexNum = 0;
             if (killList.Contains(nexNum))
                 killList.Remove(nexNum);
+        }
+        void KillNumByItem(DataItem item, ref List<int> killList)
+        {
+            int ge = item.GetGeNumber();
+            int shi = item.GetShiNumber();
+            int bai = item.GetBaiNumber();
+            KillNum(ref killList, ge);
+            KillNum(ref killList, shi);
+            KillNum(ref killList, bai);
+        }
+    }
+
+    public class KillNumberByLastReverseRepeatRelateNum : KillNumberStrategy
+    {
+        static string sDesc = "杀上期的重邻号之外的号";
+        public override string DESC() { return sDesc; }
+        static List<int> sFullList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, };
+
+        public static string GetTypeName()
+        {
+            return typeof(KillNumberByLastReverseRepeatRelateNum).ToString();
+        }
+
+        public override void KillNumber(DataItem item, ref List<int> killList)
+        {
+            DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
+            if (prevItem == null)
+                return;
+            killList.AddRange(sFullList);
+            KillNumByItem(prevItem, ref killList);
+        }
+        void KillNum(ref List<int> killList, int num)
+        {
+            if (killList.Contains(num))
+                killList.Remove(num);
+            int preNum = num - 1;
+            if (preNum < 0)
+                preNum = 9;
+            if (killList.Contains(preNum))
+                killList.Remove(preNum);
+            int nexNum = num + 1;
+            if (nexNum > 9)
+                nexNum = 0;
+            if (killList.Contains(nexNum))
+                killList.Remove(nexNum);
+        }
+        void KillNumByItem(DataItem item, ref List<int> killList)
+        {
+            int ge = item.GetGeNumber();
+            int shi = item.GetShiNumber();
+            int bai = item.GetBaiNumber();
+            KillNum(ref killList, ge);
+            KillNum(ref killList, shi);
+            KillNum(ref killList, bai);
         }
     }
 }

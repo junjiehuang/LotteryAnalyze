@@ -28,6 +28,7 @@ namespace LotteryAnalyze
             }
             comboBoxKillGroup.SelectedIndex = 2;
             Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
+            textBoxFirmRatio.Text = Simulator.firmRatio.ToString();
         }
 
         public KillType GetCurSelectedKillType()
@@ -242,6 +243,11 @@ namespace LotteryAnalyze
         private void checkBoxDoubleRatio_Click(object sender, EventArgs e)
         {
             Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
+        }
+
+        private void textBoxFirmRatio_TextChanged(object sender, EventArgs e)
+        {
+            Simulator.firmRatio = int.Parse(textBoxFirmRatio.Text);
         }
 
     }

@@ -214,6 +214,7 @@ namespace LotteryAnalyze
         static int curItemIndex = -1;
         static int curRatio = 1;
         public static bool enableDoubleRatioIfFailed = true;
+        public static int firmRatio = 10;
         static WrongInfo curCal = null;
         public static bool isCurKillGroup3 = false;
         public static List<WrongInfo> allWrongInfos = new List<WrongInfo>();
@@ -238,10 +239,16 @@ namespace LotteryAnalyze
                         curRatio = maxRatio;
                 }
             }
+            else
+            {
+                curRatio = firmRatio;
+            }
         }
         public static void ResetRatio()
         {
             curRatio = 1;
+            if (!enableDoubleRatioIfFailed)
+                curRatio = firmRatio;
         }
         public static void SortWrongInfos(bool byRound)
         {
