@@ -229,9 +229,9 @@ namespace LotteryAnalyze
         {
             if (enableDoubleRatioIfFailed)
             {
-                if (DoubleGap > 0)
-                    --DoubleGap;
-                else
+                //if (DoubleGap > 0)
+                //    --DoubleGap;
+                //else
                 {
                     DoubleGap = 1;
                     curRatio *= 2;

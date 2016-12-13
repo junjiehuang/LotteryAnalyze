@@ -32,6 +32,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.addFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +48,9 @@
             this.addToSimulatePoolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlSimulator = new System.Windows.Forms.TabControl();
             this.tabPageKillNumberStrategySetting = new System.Windows.Forms.TabPage();
+            this.textBoxFirmRatio = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxDoubleRatio = new System.Windows.Forms.CheckBox();
             this.comboBoxKillGroup = new System.Windows.Forms.ComboBox();
             this.dataGridViewKillNumberStrategy = new System.Windows.Forms.DataGridView();
             this.id = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -55,7 +60,10 @@
             this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonExecSimulate = new System.Windows.Forms.Button();
-            this.checkBoxDoubleRatio = new System.Windows.Forms.CheckBox();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxMaxRatio = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.andValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -70,8 +78,6 @@
             this.cost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.reward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.profit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxFirmRatio = new System.Windows.Forms.TextBox();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -87,6 +93,10 @@
             this.tabPageKillNumberStrategySetting.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKillNumberStrategy)).BeginInit();
             this.tabPageSimulator.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripMain
@@ -95,7 +105,7 @@
             this.toolStripMenuItem1});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Size = new System.Drawing.Size(771, 25);
+            this.menuStripMain.Size = new System.Drawing.Size(756, 25);
             this.menuStripMain.TabIndex = 0;
             this.menuStripMain.Text = "menuStrip1";
             // 
@@ -154,7 +164,7 @@
             this.dataGridViewLotteryDatas.Location = new System.Drawing.Point(3, 3);
             this.dataGridViewLotteryDatas.Name = "dataGridViewLotteryDatas";
             this.dataGridViewLotteryDatas.RowTemplate.Height = 23;
-            this.dataGridViewLotteryDatas.Size = new System.Drawing.Size(584, 181);
+            this.dataGridViewLotteryDatas.Size = new System.Drawing.Size(573, 170);
             this.dataGridViewLotteryDatas.TabIndex = 1;
             // 
             // splitContainer1
@@ -175,8 +185,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControlSimulator);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(771, 387);
-            this.splitContainer1.SplitterDistance = 187;
+            this.splitContainer1.Size = new System.Drawing.Size(756, 366);
+            this.splitContainer1.SplitterDistance = 176;
             this.splitContainer1.TabIndex = 2;
             // 
             // splitContainer2
@@ -192,8 +202,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.dataGridViewLotteryDatas);
-            this.splitContainer2.Size = new System.Drawing.Size(771, 187);
-            this.splitContainer2.SplitterDistance = 177;
+            this.splitContainer2.Size = new System.Drawing.Size(756, 176);
+            this.splitContainer2.SplitterDistance = 173;
             this.splitContainer2.TabIndex = 0;
             // 
             // listViewFileList
@@ -209,7 +219,7 @@
             this.listViewFileList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listViewFileList.Location = new System.Drawing.Point(4, 4);
             this.listViewFileList.Name = "listViewFileList";
-            this.listViewFileList.Size = new System.Drawing.Size(170, 180);
+            this.listViewFileList.Size = new System.Drawing.Size(166, 169);
             this.listViewFileList.TabIndex = 0;
             this.listViewFileList.UseCompatibleStateImageBehavior = false;
             this.listViewFileList.View = System.Windows.Forms.View.Details;
@@ -243,36 +253,70 @@
             this.tabControlSimulator.Location = new System.Drawing.Point(4, 4);
             this.tabControlSimulator.Name = "tabControlSimulator";
             this.tabControlSimulator.SelectedIndex = 0;
-            this.tabControlSimulator.Size = new System.Drawing.Size(764, 192);
+            this.tabControlSimulator.Size = new System.Drawing.Size(749, 182);
             this.tabControlSimulator.TabIndex = 0;
             // 
             // tabPageKillNumberStrategySetting
             // 
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.textBoxFirmRatio);
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.label1);
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.checkBoxDoubleRatio);
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.comboBoxKillGroup);
-            this.tabPageKillNumberStrategySetting.Controls.Add(this.dataGridViewKillNumberStrategy);
+            this.tabPageKillNumberStrategySetting.Controls.Add(this.splitContainer3);
             this.tabPageKillNumberStrategySetting.Location = new System.Drawing.Point(4, 22);
             this.tabPageKillNumberStrategySetting.Name = "tabPageKillNumberStrategySetting";
             this.tabPageKillNumberStrategySetting.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKillNumberStrategySetting.Size = new System.Drawing.Size(756, 166);
+            this.tabPageKillNumberStrategySetting.Size = new System.Drawing.Size(741, 156);
             this.tabPageKillNumberStrategySetting.TabIndex = 0;
             this.tabPageKillNumberStrategySetting.Text = "杀号策略";
             this.tabPageKillNumberStrategySetting.UseVisualStyleBackColor = true;
             // 
+            // textBoxFirmRatio
+            // 
+            this.textBoxFirmRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFirmRatio.Location = new System.Drawing.Point(66, 50);
+            this.textBoxFirmRatio.Name = "textBoxFirmRatio";
+            this.textBoxFirmRatio.Size = new System.Drawing.Size(178, 21);
+            this.textBoxFirmRatio.TabIndex = 4;
+            this.textBoxFirmRatio.TextChanged += new System.EventHandler(this.textBoxFirmRatio_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 54);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "固定倍率：";
+            // 
+            // checkBoxDoubleRatio
+            // 
+            this.checkBoxDoubleRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxDoubleRatio.AutoSize = true;
+            this.checkBoxDoubleRatio.Location = new System.Drawing.Point(7, 29);
+            this.checkBoxDoubleRatio.Name = "checkBoxDoubleRatio";
+            this.checkBoxDoubleRatio.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxDoubleRatio.TabIndex = 2;
+            this.checkBoxDoubleRatio.Text = "是否倍投";
+            this.checkBoxDoubleRatio.UseVisualStyleBackColor = true;
+            this.checkBoxDoubleRatio.Click += new System.EventHandler(this.checkBoxDoubleRatio_Click);
+            // 
             // comboBoxKillGroup
             // 
-            this.comboBoxKillGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxKillGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxKillGroup.FormattingEnabled = true;
             this.comboBoxKillGroup.Items.AddRange(new object[] {
             "匹配组三",
             "匹配组六",
             "交叉匹配"});
-            this.comboBoxKillGroup.Location = new System.Drawing.Point(0, 4);
+            this.comboBoxKillGroup.Location = new System.Drawing.Point(66, 3);
             this.comboBoxKillGroup.Name = "comboBoxKillGroup";
-            this.comboBoxKillGroup.Size = new System.Drawing.Size(363, 20);
+            this.comboBoxKillGroup.Size = new System.Drawing.Size(178, 20);
             this.comboBoxKillGroup.TabIndex = 1;
             // 
             // dataGridViewKillNumberStrategy
@@ -286,10 +330,10 @@
             this.id,
             this.name,
             this.desc});
-            this.dataGridViewKillNumberStrategy.Location = new System.Drawing.Point(0, 27);
+            this.dataGridViewKillNumberStrategy.Location = new System.Drawing.Point(3, 0);
             this.dataGridViewKillNumberStrategy.Name = "dataGridViewKillNumberStrategy";
             this.dataGridViewKillNumberStrategy.RowTemplate.Height = 23;
-            this.dataGridViewKillNumberStrategy.Size = new System.Drawing.Size(753, 142);
+            this.dataGridViewKillNumberStrategy.Size = new System.Drawing.Size(487, 153);
             this.dataGridViewKillNumberStrategy.TabIndex = 0;
             this.dataGridViewKillNumberStrategy.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKillNumberStrategy_CellEndEdit);
             // 
@@ -317,7 +361,7 @@
             this.tabPageSimulator.Location = new System.Drawing.Point(4, 22);
             this.tabPageSimulator.Name = "tabPageSimulator";
             this.tabPageSimulator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSimulator.Size = new System.Drawing.Size(756, 166);
+            this.tabPageSimulator.Size = new System.Drawing.Size(741, 156);
             this.tabPageSimulator.TabIndex = 1;
             this.tabPageSimulator.Text = "模拟器";
             this.tabPageSimulator.UseVisualStyleBackColor = true;
@@ -329,7 +373,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBoxResult.Location = new System.Drawing.Point(0, 53);
             this.richTextBoxResult.Name = "richTextBoxResult";
-            this.richTextBoxResult.Size = new System.Drawing.Size(756, 111);
+            this.richTextBoxResult.Size = new System.Drawing.Size(741, 101);
             this.richTextBoxResult.TabIndex = 2;
             this.richTextBoxResult.Text = "";
             // 
@@ -339,7 +383,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(0, 29);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(756, 23);
+            this.progressBar1.Size = new System.Drawing.Size(741, 23);
             this.progressBar1.TabIndex = 1;
             // 
             // buttonExecSimulate
@@ -348,25 +392,68 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExecSimulate.Location = new System.Drawing.Point(0, 4);
             this.buttonExecSimulate.Name = "buttonExecSimulate";
-            this.buttonExecSimulate.Size = new System.Drawing.Size(756, 23);
+            this.buttonExecSimulate.Size = new System.Drawing.Size(741, 23);
             this.buttonExecSimulate.TabIndex = 0;
             this.buttonExecSimulate.Text = "开始模拟";
             this.buttonExecSimulate.UseVisualStyleBackColor = true;
             this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
             // 
-            // checkBoxDoubleRatio
+            // splitContainer3
             // 
-            this.checkBoxDoubleRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxDoubleRatio.AutoSize = true;
-            this.checkBoxDoubleRatio.Location = new System.Drawing.Point(370, 5);
-            this.checkBoxDoubleRatio.Name = "checkBoxDoubleRatio";
-            this.checkBoxDoubleRatio.Size = new System.Drawing.Size(72, 16);
-            this.checkBoxDoubleRatio.TabIndex = 2;
-            this.checkBoxDoubleRatio.Text = "是否倍投";
-            this.checkBoxDoubleRatio.UseVisualStyleBackColor = true;
-            this.checkBoxDoubleRatio.Click += new System.EventHandler(this.checkBoxDoubleRatio_Click);
+            this.splitContainer3.Location = new System.Drawing.Point(0, 3);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.label3);
+            this.splitContainer3.Panel1.Controls.Add(this.textBoxMaxRatio);
+            this.splitContainer3.Panel1.Controls.Add(this.label2);
+            this.splitContainer3.Panel1.Controls.Add(this.comboBoxKillGroup);
+            this.splitContainer3.Panel1.Controls.Add(this.textBoxFirmRatio);
+            this.splitContainer3.Panel1.Controls.Add(this.checkBoxDoubleRatio);
+            this.splitContainer3.Panel1.Controls.Add(this.label1);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.dataGridViewKillNumberStrategy);
+            this.splitContainer3.Size = new System.Drawing.Size(741, 153);
+            this.splitContainer3.SplitterDistance = 247;
+            this.splitContainer3.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 82);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 12);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "倍率上限：";
+            // 
+            // textBoxMaxRatio
+            // 
+            this.textBoxMaxRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxMaxRatio.Location = new System.Drawing.Point(66, 78);
+            this.textBoxMaxRatio.Name = "textBoxMaxRatio";
+            this.textBoxMaxRatio.Size = new System.Drawing.Size(178, 21);
+            this.textBoxMaxRatio.TabIndex = 6;
+            this.textBoxMaxRatio.TextChanged += new System.EventHandler(this.textBoxMaxRatio_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(4, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "投注类型：";
             // 
             // ColumnData
             // 
@@ -400,7 +487,7 @@
             // 
             // group6
             // 
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
             this.group6.DefaultCellStyle = dataGridViewCellStyle1;
             this.group6.HeaderText = "组六";
@@ -409,7 +496,7 @@
             // 
             // group3
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.group3.DefaultCellStyle = dataGridViewCellStyle2;
             this.group3.HeaderText = "组三";
@@ -418,7 +505,7 @@
             // 
             // group1
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Green;
             this.group1.DefaultCellStyle = dataGridViewCellStyle3;
             this.group1.HeaderText = "豹子";
@@ -432,6 +519,8 @@
             // 
             // right
             // 
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Red;
+            this.right.DefaultCellStyle = dataGridViewCellStyle4;
             this.right.HeaderText = "对";
             this.right.Name = "right";
             this.right.ReadOnly = true;
@@ -439,6 +528,8 @@
             // 
             // wrong
             // 
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Lime;
+            this.wrong.DefaultCellStyle = dataGridViewCellStyle5;
             this.wrong.HeaderText = "错";
             this.wrong.Name = "wrong";
             this.wrong.ReadOnly = true;
@@ -462,34 +553,11 @@
             this.profit.Name = "profit";
             this.profit.ReadOnly = true;
             // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(463, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "固定倍率：";
-            // 
-            // textBoxFirmRatio
-            // 
-            this.textBoxFirmRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFirmRatio.Location = new System.Drawing.Point(526, 3);
-            this.textBoxFirmRatio.Name = "textBoxFirmRatio";
-            this.textBoxFirmRatio.Size = new System.Drawing.Size(100, 21);
-            this.textBoxFirmRatio.TabIndex = 4;
-            this.textBoxFirmRatio.TextChanged += new System.EventHandler(this.textBoxFirmRatio_TextChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(771, 415);
+            this.ClientSize = new System.Drawing.Size(756, 394);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripMain);
             this.MainMenuStrip = this.menuStripMain;
@@ -509,9 +577,13 @@
             this.contextMenuStripListView.ResumeLayout(false);
             this.tabControlSimulator.ResumeLayout(false);
             this.tabPageKillNumberStrategySetting.ResumeLayout(false);
-            this.tabPageKillNumberStrategySetting.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKillNumberStrategy)).EndInit();
             this.tabPageSimulator.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel1.PerformLayout();
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -543,6 +615,12 @@
         private System.Windows.Forms.Button buttonExecSimulate;
         private System.Windows.Forms.ComboBox comboBoxKillGroup;
         private System.Windows.Forms.CheckBox checkBoxDoubleRatio;
+        private System.Windows.Forms.TextBox textBoxFirmRatio;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.TextBox textBoxMaxRatio;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnData;
         private System.Windows.Forms.DataGridViewTextBoxColumn Number;
         private System.Windows.Forms.DataGridViewTextBoxColumn andValue;
@@ -557,8 +635,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cost;
         private System.Windows.Forms.DataGridViewTextBoxColumn reward;
         private System.Windows.Forms.DataGridViewTextBoxColumn profit;
-        private System.Windows.Forms.TextBox textBoxFirmRatio;
-        private System.Windows.Forms.Label label1;
     }
 }
 
