@@ -18,11 +18,17 @@ namespace LotteryAnalyze
         public long profit;
         public KillType killType;
 
+        public int killAndValue;
+        public GroupType killAndValueAtGroup;
+
         public void Reset()
         {
             predictResult = TestResultType.eTRTIgnore;
             cost = reward = costTotal = rewardTotal = predictCount = rightCount = profit = 0;
             killList = null;
+
+            killAndValue = -1;
+            killAndValueAtGroup = GroupType.eGT6;
         }
     }
 

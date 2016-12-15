@@ -122,6 +122,12 @@ namespace LotteryAnalyze
             return chValue;
         }
 
+        public static int GetCostByExceptAndValue(int andValue, int ratio, GroupType gt)
+        {
+            int pairCount = AndValueSearchMap.GetPairCountExcept(andValue, gt);
+            return pairCount * 2 * ratio;
+        }
+
         public static int GetCost(int numCount, int ratio, GroupType gt)
         {
             int containsCount = 10 - numCount;
@@ -214,12 +220,39 @@ namespace LotteryAnalyze
                 if (prevItem.groupType == GroupType.eGT1 )
                     Simulator.isCurKillGroup3 = true;
                 item.simData.killType = KillType.eKTGroup3;
-                item.simData.cost = GetCost(0, ratio, GroupType.eGT3);
+                List<int> killNums = new List<int>();
+                KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
+                item.simData.killList = "";
+                for (int i = 0; i < killNums.Count; ++i)
+                {
+                    item.simData.killList += killNums[i] + ",";
+                }
+                bool isRight = true;
+                if (item.groupType == GroupType.eGT3)
+                {
+                    for (int i = 0; i < killNums.Count; ++i)
+                    {
+                        int killNum = killNums[i];
+                        // kill wrong number
+                        if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                        {
+                            isRight = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                    isRight = false;
+
+                if (item.simData.killAndValue != -1)
+                    item.simData.cost = GetCostByExceptAndValue(item.simData.killAndValue, ratio, item.simData.killAndValueAtGroup);
+                else
+                    item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT3);
                 item.parent.simData.costTotal += item.simData.cost;
                 item.parent.simData.predictCount++;
                 DataManager.GetInst().simData.costTotal += item.simData.cost;
                 DataManager.GetInst().simData.predictCount++;
-                if (item.groupType == GroupType.eGT3)
+                if (isRight)
                 {
                     Simulator.isCurKillGroup3 = false;
                     item.simData.reward = GetReward(item.groupType, ratio);
@@ -248,6 +281,8 @@ namespace LotteryAnalyze
         public static TestResultType SimKillNumberAndCheckResult(DataItem item, int ratio)
         {
             List<int> killNums = new List<int>();
+            item.simData.killType = KillType.eKTGroup6;
+
             KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
             item.simData.killList = "";
             for (int i = 0; i < killNums.Count; ++i)
@@ -270,11 +305,13 @@ namespace LotteryAnalyze
             }
             else
                 isRight = false;
-
-            item.simData.killType = KillType.eKTGroup6;
+            
             item.simData.predictResult = isRight ? TestResultType.eTRTSuccess : TestResultType.eTRTFailed;
             item.simData.reward = 0;
-            item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT6);
+            if (item.simData.killAndValue != -1)
+                item.simData.cost = GetCostByExceptAndValue(item.simData.killAndValue, ratio, item.simData.killAndValueAtGroup);
+            else
+                item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT6);
             item.parent.simData.costTotal += item.simData.cost;
             item.parent.simData.predictCount++;
             DataManager.GetInst().simData.costTotal += item.simData.cost;
