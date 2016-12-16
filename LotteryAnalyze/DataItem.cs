@@ -90,18 +90,39 @@ namespace LotteryAnalyze
 
         public DataItem GetTailItem()
         {
-            return datas[datas.Count-1];
+            if (datas.Count > 0)
+                return datas[datas.Count-1];
+            return null;
         }
-
+        public DataItem GetFirstItem()
+        {
+            if (datas.Count > 0)
+                return datas[0];
+            return null;
+        }
         public DataItem GetPrevItem(DataItem curItem)
         {
-            if (curItem.id > 1)
-                return datas[curItem.id - 2];
+            int curID = curItem.id - 1;
+            if (curID > 0)
+                return datas[curID-1];
             else
             {
                 OneDayDatas prevODD = DataManager.GetInst().GetPrevOneDayDatas(this);
                 if (prevODD != null)
-                    return GetTailItem();
+                    return prevODD.GetTailItem();
+            }
+            return null;
+        }
+        public DataItem GetNextItem(DataItem curItem)
+        {
+            int curID = curItem.id-1;
+            if (curID < datas.Count - 1)
+                return datas[curID + 1];
+            else
+            {
+                OneDayDatas nextODD = DataManager.GetInst().GetNextOneDayDatas(this);
+                if (nextODD != null)
+                    return nextODD.GetFirstItem();
             }
             return null;
         }
@@ -166,6 +187,17 @@ namespace LotteryAnalyze
             }
             return null;
         }
+        public OneDayDatas GetNextOneDayDatas(OneDayDatas curData)
+        {
+            int index = indexs.IndexOf(curData.dateID);
+            if (index < indexs.Count-1)
+            {
+                ++index;
+                int newDateID = indexs[index];
+                return allDatas[newDateID];
+            }
+            return null;
+        }
         public DataItem GetPrevItem(DataItem curItem)
         {
             DataItem prevItem = curItem.parent.GetPrevItem(curItem);
@@ -174,6 +206,16 @@ namespace LotteryAnalyze
             OneDayDatas prevODD = GetPrevOneDayDatas(curItem.parent);
             if (prevODD != null)
                 return prevODD.GetTailItem();
+            return null;
+        }
+        public DataItem GetNextItem(DataItem curItem)
+        {
+            DataItem nextItem = curItem.parent.GetNextItem(curItem);
+            if (nextItem != null)
+                return nextItem;
+            OneDayDatas nextODD = GetNextOneDayDatas(curItem.parent);
+            if (nextODD != null)
+                return nextODD.GetFirstItem();
             return null;
         }
     }

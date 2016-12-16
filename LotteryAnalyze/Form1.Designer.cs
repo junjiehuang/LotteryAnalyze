@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridViewLotteryDatas = new System.Windows.Forms.DataGridView();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -173,27 +173,27 @@
             // 
             // group6
             // 
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
-            this.group6.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle21.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle21.ForeColor = System.Drawing.Color.Black;
+            this.group6.DefaultCellStyle = dataGridViewCellStyle21;
             this.group6.HeaderText = "组六";
             this.group6.Name = "group6";
             this.group6.Width = 60;
             // 
             // group3
             // 
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.group3.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle22.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.group3.DefaultCellStyle = dataGridViewCellStyle22;
             this.group3.HeaderText = "组三";
             this.group3.Name = "group3";
             this.group3.Width = 60;
             // 
             // group1
             // 
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.Green;
-            this.group1.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle23.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle23.ForeColor = System.Drawing.Color.Green;
+            this.group1.DefaultCellStyle = dataGridViewCellStyle23;
             this.group1.HeaderText = "豹子";
             this.group1.Name = "group1";
             this.group1.Width = 60;
@@ -205,8 +205,8 @@
             // 
             // right
             // 
-            dataGridViewCellStyle14.ForeColor = System.Drawing.Color.Red;
-            this.right.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle24.ForeColor = System.Drawing.Color.Red;
+            this.right.DefaultCellStyle = dataGridViewCellStyle24;
             this.right.HeaderText = "对";
             this.right.Name = "right";
             this.right.ReadOnly = true;
@@ -214,8 +214,8 @@
             // 
             // wrong
             // 
-            dataGridViewCellStyle15.ForeColor = System.Drawing.Color.DarkGreen;
-            this.wrong.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle25.ForeColor = System.Drawing.Color.DarkGreen;
+            this.wrong.DefaultCellStyle = dataGridViewCellStyle25;
             this.wrong.HeaderText = "错";
             this.wrong.Name = "wrong";
             this.wrong.ReadOnly = true;
@@ -609,6 +609,8 @@
             // 
             // dataGridViewCollectorOption
             // 
+            this.dataGridViewCollectorOption.AllowUserToAddRows = false;
+            this.dataGridViewCollectorOption.AllowUserToDeleteRows = false;
             this.dataGridViewCollectorOption.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -657,7 +659,6 @@
             // 
             this.CollectorID.HeaderText = "索引";
             this.CollectorID.Name = "CollectorID";
-            this.CollectorID.ReadOnly = true;
             this.CollectorID.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.CollectorID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.CollectorID.Width = 50;
@@ -759,10 +760,10 @@
         private System.Windows.Forms.TabPage tabPageCollector;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.DataGridView dataGridViewCollectorOption;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn CollectorID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CollectorDesc;
         private System.Windows.Forms.Button buttonCollector;
         private System.Windows.Forms.TreeView treeViewCollectorInfo;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn CollectorID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CollectorDesc;
     }
 }
 

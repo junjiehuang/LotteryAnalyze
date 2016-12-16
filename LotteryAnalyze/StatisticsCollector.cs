@@ -16,6 +16,7 @@ namespace LotteryAnalyze
         public virtual void OutPutToTreeView(TreeNode parentNode) { throw new Exception("should override OutPutToTreeView() function!"); }
     }
 
+    // 往期和值统计
     public class AndValueCollector : CollectorBase
     {
         public int totalCount;
@@ -29,7 +30,7 @@ namespace LotteryAnalyze
             oneDayAndValueGraph = new Dictionary<OneDayDatas, Dictionary<int, int>>();
         }
 
-        public override string GetDesc() { return "和值统计"; }
+        public override string GetDesc() { return "往期和值统计"; }
 
         public override void Collect()
         {
@@ -147,6 +148,22 @@ namespace LotteryAnalyze
         }
     }
 
+    // 开出长组6之后的组3信息收集
+    public class Group3AfterLongGroup6Collector : CollectorBase
+    {
+        public Group3AfterLongGroup6Collector()
+        {
+
+        }
+        public override string GetDesc() { return "开出长组6之后的组3信息收集"; }
+        public override void Collect() 
+        {
+        }
+        public override void OutPutToTreeView(TreeNode parentNode) 
+        { 
+        }
+    }
+
     public class StatisticsCollector
     {
         static List<CollectorBase> sCollectorList = new List<CollectorBase>();
@@ -154,6 +171,7 @@ namespace LotteryAnalyze
         static StatisticsCollector()
         {
             sCollectorList.Add(new AndValueCollector());
+            sCollectorList.Add(new Group3AfterLongGroup6Collector());
         }
 
         public static List<CollectorBase> CollectorList
