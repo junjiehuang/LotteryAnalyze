@@ -26,6 +26,16 @@ namespace LotteryAnalyze
                 DataGridViewRow row = dataGridViewKillNumberStrategy.Rows[rowID];
                 row.Tag = strategy;
             }
+            List<CollectorBase> cl = StatisticsCollector.CollectorList;
+            for (int i = 0; i < cl.Count; ++i)
+            {
+                CollectorBase cb = cl[i];
+                object[] parms = new object[] { cb.enable, cb.GetDesc(), };
+                dataGridViewCollectorOption.Rows.Add(parms);
+                DataGridViewRow row = dataGridViewCollectorOption.Rows[i];
+                row.Tag = cb;
+            }
+
             comboBoxKillGroup.SelectedIndex = 2;
             Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
             textBoxFirmRatio.Text = Simulator.firmRatio.ToString();
@@ -254,6 +264,32 @@ namespace LotteryAnalyze
         private void textBoxMaxRatio_TextChanged(object sender, EventArgs e)
         {
             Simulator.maxRatio = int.Parse(textBoxMaxRatio.Text);
+        }
+
+        private void dataGridViewCollectorOption_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow row = dataGridViewCollectorOption.Rows[e.RowIndex];
+            DataGridViewCell cell = row.Cells[e.ColumnIndex];
+            if (row.Tag != null && e.ColumnIndex == 0)
+            {
+                bool v = (bool)cell.Value;
+                CollectorBase cb = row.Tag as CollectorBase;
+                cb.enable = v;
+            }
+        }
+
+        private void buttonCollector_Click(object sender, EventArgs e)
+        {
+            treeViewCollectorInfo.Nodes.Clear();
+            StatisticsCollector.Collect();
+            for (int i = 0; i < StatisticsCollector.CollectorList.Count; ++i)
+            {
+                CollectorBase cb = StatisticsCollector.CollectorList[i];
+                if (cb.enable == false)
+                    continue;
+                TreeNode nodeParent = treeViewCollectorInfo.Nodes.Add(cb.GetDesc());
+                cb.OutPutToTreeView(nodeParent);
+            }
         }
 
     }
