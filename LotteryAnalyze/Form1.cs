@@ -90,6 +90,7 @@ namespace LotteryAnalyze
 
         void RefreshDataView()
         {
+            int curID = 0;
             DataManager dataMgr = DataManager.GetInst();
             dataGridViewLotteryDatas.Rows.Clear();
             foreach( int key in dataMgr.allDatas.Keys )
@@ -98,6 +99,7 @@ namespace LotteryAnalyze
                 for (int i = 0; i < data.datas.Count; ++i)
                 {
                     DataItem di = data.datas[i];
+                    di.idGlobal = curID++;
                     string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
                     string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
                     string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";
@@ -289,6 +291,20 @@ namespace LotteryAnalyze
                     continue;
                 TreeNode nodeParent = treeViewCollectorInfo.Nodes.Add(cb.GetDesc());
                 cb.OutPutToTreeView(nodeParent);
+            }
+        }
+
+        private void treeViewCollectorInfo_DoubleClick(object sender, EventArgs e)
+        {
+            TreeNode node = treeViewCollectorInfo.SelectedNode;
+            if (node != null)
+            {
+                CollectTag tag = node.Tag as CollectTag;
+                if (tag.itemIndex != -1)
+                {
+                    dataGridViewLotteryDatas.Rows[tag.itemIndex].Selected = true;
+                    dataGridViewLotteryDatas.FirstDisplayedScrollingRowIndex = tag.itemIndex;
+                }
             }
         }
 

@@ -122,7 +122,7 @@ namespace LotteryAnalyze
             return chValue;
         }
 
-        public static int GetCostByExceptAndValue(int andValue, int ratio, GroupType gt)
+        public static int GetCostByExceptAndValue(List<int> andValue, int ratio, GroupType gt)
         {
             int pairCount = AndValueSearchMap.GetPairCountExcept(andValue, gt);
             return pairCount * 2 * ratio;
@@ -222,29 +222,57 @@ namespace LotteryAnalyze
                 item.simData.killType = KillType.eKTGroup3;
                 List<int> killNums = new List<int>();
                 KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
-                item.simData.killList = "";
-                for (int i = 0; i < killNums.Count; ++i)
-                {
-                    item.simData.killList += killNums[i] + ",";
-                }
                 bool isRight = true;
-                if (item.groupType == GroupType.eGT3)
+                if (item.simData.killAndValue != null)
                 {
-                    for (int i = 0; i < killNums.Count; ++i)
+                    item.simData.killList = "杀和值{";
+                    for (int i = 0; i < item.simData.killAndValue.Count; ++i)
                     {
-                        int killNum = killNums[i];
-                        // kill wrong number
-                        if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                        item.simData.killList += item.simData.killAndValue[i] + ",";
+                    }
+                    item.simData.killList += "}";
+                    if (item.groupType == GroupType.eGT3)
+                    {
+                        for (int i = 0; i < item.simData.killAndValue.Count; ++i)
                         {
-                            isRight = false;
-                            break;
+                            int killAndValue = item.simData.killAndValue[i];
+                            // kill wrong number
+                            if (item.andValue == killAndValue)
+                            {
+                                isRight = false;
+                                break;
+                            }
                         }
                     }
+                    else
+                        isRight = false;
                 }
                 else
-                    isRight = false;
+                {
+                    item.simData.killList = "杀号{";
+                    for (int i = 0; i < killNums.Count; ++i)
+                    {
+                        item.simData.killList += killNums[i] + ",";
+                    }
+                    item.simData.killList += "}";
+                    if (item.groupType == GroupType.eGT3)
+                    {
+                        for (int i = 0; i < killNums.Count; ++i)
+                        {
+                            int killNum = killNums[i];
+                            // kill wrong number
+                            if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                            {
+                                isRight = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                        isRight = false;
+                }
 
-                if (item.simData.killAndValue != -1)
+                if (item.simData.killAndValue != null)
                     item.simData.cost = GetCostByExceptAndValue(item.simData.killAndValue, ratio, item.simData.killAndValueAtGroup);
                 else
                     item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT3);
@@ -284,31 +312,62 @@ namespace LotteryAnalyze
             item.simData.killType = KillType.eKTGroup6;
 
             KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
-            item.simData.killList = "";
-            for (int i = 0; i < killNums.Count; ++i)
-            {
-                item.simData.killList += killNums[i] + ",";
-            }
             bool isRight = true;
-            if (item.groupType == GroupType.eGT6)
+
+            // 杀和值
+            if (item.simData.killAndValue != null)
             {
-                for (int i = 0; i < killNums.Count; ++i)
+                item.simData.killList = "杀和值{";
+                for (int i = 0; i < item.simData.killAndValue.Count; ++i)
                 {
-                    int killNum = killNums[i];
-                    // kill wrong number
-                    if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                    item.simData.killList += item.simData.killAndValue[i] + ",";
+                }
+                item.simData.killList += "}";
+                if (item.groupType == GroupType.eGT6)
+                {
+                    for (int i = 0; i < item.simData.killAndValue.Count; ++i)
                     {
-                        isRight = false;
-                        break;
+                        int killAndValue = item.simData.killAndValue[i];
+                        // kill wrong number
+                        if (item.andValue == killAndValue)
+                        {
+                            isRight = false;
+                            break;
+                        }
                     }
                 }
+                else
+                    isRight = false;
             }
+            // 杀号
             else
-                isRight = false;
+            {
+                item.simData.killList = "杀号{";
+                for (int i = 0; i < killNums.Count; ++i)
+                {
+                    item.simData.killList += killNums[i] + ",";
+                }
+                item.simData.killList += "}";
+                if (item.groupType == GroupType.eGT6)
+                {
+                    for (int i = 0; i < killNums.Count; ++i)
+                    {
+                        int killNum = killNums[i];
+                        // kill wrong number
+                        if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                        {
+                            isRight = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                    isRight = false;
+            }
             
             item.simData.predictResult = isRight ? TestResultType.eTRTSuccess : TestResultType.eTRTFailed;
             item.simData.reward = 0;
-            if (item.simData.killAndValue != -1)
+            if (item.simData.killAndValue != null)
                 item.simData.cost = GetCostByExceptAndValue(item.simData.killAndValue, ratio, item.simData.killAndValueAtGroup);
             else
                 item.simData.cost = GetCost(killNums.Count, ratio, GroupType.eGT6);

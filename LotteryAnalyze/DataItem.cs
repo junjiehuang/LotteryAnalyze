@@ -18,7 +18,7 @@ namespace LotteryAnalyze
         public long profit;
         public KillType killType;
 
-        public int killAndValue;
+        public List<int> killAndValue;
         public GroupType killAndValueAtGroup;
 
         public void Reset()
@@ -27,7 +27,7 @@ namespace LotteryAnalyze
             cost = reward = costTotal = rewardTotal = predictCount = rightCount = profit = 0;
             killList = null;
 
-            killAndValue = -1;
+            killAndValue = null;
             killAndValueAtGroup = GroupType.eGT6;
         }
     }
@@ -36,6 +36,7 @@ namespace LotteryAnalyze
     {
         public OneDayDatas parent = null;
 
+        public int idGlobal = -1;
         public int id;
         public string idTag;
         public string lotteryNumber;

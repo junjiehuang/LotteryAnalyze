@@ -132,16 +132,24 @@ namespace LotteryAnalyze
             }
             pl.pairList.Add(pairInfo);
         }
-        public static int GetPairCountExcept(int andValue, GroupType gt)
+        public static int GetPairCountExcept(List<int> andValue, GroupType gt)
         {
-            AndValueGroup avp = sAndValueSearchMap[andValue];
+            int TotalCount = 0;
             switch (gt)
             {
-                case GroupType.eGT1: return sPairGP1Total - avp.pairList[GroupType.eGT1].count;
-                case GroupType.eGT3: return sPairGP3Total - avp.pairList[GroupType.eGT3].count;
-                case GroupType.eGT6: return sPairGP6Total - avp.pairList[GroupType.eGT6].count;
+                case GroupType.eGT1: TotalCount = sPairGP1Total; break;
+                case GroupType.eGT3: TotalCount = sPairGP3Total; break;
+                case GroupType.eGT6: TotalCount = sPairGP6Total; break;
             }
-            return 0;
+            for (int i = 0; i < andValue.Count; ++i)
+            {
+                int av = andValue[i];
+                AndValueGroup avp = sAndValueSearchMap[av];
+                TotalCount -= avp.pairList[gt].count;
+            }
+            if (TotalCount < 0)
+                throw new Exception("Error!!!!!!");
+            return TotalCount;
         }
     }
 
@@ -210,25 +218,36 @@ namespace LotteryAnalyze
 
     public class KillNumberByAndValue : KillNumberStrategy
     {
+        static string sDesc = "把前期的和值杀掉";
+        public override string DESC() { return sDesc; }
+
         public static string GetTypeName()
         {
             return typeof(KillNumberByAndValue).ToString();
         }
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
-            item.simData.killAndValue = -1;
+            int prevCount = 3;
+            item.simData.killAndValue = new List<int>();
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
-            if (prevItem == null)
-                return;
-            if (item.simData.killType == KillType.eKTGroup3)
+            while (prevItem != null)
             {
-                item.simData.killAndValue = prevItem.andValue;
-                item.simData.killAndValueAtGroup = GroupType.eGT3;
-            }
-            else if (item.simData.killType == KillType.eKTGroup6)
-            {
-                item.simData.killAndValue = prevItem.andValue;
-                item.simData.killAndValueAtGroup = GroupType.eGT6;
+                if (item.simData.killType == KillType.eKTGroup3)
+                {
+                    if (item.simData.killAndValue.Contains(prevItem.andValue) == false)
+                        item.simData.killAndValue.Add(prevItem.andValue);
+                    item.simData.killAndValueAtGroup = GroupType.eGT3;
+                }
+                else if (item.simData.killType == KillType.eKTGroup6)
+                {
+                    if (item.simData.killAndValue.Contains(prevItem.andValue) == false)
+                        item.simData.killAndValue.Add(prevItem.andValue);
+                    item.simData.killAndValueAtGroup = GroupType.eGT6;
+                }
+                --prevCount;
+                if (prevCount == 0)
+                    break;
+                prevItem = DataManager.GetInst().GetPrevItem(prevItem);
             }
         }
     }

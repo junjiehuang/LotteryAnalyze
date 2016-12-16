@@ -6,6 +6,17 @@ using System.Windows.Forms;
 
 namespace LotteryAnalyze
 {
+    public class CollectTag
+    {
+        public int curAndValueCount = -1;
+        public int itemIndex = -1;
+        public CollectTag(int andValueCount, int itemID) 
+        {
+            curAndValueCount = andValueCount;
+            itemIndex = itemID;
+        }
+    }
+
     public class CollectorBase
     {
         public bool enable = true;
@@ -80,7 +91,7 @@ namespace LotteryAnalyze
                 if (mainNode.Nodes.Count == 0 )
                 {
                     TreeNode node = mainNode.Nodes.Add(txt);
-                    node.Tag = curAndValueCount;
+                    node.Tag = new CollectTag(curAndValueCount, -1);
                 }
                 else
                 {
@@ -88,11 +99,11 @@ namespace LotteryAnalyze
                     for (int nodeID = 0; nodeID < mainNode.Nodes.Count; ++nodeID)
                     {
                         TreeNode curNode = mainNode.Nodes[nodeID];
-                        int colCount = (int)(curNode.Tag);
+                        int colCount = (curNode.Tag as CollectTag).curAndValueCount;
                         if( colCount <= curAndValueCount )
                         {
                             TreeNode node = mainNode.Nodes.Insert( nodeID, txt );
-                            node.Tag = curAndValueCount;
+                            node.Tag = new CollectTag(curAndValueCount,-1);
                             hasAdd = true;
                             break;
                         }
@@ -100,7 +111,7 @@ namespace LotteryAnalyze
                     if( !hasAdd )
                     {
                         TreeNode node = mainNode.Nodes.Add(txt);
-                        node.Tag = curAndValueCount;
+                        node.Tag = new CollectTag(curAndValueCount, -1);
                     }
                 }
             }
@@ -120,7 +131,7 @@ namespace LotteryAnalyze
                     if (oddnode.Nodes.Count == 0 )
                     {
                         TreeNode node = oddnode.Nodes.Add(txt);
-                        node.Tag = curAndValueCount;
+                        node.Tag = new CollectTag(curAndValueCount, -1);
                     }
                     else
                     {
@@ -128,11 +139,11 @@ namespace LotteryAnalyze
                         for (int nodeID = 0; nodeID < oddnode.Nodes.Count; ++nodeID)
                         {
                             TreeNode curNode = oddnode.Nodes[nodeID];
-                            int colCount = (int)(curNode.Tag);
+                            int colCount = (curNode.Tag as CollectTag).curAndValueCount;
                             if( colCount <= curAndValueCount )
                             {
                                 TreeNode node = oddnode.Nodes.Insert( nodeID, txt );
-                                node.Tag = curAndValueCount;
+                                node.Tag = new CollectTag(curAndValueCount, -1);
                                 hasAdd = true;
                                 break;
                             }
@@ -140,7 +151,7 @@ namespace LotteryAnalyze
                         if( !hasAdd )
                         {
                             TreeNode node = oddnode.Nodes.Add(txt);
-                            node.Tag = curAndValueCount;
+                            node.Tag = new CollectTag(curAndValueCount, -1);
                         }
                     }                    
                 }
@@ -151,16 +162,95 @@ namespace LotteryAnalyze
     // 开出长组6之后的组3信息收集
     public class Group3AfterLongGroup6Collector : CollectorBase
     {
+        public class G3AfterG6Info
+        {
+            public int mG6CountContinuity = 0;
+            public int mCollectCountAfter = 0;
+            public string mStartID = "";
+            public int mG3CountAfter = 0;
+            public int mG1CountAfter = 0;
+            public int mItemIndex = -1;
+            public G3AfterG6Info()
+            {
+            }
+        }
+        List<G3AfterG6Info> infoList = new List<G3AfterG6Info>();
+
         public Group3AfterLongGroup6Collector()
         {
-
         }
         public override string GetDesc() { return "开出长组6之后的组3信息收集"; }
         public override void Collect() 
         {
+            G3AfterG6Info curInfo = null;
+            infoList.Clear();
+            if (DataManager.GetInst().indexs == null) return;
+            int count = DataManager.GetInst().indexs.Count;
+            if (count == 0) return;
+            int oneDayID = DataManager.GetInst().indexs[0];
+            OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+            DataItem curItem = odd.GetFirstItem();
+            while (curItem != null)
+            {
+                if (curInfo == null)
+                {
+                    if (curItem.groupType == GroupType.eGT6)
+                    {
+                        curInfo = new G3AfterG6Info();
+                        curInfo.mG6CountContinuity++;
+                        curInfo.mStartID = curItem.idTag;
+                        curInfo.mItemIndex = curItem.idGlobal;
+                    }
+                }
+                else
+                {
+                    if (curItem.groupType == GroupType.eGT6)
+                    {
+                        curInfo.mG6CountContinuity++;
+                    }
+                    else
+                    {
+                        RecordInfo(curInfo, curItem);
+                        infoList.Add(curInfo);
+                        curInfo = null;
+                    }
+                }
+                curItem = DataManager.GetInst().GetNextItem(curItem);
+            }
+            infoList.Sort((x, y) =>
+                {
+                    if (x.mG6CountContinuity > y.mG6CountContinuity)
+                        return -1;
+                    return 1;
+                });
+        }
+        void RecordInfo(G3AfterG6Info curInfo, DataItem curItem)
+        {
+            DataItem checkItem = curItem;
+            curInfo.mCollectCountAfter = 0;
+            while (true)
+            {
+                if (checkItem.groupType == GroupType.eGT1)
+                    curInfo.mG1CountAfter++;
+                else if (checkItem.groupType == GroupType.eGT3)
+                    curInfo.mG3CountAfter++;
+                curInfo.mCollectCountAfter++;
+                if (curInfo.mCollectCountAfter == curInfo.mG6CountContinuity)
+                    break;
+                checkItem = DataManager.GetInst().GetNextItem(checkItem);
+                if (checkItem == null)
+                    break;
+            }
         }
         public override void OutPutToTreeView(TreeNode parentNode) 
-        { 
+        {
+            for (int i = 0; i < infoList.Count; ++i)
+            {
+                G3AfterG6Info info = infoList[i];
+                string txt = "[前组6:" + info.mG6CountContinuity + "] [组1:" + info.mG1CountAfter + "] [组3:" + info.mG3CountAfter + "] [共:" + info.mCollectCountAfter + "] [起始:" + info.mStartID + "]";
+                TreeNode node = parentNode.Nodes.Add(txt);
+                node.Tag = new CollectTag(-1, info.mItemIndex);
+            }
         }
     }
 

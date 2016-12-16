@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridViewLotteryDatas = new System.Windows.Forms.DataGridView();
             this.ColumnData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -76,16 +76,16 @@
             this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonExecSimulate = new System.Windows.Forms.Button();
+            this.tabPageCollector = new System.Windows.Forms.TabPage();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.dataGridViewCollectorOption = new System.Windows.Forms.DataGridView();
+            this.CollectorID = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.CollectorDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buttonCollector = new System.Windows.Forms.Button();
+            this.treeViewCollectorInfo = new System.Windows.Forms.TreeView();
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.tabPageCollector = new System.Windows.Forms.TabPage();
-            this.treeViewCollectorInfo = new System.Windows.Forms.TreeView();
-            this.dataGridViewCollectorOption = new System.Windows.Forms.DataGridView();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.buttonCollector = new System.Windows.Forms.Button();
-            this.CollectorID = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.CollectorDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -104,14 +104,14 @@
             this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKillNumberStrategy)).BeginInit();
             this.tabPageSimulator.SuspendLayout();
-            this.tabControlLottery.SuspendLayout();
-            this.tabPageShiShiCai.SuspendLayout();
             this.tabPageCollector.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCollectorOption)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCollectorOption)).BeginInit();
+            this.tabControlLottery.SuspendLayout();
+            this.tabPageShiShiCai.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridViewLotteryDatas
@@ -173,27 +173,27 @@
             // 
             // group6
             // 
-            dataGridViewCellStyle21.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle21.ForeColor = System.Drawing.Color.Black;
-            this.group6.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
+            this.group6.DefaultCellStyle = dataGridViewCellStyle11;
             this.group6.HeaderText = "组六";
             this.group6.Name = "group6";
             this.group6.Width = 60;
             // 
             // group3
             // 
-            dataGridViewCellStyle22.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.group3.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.group3.DefaultCellStyle = dataGridViewCellStyle12;
             this.group3.HeaderText = "组三";
             this.group3.Name = "group3";
             this.group3.Width = 60;
             // 
             // group1
             // 
-            dataGridViewCellStyle23.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle23.ForeColor = System.Drawing.Color.Green;
-            this.group1.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.Green;
+            this.group1.DefaultCellStyle = dataGridViewCellStyle13;
             this.group1.HeaderText = "豹子";
             this.group1.Name = "group1";
             this.group1.Width = 60;
@@ -205,8 +205,8 @@
             // 
             // right
             // 
-            dataGridViewCellStyle24.ForeColor = System.Drawing.Color.Red;
-            this.right.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle14.ForeColor = System.Drawing.Color.Red;
+            this.right.DefaultCellStyle = dataGridViewCellStyle14;
             this.right.HeaderText = "对";
             this.right.Name = "right";
             this.right.ReadOnly = true;
@@ -214,8 +214,8 @@
             // 
             // wrong
             // 
-            dataGridViewCellStyle25.ForeColor = System.Drawing.Color.DarkGreen;
-            this.wrong.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle15.ForeColor = System.Drawing.Color.DarkGreen;
+            this.wrong.DefaultCellStyle = dataGridViewCellStyle15;
             this.wrong.HeaderText = "错";
             this.wrong.Name = "wrong";
             this.wrong.ReadOnly = true;
@@ -515,7 +515,7 @@
             this.tabPageSimulator.Location = new System.Drawing.Point(4, 22);
             this.tabPageSimulator.Name = "tabPageSimulator";
             this.tabPageSimulator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSimulator.Size = new System.Drawing.Size(730, 155);
+            this.tabPageSimulator.Size = new System.Drawing.Size(734, 155);
             this.tabPageSimulator.TabIndex = 1;
             this.tabPageSimulator.Text = "模拟器";
             this.tabPageSimulator.UseVisualStyleBackColor = true;
@@ -527,9 +527,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBoxResult.Location = new System.Drawing.Point(0, 53);
             this.richTextBoxResult.Name = "richTextBoxResult";
-            this.richTextBoxResult.Size = new System.Drawing.Size(730, 100);
+            this.richTextBoxResult.Size = new System.Drawing.Size(734, 100);
             this.richTextBoxResult.TabIndex = 2;
-            this.richTextBoxResult.Text = "";
             // 
             // progressBar1
             // 
@@ -537,7 +536,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(0, 29);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(730, 23);
+            this.progressBar1.Size = new System.Drawing.Size(734, 23);
             this.progressBar1.TabIndex = 1;
             // 
             // buttonExecSimulate
@@ -546,11 +545,99 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExecSimulate.Location = new System.Drawing.Point(0, 4);
             this.buttonExecSimulate.Name = "buttonExecSimulate";
-            this.buttonExecSimulate.Size = new System.Drawing.Size(730, 23);
+            this.buttonExecSimulate.Size = new System.Drawing.Size(734, 23);
             this.buttonExecSimulate.TabIndex = 0;
             this.buttonExecSimulate.Text = "开始模拟";
             this.buttonExecSimulate.UseVisualStyleBackColor = true;
             this.buttonExecSimulate.Click += new System.EventHandler(this.buttonExecSimulate_Click);
+            // 
+            // tabPageCollector
+            // 
+            this.tabPageCollector.Controls.Add(this.splitContainer4);
+            this.tabPageCollector.Location = new System.Drawing.Point(4, 22);
+            this.tabPageCollector.Name = "tabPageCollector";
+            this.tabPageCollector.Size = new System.Drawing.Size(734, 155);
+            this.tabPageCollector.TabIndex = 2;
+            this.tabPageCollector.Text = "统计信息";
+            this.tabPageCollector.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.dataGridViewCollectorOption);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.buttonCollector);
+            this.splitContainer4.Panel2.Controls.Add(this.treeViewCollectorInfo);
+            this.splitContainer4.Size = new System.Drawing.Size(734, 155);
+            this.splitContainer4.SplitterDistance = 244;
+            this.splitContainer4.TabIndex = 2;
+            // 
+            // dataGridViewCollectorOption
+            // 
+            this.dataGridViewCollectorOption.AllowUserToAddRows = false;
+            this.dataGridViewCollectorOption.AllowUserToDeleteRows = false;
+            this.dataGridViewCollectorOption.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewCollectorOption.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewCollectorOption.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CollectorID,
+            this.CollectorDesc});
+            this.dataGridViewCollectorOption.Location = new System.Drawing.Point(4, 3);
+            this.dataGridViewCollectorOption.Name = "dataGridViewCollectorOption";
+            this.dataGridViewCollectorOption.RowTemplate.Height = 23;
+            this.dataGridViewCollectorOption.Size = new System.Drawing.Size(237, 149);
+            this.dataGridViewCollectorOption.TabIndex = 1;
+            this.dataGridViewCollectorOption.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewCollectorOption_CellEndEdit);
+            // 
+            // CollectorID
+            // 
+            this.CollectorID.HeaderText = "索引";
+            this.CollectorID.Name = "CollectorID";
+            this.CollectorID.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.CollectorID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.CollectorID.Width = 50;
+            // 
+            // CollectorDesc
+            // 
+            this.CollectorDesc.HeaderText = "描述";
+            this.CollectorDesc.Name = "CollectorDesc";
+            this.CollectorDesc.ReadOnly = true;
+            this.CollectorDesc.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.CollectorDesc.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // buttonCollector
+            // 
+            this.buttonCollector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCollector.Location = new System.Drawing.Point(4, 4);
+            this.buttonCollector.Name = "buttonCollector";
+            this.buttonCollector.Size = new System.Drawing.Size(479, 23);
+            this.buttonCollector.TabIndex = 1;
+            this.buttonCollector.Text = "收集";
+            this.buttonCollector.UseVisualStyleBackColor = true;
+            this.buttonCollector.Click += new System.EventHandler(this.buttonCollector_Click);
+            // 
+            // treeViewCollectorInfo
+            // 
+            this.treeViewCollectorInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewCollectorInfo.FullRowSelect = true;
+            this.treeViewCollectorInfo.Location = new System.Drawing.Point(3, 28);
+            this.treeViewCollectorInfo.Name = "treeViewCollectorInfo";
+            this.treeViewCollectorInfo.Size = new System.Drawing.Size(480, 124);
+            this.treeViewCollectorInfo.TabIndex = 0;
+            this.treeViewCollectorInfo.DoubleClick += new System.EventHandler(this.treeViewCollectorInfo_DoubleClick);
             // 
             // tabControlLottery
             // 
@@ -586,91 +673,6 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // tabPageCollector
-            // 
-            this.tabPageCollector.Controls.Add(this.splitContainer4);
-            this.tabPageCollector.Location = new System.Drawing.Point(4, 22);
-            this.tabPageCollector.Name = "tabPageCollector";
-            this.tabPageCollector.Size = new System.Drawing.Size(734, 155);
-            this.tabPageCollector.TabIndex = 2;
-            this.tabPageCollector.Text = "统计信息";
-            this.tabPageCollector.UseVisualStyleBackColor = true;
-            // 
-            // treeViewCollectorInfo
-            // 
-            this.treeViewCollectorInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewCollectorInfo.FullRowSelect = true;
-            this.treeViewCollectorInfo.Location = new System.Drawing.Point(3, 28);
-            this.treeViewCollectorInfo.Name = "treeViewCollectorInfo";
-            this.treeViewCollectorInfo.Size = new System.Drawing.Size(480, 124);
-            this.treeViewCollectorInfo.TabIndex = 0;
-            // 
-            // dataGridViewCollectorOption
-            // 
-            this.dataGridViewCollectorOption.AllowUserToAddRows = false;
-            this.dataGridViewCollectorOption.AllowUserToDeleteRows = false;
-            this.dataGridViewCollectorOption.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewCollectorOption.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCollectorOption.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.CollectorID,
-            this.CollectorDesc});
-            this.dataGridViewCollectorOption.Location = new System.Drawing.Point(4, 3);
-            this.dataGridViewCollectorOption.Name = "dataGridViewCollectorOption";
-            this.dataGridViewCollectorOption.RowTemplate.Height = 23;
-            this.dataGridViewCollectorOption.Size = new System.Drawing.Size(237, 149);
-            this.dataGridViewCollectorOption.TabIndex = 1;
-            this.dataGridViewCollectorOption.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewCollectorOption_CellEndEdit);
-            // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.dataGridViewCollectorOption);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.buttonCollector);
-            this.splitContainer4.Panel2.Controls.Add(this.treeViewCollectorInfo);
-            this.splitContainer4.Size = new System.Drawing.Size(734, 155);
-            this.splitContainer4.SplitterDistance = 244;
-            this.splitContainer4.TabIndex = 2;
-            // 
-            // buttonCollector
-            // 
-            this.buttonCollector.Location = new System.Drawing.Point(4, 4);
-            this.buttonCollector.Name = "buttonCollector";
-            this.buttonCollector.Size = new System.Drawing.Size(479, 23);
-            this.buttonCollector.TabIndex = 1;
-            this.buttonCollector.Text = "收集";
-            this.buttonCollector.UseVisualStyleBackColor = true;
-            this.buttonCollector.Click += new System.EventHandler(this.buttonCollector_Click);
-            // 
-            // CollectorID
-            // 
-            this.CollectorID.HeaderText = "索引";
-            this.CollectorID.Name = "CollectorID";
-            this.CollectorID.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.CollectorID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.CollectorID.Width = 50;
-            // 
-            // CollectorDesc
-            // 
-            this.CollectorDesc.HeaderText = "描述";
-            this.CollectorDesc.Name = "CollectorDesc";
-            this.CollectorDesc.ReadOnly = true;
-            this.CollectorDesc.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.CollectorDesc.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -698,14 +700,14 @@
             this.splitContainer3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKillNumberStrategy)).EndInit();
             this.tabPageSimulator.ResumeLayout(false);
-            this.tabControlLottery.ResumeLayout(false);
-            this.tabPageShiShiCai.ResumeLayout(false);
             this.tabPageCollector.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCollectorOption)).EndInit();
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCollectorOption)).EndInit();
+            this.tabControlLottery.ResumeLayout(false);
+            this.tabPageShiShiCai.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
