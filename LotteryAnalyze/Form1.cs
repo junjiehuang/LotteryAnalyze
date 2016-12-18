@@ -40,6 +40,8 @@ namespace LotteryAnalyze
             Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
             textBoxFirmRatio.Text = Simulator.firmRatio.ToString();
             textBoxMaxRatio.Text = Simulator.maxRatio.ToString();
+
+            DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
         }
 
         public KillType GetCurSelectedKillType()
@@ -100,52 +102,53 @@ namespace LotteryAnalyze
                 {
                     DataItem di = data.datas[i];
                     di.idGlobal = curID++;
-                    string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
-                    string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
-                    string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";
-                    object[] objs = new object[] { di.idTag, di.lotteryNumber, di.andValue, di.rearValue, di.crossValue, g6, g3, g1, };
-                    dataGridViewLotteryDatas.Rows.Add(objs);
+                    //string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
+                    //string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
+                    //string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";
+                    //object[] objs = new object[] { di.idTag, di.lotteryNumber, di.andValue, di.rearValue, di.crossValue, g6, g3, g1, };
+                    //dataGridViewLotteryDatas.Rows.Add(objs);
+                    DataGridViewColumnManager.AddRow(di, dataGridViewLotteryDatas);
                 }
             }
         }
         public void ResetResult()
         {
-            for (int i = 0; i < dataGridViewLotteryDatas.RowCount; ++i)
-            {
-                DataGridViewRow row = dataGridViewLotteryDatas.Rows[i];
-                for (int j = 0; j < 6; ++j)
-                {
-                    int col = 8 + j;
-                    DataGridViewCell cell = row.Cells[col];
-                    cell.Value = "";
-                }
-            }
+            //for (int i = 0; i < dataGridViewLotteryDatas.RowCount; ++i)
+            //{
+            //    DataGridViewRow row = dataGridViewLotteryDatas.Rows[i];
+            //    for (int j = 0; j < 6; ++j)
+            //    {
+            //        int col = 8 + j;
+            //        DataGridViewCell cell = row.Cells[col];
+            //        cell.Value = "";
+            //    }
+            //}
             progressBar1.Value = progressBar1.Minimum;
         }
         public void RefreshResultItem(int itemIndex, DataItem item)
         {
-            DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
-            int curCol = 8;
-            DataGridViewCell cell = row.Cells[curCol++];
-            string kt = "";
-            switch (item.simData.killType)
-            {
-                case KillType.eKTGroup3: kt = "杀组三 "; break;
-                case KillType.eKTGroup6: kt = "杀组六 "; break;
-                case KillType.eKTNone: kt = "忽略 "; break;
-            }
-            cell.Value = kt + item.simData.killList;
-            DataGridViewCell c1 = row.Cells[curCol++];
-            c1.Value = item.simData.predictResult == TestResultType.eTRTSuccess ? "对" : "";
-            DataGridViewCell c2 = row.Cells[curCol++];
-            c2.Value = item.simData.predictResult == TestResultType.eTRTFailed ? "错" : "";
-            DataGridViewCell c3 = row.Cells[curCol++];
-            c3.Value = item.simData.cost;
-            DataGridViewCell c4 = row.Cells[curCol++];
-            c4.Value = item.simData.reward;
-            DataGridViewCell c5 = row.Cells[curCol++];
-            c5.Value = item.simData.profit;
-            progressBar1.Value = progressBar1.Minimum + (int)((float)(itemIndex+1) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
+            //DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
+            //int curCol = 8;
+            //DataGridViewCell cell = row.Cells[curCol++];
+            //string kt = "";
+            //switch (item.simData.killType)
+            //{
+            //    case KillType.eKTGroup3: kt = "杀组三 "; break;
+            //    case KillType.eKTGroup6: kt = "杀组六 "; break;
+            //    case KillType.eKTNone: kt = "忽略 "; break;
+            //}
+            //cell.Value = kt + item.simData.killList;
+            //DataGridViewCell c1 = row.Cells[curCol++];
+            //c1.Value = item.simData.predictResult == TestResultType.eTRTSuccess ? "对" : "";
+            //DataGridViewCell c2 = row.Cells[curCol++];
+            //c2.Value = item.simData.predictResult == TestResultType.eTRTFailed ? "错" : "";
+            //DataGridViewCell c3 = row.Cells[curCol++];
+            //c3.Value = item.simData.cost;
+            //DataGridViewCell c4 = row.Cells[curCol++];
+            //c4.Value = item.simData.reward;
+            //DataGridViewCell c5 = row.Cells[curCol++];
+            //c5.Value = item.simData.profit;
+            //progressBar1.Value = progressBar1.Minimum + (int)((float)(itemIndex+1) / (float)(dataGridViewLotteryDatas.RowCount) * (float)(progressBar1.Maximum - progressBar1.Minimum));
         }
         public void RefreshResultPanel()
         {
@@ -297,13 +300,22 @@ namespace LotteryAnalyze
         private void treeViewCollectorInfo_DoubleClick(object sender, EventArgs e)
         {
             TreeNode node = treeViewCollectorInfo.SelectedNode;
-            if (node != null)
+            if (node != null && node.Tag != null)
             {
                 CollectTag tag = node.Tag as CollectTag;
                 if (tag.itemIndex != -1)
                 {
-                    dataGridViewLotteryDatas.Rows[tag.itemIndex].Selected = true;
+                    //dataGridViewLotteryDatas.Rows[tag.itemIndex].Selected = true;
                     dataGridViewLotteryDatas.FirstDisplayedScrollingRowIndex = tag.itemIndex;
+                    int firstIndex = tag.itemIndex;
+                    int lastIndex = tag.itemIndex + tag.continueCount - 1;
+                    for (int i = 0; i < dataGridViewLotteryDatas.Rows.Count; ++i)
+                    {
+                        if( i < firstIndex || i > lastIndex )
+                            dataGridViewLotteryDatas.Rows[i].Selected = false;
+                        else
+                            dataGridViewLotteryDatas.Rows[i].Selected = true;
+                    }
                 }
             }
         }
