@@ -21,6 +21,10 @@ namespace LotteryAnalyze
         public List<int> killAndValue;
         public GroupType killAndValueAtGroup;
 
+        public float g6Score;
+        public float g3Score;
+        public float g1Score;
+
         public void Reset()
         {
             predictResult = TestResultType.eTRTIgnore;
@@ -29,6 +33,8 @@ namespace LotteryAnalyze
 
             killAndValue = null;
             killAndValueAtGroup = GroupType.eGT6;
+
+            g6Score = g3Score = g1Score = 0.0f;
         }
     }
 
@@ -273,6 +279,9 @@ namespace LotteryAnalyze
         public static int g6Round = 0;
         public static KillType curKillType = KillType.eKTGroup6;
         static int DoubleGap = 1;
+        const float G1SCORE = 1000.0f / 10.0f;
+        const float G3SCORE = 1000.0f / 270.0f;
+        const float G6SCORE = 1000.0f / 720.0f;
 
         public static void StepRatio()
         {
@@ -368,6 +377,16 @@ namespace LotteryAnalyze
                         for (int i = 0; i < odd.datas.Count; ++i)
                         {
                             DataItem item = odd.datas[i];
+                            item.simData.g1Score = mgr.simData.g1Score;
+                            item.simData.g3Score = mgr.simData.g3Score;
+                            item.simData.g6Score = mgr.simData.g6Score;
+                            switch (item.groupType)
+                            {
+                                case GroupType.eGT1: mgr.simData.g1Score += G1SCORE; break;
+                                case GroupType.eGT3: mgr.simData.g3Score += G3SCORE; break;
+                                case GroupType.eGT6: mgr.simData.g6Score += G6SCORE; break;
+                            }
+
                             TestResultType curResult = TestResultType.eTRTIgnore;
                             if (killType == KillType.eKTGroup3)
                                 curResult = Util.SimKillGroup3OnGroup1Out(item, curRatio);

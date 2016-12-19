@@ -35,6 +35,16 @@ namespace LotteryAnalyze
                 DataGridViewRow row = dataGridViewCollectorOption.Rows[i];
                 row.Tag = cb;
             }
+            for (int i = 0; i < DataGridViewColumnManager.COLUMNS.Count; ++i)
+            {
+                ColumnBase col = DataGridViewColumnManager.COLUMNS[i];
+                if (col.forceActive)
+                    continue;
+                object[] parms = new object[] { col.active, col.GetColumnName(), };
+                int rid = dataGridViewColSelector.Rows.Add(parms);
+                DataGridViewRow row = dataGridViewColSelector.Rows[rid];
+                row.Tag = col;
+            }
 
             comboBoxKillGroup.SelectedIndex = 2;
             Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
@@ -111,6 +121,15 @@ namespace LotteryAnalyze
                 }
             }
         }
+        void RefreshDataViewOnColumnSelected()
+        {
+            int rowCount = dataGridViewLotteryDatas.Rows.Count;
+            for (int i = 0; i < rowCount; ++i)
+            {
+                DataGridViewRow row = dataGridViewLotteryDatas.Rows[i];
+                DataGridViewColumnManager.SetColumnText(row.Tag as DataItem, row);
+            }
+        }
         public void ResetResult()
         {
             //for (int i = 0; i < dataGridViewLotteryDatas.RowCount; ++i)
@@ -127,6 +146,8 @@ namespace LotteryAnalyze
         }
         public void RefreshResultItem(int itemIndex, DataItem item)
         {
+            DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
+            DataGridViewColumnManager.SetColumnText(item, row);
             //DataGridViewRow row = dataGridViewLotteryDatas.Rows[itemIndex];
             //int curCol = 8;
             //DataGridViewCell cell = row.Cells[curCol++];
@@ -317,6 +338,20 @@ namespace LotteryAnalyze
                             dataGridViewLotteryDatas.Rows[i].Selected = true;
                     }
                 }
+            }
+        }
+
+        private void dataGridViewColSelector_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow row = dataGridViewColSelector.Rows[e.RowIndex];
+            DataGridViewCell cell = row.Cells[e.ColumnIndex];
+            if (row.Tag != null && e.ColumnIndex == 0)
+            {
+                bool v = (bool)cell.Value;
+                ColumnBase cb = row.Tag as ColumnBase;
+                cb.active = v;
+                DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
+                RefreshDataView();
             }
         }
 
