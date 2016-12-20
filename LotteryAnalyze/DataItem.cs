@@ -256,9 +256,15 @@ namespace LotteryAnalyze
 
     public enum KillType
     {
+        // 只匹配组三
         eKTGroup3 = 0,
+        // 只匹配组六
         eKTGroup6,
+        // 交叉匹配
         eKTBlend,
+        // 根据组三形态匹配组六
+        eKTGroup6OnGroup3,
+        // 不做
         eKTNone,
     }
     
@@ -389,11 +395,14 @@ namespace LotteryAnalyze
 
                             TestResultType curResult = TestResultType.eTRTIgnore;
                             if (killType == KillType.eKTGroup3)
-                                curResult = Util.SimKillGroup3OnGroup1Out(item, curRatio);
+                                curResult = Util.SimButG3OnG1Out(item, curRatio);
                             else if (killType == KillType.eKTGroup6)
-                                curResult = Util.SimKillNumberAndCheckResult(item, curRatio);
+                                curResult = Util.SimBuyG6(item, curRatio);
                             else if (killType == KillType.eKTBlend)
-                                curResult = Util.SimKillBlendGroup(item, curRatio);
+                                curResult = Util.SimCrossBuyG6G3(item, curRatio);
+                            else if (killType == KillType.eKTGroup6OnGroup3)
+                                curResult = Util.SimBuyG6On5G3Out(item, curRatio);
+
                             Program.mainForm.RefreshResultItem(curItemIndex, item);
                             ++curItemIndex;
 

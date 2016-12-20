@@ -174,12 +174,46 @@ namespace LotteryAnalyze
             return 0;
         }
 
-        public static TestResultType SimKillBlendGroup(DataItem item, int ratio)
+        public static TestResultType SimBuyG6On5G3Out(DataItem item, int ratio)
+        {
+            item.simData.killType = KillType.eKTNone;
+            item.simData.profit = DataManager.GetInst().curProfit;
+            int g3Count = 0;
+            TestResultType curResult = TestResultType.eTRTIgnore;
+            DataItem last1 = DataManager.GetInst().GetPrevItem(item);
+            if (last1 == null)
+                return curResult;
+            g3Count += last1.groupType == GroupType.eGT3 ? 1 : 0;
+            DataItem last2 = DataManager.GetInst().GetPrevItem(last1);
+            if (last2 == null)
+                return curResult;
+            g3Count += last2.groupType == GroupType.eGT3 ? 1 : 0;
+            DataItem last3 = DataManager.GetInst().GetPrevItem(last2);
+            if (last3 == null)
+                return curResult;
+            g3Count += last3.groupType == GroupType.eGT3 ? 1 : 0;
+            DataItem last4 = DataManager.GetInst().GetPrevItem(last3);
+            if (last4 == null)
+                return curResult;
+            g3Count += last4.groupType == GroupType.eGT3 ? 1 : 0;
+            DataItem last5 = DataManager.GetInst().GetPrevItem(last4);
+            if (last5 == null)
+                return curResult;
+            g3Count += last5.groupType == GroupType.eGT3 ? 1 : 0;
+            if (g3Count >= 3)
+            {
+                curResult = SimBuyG6(item, ratio);
+            }
+            return curResult;
+        }
+
+        // 交叉匹配组三组六
+        public static TestResultType SimCrossBuyG6G3(DataItem item, int ratio)
         {
             TestResultType curResult = TestResultType.eTRTIgnore;
             if (Simulator.curKillType == KillType.eKTGroup6)
             {
-                curResult = SimKillNumberAndCheckResult(item, ratio);
+                curResult = SimBuyG6(item, ratio);
                 if (curResult == TestResultType.eTRTFailed || item.groupType == GroupType.eGT1)
                 {
                     Simulator.g6Round++;
@@ -192,7 +226,7 @@ namespace LotteryAnalyze
             }
             else if (Simulator.curKillType == KillType.eKTGroup3)
             {
-                curResult = SimKillGroup3OnGroup1Out(item, ratio);
+                curResult = SimButG3OnG1Out(item, ratio);
                 if (curResult == TestResultType.eTRTFailed)
                 {
                     Simulator.g3Round++;
@@ -210,7 +244,8 @@ namespace LotteryAnalyze
             return curResult;
         }
 
-        public static TestResultType SimKillGroup3OnGroup1Out(DataItem item, int ratio)
+        // 出豹子后匹配组三
+        public static TestResultType SimButG3OnG1Out(DataItem item, int ratio)
         {
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
             if (prevItem == null)
@@ -306,7 +341,8 @@ namespace LotteryAnalyze
             return item.simData.predictResult;
         }
 
-        public static TestResultType SimKillNumberAndCheckResult(DataItem item, int ratio)
+        // 匹配组六
+        public static TestResultType SimBuyG6(DataItem item, int ratio)
         {
             List<int> killNums = new List<int>();
             item.simData.killType = KillType.eKTGroup6;
