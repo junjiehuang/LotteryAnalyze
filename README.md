@@ -1,1 +1,2 @@
-# LotteryAnalyze
+# Lottery Analyze
+# version 1
