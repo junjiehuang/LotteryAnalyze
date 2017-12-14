@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace LotteryAnalyze
 {
+    #region base class
     public class ColumnBase
     {
         public bool forceActive = false;
@@ -67,6 +68,74 @@ namespace LotteryAnalyze
         }
 
     }
+
+    public class DataGridViewColumnManager
+    {
+        static int sActiveColumnCount = 0;
+        static List<ColumnBase> sColumns = new List<ColumnBase>();
+
+        public static List<ColumnBase> COLUMNS
+        {
+            get { return sColumns; }
+        }
+
+        static DataGridViewColumnManager()
+        {
+            sColumns.Add(new ColumnGlobalID());
+            sColumns.Add(new ColumnIDTag());
+            sColumns.Add(new ColumnNumber());
+            //sColumns.Add(new ColumnSimulateGroup3BuyLottery());
+            //sColumns.Add(new ColumnSimulateGroup2BuyLottery());
+        }
+
+        public static void ReassignColumns(DataGridView view)
+        {
+            view.Rows.Clear();
+            view.Columns.Clear();
+            int startIndex = 0;
+            for (int i = 0; i < sColumns.Count; ++i)
+            {
+                ColumnBase col = sColumns[i];
+                if (col.forceActive || col.active)
+                {
+                    col.SetColumnIndex(ref startIndex, view);
+                }
+            }
+            sActiveColumnCount = startIndex;
+        }
+
+        public static void AddRow(DataItem item, DataGridView view)
+        {
+            List<object> parms = new List<object>();
+            for (int i = 0; i < sColumns.Count; ++i)
+            {
+                ColumnBase col = sColumns[i];
+                if (col.forceActive || col.active)
+                {
+                    col.OnAddRow(item, parms);
+                }
+            }
+            int rid = view.Rows.Add(parms.ToArray());
+            DataGridViewRow row = view.Rows[rid];
+            row.Tag = item;
+        }
+
+        public static void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            for (int i = 0; i < sColumns.Count; ++i)
+            {
+                ColumnBase col = sColumns[i];
+                if (col.forceActive || col.active)
+                {
+                    col.SetColumnText(item, row);
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region common data column
 
     public class ColumnGlobalID : ColumnBase
     {
@@ -142,7 +211,9 @@ namespace LotteryAnalyze
             col.Width = 60;
         }
     }
+    #endregion
 
+    #region group 3 column
     public class ColumnAndValue : ColumnBase
     {
         public ColumnAndValue()
@@ -321,9 +392,9 @@ namespace LotteryAnalyze
         }
     }
 
-    public class ColumnKillNumber : ColumnBase
+    public class ColumnGroup3KillNumber : ColumnBase
     {
-        public ColumnKillNumber()
+        public ColumnGroup3KillNumber()
         {
             forceActive = false;
         }
@@ -351,10 +422,260 @@ namespace LotteryAnalyze
         {
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
-            //col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            //col.Width = 60;
         }
     }
+    #endregion
+
+    #region group 2 column
+
+    public class ColumnTenOdd : ColumnBase
+    {
+        public ColumnTenOdd()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "十位单"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetShiNumber() % 2 == 1 ? "单" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetShiNumber() % 2 == 1 ? "单" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnTenEven : ColumnBase
+    {
+        public ColumnTenEven()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "十位双"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetShiNumber() % 2 == 1 ? "双" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetShiNumber() % 2 == 1 ? "双" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnTenBig : ColumnBase
+    {
+        public ColumnTenBig()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "十位大"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetShiNumber() > 4 ? "大" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetShiNumber() > 4 ? "大" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnTenSmall : ColumnBase
+    {
+        public ColumnTenSmall()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "十位小"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetShiNumber() <= 4 ? "小" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetShiNumber() <= 4 ? "小" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnGroupTen : ColumnSet
+    {
+        public ColumnGroupTen()
+        {
+            forceActive = true;
+            subColumns.Add(new ColumnTenOdd());
+            subColumns.Add(new ColumnTenEven());
+            subColumns.Add(new ColumnTenBig());
+            subColumns.Add(new ColumnTenSmall());
+        }
+        public override string GetColumnName() { return "十位"; }
+    }
+
+
+
+    public class ColumnGeOdd : ColumnBase
+    {
+        public ColumnGeOdd()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "个位单"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetGeNumber() % 2 == 1 ? "单" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetGeNumber() % 2 == 1 ? "单" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnGeEven : ColumnBase
+    {
+        public ColumnGeEven()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "个位双"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetGeNumber() % 2 == 1 ? "双" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetGeNumber() % 2 == 1 ? "双" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnGeBig : ColumnBase
+    {
+        public ColumnGeBig()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "个位大"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetGeNumber() > 4 ? "大" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetGeNumber() > 4 ? "大" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnGeSmall : ColumnBase
+    {
+        public ColumnGeSmall()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "个位小"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (item.GetGeNumber() <= 4 ? "小" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add((item.GetGeNumber() <= 4 ? "小" : ""));
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnGroupGe : ColumnSet
+    {
+        public ColumnGroupGe()
+        {
+            forceActive = true;
+            subColumns.Add(new ColumnGeOdd());
+            subColumns.Add(new ColumnGeEven());
+            subColumns.Add(new ColumnGeBig());
+            subColumns.Add(new ColumnGeSmall());
+        }
+        public override string GetColumnName() { return "个位"; }
+    }
+
+    #endregion
+
+    #region simulate step info
+
     public class ColumnKillResultTrue : ColumnBase
     {
         public ColumnKillResultTrue()
@@ -487,85 +808,45 @@ namespace LotteryAnalyze
             //col.Width = 60;
         }
     }
-    public class ColumnSimulateBuyLottery : ColumnSet
+
+    #endregion
+
+    public class ColumnSimulateGroup3BuyLottery : ColumnSet
     {
-        public ColumnSimulateBuyLottery()
+        public ColumnSimulateGroup3BuyLottery()
         {
             forceActive = false;
-            subColumns.Add(new ColumnKillNumber());
+            subColumns.Add(new ColumnGroupType());
+            subColumns.Add(new ColumnAndValue());
+            subColumns.Add(new ColumnAndRearValue());
+            subColumns.Add(new ColumnGroupScore());
+
+            subColumns.Add(new ColumnGroup3KillNumber());
             subColumns.Add(new ColumnKillResultTrue());
             subColumns.Add(new ColumnKillResultFalse());
             subColumns.Add(new ColumnSimCost());
             subColumns.Add(new ColumnSimReward());
             subColumns.Add(new ColumnSimProfit());
         }
-        public override string GetColumnName() { return "模拟杀号"; }
+        public override string GetColumnName() { return "模拟组三杀号"; }
     }
 
-    public class DataGridViewColumnManager
+
+    public class ColumnSimulateGroup2BuyLottery : ColumnSet
     {
-        static int sActiveColumnCount = 0;
-        static List<ColumnBase> sColumns = new List<ColumnBase>();
-
-        public static List<ColumnBase> COLUMNS
+        public ColumnSimulateGroup2BuyLottery()
         {
-            get { return sColumns; }
-        }
+            forceActive = false;
+            subColumns.Add(new ColumnGroupTen());
+            subColumns.Add(new ColumnGroupGe());
 
-        static DataGridViewColumnManager()
-        {
-            sColumns.Add(new ColumnGlobalID());
-            sColumns.Add(new ColumnIDTag());
-            sColumns.Add(new ColumnNumber());
-            sColumns.Add(new ColumnAndValue());
-            sColumns.Add(new ColumnAndRearValue());
-            sColumns.Add(new ColumnGroupType());
-            sColumns.Add(new ColumnGroupScore());
-            sColumns.Add(new ColumnSimulateBuyLottery());
+            subColumns.Add(new ColumnKillResultTrue());
+            subColumns.Add(new ColumnKillResultFalse());
+            subColumns.Add(new ColumnSimCost());
+            subColumns.Add(new ColumnSimReward());
+            subColumns.Add(new ColumnSimProfit());
         }
-
-        public static void ReassignColumns(DataGridView view)
-        {
-            view.Rows.Clear();
-            view.Columns.Clear();
-            int startIndex = 0;
-            for (int i = 0; i < sColumns.Count; ++i)
-            {
-                ColumnBase col = sColumns[i];
-                if (col.forceActive || col.active)
-                {
-                    col.SetColumnIndex(ref startIndex, view);
-                }
-            }
-            sActiveColumnCount = startIndex;
-        }
-
-        public static void AddRow(DataItem item, DataGridView view)
-        {
-            List<object> parms = new List<object>();
-            for (int i = 0; i < sColumns.Count; ++i)
-            {
-                ColumnBase col = sColumns[i];
-                if (col.forceActive || col.active)
-                {
-                    col.OnAddRow(item, parms);
-                }
-            }
-            int rid = view.Rows.Add(parms.ToArray());
-            DataGridViewRow row = view.Rows[rid];
-            row.Tag = item;
-        }
-
-        public static void SetColumnText(DataItem item, DataGridViewRow row)
-        {
-            for (int i = 0; i < sColumns.Count; ++i)
-            {
-                ColumnBase col = sColumns[i];
-                if (col.forceActive || col.active)
-                {
-                    col.SetColumnText(item, row);
-                }
-            }
-        }
+        public override string GetColumnName() { return "模拟组二杀号"; }
     }
+
 }

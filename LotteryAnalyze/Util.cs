@@ -41,9 +41,12 @@ namespace LotteryAnalyze
             }
             while ((line = sr.ReadLine()) != null)
             {
-                string[] strs = line.Split( '\t' );
-                if (strs.Length > 0)
+                string[] strs = line.Split( ' ' );
+                if (strs.Length > 1)
                 {
+                    if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
+                       strs[0] == "-" || strs[1] == "-")
+                        continue;
                     DataItem item = new DataItem();
                     item.id = int.Parse(strs[0]);
                     item.lotteryNumber = strs[1];
