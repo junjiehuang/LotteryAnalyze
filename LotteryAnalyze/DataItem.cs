@@ -5,6 +5,7 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
+    #region data manage
     public struct SimData
     {
         public string killList;
@@ -50,7 +51,7 @@ namespace LotteryAnalyze
         public int rearValue;
         public int crossValue;
         public GroupType groupType;
-        public List<int> valuesInThreePos = new List<int>();
+        public List<int> valuesOfLastThree = new List<int>();
 
         public SimData simData;
 
@@ -60,26 +61,36 @@ namespace LotteryAnalyze
 
         public int GetGeNumber()
         {
-            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 1]);
+            int value = Util.CharValue(lotteryNumber[4]);
             return value;
         }
         public int GetShiNumber()
         {
-            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 2]);
+            int value = Util.CharValue(lotteryNumber[3]);
             return value;
         }
         public int GetBaiNumber()
         {
-            int value = Util.CharValue(lotteryNumber[lotteryNumber.Length - 3]);
+            int value = Util.CharValue(lotteryNumber[2]);
+            return value;
+        }
+        public int GetQianNumber()
+        {
+            int value = Util.CharValue(lotteryNumber[1]);
+            return value;
+        }
+        public int GetWanNumber()
+        {
+            int value = Util.CharValue(lotteryNumber[0]);
             return value;
         }
         public void GetValuesInThreePos()
         {
-            if (valuesInThreePos.Count == 0)
+            if (valuesOfLastThree.Count == 0)
             {
-                valuesInThreePos.Add(GetBaiNumber());
-                valuesInThreePos.Add(GetShiNumber());
-                valuesInThreePos.Add(GetGeNumber());
+                valuesOfLastThree.Add(GetBaiNumber());
+                valuesOfLastThree.Add(GetShiNumber());
+                valuesOfLastThree.Add(GetGeNumber());
             }
         }
     }
@@ -227,6 +238,10 @@ namespace LotteryAnalyze
         }
     }
 
+    #endregion
+
+    #region simulation
+
     public enum SimState
     {
         eNotStart = 0,
@@ -267,54 +282,45 @@ namespace LotteryAnalyze
         // 不做
         eKTNone,
     }
-    
-    public class Simulator
+
+    public enum SimType
+    {
+        eGroup3,
+        eGroup2,
+    }
+
+    public abstract class SimulationBase
+    {
+        public virtual void SortWrongInfos(bool byRound) { }
+        public virtual void StepRatio() { }
+        public virtual void ResetRatio() { }
+        public virtual void StartSimulate() { }
+        public virtual void UpdateSimulate() { }
+    } 
+
+    public class SimulationGroup3 : SimulationBase
     {
         static SimState curState = SimState.eNotStart;
         static int curSimIndex = -1;
         static int curItemIndex = -1;
-        static int curRatio = 1;
-        public static bool enableDoubleRatioIfFailed = true;
-        public static int firmRatio = 10;
         static WrongInfo curCal = null;
         public static bool isCurKillGroup3 = false;
         public static List<WrongInfo> allWrongInfos = new List<WrongInfo>();
         public static KillType killType = KillType.eKTGroup3;
-        public static int maxRatio = 32;
         public static int g3Round = 0;
         public static int g6Round = 0;
         public static KillType curKillType = KillType.eKTGroup6;
-        static int DoubleGap = 1;
+
         const float G1SCORE = 1000.0f / 10.0f;
         const float G3SCORE = 1000.0f / 270.0f;
         const float G6SCORE = 1000.0f / 720.0f;
 
-        public static void StepRatio()
-        {
-            if (enableDoubleRatioIfFailed)
-            {
-                //if (DoubleGap > 0)
-                //    --DoubleGap;
-                //else
-                {
-                    DoubleGap = 1;
-                    curRatio *= 2;
-                    if (maxRatio > 0 && curRatio > maxRatio)
-                        curRatio = maxRatio;
-                }
-            }
-            else
-            {
-                curRatio = firmRatio;
-            }
-        }
-        public static void ResetRatio()
-        {
-            curRatio = 1;
-            if (!enableDoubleRatioIfFailed)
-                curRatio = firmRatio;
-        }
-        public static void SortWrongInfos(bool byRound)
+        static int curRatio = 1;
+        public static bool enableDoubleRatioIfFailed = true;
+        public static int firmRatio = 10;
+        public static int maxRatio = 32;
+
+        public override void SortWrongInfos(bool byRound)
         {
             if (byRound)
             {
@@ -336,7 +342,26 @@ namespace LotteryAnalyze
             }
         }
 
-        public static void StartSimulate()
+        public override void StepRatio()
+        {
+            if (enableDoubleRatioIfFailed)
+            {
+                curRatio *= 2;
+                if (maxRatio > 0 && curRatio > maxRatio)
+                    curRatio = maxRatio;
+            }
+            else
+            {
+                curRatio = firmRatio;
+            }
+        }
+        public override void ResetRatio()
+        {
+            curRatio = 1;
+            if (!enableDoubleRatioIfFailed)
+                curRatio = firmRatio;
+        }
+        public override void StartSimulate()
         {
             DataManager mgr = DataManager.GetInst();
             mgr.simData.Reset();
@@ -361,15 +386,14 @@ namespace LotteryAnalyze
             curState = SimState.eSimulating;
             allWrongInfos.Clear();
             g3Round = 0;
-            g6Round = 0;            
+            g6Round = 0;
             killType = Program.mainForm.GetCurSelectedKillType();
             if (killType == KillType.eKTBlend)
                 curKillType = KillType.eKTGroup6;
             else
                 curKillType = KillType.eKTNone;
         }
-
-        public static void UpdateSimulate()
+        public override void UpdateSimulate()
         {
             DataManager mgr = DataManager.GetInst();
             if (curState == SimState.eSimulating)
@@ -416,7 +440,7 @@ namespace LotteryAnalyze
                                 if (curResult == TestResultType.eTRTSuccess)
                                     curCal = null;
                             }
-                            else if( curCal != null )
+                            else if (curCal != null)
                             {
                                 if (curResult == TestResultType.eTRTFailed)
                                 {
@@ -443,4 +467,67 @@ namespace LotteryAnalyze
             }
         }
     }
+
+
+    public class SimulationGroup2 : SimulationBase
+    {
+        public override void SortWrongInfos(bool byRound)
+        {
+
+        }
+        public override void StepRatio()
+        {
+        }
+        public override void ResetRatio()
+        {
+        }
+        public override void StartSimulate()
+        {
+        }
+        public override void UpdateSimulate()
+        {
+        }
+    }
+
+
+    public class Simulator
+    {
+        static SimulationBase curSim = null;
+        static Dictionary<SimType, SimulationBase> simDict = null;
+
+        static Simulator()
+        {
+            simDict = new Dictionary<SimType, SimulationBase>();
+            simDict.Add(SimType.eGroup3, new SimulationGroup3());
+            simDict.Add(SimType.eGroup2, new SimulationGroup2());
+            curSim = simDict[SimType.eGroup3];
+        }
+
+        public static void SortWrongInfos(bool byRound)
+        {
+            curSim.SortWrongInfos(byRound);
+        }
+
+        public static void StepRatio()
+        {
+            curSim.StepRatio();
+        }
+
+        public static void ResetRatio()
+        {
+            curSim.ResetRatio();
+        }
+
+        public static void StartSimulate()
+        {
+            curSim.StartSimulate();
+        }
+
+        public static void UpdateSimulate()
+        {
+            curSim.UpdateSimulate();
+        }
+    }
+
+    #endregion
 }

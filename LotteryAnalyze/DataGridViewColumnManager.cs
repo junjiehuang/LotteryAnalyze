@@ -84,8 +84,8 @@ namespace LotteryAnalyze
             sColumns.Add(new ColumnGlobalID());
             sColumns.Add(new ColumnIDTag());
             sColumns.Add(new ColumnNumber());
-            //sColumns.Add(new ColumnSimulateGroup3BuyLottery());
-            //sColumns.Add(new ColumnSimulateGroup2BuyLottery());
+            sColumns.Add(new ColumnSimulateGroup3BuyLottery());
+            sColumns.Add(new ColumnSimulateGroup2BuyLottery());
         }
 
         public static void ReassignColumns(DataGridView view)
@@ -467,12 +467,12 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                cell.Value = (item.GetShiNumber() % 2 == 1 ? "双" : "");
+                cell.Value = (item.GetShiNumber() % 2 == 0 ? "双" : "");
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            colValues.Add((item.GetShiNumber() % 2 == 1 ? "双" : ""));
+            colValues.Add((item.GetShiNumber() % 2 == 0 ? "双" : ""));
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
         {
@@ -590,12 +590,12 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                cell.Value = (item.GetGeNumber() % 2 == 1 ? "双" : "");
+                cell.Value = (item.GetGeNumber() % 2 == 0 ? "双" : "");
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            colValues.Add((item.GetGeNumber() % 2 == 1 ? "双" : ""));
+            colValues.Add((item.GetGeNumber() % 2 == 0 ? "双" : ""));
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
         {
@@ -816,6 +816,7 @@ namespace LotteryAnalyze
         public ColumnSimulateGroup3BuyLottery()
         {
             forceActive = false;
+            active = false;
             subColumns.Add(new ColumnGroupType());
             subColumns.Add(new ColumnAndValue());
             subColumns.Add(new ColumnAndRearValue());
@@ -828,7 +829,7 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSimReward());
             subColumns.Add(new ColumnSimProfit());
         }
-        public override string GetColumnName() { return "模拟组三杀号"; }
+        public override string GetColumnName() { return "模拟组三方案"; }
     }
 
 
@@ -837,6 +838,7 @@ namespace LotteryAnalyze
         public ColumnSimulateGroup2BuyLottery()
         {
             forceActive = false;
+            active = false;
             subColumns.Add(new ColumnGroupTen());
             subColumns.Add(new ColumnGroupGe());
 
@@ -846,7 +848,7 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSimReward());
             subColumns.Add(new ColumnSimProfit());
         }
-        public override string GetColumnName() { return "模拟组二杀号"; }
+        public override string GetColumnName() { return "模拟组二方案"; }
     }
 
 }

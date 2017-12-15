@@ -47,6 +47,7 @@ namespace LotteryAnalyze
                     if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
                        strs[0] == "-" || strs[1] == "-")
                         continue;
+
                     DataItem item = new DataItem();
                     item.id = int.Parse(strs[0]);
                     item.lotteryNumber = strs[1];
@@ -214,35 +215,35 @@ namespace LotteryAnalyze
         public static TestResultType SimCrossBuyG6G3(DataItem item, int ratio)
         {
             TestResultType curResult = TestResultType.eTRTIgnore;
-            if (Simulator.curKillType == KillType.eKTGroup6)
+            if (SimulationGroup3.curKillType == KillType.eKTGroup6)
             {
                 curResult = SimBuyG6(item, ratio);
                 if (curResult == TestResultType.eTRTFailed || item.groupType == GroupType.eGT1)
                 {
-                    Simulator.g6Round++;
-                    if (Simulator.g6Round > 2 || item.groupType == GroupType.eGT1)
+                    SimulationGroup3.g6Round++;
+                    if (SimulationGroup3.g6Round > 2 || item.groupType == GroupType.eGT1)
                     {
-                        Simulator.curKillType = KillType.eKTGroup3;
-                        Simulator.g3Round = 0;
+                        SimulationGroup3.curKillType = KillType.eKTGroup3;
+                        SimulationGroup3.g3Round = 0;
                     }
                 }
             }
-            else if (Simulator.curKillType == KillType.eKTGroup3)
+            else if (SimulationGroup3.curKillType == KillType.eKTGroup3)
             {
                 curResult = SimButG3OnG1Out(item, ratio);
                 if (curResult == TestResultType.eTRTFailed)
                 {
-                    Simulator.g3Round++;
-                    if (Simulator.g3Round > 2)
+                    SimulationGroup3.g3Round++;
+                    if (SimulationGroup3.g3Round > 2)
                     {
-                        Simulator.curKillType = KillType.eKTGroup6;
-                        Simulator.g6Round = 0;
+                        SimulationGroup3.curKillType = KillType.eKTGroup6;
+                        SimulationGroup3.g6Round = 0;
                     }
                 }
             }
             if (curResult == TestResultType.eTRTSuccess)
             {
-                Simulator.g3Round = Simulator.g6Round = 0;
+                SimulationGroup3.g3Round = SimulationGroup3.g6Round = 0;
             }
             return curResult;
         }
@@ -253,10 +254,10 @@ namespace LotteryAnalyze
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
             if (prevItem == null)
                 return TestResultType.eTRTIgnore;
-            if (prevItem.groupType == GroupType.eGT1 || Simulator.isCurKillGroup3 || Simulator.curKillType == KillType.eKTGroup3)
+            if (prevItem.groupType == GroupType.eGT1 || SimulationGroup3.isCurKillGroup3 || SimulationGroup3.curKillType == KillType.eKTGroup3)
             {
                 if (prevItem.groupType == GroupType.eGT1 )
-                    Simulator.isCurKillGroup3 = true;
+                    SimulationGroup3.isCurKillGroup3 = true;
                 item.simData.killType = KillType.eKTGroup3;
                 List<int> killNums = new List<int>();
                 KillNumberStrategyManager.GetInst().KillNumber(item, ref killNums);
@@ -299,7 +300,7 @@ namespace LotteryAnalyze
                         {
                             int killNum = killNums[i];
                             // kill wrong number
-                            if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                            if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                             {
                                 isRight = false;
                                 break;
@@ -320,7 +321,7 @@ namespace LotteryAnalyze
                 DataManager.GetInst().simData.predictCount++;
                 if (isRight)
                 {
-                    Simulator.isCurKillGroup3 = false;
+                    SimulationGroup3.isCurKillGroup3 = false;
                     item.simData.reward = GetReward(item.groupType, ratio);
                     item.parent.simData.rewardTotal += item.simData.reward;
                     item.parent.simData.rightCount++;
@@ -393,7 +394,7 @@ namespace LotteryAnalyze
                     {
                         int killNum = killNums[i];
                         // kill wrong number
-                        if (item.valuesInThreePos.IndexOf(killNum) != -1)
+                        if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                         {
                             isRight = false;
                             break;

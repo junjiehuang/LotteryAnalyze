@@ -47,9 +47,9 @@ namespace LotteryAnalyze
             }
 
             comboBoxKillGroup.SelectedIndex = 2;
-            Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
-            textBoxFirmRatio.Text = Simulator.firmRatio.ToString();
-            textBoxMaxRatio.Text = Simulator.maxRatio.ToString();
+            SimulationGroup3.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
+            textBoxFirmRatio.Text = SimulationGroup3.firmRatio.ToString();
+            textBoxMaxRatio.Text = SimulationGroup3.maxRatio.ToString();
 
             DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
         }
@@ -175,17 +175,11 @@ namespace LotteryAnalyze
         {
             DataManager mgr = DataManager.GetInst();
             StringBuilder sb = new StringBuilder();
-            //sb.Append("连错最大损失值 : " + Simulator.maxCost.costTotal + "\n");
-            //sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
-            //sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
-            //sb.Append("最长连错损失值 : " + Simulator.maxCost.costTotal + "\n");
-            //sb.Append("连错起始期号 : " + Simulator.maxCost.startTag + "\n");
-            //sb.Append("连错期数 : " + Simulator.maxCost.round + "\n\n");
             sb.Append("准确率 : " + (float)mgr.simData.rightCount / (float)mgr.simData.predictCount * 100 + "%\n");
             Simulator.SortWrongInfos(true);
-            for (int i = 0; i < Simulator.allWrongInfos.Count; ++i)
+            for (int i = 0; i < SimulationGroup3.allWrongInfos.Count; ++i)
             {
-                WrongInfo wi = Simulator.allWrongInfos[i];
+                WrongInfo wi = SimulationGroup3.allWrongInfos[i];
                 sb.Append("损失值\t: " + wi.costTotal + "\n");
                 sb.Append("起始期号\t: " + wi.startTag + "\n");
                 sb.Append("连错期数\t: " + wi.round + "\n\n");
@@ -279,17 +273,17 @@ namespace LotteryAnalyze
 
         private void checkBoxDoubleRatio_Click(object sender, EventArgs e)
         {
-            Simulator.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
+            SimulationGroup3.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
         }
 
         private void textBoxFirmRatio_TextChanged(object sender, EventArgs e)
         {
-            Simulator.firmRatio = int.Parse(textBoxFirmRatio.Text);
+            SimulationGroup3.firmRatio = int.Parse(textBoxFirmRatio.Text);
         }
 
         private void textBoxMaxRatio_TextChanged(object sender, EventArgs e)
         {
-            Simulator.maxRatio = int.Parse(textBoxMaxRatio.Text);
+            SimulationGroup3.maxRatio = int.Parse(textBoxMaxRatio.Text);
         }
 
         private void dataGridViewCollectorOption_CellEndEdit(object sender, DataGridViewCellEventArgs e)

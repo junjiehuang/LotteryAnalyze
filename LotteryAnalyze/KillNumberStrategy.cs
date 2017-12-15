@@ -5,6 +5,7 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
+    #region base class
     public class AndValueSearchMap
     {
         public class AndValuePairList
@@ -195,6 +196,10 @@ namespace LotteryAnalyze
             }
         }
     }
+
+    #endregion
+
+    #region stratage class
 
     public class KillNumberByDateValue : KillNumberStrategy
     {
@@ -401,4 +406,6 @@ namespace LotteryAnalyze
             KillNum(ref killList, bai);
         }
     }
+
+    #endregion
 }
