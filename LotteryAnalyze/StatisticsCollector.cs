@@ -79,6 +79,8 @@ namespace LotteryAnalyze
 
         public override void OutPutToTreeView(TreeNode parentNode) 
         {
+            if (totalCount <= 0)
+                return;
             TreeNode mainNode = new TreeNode("整体数据");
             TreeNode oddNodes = new TreeNode("按期划分");
             parentNode.Nodes.Add(mainNode);

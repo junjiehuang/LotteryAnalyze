@@ -235,6 +235,7 @@ namespace LotteryAnalyze
             dataGridViewLotteryDatas.Rows.Clear();
             progressBar1.Value = progressBar1.Minimum;
             richTextBoxResult.Text = "";
+            RefreshFileList();
         }
 
         private void addToSimulatePoolToolStripMenuItem_Click(object sender, EventArgs e)
@@ -349,5 +350,14 @@ namespace LotteryAnalyze
             }
         }
 
+        private void clearSimPoolDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DataManager dataMgr = DataManager.GetInst();
+            dataMgr.ClearAllDatas();
+            dataGridViewLotteryDatas.Rows.Clear();
+            progressBar1.Value = progressBar1.Minimum;
+            richTextBoxResult.Text = "";
+
+        }
     }
 }
