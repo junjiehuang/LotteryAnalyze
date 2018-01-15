@@ -133,7 +133,7 @@ namespace LotteryAnalyze
                 valuesOfLastThree.Add(GetGeNumber());
             }
         }
-        public void CollectPath012Info()
+        public void CollectShortPath012Info()
         {
             for (int i = 0; i < 5; ++i)
             {
@@ -151,7 +151,7 @@ namespace LotteryAnalyze
                     for( int k = 0; k < 3; ++k )
                     {
                         if (prevItem.path012OfEachSingle[j] == k)
-                            simData.path012CountInfoShort[j][k]++;
+                            simData.path012CountInfoShort[j][k] = simData.path012CountInfoShort[j][k] + 1;
                     }
                 }
             }
@@ -162,12 +162,14 @@ namespace LotteryAnalyze
     {
         public int dateID = 0;
         public List<DataItem> datas = new List<DataItem>();
-        public SimData simData;
+        public SimData simData = new SimData();
 
 
         public OneDayDatas()
         {
+            simData.Reset();
         }
+
 
         public DataItem GetTailItem()
         {
@@ -206,6 +208,23 @@ namespace LotteryAnalyze
                     return nextODD.GetFirstItem();
             }
             return null;
+        }
+        public void CollectShortPath012Info()
+        {
+            simData.ResetPath012Info();
+            for (int i = 0; i < datas.Count; ++i)
+            {
+                DataItem data = datas[i];
+                for (int j = 0; j < 5; ++j)
+                {
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        if (data.path012OfEachSingle[j] == k)
+                            simData.path012CountInfoShort[j][k] = simData.path012CountInfoShort[j][k] + 1;
+                    }
+                }
+
+            }
         }
     }
 

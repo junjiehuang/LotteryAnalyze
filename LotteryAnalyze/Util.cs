@@ -443,10 +443,13 @@ namespace LotteryAnalyze
             {
                 int oneDayID = DataManager.GetInst().indexs[i];
                 OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+                odd.CollectShortPath012Info();
+
                 for (int j = 0; j < odd.datas.Count; ++j)
                 {
                     DataItem item = odd.datas[j];
-                    item.simData.ResetPath012Info();
+                    item.CollectShortPath012Info();
+
                     DataItem prevItem = item.parent.GetPrevItem(item);
                     if (prevItem != null)
                     {

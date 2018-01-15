@@ -793,6 +793,41 @@ namespace LotteryAnalyze
         }
     }
 
+    public class ColumnSinglePath012CountShort : ColumnBase
+    {
+        public ColumnSinglePath012CountShort()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012统计短期"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+
+    }
+
     #endregion
 
     #region simulate step info
@@ -1000,6 +1035,7 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSinglePath1());
             subColumns.Add(new ColumnSinglePath2());
             subColumns.Add(new ColumnSinglePath012Missing());
+            subColumns.Add(new ColumnSinglePath012CountShort());
 
             subColumns.Add(new ColumnKillResultTrue());
             subColumns.Add(new ColumnKillResultFalse());

@@ -67,6 +67,7 @@
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pushToSimulatePoolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearSimPoolDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewColSelector = new System.Windows.Forms.DataGridView();
             this.ColumnId = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -99,7 +100,8 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.clearSimPoolDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBoxPath012ShortCount = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -140,7 +142,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -164,7 +166,7 @@
             this.profit});
             dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -174,7 +176,7 @@
             this.dataGridViewLotteryDatas.Name = "dataGridViewLotteryDatas";
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -216,7 +218,7 @@
             // 
             // group6
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
             this.group6.DefaultCellStyle = dataGridViewCellStyle2;
             this.group6.HeaderText = "组六";
@@ -225,7 +227,7 @@
             // 
             // group3
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.group3.DefaultCellStyle = dataGridViewCellStyle3;
             this.group3.HeaderText = "组三";
@@ -234,7 +236,7 @@
             // 
             // group1
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Green;
             this.group1.DefaultCellStyle = dataGridViewCellStyle4;
             this.group1.HeaderText = "豹子";
@@ -353,35 +355,42 @@
             this.pushToSimulatePoolToolStripMenuItem,
             this.clearSimPoolDataToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(153, 136);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(149, 114);
             // 
             // addFilesToolStripMenuItem
             // 
             this.addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.addFilesToolStripMenuItem.Text = "添加文件";
             this.addFilesToolStripMenuItem.Click += new System.EventHandler(this.addFilesToolStripMenuItem_Click);
             // 
             // addFolderToolStripMenuItem
             // 
             this.addFolderToolStripMenuItem.Name = "addFolderToolStripMenuItem";
-            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.addFolderToolStripMenuItem.Text = "添加文件夹";
             this.addFolderToolStripMenuItem.Click += new System.EventHandler(this.addFolderToolStripMenuItem_Click);
             // 
             // clearDataToolStripMenuItem
             // 
             this.clearDataToolStripMenuItem.Name = "clearDataToolStripMenuItem";
-            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.clearDataToolStripMenuItem.Text = "清空所有数据";
             this.clearDataToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // pushToSimulatePoolToolStripMenuItem
             // 
             this.pushToSimulatePoolToolStripMenuItem.Name = "pushToSimulatePoolToolStripMenuItem";
-            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.pushToSimulatePoolToolStripMenuItem.Text = "放入模拟池";
             this.pushToSimulatePoolToolStripMenuItem.Click += new System.EventHandler(this.addToSimulatePoolToolStripMenuItem_Click);
+            // 
+            // clearSimPoolDataToolStripMenuItem
+            // 
+            this.clearSimPoolDataToolStripMenuItem.Name = "clearSimPoolDataToolStripMenuItem";
+            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.clearSimPoolDataToolStripMenuItem.Text = "清空模拟池";
+            this.clearSimPoolDataToolStripMenuItem.Click += new System.EventHandler(this.clearSimPoolDataToolStripMenuItem_Click);
             // 
             // splitContainer5
             // 
@@ -470,6 +479,8 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.textBoxPath012ShortCount);
+            this.splitContainer3.Panel1.Controls.Add(this.label4);
             this.splitContainer3.Panel1.Controls.Add(this.label3);
             this.splitContainer3.Panel1.Controls.Add(this.textBoxMaxRatio);
             this.splitContainer3.Panel1.Controls.Add(this.label2);
@@ -578,7 +589,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -591,7 +602,7 @@
             this.desc});
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -601,7 +612,7 @@
             this.dataGridViewKillNumberStrategy.Name = "dataGridViewKillNumberStrategy";
             dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -712,7 +723,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -724,7 +735,7 @@
             this.CollectorDesc});
             dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -734,7 +745,7 @@
             this.dataGridViewCollectorOption.Name = "dataGridViewCollectorOption";
             dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -819,12 +830,28 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // clearSimPoolDataToolStripMenuItem
+            // label4
             // 
-            this.clearSimPoolDataToolStripMenuItem.Name = "clearSimPoolDataToolStripMenuItem";
-            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.clearSimPoolDataToolStripMenuItem.Text = "清空模拟池";
-            this.clearSimPoolDataToolStripMenuItem.Click += new System.EventHandler(this.clearSimPoolDataToolStripMenuItem_Click);
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(5, 107);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 12);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "统计期数：";
+            // 
+            // textBoxPath012ShortCount
+            // 
+            this.textBoxPath012ShortCount.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxPath012ShortCount.Location = new System.Drawing.Point(66, 105);
+            this.textBoxPath012ShortCount.Name = "textBoxPath012ShortCount";
+            this.textBoxPath012ShortCount.Size = new System.Drawing.Size(175, 21);
+            this.textBoxPath012ShortCount.TabIndex = 9;
+            this.textBoxPath012ShortCount.TextChanged += new System.EventHandler(this.textBoxPath012ShortCount_TextChanged);
             // 
             // Form1
             // 
@@ -929,6 +956,8 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDesc;
         private System.Windows.Forms.ToolStripMenuItem clearSimPoolDataToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxPath012ShortCount;
+        private System.Windows.Forms.Label label4;
     }
 }
 

@@ -345,6 +345,8 @@ namespace LotteryAnalyze
 
         string[] SingleNames = new string[] { "万", "千", "百", "十", "个", }; 
         public List<MissingInfo> maxPath012Missing = new List<MissingInfo>(); 
+
+
         public SinglePath012MaxMissingCollector()
         {
             maxPath012Missing.Clear();
@@ -360,42 +362,6 @@ namespace LotteryAnalyze
         public override void Collect()
         {
             Util.CollectPath012Info(maxPath012Missing);
-
-            //if (DataManager.GetInst().indexs == null) return;
-            //int count = DataManager.GetInst().indexs.Count;
-            //if (count == 0) return;
-
-            //for (int i = 0; i < 5; ++i)
-            //{
-            //    maxPath012Missing[i][0] = maxPath012Missing[i][1] = maxPath012Missing[i][2] = 0;
-            //}
-            //for (int i = 0; i < count; ++i)
-            //{
-            //    int oneDayID = DataManager.GetInst().indexs[i];
-            //    OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
-            //    for (int j = 0; j < odd.datas.Count; ++j)
-            //    {
-            //        DataItem item = odd.datas[j];
-            //        item.simData.ResetPath012Info();
-            //        DataItem prevItem = item.parent.GetPrevItem(item);
-            //        if(prevItem != null)
-            //        {
-            //            for( int k = 0; k < 5; ++k )
-            //            {
-            //                for( int t = 0; t < 3; ++t )
-            //                {
-            //                    if (item.path012OfEachSingle[k] == t)
-            //                        item.simData.path012MissingInfo[k][t] = 0;
-            //                    else
-            //                        item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
-
-            //                    if (item.simData.path012MissingInfo[k][t] > maxPath012Missing[k][t])
-            //                        maxPath012Missing[k][t] = item.simData.path012MissingInfo[k][t];
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         public override void OutPutToTreeView(TreeNode parentNode)
@@ -409,6 +375,26 @@ namespace LotteryAnalyze
                 {
                     TreeNode node = sub.Nodes.Add(j + " 路最大遗漏 = " + maxPath012Missing[i].maxPath012MissingData[j] + "(" + maxPath012Missing[i].maxPath012MissingID[j] + ")");
                     node.Tag = new CollectTag(-1, maxPath012Missing[i].maxPath012MissingID[j]);
+                }
+            }
+
+            TreeNode dayNodes = new TreeNode("每日012路个数统计");
+            parentNode.Nodes.Add(dayNodes);
+            if (DataManager.GetInst().indexs == null) return;
+            int count = DataManager.GetInst().indexs.Count;
+            if (count == 0) return;
+            for (int i = 0; i < count; ++i)
+            {
+                int oneDayID = DataManager.GetInst().indexs[i];
+                OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+                TreeNode dn = new TreeNode(odd.dateID.ToString());
+                dayNodes.Nodes.Add(dn);
+                for (int j = 0; j < 5; ++j)
+                {
+                    TreeNode sn = new TreeNode(SingleNames[j] + " - " + odd.simData.path012CountInfoShort[j][0] + ":" +
+                    odd.simData.path012CountInfoShort[j][1] + ":" +
+                    odd.simData.path012CountInfoShort[j][2]);
+                    dn.Nodes.Add(sn);
                 }
             }
         }

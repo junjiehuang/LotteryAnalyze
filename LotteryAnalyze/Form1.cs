@@ -50,7 +50,7 @@ namespace LotteryAnalyze
             SimulationGroup3.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
             textBoxFirmRatio.Text = SimulationGroup3.firmRatio.ToString();
             textBoxMaxRatio.Text = SimulationGroup3.maxRatio.ToString();
-
+            textBoxPath012ShortCount.Text = ColumnSimulateSingleBuyLottery.S_SHORT_COUNT.ToString();
             DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
         }
 
@@ -312,6 +312,7 @@ namespace LotteryAnalyze
                 TreeNode nodeParent = treeViewCollectorInfo.Nodes.Add(cb.GetDesc());
                 cb.OutPutToTreeView(nodeParent);
             }
+            RefreshDataView();
         }
 
         private void treeViewCollectorInfo_DoubleClick(object sender, EventArgs e)
@@ -362,6 +363,12 @@ namespace LotteryAnalyze
             progressBar1.Value = progressBar1.Minimum;
             richTextBoxResult.Text = "";
 
+        }
+
+        private void textBoxPath012ShortCount_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBoxPath012ShortCount.Text) == false)
+                ColumnSimulateSingleBuyLottery.S_SHORT_COUNT = int.Parse(textBoxPath012ShortCount.Text);
         }
     }
 }
