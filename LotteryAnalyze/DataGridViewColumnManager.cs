@@ -86,6 +86,7 @@ namespace LotteryAnalyze
             sColumns.Add(new ColumnNumber());
             sColumns.Add(new ColumnSimulateGroup3BuyLottery());
             sColumns.Add(new ColumnSimulateGroup2BuyLottery());
+            sColumns.Add(new ColumnSimulateSingleBuyLottery());
         }
 
         public static void ReassignColumns(DataGridView view)
@@ -674,6 +675,93 @@ namespace LotteryAnalyze
 
     #endregion
 
+    #region single column
+
+    public class ColumnSinglePath0 : ColumnBase
+    {
+        public ColumnSinglePath0()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "0路"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 0 ? "0" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add(ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 0 ? "0" : "");
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnSinglePath1 : ColumnBase
+    {
+        public ColumnSinglePath1()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "1路"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 1 ? "1" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add(ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 1 ? "1" : "");
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+    public class ColumnSinglePath2 : ColumnBase
+    {
+        public ColumnSinglePath2()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "2路"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                cell.Value = (ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 2 ? "2" : "");
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            colValues.Add(ColumnSimulateSingleBuyLottery.GetNum(item) % 3 == 2 ? "2" : "");
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
+
+
+    #endregion
+
     #region simulate step info
 
     public class ColumnKillResultTrue : ColumnBase
@@ -849,6 +937,41 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSimProfit());
         }
         public override string GetColumnName() { return "模拟组二方案"; }
+    }
+
+
+    public class ColumnSimulateSingleBuyLottery : ColumnSet
+    {
+        public static int S_INDEX = 0;
+        public static int GetNum(DataItem data)
+        {
+            switch(S_INDEX)
+            {
+                case 0: return data.GetWanNumber();
+                case 1: return data.GetQianNumber();
+                case 2: return data.GetBaiNumber();
+                case 3: return data.GetShiNumber();
+                case 4: return data.GetGeNumber();
+            }
+            Console.WriteLine("not find number at (" + data.lotteryNumber +") [" + S_INDEX + "]");
+            return -1;
+        }
+
+        public ColumnSimulateSingleBuyLottery()
+        {
+            forceActive = false;
+            active = false;
+            subColumns.Add(new ColumnSinglePath0());
+            subColumns.Add(new ColumnSinglePath1());
+            subColumns.Add(new ColumnSinglePath2());
+
+            subColumns.Add(new ColumnKillResultTrue());
+            subColumns.Add(new ColumnKillResultFalse());
+            subColumns.Add(new ColumnSimCost());
+            subColumns.Add(new ColumnSimReward());
+            subColumns.Add(new ColumnSimProfit());
+        }
+        public override string GetColumnName() { return "模拟单选方案"; }
     }
 
 }
