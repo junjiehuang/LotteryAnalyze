@@ -48,16 +48,8 @@ namespace LotteryAnalyze
                        strs[0] == "-" || strs[1] == "-")
                         continue;
 
-                    DataItem item = new DataItem();
-                    item.id = int.Parse(strs[0]);
-                    item.lotteryNumber = strs[1];
-                    item.idTag = fileID.ToString() + "-" + strs[0];
-                    item.andValue = Util.CalAndValue(item.lotteryNumber);
-                    item.rearValue = Util.CalRearValue(item.lotteryNumber);
-                    item.crossValue = Util.CalCrossValue(item.lotteryNumber);
-                    item.groupType = Util.GetGroupType(item.lotteryNumber);
-                    item.parent = datas;
-                    item.GetValuesInThreePos();
+                    DataItem item = new DataItem(strs[0], strs[1], fileID);
+                    item.parent = datas;                    
                     datas.datas.Add(item);
                 }
             }
@@ -431,6 +423,56 @@ namespace LotteryAnalyze
             DataManager.GetInst().curProfit += -item.simData.cost + item.simData.reward;
             item.simData.profit = DataManager.GetInst().curProfit;
             return item.simData.predictResult;
+        }
+
+        public static bool CollectPath012Info(List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo)
+        {
+            if (DataManager.GetInst().indexs == null) return false;
+            int count = DataManager.GetInst().indexs.Count;
+            if (count == 0) return false;
+
+            if (maxMissingInfo != null)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    maxMissingInfo[i].maxPath012MissingData[0] = maxMissingInfo[i].maxPath012MissingData[1] = maxMissingInfo[i].maxPath012MissingData[2] = 0;
+                    maxMissingInfo[i].maxPath012MissingID[0] = maxMissingInfo[i].maxPath012MissingID[1] = maxMissingInfo[i].maxPath012MissingID[2] = -1;
+                }
+            }
+            for (int i = 0; i < count; ++i)
+            {
+                int oneDayID = DataManager.GetInst().indexs[i];
+                OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+                for (int j = 0; j < odd.datas.Count; ++j)
+                {
+                    DataItem item = odd.datas[j];
+                    item.simData.ResetPath012Info();
+                    DataItem prevItem = item.parent.GetPrevItem(item);
+                    if (prevItem != null)
+                    {
+                        for (int k = 0; k < 5; ++k)
+                        {
+                            for (int t = 0; t < 3; ++t)
+                            {
+                                if (item.path012OfEachSingle[k] == t)
+                                    item.simData.path012MissingInfo[k][t] = 0;
+                                else
+                                    item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
+
+                                if (item.path012OfEachSingle[k] == t)
+                                    item.simData.path012CountInfoLong[k][t] = item.simData.path012CountInfoLong[k][t] + 1;
+
+                                if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
+                                {
+                                    maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
+                                    maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
     }
 }

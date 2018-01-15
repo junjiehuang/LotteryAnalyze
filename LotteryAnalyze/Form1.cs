@@ -248,6 +248,7 @@ namespace LotteryAnalyze
                 int key = (int)(item.Tag);
                 dataMgr.LoadData(key);
             }
+            Util.CollectPath012Info(null);
             RefreshDataView();
         }
 
@@ -327,10 +328,13 @@ namespace LotteryAnalyze
                     int lastIndex = tag.itemIndex + tag.continueCount - 1;
                     for (int i = 0; i < dataGridViewLotteryDatas.Rows.Count; ++i)
                     {
-                        if( i < firstIndex || i > lastIndex )
+                        if (i < firstIndex || i > lastIndex)
                             dataGridViewLotteryDatas.Rows[i].Selected = false;
                         else
+                        {
                             dataGridViewLotteryDatas.Rows[i].Selected = true;
+                            dataGridViewLotteryDatas.CurrentCell = dataGridViewLotteryDatas.Rows[i].Cells[0];
+                        }
                     }
                 }
             }

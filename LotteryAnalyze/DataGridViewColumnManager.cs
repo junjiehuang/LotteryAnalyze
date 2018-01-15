@@ -759,6 +759,39 @@ namespace LotteryAnalyze
         }
     }
 
+    public class ColumnSinglePath012Missing : ColumnBase
+    {
+        public ColumnSinglePath012Missing()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012路遗漏"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 60;
+        }
+    }
 
     #endregion
 
@@ -943,6 +976,8 @@ namespace LotteryAnalyze
     public class ColumnSimulateSingleBuyLottery : ColumnSet
     {
         public static int S_INDEX = 0;
+        public static int S_SHORT_COUNT = 30;
+
         public static int GetNum(DataItem data)
         {
             switch(S_INDEX)
@@ -964,6 +999,7 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSinglePath0());
             subColumns.Add(new ColumnSinglePath1());
             subColumns.Add(new ColumnSinglePath2());
+            subColumns.Add(new ColumnSinglePath012Missing());
 
             subColumns.Add(new ColumnKillResultTrue());
             subColumns.Add(new ColumnKillResultFalse());

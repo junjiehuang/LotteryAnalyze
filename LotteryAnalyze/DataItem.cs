@@ -6,7 +6,7 @@ using System.Text;
 namespace LotteryAnalyze
 {
     #region data manage
-    public struct SimData
+    public class SimData
     {
         public string killList;
         public TestResultType predictResult;
@@ -26,6 +26,20 @@ namespace LotteryAnalyze
         public float g3Score;
         public float g1Score;
 
+        public List<int[]> path012MissingInfo = new List<int[]>();
+        public List<int[]> path012CountInfoLong = new List<int[]>();
+        public List<int[]> path012CountInfoShort = new List<int[]>();
+
+        public SimData()
+        {
+            for( int i = 0; i < 5; ++i )
+            {
+                path012MissingInfo.Add(new int[3]);
+                path012CountInfoLong.Add(new int[3]);
+                path012CountInfoShort.Add(new int[3]);
+            }
+        }
+
         public void Reset()
         {
             predictResult = TestResultType.eTRTIgnore;
@@ -36,6 +50,17 @@ namespace LotteryAnalyze
             killAndValueAtGroup = GroupType.eGT6;
 
             g6Score = g3Score = g1Score = 0.0f;
+            ResetPath012Info();
+        }
+
+        public void ResetPath012Info()
+        {
+            for (int i = 0; i < 5; ++i)
+            {
+                path012MissingInfo[i][0] = path012MissingInfo[i][1] = path012MissingInfo[i][2] = 0;
+                path012CountInfoLong[i][0] = path012CountInfoLong[i][1] = path012CountInfoLong[i][2] = 0;
+                path012CountInfoShort[i][0] = path012CountInfoShort[i][1] = path012CountInfoShort[i][2] = 0;
+            }
         }
     }
 
@@ -52,11 +77,26 @@ namespace LotteryAnalyze
         public int crossValue;
         public GroupType groupType;
         public List<int> valuesOfLastThree = new List<int>();
+        public List<int> path012OfEachSingle = new List<int>();
 
-        public SimData simData;
+        public SimData simData = new SimData();
 
-        public DataItem()
+        public DataItem(string idStr, string numStr, int fileID)
         {
+            id = int.Parse(idStr);
+            lotteryNumber = numStr;
+            idTag = fileID + "-" + idStr;
+            andValue = Util.CalAndValue(lotteryNumber);
+            rearValue = Util.CalRearValue(lotteryNumber);
+            crossValue = Util.CalCrossValue(lotteryNumber);
+            groupType = Util.GetGroupType(lotteryNumber);
+            GetValuesInThreePos();
+            path012OfEachSingle.Clear();
+            path012OfEachSingle.Add(GetWanNumber() % 3);
+            path012OfEachSingle.Add(GetQianNumber() % 3);
+            path012OfEachSingle.Add(GetBaiNumber() % 3);
+            path012OfEachSingle.Add(GetShiNumber() % 3);
+            path012OfEachSingle.Add(GetGeNumber() % 3);
         }
 
         public int GetGeNumber()
@@ -91,6 +131,29 @@ namespace LotteryAnalyze
                 valuesOfLastThree.Add(GetBaiNumber());
                 valuesOfLastThree.Add(GetShiNumber());
                 valuesOfLastThree.Add(GetGeNumber());
+            }
+        }
+        public void CollectPath012Info()
+        {
+            for (int i = 0; i < 5; ++i)
+            {
+                simData.path012CountInfoShort[i][0] = simData.path012CountInfoShort[i][1] = simData.path012CountInfoShort[i][2] = 0;
+            }
+
+            DataItem prevItem = this;
+            for( int i = 0; i < ColumnSimulateSingleBuyLottery.S_SHORT_COUNT; ++i )
+            {
+                prevItem = prevItem.parent.GetPrevItem(prevItem);
+                if (prevItem == null)
+                    break;
+                for( int j = 0; j < 5; ++j )
+                {
+                    for( int k = 0; k < 3; ++k )
+                    {
+                        if (prevItem.path012OfEachSingle[j] == k)
+                            simData.path012CountInfoShort[j][k]++;
+                    }
+                }
             }
         }
     }
