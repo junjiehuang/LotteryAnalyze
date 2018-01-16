@@ -6,6 +6,30 @@ using System.IO;
 
 namespace LotteryAnalyze
 {
+    // 个位对数5期定胆
+    // 0 - 1
+    // 1 - 5
+    // 2 - 3
+    // 3 - 0
+    // 4 - 7
+    // 5 - 8
+    // 6 - 2
+    // 7 - 4
+    // 8 - 3
+    // 9 - 6
+
+    // 十位对数3期定胆
+    // 0 - 0
+    // 1 - 8
+    // 2 - 6
+    // 3 - 4
+    // 4 - 7
+    // 5 - 9
+    // 6 - 1
+    // 7 - 2
+    // 8 - 4
+    // 9 - 6
+
     public enum GroupType
     {
         eGT1 = 1,
@@ -457,19 +481,28 @@ namespace LotteryAnalyze
                         {
                             for (int t = 0; t < 3; ++t)
                             {
-                                if (item.path012OfEachSingle[k] == t)
+                                if (prevItem.path012OfEachSingle[k] == t)
                                     item.simData.path012MissingInfo[k][t] = 0;
                                 else
                                     item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
 
-                                if (item.path012OfEachSingle[k] == t)
-                                    item.simData.path012CountInfoLong[k][t] = item.simData.path012CountInfoLong[k][t] + 1;
+                                if (prevItem.path012OfEachSingle[k] == t)
+                                    item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
+                                else
+                                    item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
 
                                 if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
                                 {
                                     maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
                                     maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
                                 }
+                            }
+                            int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
+                            if(totalCount > 0)
+                            {
+                                item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
+                                item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
+                                item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
                             }
                         }
                     }

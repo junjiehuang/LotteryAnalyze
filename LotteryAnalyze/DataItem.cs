@@ -28,7 +28,11 @@ namespace LotteryAnalyze
 
         public List<int[]> path012MissingInfo = new List<int[]>();
         public List<int[]> path012CountInfoLong = new List<int[]>();
+        public List<int[]> path012ProbabilityLong = new List<int[]>();
+
         public List<int[]> path012CountInfoShort = new List<int[]>();
+        public List<int[]> path012ProbabilityShort = new List<int[]>();
+        public List<int[]> path012ProbabilityShortNormalize = new List<int[]>();
 
         public SimData()
         {
@@ -37,6 +41,9 @@ namespace LotteryAnalyze
                 path012MissingInfo.Add(new int[3]);
                 path012CountInfoLong.Add(new int[3]);
                 path012CountInfoShort.Add(new int[3]);
+                path012ProbabilityShort.Add(new int[3]);
+                path012ProbabilityShortNormalize.Add(new int[3]);
+                path012ProbabilityLong.Add(new int[3]);
             }
         }
 
@@ -59,13 +66,18 @@ namespace LotteryAnalyze
             {
                 path012MissingInfo[i][0] = path012MissingInfo[i][1] = path012MissingInfo[i][2] = 0;
                 path012CountInfoLong[i][0] = path012CountInfoLong[i][1] = path012CountInfoLong[i][2] = 0;
+                path012ProbabilityLong[i][0] = path012ProbabilityLong[i][1] = path012ProbabilityLong[i][2] = 0;                
                 path012CountInfoShort[i][0] = path012CountInfoShort[i][1] = path012CountInfoShort[i][2] = 0;
+                path012ProbabilityShort[i][0] = path012ProbabilityShort[i][1] = path012ProbabilityShort[i][2] = 0;
+                path012ProbabilityShortNormalize[i][0] = path012ProbabilityShortNormalize[i][1] = path012ProbabilityShortNormalize[i][2] = 0;
             }
         }
     }
 
     public class DataItem
     {
+        static int[] TheoryProbabilityOfPath012 = new int[3] { 40, 30, 30, };
+
         public OneDayDatas parent = null;
 
         public int idGlobal = -1;
@@ -134,24 +146,41 @@ namespace LotteryAnalyze
             }
         }
         public void CollectShortPath012Info()
-        {
+        {            
             for (int i = 0; i < 5; ++i)
             {
+                simData.path012CountInfoLong[i][0] = simData.path012CountInfoLong[i][1] = simData.path012CountInfoLong[i][2] = 0;
+                simData.path012ProbabilityLong[i][0] = simData.path012ProbabilityLong[i][1] = simData.path012ProbabilityLong[i][2] = 0;                
                 simData.path012CountInfoShort[i][0] = simData.path012CountInfoShort[i][1] = simData.path012CountInfoShort[i][2] = 0;
+                simData.path012ProbabilityShort[i][0] = simData.path012ProbabilityShort[i][1] = simData.path012ProbabilityShort[i][2] = 0;
+                simData.path012ProbabilityShortNormalize[i][0] = simData.path012ProbabilityShortNormalize[i][1] = simData.path012ProbabilityShortNormalize[i][2] = 0;
             }
 
+            int validCount = 0;
             DataItem prevItem = this;
             for( int i = 0; i < ColumnSimulateSingleBuyLottery.S_SHORT_COUNT; ++i )
             {
                 prevItem = prevItem.parent.GetPrevItem(prevItem);
                 if (prevItem == null)
                     break;
-                for( int j = 0; j < 5; ++j )
+                ++validCount;
+                for ( int j = 0; j < 5; ++j )
                 {
                     for( int k = 0; k < 3; ++k )
                     {
                         if (prevItem.path012OfEachSingle[j] == k)
                             simData.path012CountInfoShort[j][k] = simData.path012CountInfoShort[j][k] + 1;
+                    }
+                }
+            }
+            if (validCount > 0)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        simData.path012ProbabilityShort[i][k] = simData.path012CountInfoShort[i][k] * 100 / validCount;
+                        simData.path012ProbabilityShortNormalize[i][k] = simData.path012ProbabilityShort[i][k] - TheoryProbabilityOfPath012[k];
                     }
                 }
             }

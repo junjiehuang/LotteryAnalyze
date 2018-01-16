@@ -701,7 +701,7 @@ namespace LotteryAnalyze
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
             col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            col.Width = 60;
+            col.Width = 40;
         }
     }
     public class ColumnSinglePath1 : ColumnBase
@@ -728,7 +728,7 @@ namespace LotteryAnalyze
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
             col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            col.Width = 60;
+            col.Width = 40;
         }
     }
     public class ColumnSinglePath2 : ColumnBase
@@ -755,7 +755,7 @@ namespace LotteryAnalyze
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
             col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            col.Width = 60;
+            col.Width = 40;
         }
     }
 
@@ -789,23 +789,88 @@ namespace LotteryAnalyze
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
             col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            col.Width = 60;
+            col.Width = 80;
         }
     }
-
+    public class ColumnSinglePath012CountLong : ColumnBase
+    {
+        public ColumnSinglePath012CountLong()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012次数统计全期"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 80;
+        }
+    }
+    public class ColumnSinglePath012ProbabilityLong : ColumnBase
+    {
+        public ColumnSinglePath012ProbabilityLong()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012路实际比率（全期）"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 80;
+        }
+    }
     public class ColumnSinglePath012CountShort : ColumnBase
     {
         public ColumnSinglePath012CountShort()
         {
             forceActive = false;
         }
-        public override string GetColumnName() { return "012统计短期"; }
+        public override string GetColumnName() { return "012次数统计短期"; }
         public override void SetColumnText(DataItem item, DataGridViewRow row)
         {
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
                     item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
                     item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
                 cell.Value = (info);
@@ -813,7 +878,7 @@ namespace LotteryAnalyze
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+            string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
                     item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
                     item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
             colValues.Add(info);
@@ -823,10 +888,76 @@ namespace LotteryAnalyze
             base.SetColumnIndex(ref startIndex, view);
             DataGridViewColumn col = view.Columns[columnID];
             col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            col.Width = 60;
+            col.Width = 80;
         }
-
     }
+    public class ColumnSinglePath012ProbabilityShort : ColumnBase
+    {
+        public ColumnSinglePath012ProbabilityShort()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012路实际比率（短期）"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 80;
+        }
+    }
+    public class ColumnSinglePath012ProbabilityShortNormalize : ColumnBase
+    {
+        public ColumnSinglePath012ProbabilityShortNormalize()
+        {
+            forceActive = false;
+        }
+        public override string GetColumnName() { return "012实际与理论比率差（短期）"; }
+        public override void SetColumnText(DataItem item, DataGridViewRow row)
+        {
+            if (columnID >= 0)
+            {
+                DataGridViewCell cell = row.Cells[columnID];
+                string info = item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                cell.Value = (info);
+            }
+        }
+        public override void OnAddRow(DataItem item, List<object> colValues)
+        {
+            string info = item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            colValues.Add(info);
+        }
+        public override void SetColumnIndex(ref int startIndex, DataGridView view)
+        {
+            base.SetColumnIndex(ref startIndex, view);
+            DataGridViewColumn col = view.Columns[columnID];
+            col.DefaultCellStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            col.Width = 80;
+        }
+    }
+
 
     #endregion
 
@@ -1035,7 +1166,11 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSinglePath1());
             subColumns.Add(new ColumnSinglePath2());
             subColumns.Add(new ColumnSinglePath012Missing());
+            subColumns.Add(new ColumnSinglePath012CountLong());
+            subColumns.Add(new ColumnSinglePath012ProbabilityLong());
             subColumns.Add(new ColumnSinglePath012CountShort());
+            subColumns.Add(new ColumnSinglePath012ProbabilityShort());
+            subColumns.Add(new ColumnSinglePath012ProbabilityShortNormalize());
 
             subColumns.Add(new ColumnKillResultTrue());
             subColumns.Add(new ColumnKillResultFalse());

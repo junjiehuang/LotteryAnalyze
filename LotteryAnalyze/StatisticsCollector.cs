@@ -38,6 +38,7 @@ namespace LotteryAnalyze
 
         public AndValueCollector()
         {
+            enable = false;
             totalCount = 0;
             andValueGraphTotal = new Dictionary<int, int>();
             oneDayAndValueGraph = new Dictionary<OneDayDatas, Dictionary<int, int>>();
@@ -182,6 +183,7 @@ namespace LotteryAnalyze
 
         public Group3AfterLongGroup6Collector()
         {
+            enable = false;
         }
         public override string GetDesc() { return "开出长组6之后的组3信息收集"; }
         public override void Collect() 
@@ -281,7 +283,10 @@ namespace LotteryAnalyze
         GTCount total = new GTCount();
         Dictionary<OneDayDatas, GTCount> infoList = new Dictionary<OneDayDatas, GTCount>();
 
-        public GroupTypeCollector() { }
+        public GroupTypeCollector()
+        {
+            enable = false;
+        }
         public override string GetDesc()
         {
             return "往期开出组六，组三，豹子次数统计";
