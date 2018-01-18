@@ -15,7 +15,6 @@ namespace LotteryAnalyze
         {
             if (sLinePen == null)
                 sLinePen = new Pen(color);
-            sLinePen.Brush = null;
             sLinePen.Color = color;
             sLinePen.DashStyle = dashStyle;
             sLinePen.Width = width;

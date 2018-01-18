@@ -49,7 +49,7 @@ namespace LotteryAnalyze
     class Graph
     {
         float gridScaleH = 5;
-        float gridScaleW = 5;
+        float gridScaleW = 10;
 
         float originX = 0;
         float originY = 0;
@@ -70,6 +70,10 @@ namespace LotteryAnalyze
 
         public void DrawGraph(Graphics g, CollectDataType cdt, int winW, int winH)
         {
+            int baseX = 0;
+            int baseY = winH / 2;
+            g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
+
             lastValue = 0;
             for ( int i = 0; i < kdLst.Count; ++i )
             {
@@ -89,8 +93,8 @@ namespace LotteryAnalyze
             float baseY = winH / 2;
             baseX += (data.index - startDataIndex) * gridScaleW;
             baseY -= lastValue * gridScaleH;
-            int up = (int)(baseY - data.HitValue);
-            int down = (int)(baseY + data.MissValue);
+            int up = (int)(baseY - data.HitValue * gridScaleH);
+            int down = (int)(baseY + data.MissValue * gridScaleH);
             float valueChange = data.HitValue - data.MissValue;
             Color col = valueChange > 0 ? Color.Red : (valueChange < 0 ? Color.Blue : Color.White);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
@@ -104,7 +108,7 @@ namespace LotteryAnalyze
             int height = (int)Math.Abs(valueChange * gridScaleH);
             if (height < 1)
                 height = 1;
-            g.DrawRectangle(rcPen, baseX, rcY, gridScaleW, height);
+            g.FillRectangle(new SolidBrush(col), baseX, rcY, gridScaleW, height);
             lastValue += valueChange;
         }
 
@@ -129,18 +133,21 @@ namespace LotteryAnalyze
                     DataItem item = odd.datas[j];
                     CollectItem(NUM_INDEX, item, curData, collectDataType);
                     ++loop;
-                    if (loop == 5)
+                    if (loop == cycleLength)
+                    {
                         curData = CreateKDataDict();
+                        loop = 0;
+                    }
                 }
             }
         }
 
         void CollectItem(int NUM_INDEX, DataItem item, KDataDict kd, CollectDataType collectDataType)
         {
-            CollectDataType cdt = CollectDataType.eNone;
-            for (; cdt < CollectDataType.eMax; ++cdt)
+            CollectDataType cdt = collectDataType;//CollectDataType.eNone;
+            //for (; cdt < CollectDataType.eMax; ++cdt)
             {
-                if ((collectDataType & cdt) > 0)
+                //if ((collectDataType & cdt) > 0)
                 {
                     KData data = kd.GetData(cdt, true);
                     data.index = kd.index;
