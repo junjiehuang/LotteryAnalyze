@@ -7,7 +7,7 @@ namespace LotteryAnalyze
 {
     static class Program
     {
-        static public Form1 mainForm = null;
+        static public FormMain mainForm = null;
 
         /// <summary>
         /// The main entry point for the application.
@@ -26,7 +26,7 @@ namespace LotteryAnalyze
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
-            mainForm = new Form1();
+            mainForm = new FormMain();
             {
                 mainForm.Show();
                 Init();

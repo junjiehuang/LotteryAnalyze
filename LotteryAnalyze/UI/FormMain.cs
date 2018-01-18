@@ -10,9 +10,9 @@ using System.IO;
 
 namespace LotteryAnalyze
 {
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
-        public Form1()
+        public FormMain()
         {
             InitializeComponent();
 
@@ -369,6 +369,11 @@ namespace LotteryAnalyze
         {
             if (string.IsNullOrEmpty(textBoxPath012ShortCount.Text) == false)
                 ColumnSimulateSingleBuyLottery.S_SHORT_COUNT = int.Parse(textBoxPath012ShortCount.Text);
+        }
+
+        private void openGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LotteryAnalyze.UI.LotteryGraph.Open();
         }
     }
 }
