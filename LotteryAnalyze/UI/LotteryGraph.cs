@@ -14,9 +14,9 @@ namespace LotteryAnalyze.UI
         static LotteryGraph sInst = null;
 
         Graph canvas = new Graph();
-        int numberIndex = 0;
-        int cycleCount = 5;
-        CollectDataType curDataType = CollectDataType.ePath0;
+        int numberIndex = 0;        
+        int curCDTIndex = 0;
+        Point currentPoint = new Point();
 
 
         public static void Open()
@@ -37,8 +37,14 @@ namespace LotteryAnalyze.UI
         {
             InitializeComponent();
 
-            comboBoxNumIndex.SelectedIndex = numberIndex + 1;
-            comboBoxCollectionDataType.SelectedIndex = (int)curDataType;
+            IList<string> list = new List<string>();
+            for (int i = 0; i < GraphDataManager.S_CDTSTRS.Length; ++i)
+                list.Add(GraphDataManager.S_CDTSTRS[i]);
+            comboBoxCollectionDataType.DataSource = list;
+            comboBoxCollectionDataType.SelectedIndex = curCDTIndex;
+
+            comboBoxNumIndex.SelectedIndex = numberIndex;            
+            textBoxCycleLength.Text = GraphDataManager.Instance.CycleLength.ToString();
         }
 
 
@@ -46,13 +52,12 @@ namespace LotteryAnalyze.UI
         {
             g.Clear(Color.Black);
 
-            Rectangle r = new Rectangle(0, 0, this.splitContainer1.Panel1.ClientSize.Width - 1, this.splitContainer1.Panel1.ClientSize.Height - 1);
+            CollectDataType cdt = GraphDataManager.S_CDTS[curCDTIndex];
+            canvas.DrawGraph(g, numberIndex, cdt, this.ClientSize.Width, this.ClientSize.Height);
 
-            //Pen solidPen = GraphUtil.GetSolidPen(Color.Black);
-            //g.DrawRectangle(solidPen, r);
+            Rectangle r = new Rectangle(0, 0, this.splitContainer1.Panel1.ClientSize.Width - 1, this.splitContainer1.Panel1.ClientSize.Height - 1);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
             g.DrawRectangle(linePen, r);
-            canvas.DrawGraph(g, curDataType, this.ClientSize.Width, this.ClientSize.Height);
 
             g.Flush();
         }
@@ -70,8 +75,8 @@ namespace LotteryAnalyze.UI
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            canvas.CollectKDatas(numberIndex, curDataType, cycleCount);
-            this.Update();
+            GraphDataManager.Instance.CollectGraphData();
+            this.Refresh();
         }
 
 
@@ -83,12 +88,46 @@ namespace LotteryAnalyze.UI
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
         {
-            numberIndex = comboBoxNumIndex.SelectedIndex - 1;
+            numberIndex = comboBoxNumIndex.SelectedIndex;
+            this.Refresh();
         }
 
         private void comboBoxCollectionDataType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            curDataType = (CollectDataType)comboBoxCollectionDataType.SelectedIndex;
+            curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
+            this.Refresh();
+        }
+
+        private void textBoxCycleLength_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBoxCycleLength.Text) == false)
+            {
+                GraphDataManager.Instance.CycleLength = int.Parse(textBoxCycleLength.Text);
+            }
+        }
+
+        private void splitContainer1_Panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                int dx = e.Location.X - currentPoint.X;
+                currentPoint = e.Location;
+                bool moveLeft = dx < 0;
+                bool moveSuccess = false;
+                for( int i = Math.Abs(dx); i > 0; i -= 5 )
+                {
+                    if (canvas.MoveLeftRight(moveLeft))
+                        moveSuccess = true;
+                }
+                if(moveSuccess)
+                    this.Refresh();
+            }
+        }
+
+        private void splitContainer1_Panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                currentPoint = e.Location;
         }
     }
 }

@@ -10,12 +10,13 @@ namespace LotteryAnalyze
     {
         eNone,
 
-        ePath0,
-        ePath1,
-        ePath2,
+        ePath0 = 1 << 0,
+        ePath1 = 1 << 1,
+        ePath2 = 1 << 2,
 
-        eMax,
+        eMax = 0xFFFFFFF,
     }
+
 
     class KData
     {
@@ -46,82 +47,100 @@ namespace LotteryAnalyze
         }
     }
 
-    class Graph
+    class KDataDictContainer
     {
-        float gridScaleH = 5;
-        float gridScaleW = 10;
+        public List<KDataDict> dataLst = new List<KDataDict>();
 
-        float originX = 0;
-        float originY = 0;
-
-        List<KDataDict> kdLst = new List<KDataDict>();
-        int startDataIndex = 0;
-        float lastValue = 0;
-
-        public Graph()
+        public KDataDict CreateKDataDict()
         {
-
+            KDataDict kdd = new KDataDict();
+            kdd.index = dataLst.Count;
+            dataLst.Add(kdd);
+            return kdd;
         }
+    }
 
-        public void Destroy()
+    class GraphDataManager
+    {
+        public static CollectDataType[] S_CDTS = new CollectDataType[]
         {
-            kdLst.Clear();
-        }
-
-        public void DrawGraph(Graphics g, CollectDataType cdt, int winW, int winH)
+            CollectDataType.ePath0,
+            CollectDataType.ePath1,
+            CollectDataType.ePath2,
+        };
+        public static string[] S_CDTSTRS = new string[]
         {
-            int baseX = 0;
-            int baseY = winH / 2;
-            g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
+            "0路",
+            "1路",
+            "2路",
+        };
 
-            lastValue = 0;
-            for ( int i = 0; i < kdLst.Count; ++i )
+        static GraphDataManager sInst = null;
+        public static GraphDataManager Instance
+        {
+            get
             {
-                KDataDict kdDict = kdLst[i];
-                KData data = kdDict.GetData(cdt, false);
-                if (data == null)
-                    continue;
-                DrawData(g, data, winW, winH);
+                if (sInst == null) sInst = new GraphDataManager();
+                return sInst;
             }
         }
 
-        void DrawData(Graphics g, KData data, int winW, int winH)
+        int dataLength = 0;
+        int cycleLength = 5;
+        List<KDataDictContainer> allDatas = new List<KDataDictContainer>();
+
+        public int CycleLength
         {
-            if (data.index < startDataIndex)
-                return;
-            float baseX = 0;
-            float baseY = winH / 2;
-            baseX += (data.index - startDataIndex) * gridScaleW;
-            baseY -= lastValue * gridScaleH;
-            int up = (int)(baseY - data.HitValue * gridScaleH);
-            int down = (int)(baseY + data.MissValue * gridScaleH);
-            float valueChange = data.HitValue - data.MissValue;
-            Color col = valueChange > 0 ? Color.Red : (valueChange < 0 ? Color.Blue : Color.White);
-            Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
-            Pen rcPen = GraphUtil.GetSolidPen(col);
-            int midX = (int)(baseX + gridScaleW * 0.5f);
-            Point p0 = new Point(midX, up);
-            Point p1 = new Point(midX, down);
-            g.DrawLine(linePen, p0, p1);
-            linePen.Width = gridScaleW;
-            float rcY = valueChange > 0 ? (baseY - valueChange * gridScaleH) : baseY;
-            int height = (int)Math.Abs(valueChange * gridScaleH);
-            if (height < 1)
-                height = 1;
-            g.FillRectangle(new SolidBrush(col), baseX, rcY, gridScaleW, height);
-            lastValue += valueChange;
+            get { return cycleLength; }
+            set { cycleLength = value; }
+        }
+        public int DataLength
+        {
+            get
+            {
+                return dataLength;
+            }
         }
 
-        public void CollectKDatas(int NUM_INDEX, CollectDataType collectDataType, int cycleLength = 5)
+        public void Clear()
         {
-            kdLst.Clear();
+            allDatas.Clear();
+        }
 
+        public KDataDictContainer GetKDataDictContainer( int numIndex )
+        {
+            if(allDatas.Count > numIndex)
+                return allDatas[numIndex];
+            return null;
+        }
+
+        public void Init()
+        {
+            KDataDictContainer kddc = null;
+            for ( int i = 0; i < 5; ++i )
+            {
+                if (i >= allDatas.Count)
+                {
+                    kddc = new KDataDictContainer();
+                    allDatas.Add(kddc);
+                }
+                else
+                {
+                    kddc = allDatas[i];
+                    kddc.dataLst.Clear();
+                }
+            }
+        }
+
+        public void CollectGraphData()
+        {
             if (DataManager.GetInst().indexs == null) return;
             int count = DataManager.GetInst().indexs.Count;
             if (count == 0) return;
+            Init();
 
             int loop = 0;
-            KDataDict curData = CreateKDataDict();
+            KDataDict[] curDatas = CreateKDataDicts();
 
             for (int i = 0; i < count; ++i)
             {
@@ -131,58 +150,152 @@ namespace LotteryAnalyze
                 for (int j = 0; j < odd.datas.Count; ++j)
                 {
                     DataItem item = odd.datas[j];
-                    CollectItem(NUM_INDEX, item, curData, collectDataType);
+                    for (int numIndex = 0; numIndex < 5; ++numIndex)
+                    {
+                        CollectItem(numIndex, item, curDatas[numIndex]);
+                    }
+
                     ++loop;
                     if (loop == cycleLength)
                     {
-                        curData = CreateKDataDict();
+                        curDatas = CreateKDataDicts();
                         loop = 0;
                     }
                 }
             }
+
+            dataLength = allDatas[0].dataLst.Count;
         }
 
-        void CollectItem(int NUM_INDEX, DataItem item, KDataDict kd, CollectDataType collectDataType)
+        void CollectItem(int NUM_INDEX, DataItem item, KDataDict kd)
         {
-            CollectDataType cdt = collectDataType;//CollectDataType.eNone;
-            //for (; cdt < CollectDataType.eMax; ++cdt)
+            for (int i = 0; i < S_CDTS.Length; ++i)
             {
-                //if ((collectDataType & cdt) > 0)
+                CollectDataType cdt = S_CDTS[i];
+                KData data = kd.GetData(cdt, true);
+                data.index = kd.index;
+                switch (cdt)
                 {
-                    KData data = kd.GetData(cdt, true);
-                    data.index = kd.index;
-                    switch (cdt)
-                    {
-                        case CollectDataType.ePath0:
-                            if (item.path012OfEachSingle[NUM_INDEX] == 0)
-                                data.HitValue++;
-                            else
-                                data.MissValue++;
-                            break;
-                        case CollectDataType.ePath1:
-                            if (item.path012OfEachSingle[NUM_INDEX] == 1)
-                                data.HitValue++;
-                            else
-                                data.MissValue++;
-                            break;
-                        case CollectDataType.ePath2:
-                            if (item.path012OfEachSingle[NUM_INDEX] == 2)
-                                data.HitValue++;
-                            else
-                                data.MissValue++;
-                            break;
-                    }
+                    case CollectDataType.ePath0:
+                        if (item.path012OfEachSingle[NUM_INDEX] == 0)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.ePath1:
+                        if (item.path012OfEachSingle[NUM_INDEX] == 1)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.ePath2:
+                        if (item.path012OfEachSingle[NUM_INDEX] == 2)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;                
                 }
             }
         }
 
-        KDataDict CreateKDataDict()
+        KDataDict[] CreateKDataDicts()
         {
-            KDataDict curData = new KDataDict();
-            curData.index = kdLst.Count;
-            kdLst.Add(curData);
-            return curData;
+            KDataDict[] curDatas = new KDataDict[5];
+            for (int i = 0; i < 5; ++i)
+            {
+                curDatas[i] = allDatas[i].CreateKDataDict();
+            }
+            return curDatas;
         }
+    }
+
+    class Graph
+    {
+        float gridScaleH = 5;
+        float gridScaleW = 10;
+
+        float originX = 0;
+        float originY = 0;
+
+        int startDataIndex = 0;
+        float startDataValue = 0;        
+        float lastValue = 0;
+
+        public Graph()
+        {
+
+        }
+
+        public bool MoveLeftRight( bool left )
+        {
+            if (left && startDataIndex < GraphDataManager.Instance.DataLength - 1)
+            {
+                ++startDataIndex;
+                return true;
+            }
+            else if (startDataIndex > 0)
+            {
+                --startDataIndex;
+                return true;
+            }
+            return false;
+        }
+        
+        public void DrawGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH)
+        {
+            int baseX = 0;
+            int baseY = winH / 2;
+            g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
+
+            lastValue = 0;
+            startDataValue = 0;
+            KDataDictContainer kddc = GraphDataManager.Instance.GetKDataDictContainer(numIndex);
+            if (kddc != null)
+            {
+                for (int i = 0; i < kddc.dataLst.Count; ++i)
+                {
+                    KDataDict kdDict = kddc.dataLst[i];
+                    KData data = kdDict.GetData(cdt, false);
+                    if (data == null)
+                        continue;
+                    DrawData(g, data, winW, winH);
+                }
+            }
+        }
+
+        void DrawData(Graphics g, KData data, int winW, int winH)
+        {
+            float valueChange = data.HitValue - data.MissValue;
+            if (data.index < startDataIndex)
+            {
+                lastValue += valueChange;
+                startDataValue += valueChange;
+                return;
+            }
+
+            float baseX = 0;
+            float baseY = winH / 2;
+            baseX += (data.index - startDataIndex) * gridScaleW;
+            baseY -= (lastValue - startDataValue) * gridScaleH;
+            int upBound = (int)(baseY - data.HitValue * gridScaleH);
+            int downBound = (int)(baseY + data.MissValue * gridScaleH);
+            
+            Color col = valueChange > 0 ? Color.Red : (valueChange < 0 ? Color.Blue : Color.White);
+            Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
+            Pen rcPen = GraphUtil.GetSolidPen(col);
+            int midX = (int)(baseX + gridScaleW * 0.5f);
+            Point p0 = new Point(midX, upBound);
+            Point p1 = new Point(midX, downBound);
+            g.DrawLine(linePen, p0, p1);
+            float rcY = valueChange > 0 ? (baseY - valueChange * gridScaleH) : baseY;
+            int height = (int)Math.Abs(valueChange * gridScaleH);
+            if (height < 1)
+                height = 1;
+            g.FillRectangle(new SolidBrush(col), baseX, rcY, gridScaleW, height);
+            lastValue += valueChange;
+        }
+
+
 
 
     }

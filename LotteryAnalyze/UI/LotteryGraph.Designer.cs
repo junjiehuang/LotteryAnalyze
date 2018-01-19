@@ -32,10 +32,12 @@
             this.操作ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBoxCycleLength = new System.Windows.Forms.TextBox();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -63,7 +65,7 @@
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.refreshToolStripMenuItem.Text = "刷新";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -76,9 +78,13 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
+            this.splitContainer1.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_Panel1_MouseDown);
+            this.splitContainer1.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_Panel1_MouseMove);
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.textBoxCycleLength);
+            this.splitContainer1.Panel2.Controls.Add(this.label3);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxCollectionDataType);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
@@ -87,14 +93,29 @@
             this.splitContainer1.SplitterDistance = 437;
             this.splitContainer1.TabIndex = 1;
             // 
-            // label1
+            // comboBoxCollectionDataType
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "选择数字位：";
+            this.comboBoxCollectionDataType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxCollectionDataType.FormattingEnabled = true;
+            this.comboBoxCollectionDataType.Items.AddRange(new object[] {
+            "0路",
+            "1路",
+            "2路"});
+            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 63);
+            this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
+            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(156, 20);
+            this.comboBoxCollectionDataType.TabIndex = 3;
+            this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 12);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "选择数据类型：";
             // 
             // comboBoxNumIndex
             // 
@@ -119,29 +140,33 @@
             this.comboBoxNumIndex.TabIndex = 1;
             this.comboBoxNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxNumIndex_SelectedIndexChanged);
             // 
-            // label2
+            // label1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 12);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "选择数据类型：";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(4, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 12);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "选择数字位：";
             // 
-            // comboBoxCollectionDataType
+            // label3
             // 
-            this.comboBoxCollectionDataType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 90);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 12);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "K值周期：";
+            // 
+            // textBoxCycleLength
+            // 
+            this.textBoxCycleLength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxCollectionDataType.FormattingEnabled = true;
-            this.comboBoxCollectionDataType.Items.AddRange(new object[] {
-            "0路",
-            "1路",
-            "2路"});
-            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 63);
-            this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
-            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(156, 20);
-            this.comboBoxCollectionDataType.TabIndex = 3;
-            this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
+            this.textBoxCycleLength.Location = new System.Drawing.Point(6, 106);
+            this.textBoxCycleLength.Name = "textBoxCycleLength";
+            this.textBoxCycleLength.Size = new System.Drawing.Size(156, 21);
+            this.textBoxCycleLength.TabIndex = 5;
+            this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
             // LotteryGraph
             // 
@@ -176,5 +201,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBoxCollectionDataType;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxCycleLength;
+        private System.Windows.Forms.Label label3;
     }
 }
