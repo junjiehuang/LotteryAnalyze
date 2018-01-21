@@ -13,10 +13,11 @@ namespace LotteryAnalyze.UI
     {
         static LotteryGraph sInst = null;
 
-        Graph canvas = new Graph();
+        GraphSet graphMgr = new GraphSet();
         int numberIndex = 0;        
         int curCDTIndex = 0;
         Point currentPoint = new Point();
+        Point mouseRelPos = new Point();
 
 
         public static void Open()
@@ -37,14 +38,23 @@ namespace LotteryAnalyze.UI
         {
             InitializeComponent();
 
-            IList<string> list = new List<string>();
-            for (int i = 0; i < GraphDataManager.S_CDTSTRS.Length; ++i)
-                list.Add(GraphDataManager.S_CDTSTRS[i]);
-            comboBoxCollectionDataType.DataSource = list;
-            comboBoxCollectionDataType.SelectedIndex = curCDTIndex;
+            //采用双缓冲技术的控件必需的设置
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
 
-            comboBoxNumIndex.SelectedIndex = numberIndex;            
-            textBoxCycleLength.Text = GraphDataManager.Instance.CycleLength.ToString();
+            graphMgr.SetCurrentGraph(GraphType.eKCurveGraph);
+
+            comboBoxCollectionDataType.DataSource = GraphDataManager.S_CDT_TAG_LIST;
+            comboBoxCollectionDataType.SelectedIndex = curCDTIndex;
+            comboBoxNumIndex.SelectedIndex = numberIndex;
+            textBoxCycleLength.Text = GraphDataManager.KGDC.CycleLength.ToString();
+
+            comboBoxBarCollectType.DataSource = BarGraphDataContianer.S_StatisticsType_STRS;
+            comboBoxCollectRange.DataSource = BarGraphDataContianer.S_StatisticsRange_STRS;
+            comboBoxBarCollectType.SelectedIndex = (int)GraphDataManager.BGDC.curStatisticsType;
+            comboBoxCollectRange.SelectedIndex = (int)GraphDataManager.BGDC.curStatisticsRange;
+            textBoxCustomCollectRange.Text = GraphDataManager.BGDC.customStatisticsRange.ToString();
         }
 
 
@@ -52,14 +62,22 @@ namespace LotteryAnalyze.UI
         {
             g.Clear(Color.Black);
 
-            CollectDataType cdt = GraphDataManager.S_CDTS[curCDTIndex];
-            canvas.DrawGraph(g, numberIndex, cdt, this.ClientSize.Width, this.ClientSize.Height);
+            CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
+            graphMgr.DrawGraph(g, numberIndex, cdt, this.splitContainer1.Panel1.ClientSize.Width, this.splitContainer1.Panel1.ClientSize.Height, mouseRelPos);
 
-            Rectangle r = new Rectangle(0, 0, this.splitContainer1.Panel1.ClientSize.Width - 1, this.splitContainer1.Panel1.ClientSize.Height - 1);
+            Rectangle r = new Rectangle(1, 1, this.splitContainer1.Panel1.ClientSize.Width - 2, this.splitContainer1.Panel1.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
             g.DrawRectangle(linePen, r);
 
             g.Flush();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0014) // 禁掉清除背景消息
+                return;
+            base.WndProc(ref m);
+
         }
 
         private void LotteryGraph_Paint(object sender, PaintEventArgs e)
@@ -75,8 +93,8 @@ namespace LotteryAnalyze.UI
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GraphDataManager.Instance.CollectGraphData();
-            this.Refresh();
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);//触发Paint事件
         }
 
 
@@ -89,38 +107,43 @@ namespace LotteryAnalyze.UI
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
         {
             numberIndex = comboBoxNumIndex.SelectedIndex;
-            this.Refresh();
+            this.Invalidate(true);//触发Paint事件
         }
 
         private void comboBoxCollectionDataType_SelectedIndexChanged(object sender, EventArgs e)
         {
             curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
-            this.Refresh();
+            this.Invalidate(true);//触发Paint事件
         }
 
         private void textBoxCycleLength_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBoxCycleLength.Text) == false)
             {
-                GraphDataManager.Instance.CycleLength = int.Parse(textBoxCycleLength.Text);
+                int value = 5;
+                if (int.TryParse(textBoxCycleLength.Text, out value))
+                {
+                    GraphDataManager.KGDC.CycleLength = value;
+                    GraphDataManager.KGDC.CollectGraphData();
+                    this.Invalidate(true);//触发Paint事件
+                }
             }
         }
 
         private void splitContainer1_Panel1_MouseMove(object sender, MouseEventArgs e)
         {
+            mouseRelPos = this.splitContainer1.Panel1.PointToClient(e.Location);
+            if (graphMgr.NeedRefreshCanvasOnMouseMove(mouseRelPos))
+                this.Invalidate(true);//触发Paint事件
             if (e.Button == MouseButtons.Left)
             {
                 int dx = e.Location.X - currentPoint.X;
                 currentPoint = e.Location;
                 bool moveLeft = dx < 0;
-                bool moveSuccess = false;
                 for( int i = Math.Abs(dx); i > 0; i -= 5 )
                 {
-                    if (canvas.MoveLeftRight(moveLeft))
-                        moveSuccess = true;
+                    graphMgr.MoveLeftRight(moveLeft);
                 }
-                if(moveSuccess)
-                    this.Refresh();
             }
         }
 
@@ -128,6 +151,33 @@ namespace LotteryAnalyze.UI
         {
             if (e.Button == MouseButtons.Left)
                 currentPoint = e.Location;
+        }
+
+        private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);
+        }
+
+        private void comboBoxBarCollectType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GraphDataManager.BGDC.curStatisticsType = (BarGraphDataContianer.StatisticsType)comboBoxBarCollectType.SelectedIndex;
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);
+        }
+
+        private void comboBoxCollectRange_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GraphDataManager.BGDC.curStatisticsRange = (BarGraphDataContianer.StatisticsRange)comboBoxCollectRange.SelectedIndex;
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);
+        }
+
+        private void textBoxCustomCollectRange_TextChanged(object sender, EventArgs e)
+        {
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);
         }
     }
 }

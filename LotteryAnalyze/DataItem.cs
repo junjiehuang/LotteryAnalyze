@@ -110,7 +110,10 @@ namespace LotteryAnalyze
             path012OfEachSingle.Add(GetShiNumber() % 3);
             path012OfEachSingle.Add(GetGeNumber() % 3);
         }
-
+        public int GetNumberByIndex(int index)
+        {
+            return Util.CharValue(lotteryNumber[index]);
+        }
         public int GetGeNumber()
         {
             int value = Util.CharValue(lotteryNumber[4]);
@@ -345,6 +348,19 @@ namespace LotteryAnalyze
             OneDayDatas nextODD = GetNextOneDayDatas(curItem.parent);
             if (nextODD != null)
                 return nextODD.GetFirstItem();
+            return null;
+        }
+        public DataItem GetLatestItem()
+        {
+            if (allDatas.Count > 0)
+            {
+                int lastIndex = indexs[indexs.Count - 1];
+                if (allDatas.ContainsKey(lastIndex))
+                {
+                    OneDayDatas odd = allDatas[lastIndex];
+                    return odd.datas[odd.datas.Count - 1];
+                }
+            }
             return null;
         }
     }
