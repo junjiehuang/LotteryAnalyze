@@ -152,7 +152,7 @@ namespace LotteryAnalyze.UI
 
         private void splitContainer1_Panel1_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseRelPos = this.splitContainer1.Panel1.PointToClient(e.Location);
+            mouseRelPos = e.Location;// this.splitContainer1.Panel1.PointToClient(e.Location);
             if (graphMgr.NeedRefreshCanvasOnMouseMove(mouseRelPos))
                 this.Invalidate(true);//触发Paint事件
             if (e.Button == MouseButtons.Left)

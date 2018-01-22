@@ -55,6 +55,9 @@ namespace LotteryAnalyze
         PointF prevPt = new PointF();
         bool findPrevPt = false;
 
+        float lastValue = 0;
+        PointF canvasOffset = new PointF(0, 0);
+
         public GraphKCurve()
         {
             selDataFont = new Font(FontFamily.GenericSerif, 16);
@@ -72,33 +75,33 @@ namespace LotteryAnalyze
 
         public override bool MoveLeftRight(bool left)
         {
-            if (left && startDataIndex < (GraphDataManager.Instance.DataLength(GraphType.eKCurveGraph) - 1))
-            {
-                ++startDataIndex;
-                return true;
-            }
-            else if (startDataIndex > 0)
-            {
-                --startDataIndex;
-                return true;
-            }
-            return false;
+            //if (left && startDataIndex < (GraphDataManager.Instance.DataLength(GraphType.eKCurveGraph) - 1))
+            //{
+            //    ++startDataIndex;
+            //    return true;
+            //}
+            //else if (startDataIndex > 0)
+            //{
+            //    --startDataIndex;
+            //    return true;
+            //}
+            //return false;
+            if (left && canvasOffset.X > 0)
+                canvasOffset.X -= gridScaleW;
+            else
+                canvasOffset.X += gridScaleW;
+            return true;
         }
 
         public override void DrawGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
-            int baseY = winH / 2;
-            g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
-
+            selDataIndex = -1;
+            lastValue = 0;
+            if (canvasOffset.Y == 0 && canvasOffset.X == 0)
+                canvasOffset.Y = winH * 0.5f;
+            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
             float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
-
-            selDataIndex = -1;
-            lastDataHitValue = 0;
-            lastDataMissValue = 0;
-            startDataHitValue = 0;
-            startDataMissValue = 0;
-            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
             if (kddc != null)
             {
                 for (int i = 0; i < kddc.dataLst.Count; ++i)
@@ -109,102 +112,207 @@ namespace LotteryAnalyze
                         continue;
                     DrawData(g, data, winW, winH, missRelHeight, mouseRelPos);
                 }
-
-                foreach( AvgDataContainer adc in kddc.avgDataContMap.Values)
+                foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
                 {
-                    if(adc.avgLineSetting.enable)
+                    if (adc.avgLineSetting.enable)
                     {
-                        lastDataHitValue = 0;
-                        lastDataMissValue = 0;
-                        startDataHitValue = 0;
-                        startDataMissValue = 0;
+                        lastValue = 0;
                         findPrevPt = false;
-                        for ( int i = 0; i < adc.avgPointMapLst.Count; ++i )
+                        for (int i = 0; i < adc.avgPointMapLst.Count; ++i)
                         {
                             DrawAvgLine(g, adc.avgPointMapLst[i], winW, winH, missRelHeight, cdt, adc);
                         }
                     }
                 }
             }
+            //int baseY = winH / 2;
+            //g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
+            //int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+            //float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+            //selDataIndex = -1;
+            //lastDataHitValue = 0;
+            //lastDataMissValue = 0;
+            //startDataHitValue = 0;
+            //startDataMissValue = 0;
+            //KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+            //if (kddc != null)
+            //{
+            //    for (int i = 0; i < kddc.dataLst.Count; ++i)
+            //    {
+            //        KDataDict kdDict = kddc.dataLst[i];
+            //        KData data = kdDict.GetData(cdt, false);
+            //        if (data == null)
+            //            continue;
+            //        DrawData(g, data, winW, winH, missRelHeight, mouseRelPos);
+            //    }
+            //    foreach( AvgDataContainer adc in kddc.avgDataContMap.Values)
+            //    {
+            //        if(adc.avgLineSetting.enable)
+            //        {
+            //            lastDataHitValue = 0;
+            //            lastDataMissValue = 0;
+            //            startDataHitValue = 0;
+            //            startDataMissValue = 0;
+            //            findPrevPt = false;
+            //            for ( int i = 0; i < adc.avgPointMapLst.Count; ++i )
+            //            {
+            //                DrawAvgLine(g, adc.avgPointMapLst[i], winW, winH, missRelHeight, cdt, adc);
+            //            }
+            //        }
+            //    }
+            //}
+        }
+
+        float StandToCanvas(float v, bool isX)
+        {
+            if (isX)
+                return v - canvasOffset.X;
+            else
+                return canvasOffset.Y - v;
         }
 
         void DrawData(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
         {
-            if (data.index < startDataIndex)
-            {
-                lastDataHitValue += data.HitValue;
-                lastDataMissValue += data.MissValue;
-                startDataHitValue += data.HitValue;
-                startDataMissValue += data.MissValue;
-                return;
-            }
+            float standX = data.index * gridScaleW;
+            float valudChange = data.HitValue - data.MissValue * missRelHeight;
+            float standY = lastValue * gridScaleH;
+            float up = standY + data.HitValue * gridScaleH;
+            float dowm = standY - data.MissValue * missRelHeight * gridScaleH;
+            float rcY = standY;
+            float rcH = Math.Abs(valudChange * gridScaleH);
+            if (rcH < 1)
+                rcH = 1;
+            if (valudChange > 0)
+                rcY += valudChange * gridScaleH;
+            lastValue += valudChange;
 
-            float baseX = 0;
-            float baseY = winH / 2;
-            baseX += (data.index - startDataIndex) * gridScaleW;
-            baseY -= (lastDataHitValue - startDataHitValue) * gridScaleH;
-            baseY += (lastDataMissValue - startDataMissValue) * gridScaleH * missRelHeight;
-            int upBound = (int)(baseY - data.HitValue * gridScaleH);
-            int downBound = (int)(baseY + data.MissValue * gridScaleH * missRelHeight);
-            float valueChange = data.HitValue - data.MissValue;
-            
-            Color col = valueChange > 0 ? Color.Red : (valueChange < 0 ? Color.Cyan : Color.White);
+            standX = StandToCanvas(standX, true);
+            if (standX < 0 || standX > winW)
+                return;
+            standY = StandToCanvas(standY, false);
+            up = StandToCanvas(up, false);
+            dowm = StandToCanvas(dowm, false);
+            rcY = StandToCanvas(rcY, false);
+            Color col = valudChange > 0 ? Color.Red : (valudChange < 0 ? Color.Cyan : Color.White);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
             Pen rcPen = GraphUtil.GetSolidPen(col);
-            int midX = (int)(baseX + gridScaleW * 0.5f);
-            Point p0 = new Point(midX, upBound);
-            Point p1 = new Point(midX, downBound);
+            float midX = standX + gridScaleW * 0.5f;
+            PointF p0 = new PointF(midX, up);
+            PointF p1 = new PointF(midX, dowm);
             g.DrawLine(linePen, p0, p1);
-            float rcY = valueChange > 0 ? (baseY - valueChange * gridScaleH) : baseY;
-            float height = (int)Math.Abs(valueChange * gridScaleH);
-            if (valueChange < 0)
-                height *= missRelHeight;
-            if (height < 1)
-                height = 1;
-            g.FillRectangle(new SolidBrush(col), baseX, rcY, gridScaleW, height);
-            lastDataHitValue += data.HitValue;
-            lastDataMissValue += data.MissValue;
+            g.FillRectangle(new SolidBrush(col), standX, rcY, gridScaleW, rcH);
 
-            if (selDataIndex < 0 && baseX <= mouseRelPos.X && baseX + gridScaleW >= mouseRelPos.X)
+            if (selDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
             {
                 selDataIndex = data.index;
                 Pen selPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
-                g.DrawLine(selPen, baseX, 0, baseX, winH);
-                g.DrawLine(selPen, baseX + gridScaleW, 0, baseX + gridScaleW, winH);
+                g.DrawLine(selPen, standX, 0, standX, winH);
+                g.DrawLine(selPen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 g.DrawString(data.GetInfo(), selDataFont, new SolidBrush(Color.White), 0, 0);
             }
+
+            //if (data.index < startDataIndex)
+            //{
+            //    lastDataHitValue += data.HitValue;
+            //    lastDataMissValue += data.MissValue;
+            //    startDataHitValue += data.HitValue;
+            //    startDataMissValue += data.MissValue;
+            //    return;
+            //}
+            //float baseX = 0;
+            //float baseY = winH / 2;
+            //baseX += (data.index - startDataIndex) * gridScaleW;
+            //baseY -= (lastDataHitValue - startDataHitValue) * gridScaleH;
+            //baseY += (lastDataMissValue - startDataMissValue) * gridScaleH * missRelHeight;
+            //int upBound = (int)(baseY - data.HitValue * gridScaleH);
+            //int downBound = (int)(baseY + data.MissValue * gridScaleH * missRelHeight);
+            //float valueChange = data.HitValue - data.MissValue;            
+            //Color col = valueChange > 0 ? Color.Red : (valueChange < 0 ? Color.Cyan : Color.White);
+            //Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
+            //Pen rcPen = GraphUtil.GetSolidPen(col);
+            //int midX = (int)(baseX + gridScaleW * 0.5f);
+            //Point p0 = new Point(midX, upBound);
+            //Point p1 = new Point(midX, downBound);
+            //g.DrawLine(linePen, p0, p1);
+            //float rcY = valueChange > 0 ? (baseY - valueChange * gridScaleH) : baseY;
+            //float height = (int)Math.Abs(valueChange * gridScaleH);
+            //if (valueChange < 0)
+            //    height *= missRelHeight;
+            //if (height < 1)
+            //    height = 1;
+            //g.FillRectangle(new SolidBrush(col), baseX, rcY, gridScaleW, height);
+            //lastDataHitValue += data.HitValue;
+            //lastDataMissValue += data.MissValue;
+            //if (selDataIndex < 0 && baseX <= mouseRelPos.X && baseX + gridScaleW >= mouseRelPos.X)
+            //{
+            //    selDataIndex = data.index;
+            //    Pen selPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+            //    g.DrawLine(selPen, baseX, 0, baseX, winH);
+            //    g.DrawLine(selPen, baseX + gridScaleW, 0, baseX + gridScaleW, winH);
+            //    g.DrawString(data.GetInfo(), selDataFont, new SolidBrush(Color.White), 0, 0);
+            //}
         }
-     
+
         void DrawAvgLine(Graphics g, AvgPointMap apm, int winW, int winH, float missRelHeight, CollectDataType cdt, AvgDataContainer adc)
         {
             AvgPoint ap = apm.apMap[cdt];
-            if (apm.index < startDataIndex)
+            float standX = apm.index * gridScaleW;
+            float valudChange = ap.avgHit - ap.avgMiss * missRelHeight;
+            float standY = (lastValue + valudChange) * gridScaleH;
+            lastValue += valudChange;    
+            if (findPrevPt == false)
             {
-                lastDataHitValue += ap.avgHit;
-                lastDataMissValue += ap.avgMiss;
-                startDataHitValue += ap.avgHit;
-                startDataMissValue += ap.avgMiss;
+                findPrevPt = true;
+                prevPt.X = standX;
+                prevPt.Y = standY;
                 return;
             }
-            float baseX = 0;
-            float baseY = winH / 2;
-            baseX += (apm.index - startDataIndex) * gridScaleW;
-            baseY -= (lastDataHitValue - startDataHitValue) * gridScaleH;
-            baseY += (lastDataMissValue - startDataMissValue) * gridScaleH * missRelHeight;
-            float avgPtH = baseY - ap.avgHit * gridScaleH + ap.avgMiss * gridScaleH * missRelHeight;
-            lastDataHitValue += ap.avgHit;
-            lastDataMissValue += ap.avgMiss;
-            if(findPrevPt == false)
+
+            float cx = StandToCanvas(standX, true);
+            if (cx < 0 || cx > winW)
             {
-                prevPt.X = baseX + gridScaleW * 0.5f;
-                prevPt.Y = avgPtH;
-                findPrevPt = true;
+                prevPt.X = standX;
+                prevPt.Y = standY;
+                return;
             }
-            else
-            {
-                Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, adc.avgLineSetting.color, 1);
-                g.DrawLine(pen, prevPt.X, prevPt.Y, prevPt.X = baseX + gridScaleW * 0.5f, prevPt.Y = avgPtH);
-            }
+
+            float px = StandToCanvas(prevPt.X, true);
+            float py = StandToCanvas(prevPt.Y, false);
+            float cy = StandToCanvas(standY, false);
+            prevPt.X = standX;
+            prevPt.Y = standY;
+
+            Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, adc.avgLineSetting.color, 1);
+            g.DrawLine(pen, px, py, cx, cy);
+
+            //AvgPoint ap = apm.apMap[cdt];
+            //if (apm.index < startDataIndex)
+            //{
+            //    lastDataHitValue += ap.avgHit;
+            //    lastDataMissValue += ap.avgMiss;
+            //    startDataHitValue += ap.avgHit;
+            //    startDataMissValue += ap.avgMiss;
+            //    return;
+            //}
+            //float baseX = 0;
+            //float baseY = winH / 2;
+            //baseX += (apm.index - startDataIndex) * gridScaleW;
+            //baseY -= (lastDataHitValue - startDataHitValue) * gridScaleH;
+            //baseY += (lastDataMissValue - startDataMissValue) * gridScaleH * missRelHeight;
+            //float avgPtH = baseY - ap.avgHit * gridScaleH + ap.avgMiss * gridScaleH * missRelHeight;
+            //lastDataHitValue += ap.avgHit;
+            //lastDataMissValue += ap.avgMiss;
+            //if(findPrevPt == false)
+            //{
+            //    prevPt.X = baseX + gridScaleW * 0.5f;
+            //    prevPt.Y = avgPtH;
+            //    findPrevPt = true;
+            //}
+            //else
+            //{
+            //    Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, adc.avgLineSetting.color, 1);
+            //    g.DrawLine(pen, prevPt.X, prevPt.Y, prevPt.X = baseX + gridScaleW * 0.5f, prevPt.Y = avgPtH);
+            //}
         }
     }
 
