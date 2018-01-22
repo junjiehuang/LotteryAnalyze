@@ -26,6 +26,7 @@ namespace LotteryAnalyze
         public int index;
         public float HitValue;
         public float MissValue;
+        public float KValue;
 
         string info = null;
         public string GetInfo()
@@ -84,8 +85,9 @@ namespace LotteryAnalyze
 
     class AvgPoint
     {
-        public float avgHit = 0;
-        public float avgMiss = 0;
+        //public float avgHit = 0;
+        //public float avgMiss = 0;
+        public float avgKValue = 0;
     }
 
     class AvgPointMap
@@ -179,16 +181,18 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        ap.avgHit += kd.HitValue;
-                        ap.avgMiss += kd.MissValue;
+                        //ap.avgHit += kd.HitValue;
+                        //ap.avgMiss += kd.MissValue;
+                        ap.avgKValue += kd.KValue;
                     }
                 }
                 for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    ap.avgHit /= totalSub;
-                    ap.avgMiss /= totalSub;
+                    //ap.avgHit /= totalSub;
+                    //ap.avgMiss /= totalSub;
+                    ap.avgKValue /= totalSub;
                 }
             }
         }
@@ -214,13 +218,15 @@ namespace LotteryAnalyze
                         KData kd = kdd.dataDict[cdt];
                         if (isLastDay)
                         {
-                            ap.avgHit += kd.HitValue * 2;
-                            ap.avgMiss += kd.MissValue * 2;
+                            //ap.avgHit += kd.HitValue * 2;
+                            //ap.avgMiss += kd.MissValue * 2;
+                            ap.avgKValue += kd.KValue * 2;
                         }
                         else
                         {
-                            ap.avgHit += kd.HitValue;
-                            ap.avgMiss += kd.MissValue;
+                            //ap.avgHit += kd.HitValue;
+                            //ap.avgMiss += kd.MissValue;
+                            ap.avgKValue += kd.KValue;
                         }
                     }
                     totalSub += isLastDay ? 2 : 1;
@@ -229,8 +235,9 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    ap.avgHit /= totalSub;
-                    ap.avgMiss /= totalSub;
+                    //ap.avgHit /= totalSub;
+                    //ap.avgMiss /= totalSub;
+                    ap.avgKValue /= totalSub;
                 }
             }
         }
@@ -254,8 +261,9 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        ap.avgHit += kd.HitValue * loop;
-                        ap.avgMiss += kd.MissValue * loop;
+                        //ap.avgHit += kd.HitValue * loop;
+                        //ap.avgMiss += kd.MissValue * loop;
+                        ap.avgKValue += kd.KValue * loop;
                     }
                     totalSub += loop;
                     ++loop;
@@ -264,8 +272,9 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    ap.avgHit /= totalSub;
-                    ap.avgMiss /= totalSub;
+                    //ap.avgHit /= totalSub;
+                    //ap.avgMiss /= totalSub;
+                    ap.avgKValue /= totalSub;
                 }
             }
         }
@@ -290,8 +299,9 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        ap.avgHit += kd.HitValue * sqrLoop;
-                        ap.avgMiss += kd.MissValue * sqrLoop;
+                        //ap.avgHit += kd.HitValue * sqrLoop;
+                        //ap.avgMiss += kd.MissValue * sqrLoop;
+                        ap.avgKValue += kd.KValue * sqrLoop;
                     }
                     totalSub += sqrLoop;
                     ++loop;
@@ -300,8 +310,9 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    ap.avgHit /= totalSub;
-                    ap.avgMiss /= totalSub;
+                    //ap.avgHit /= totalSub;
+                    //ap.avgMiss /= totalSub;
+                    ap.avgKValue /= totalSub;
                 }
             }
         }
@@ -324,13 +335,15 @@ namespace LotteryAnalyze
                     KData kd = kdd.dataDict[cdt];
                     if (prevApm == null)
                     {
-                        ap.avgHit = kd.HitValue;
-                        ap.avgMiss = kd.MissValue;
+                        //ap.avgHit = kd.HitValue;
+                        //ap.avgMiss = kd.MissValue;
+                        ap.avgKValue = kd.KValue;
                     }
                     else
                     {
-                        ap.avgHit = (kd.HitValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgHit) / (cycle + 1);
-                        ap.avgMiss = (kd.MissValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgMiss) / (cycle + 1);
+                        //ap.avgHit = (kd.HitValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgHit) / (cycle + 1);
+                        //ap.avgMiss = (kd.MissValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgMiss) / (cycle + 1);
+                        ap.avgKValue = (kd.KValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgKValue) / (cycle + 1);
                     }
                 }
             }
@@ -387,6 +400,7 @@ namespace LotteryAnalyze
             public int cycle;
             public Color color;
             public bool enable;
+            public Pen pen;
         }
         public static List<AvgLineSetting> S_AVG_LINE_SETTINGS = new List<AvgLineSetting>();
         public static AvgAlgorithm S_AVG_ALGORITHM = AvgAlgorithm.eEMA;
@@ -412,6 +426,7 @@ namespace LotteryAnalyze
             als.cycle = cycle;
             als.color = col;
             als.enable = enable;
+            als.pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
             S_AVG_LINE_SETTINGS.Add(als);
         }
         #endregion
@@ -467,6 +482,37 @@ namespace LotteryAnalyze
                 }
             }
             dataLength = allKDatas[0].dataLst.Count;
+
+            Dictionary<CollectDataType, float> valueMap = new Dictionary<CollectDataType, float>();
+            for (int i = 0; i < allKDatas.Count; ++i)
+            {
+                valueMap.Clear();
+                KDataDictContainer kddc = allKDatas[i];
+                for (int j = 0; j < kddc.dataLst.Count; ++j)
+                {
+                    KDataDict kdd = kddc.dataLst[j];
+                    foreach (CollectDataType cdt in kdd.dataDict.Keys)
+                    {
+                        float lastValue = 0;
+                        KData kd = kdd.dataDict[cdt];
+                        int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                        float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+                        float valueChange = kd.HitValue - kd.MissValue * missRelHeight;
+                        if (valueMap.ContainsKey(cdt))
+                        {
+                            lastValue = valueMap[cdt];
+                            lastValue += valueChange;
+                            valueMap[cdt] = lastValue;
+                        }
+                        else
+                        {
+                            lastValue = valueChange;
+                            valueMap.Add(cdt, lastValue);
+                        }
+                        kd.KValue = lastValue;
+                    }
+                }
+            }
         }
 
         public void CollectAvgDatas()

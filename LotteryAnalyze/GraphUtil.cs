@@ -8,13 +8,10 @@ namespace LotteryAnalyze
 {
     class GraphUtil
     {
-        static Pen sLinePen = null;
-        static Pen sSolidPen = null;
 
         public static Pen GetLinePen(System.Drawing.Drawing2D.DashStyle dashStyle, Color color, int width )
         {
-            if (sLinePen == null)
-                sLinePen = new Pen(color);
+            Pen sLinePen = new Pen(color);
             sLinePen.Color = color;
             sLinePen.DashStyle = dashStyle;
             sLinePen.Width = width;
@@ -23,8 +20,7 @@ namespace LotteryAnalyze
 
         public static Pen GetSolidPen(Color color)
         {
-            if (sSolidPen == null)
-                sSolidPen = new Pen(color);    
+            Pen sSolidPen = new Pen(color);    
             sSolidPen.Brush = new SolidBrush(color);
             return sSolidPen;
         }
