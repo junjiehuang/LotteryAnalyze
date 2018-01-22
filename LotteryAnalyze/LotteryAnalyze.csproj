@@ -49,6 +49,7 @@
     <Compile Include="DataGridViewColumnManager.cs" />
     <Compile Include="DataItem.cs" />
     <Compile Include="Graph.cs" />
+    <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />
     <Compile Include="UI\ExtSplitContainer.cs">
       <SubType>Component</SubType>

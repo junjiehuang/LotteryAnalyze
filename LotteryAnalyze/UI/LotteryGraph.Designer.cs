@@ -35,25 +35,41 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.comboBoxAvgAlgorithm = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.groupBoxAvgSettings = new System.Windows.Forms.GroupBox();
+            this.buttonAvg100 = new System.Windows.Forms.Button();
+            this.checkBoxAvg100 = new System.Windows.Forms.CheckBox();
+            this.buttonAvg50 = new System.Windows.Forms.Button();
+            this.checkBoxAvg50 = new System.Windows.Forms.CheckBox();
+            this.buttonAvg30 = new System.Windows.Forms.Button();
+            this.checkBoxAvg30 = new System.Windows.Forms.CheckBox();
+            this.buttonAvg20 = new System.Windows.Forms.Button();
+            this.checkBoxAvg20 = new System.Windows.Forms.CheckBox();
+            this.buttonAvg10 = new System.Windows.Forms.Button();
+            this.checkBoxAvg10 = new System.Windows.Forms.CheckBox();
+            this.buttonAvg5 = new System.Windows.Forms.Button();
+            this.checkBoxAvg5 = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxCycleLength = new System.Windows.Forms.TextBox();
             this.tabPageBarGraph = new System.Windows.Forms.TabPage();
+            this.textBoxCustomCollectRange = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBoxCollectRange = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.comboBoxCollectRange = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textBoxCustomCollectRange = new System.Windows.Forms.TextBox();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
+            this.groupBoxAvgSettings.SuspendLayout();
             this.tabPageBarGraph.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -102,8 +118,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(647, 363);
-            this.splitContainer1.SplitterDistance = 466;
+            this.splitContainer1.Size = new System.Drawing.Size(647, 412);
+            this.splitContainer1.SplitterDistance = 445;
             this.splitContainer1.TabIndex = 1;
             // 
             // label4
@@ -125,21 +141,198 @@
             this.tabControlView.Location = new System.Drawing.Point(6, 113);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(168, 247);
+            this.tabControlView.Size = new System.Drawing.Size(189, 296);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.comboBoxAvgAlgorithm);
+            this.tabPageKGraph.Controls.Add(this.label8);
+            this.tabPageKGraph.Controls.Add(this.groupBoxAvgSettings);
             this.tabPageKGraph.Controls.Add(this.label3);
             this.tabPageKGraph.Controls.Add(this.textBoxCycleLength);
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(160, 221);
+            this.tabPageKGraph.Size = new System.Drawing.Size(181, 270);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxAvgAlgorithm
+            // 
+            this.comboBoxAvgAlgorithm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxAvgAlgorithm.FormattingEnabled = true;
+            this.comboBoxAvgAlgorithm.Items.AddRange(new object[] {
+            "0路",
+            "1路",
+            "2路"});
+            this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(0, 67);
+            this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
+            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(181, 20);
+            this.comboBoxAvgAlgorithm.TabIndex = 8;
+            this.comboBoxAvgAlgorithm.SelectedIndexChanged += new System.EventHandler(this.comboBoxAvgAlgorithm_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(3, 52);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(101, 12);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "平均线计算方式：";
+            // 
+            // groupBoxAvgSettings
+            // 
+            this.groupBoxAvgSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg100);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg100);
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg50);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg50);
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg30);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg30);
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg20);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg20);
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg10);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
+            this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
+            this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 102);
+            this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(181, 165);
+            this.groupBoxAvgSettings.TabIndex = 6;
+            this.groupBoxAvgSettings.TabStop = false;
+            this.groupBoxAvgSettings.Text = "均线设置:";
+            // 
+            // buttonAvg100
+            // 
+            this.buttonAvg100.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg100.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg100.Location = new System.Drawing.Point(106, 136);
+            this.buttonAvg100.Name = "buttonAvg100";
+            this.buttonAvg100.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg100.TabIndex = 11;
+            this.buttonAvg100.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg100
+            // 
+            this.checkBoxAvg100.AutoSize = true;
+            this.checkBoxAvg100.Location = new System.Drawing.Point(6, 140);
+            this.checkBoxAvg100.Name = "checkBoxAvg100";
+            this.checkBoxAvg100.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxAvg100.TabIndex = 10;
+            this.checkBoxAvg100.Text = "100";
+            this.checkBoxAvg100.UseVisualStyleBackColor = true;
+            this.checkBoxAvg100.CheckedChanged += new System.EventHandler(this.checkBoxAvg100_CheckedChanged);
+            // 
+            // buttonAvg50
+            // 
+            this.buttonAvg50.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg50.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg50.Location = new System.Drawing.Point(106, 112);
+            this.buttonAvg50.Name = "buttonAvg50";
+            this.buttonAvg50.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg50.TabIndex = 9;
+            this.buttonAvg50.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg50
+            // 
+            this.checkBoxAvg50.AutoSize = true;
+            this.checkBoxAvg50.Location = new System.Drawing.Point(6, 116);
+            this.checkBoxAvg50.Name = "checkBoxAvg50";
+            this.checkBoxAvg50.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxAvg50.TabIndex = 8;
+            this.checkBoxAvg50.Text = "50";
+            this.checkBoxAvg50.UseVisualStyleBackColor = true;
+            this.checkBoxAvg50.CheckedChanged += new System.EventHandler(this.checkBoxAvg50_CheckedChanged);
+            // 
+            // buttonAvg30
+            // 
+            this.buttonAvg30.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg30.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg30.Location = new System.Drawing.Point(106, 88);
+            this.buttonAvg30.Name = "buttonAvg30";
+            this.buttonAvg30.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg30.TabIndex = 7;
+            this.buttonAvg30.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg30
+            // 
+            this.checkBoxAvg30.AutoSize = true;
+            this.checkBoxAvg30.Location = new System.Drawing.Point(6, 92);
+            this.checkBoxAvg30.Name = "checkBoxAvg30";
+            this.checkBoxAvg30.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxAvg30.TabIndex = 6;
+            this.checkBoxAvg30.Text = "30";
+            this.checkBoxAvg30.UseVisualStyleBackColor = true;
+            this.checkBoxAvg30.CheckedChanged += new System.EventHandler(this.checkBoxAvg30_CheckedChanged);
+            // 
+            // buttonAvg20
+            // 
+            this.buttonAvg20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg20.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg20.Location = new System.Drawing.Point(106, 64);
+            this.buttonAvg20.Name = "buttonAvg20";
+            this.buttonAvg20.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg20.TabIndex = 5;
+            this.buttonAvg20.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg20
+            // 
+            this.checkBoxAvg20.AutoSize = true;
+            this.checkBoxAvg20.Location = new System.Drawing.Point(6, 68);
+            this.checkBoxAvg20.Name = "checkBoxAvg20";
+            this.checkBoxAvg20.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxAvg20.TabIndex = 4;
+            this.checkBoxAvg20.Text = "20";
+            this.checkBoxAvg20.UseVisualStyleBackColor = true;
+            this.checkBoxAvg20.CheckedChanged += new System.EventHandler(this.checkBoxAvg20_CheckedChanged);
+            // 
+            // buttonAvg10
+            // 
+            this.buttonAvg10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg10.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg10.Location = new System.Drawing.Point(106, 40);
+            this.buttonAvg10.Name = "buttonAvg10";
+            this.buttonAvg10.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg10.TabIndex = 3;
+            this.buttonAvg10.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg10
+            // 
+            this.checkBoxAvg10.AutoSize = true;
+            this.checkBoxAvg10.Location = new System.Drawing.Point(6, 44);
+            this.checkBoxAvg10.Name = "checkBoxAvg10";
+            this.checkBoxAvg10.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxAvg10.TabIndex = 2;
+            this.checkBoxAvg10.Text = "10";
+            this.checkBoxAvg10.UseVisualStyleBackColor = true;
+            this.checkBoxAvg10.CheckedChanged += new System.EventHandler(this.checkBoxAvg10_CheckedChanged);
+            // 
+            // buttonAvg5
+            // 
+            this.buttonAvg5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAvg5.BackColor = System.Drawing.Color.Red;
+            this.buttonAvg5.Location = new System.Drawing.Point(106, 16);
+            this.buttonAvg5.Name = "buttonAvg5";
+            this.buttonAvg5.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg5.TabIndex = 1;
+            this.buttonAvg5.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxAvg5
+            // 
+            this.checkBoxAvg5.AutoSize = true;
+            this.checkBoxAvg5.Location = new System.Drawing.Point(6, 20);
+            this.checkBoxAvg5.Name = "checkBoxAvg5";
+            this.checkBoxAvg5.Size = new System.Drawing.Size(30, 16);
+            this.checkBoxAvg5.TabIndex = 0;
+            this.checkBoxAvg5.Text = "5";
+            this.checkBoxAvg5.UseVisualStyleBackColor = true;
+            this.checkBoxAvg5.CheckedChanged += new System.EventHandler(this.checkBoxAvg5_CheckedChanged);
             // 
             // label3
             // 
@@ -156,7 +349,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCycleLength.Location = new System.Drawing.Point(1, 28);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(159, 21);
+            this.textBoxCycleLength.Size = new System.Drawing.Size(180, 21);
             this.textBoxCycleLength.TabIndex = 5;
             this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
@@ -171,10 +364,69 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(160, 221);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 270);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
+            // 
+            // textBoxCustomCollectRange
+            // 
+            this.textBoxCustomCollectRange.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
+            this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
+            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(154, 21);
+            this.textBoxCustomCollectRange.TabIndex = 5;
+            this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(4, 84);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(101, 12);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "自定义统计范围：";
+            // 
+            // comboBoxCollectRange
+            // 
+            this.comboBoxCollectRange.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxCollectRange.FormattingEnabled = true;
+            this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
+            this.comboBoxCollectRange.Name = "comboBoxCollectRange";
+            this.comboBoxCollectRange.Size = new System.Drawing.Size(154, 20);
+            this.comboBoxCollectRange.TabIndex = 3;
+            this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(4, 46);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 12);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "统计范围：";
+            // 
+            // comboBoxBarCollectType
+            // 
+            this.comboBoxBarCollectType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxBarCollectType.FormattingEnabled = true;
+            this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
+            this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
+            this.comboBoxBarCollectType.Size = new System.Drawing.Size(154, 20);
+            this.comboBoxBarCollectType.TabIndex = 1;
+            this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(4, 7);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "统计类型：";
             // 
             // comboBoxCollectionDataType
             // 
@@ -187,7 +439,7 @@
             "2路"});
             this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 63);
             this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
-            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(168, 20);
+            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(189, 20);
             this.comboBoxCollectionDataType.TabIndex = 3;
             this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
             // 
@@ -219,7 +471,7 @@
             "个位"});
             this.comboBoxNumIndex.Location = new System.Drawing.Point(6, 20);
             this.comboBoxNumIndex.Name = "comboBoxNumIndex";
-            this.comboBoxNumIndex.Size = new System.Drawing.Size(168, 20);
+            this.comboBoxNumIndex.Size = new System.Drawing.Size(189, 20);
             this.comboBoxNumIndex.TabIndex = 1;
             this.comboBoxNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxNumIndex_SelectedIndexChanged);
             // 
@@ -232,70 +484,11 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 12);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "统计类型：";
-            // 
-            // comboBoxBarCollectType
-            // 
-            this.comboBoxBarCollectType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxBarCollectType.FormattingEnabled = true;
-            this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
-            this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
-            this.comboBoxBarCollectType.Size = new System.Drawing.Size(154, 20);
-            this.comboBoxBarCollectType.TabIndex = 1;
-            this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 46);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(65, 12);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "统计范围：";
-            // 
-            // comboBoxCollectRange
-            // 
-            this.comboBoxCollectRange.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxCollectRange.FormattingEnabled = true;
-            this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
-            this.comboBoxCollectRange.Name = "comboBoxCollectRange";
-            this.comboBoxCollectRange.Size = new System.Drawing.Size(154, 20);
-            this.comboBoxCollectRange.TabIndex = 3;
-            this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 84);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(101, 12);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "自定义统计范围：";
-            // 
-            // textBoxCustomCollectRange
-            // 
-            this.textBoxCustomCollectRange.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
-            this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
-            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(154, 21);
-            this.textBoxCustomCollectRange.TabIndex = 5;
-            this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
-            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(647, 388);
+            this.ClientSize = new System.Drawing.Size(647, 437);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripGraph);
             this.DoubleBuffered = true;
@@ -312,6 +505,8 @@
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
             this.tabPageKGraph.PerformLayout();
+            this.groupBoxAvgSettings.ResumeLayout(false);
+            this.groupBoxAvgSettings.PerformLayout();
             this.tabPageBarGraph.ResumeLayout(false);
             this.tabPageBarGraph.PerformLayout();
             this.ResumeLayout(false);
@@ -341,5 +536,20 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxCustomCollectRange;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox comboBoxAvgAlgorithm;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.GroupBox groupBoxAvgSettings;
+        private System.Windows.Forms.Button buttonAvg100;
+        private System.Windows.Forms.CheckBox checkBoxAvg100;
+        private System.Windows.Forms.Button buttonAvg50;
+        private System.Windows.Forms.CheckBox checkBoxAvg50;
+        private System.Windows.Forms.Button buttonAvg30;
+        private System.Windows.Forms.CheckBox checkBoxAvg30;
+        private System.Windows.Forms.Button buttonAvg20;
+        private System.Windows.Forms.CheckBox checkBoxAvg20;
+        private System.Windows.Forms.Button buttonAvg10;
+        private System.Windows.Forms.CheckBox checkBoxAvg10;
+        private System.Windows.Forms.Button buttonAvg5;
+        private System.Windows.Forms.CheckBox checkBoxAvg5;
     }
 }

@@ -11,31 +11,23 @@ namespace LotteryAnalyze.UI
 {
     public partial class LotteryGraph : Form
     {
-        static LotteryGraph sInst = null;
+        static List<LotteryGraph> instLst = new List<LotteryGraph>();
 
-        GraphSet graphMgr = new GraphSet();
+        GraphManager graphMgr = new GraphManager();
         int numberIndex = 0;        
         int curCDTIndex = 0;
         Point currentPoint = new Point();
         Point mouseRelPos = new Point();
 
-
         public static void Open()
         {
-            if (sInst == null)
-                sInst = new LotteryGraph();
-            sInst.Show();
+            LotteryGraph graphInst = new LotteryGraph();
+            graphInst.Show();
         }
-
-        public static void ShutDown()
-        {
-            if (sInst != null)
-                sInst.Close();
-            sInst = null;
-        }
-
+        
         public LotteryGraph()
         {
+            instLst.Add(this);
             InitializeComponent();
 
             //采用双缓冲技术的控件必需的设置
@@ -55,8 +47,36 @@ namespace LotteryAnalyze.UI
             comboBoxBarCollectType.SelectedIndex = (int)GraphDataManager.BGDC.curStatisticsType;
             comboBoxCollectRange.SelectedIndex = (int)GraphDataManager.BGDC.curStatisticsRange;
             textBoxCustomCollectRange.Text = GraphDataManager.BGDC.customStatisticsRange.ToString();
+
+            comboBoxAvgAlgorithm.DataSource = KGraphDataContainer.S_AVG_ALGORITHM_STRS;
+            comboBoxAvgAlgorithm.SelectedIndex = (int)KGraphDataContainer.S_AVG_ALGORITHM;
+
+            RefreshUI();
         }
 
+        void RefreshUI()
+        {
+            CheckBox[] cbs = new CheckBox[] { checkBoxAvg5, checkBoxAvg10, checkBoxAvg20, checkBoxAvg30, checkBoxAvg50, checkBoxAvg100, };
+            Button[] btns = new Button[] { buttonAvg5, buttonAvg10, buttonAvg20, buttonAvg30, buttonAvg50, buttonAvg100, };
+            for (int i = 0; i < KGraphDataContainer.S_AVG_LINE_SETTINGS.Count; ++i)
+            {
+                cbs[i].Enabled = KGraphDataContainer.S_AVG_LINE_SETTINGS[i].enable;
+                cbs[i].Text = KGraphDataContainer.S_AVG_LINE_SETTINGS[i].tag;
+                btns[i].BackColor = KGraphDataContainer.S_AVG_LINE_SETTINGS[i].color;
+                cbs[i].Tag = KGraphDataContainer.S_AVG_LINE_SETTINGS[i];
+            }
+        }
+
+        static void NotifyOtherGraphRefreshUI(LotteryGraph sender)
+        {
+            for( int i = 0; i < instLst.Count; ++i )
+            {
+                if(instLst[i] != sender)
+                {
+                    instLst[i].RefreshUI();
+                }
+            }
+        } 
 
         void DrawCanvas(Graphics g)
         {
@@ -88,7 +108,7 @@ namespace LotteryAnalyze.UI
 
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
         {
-            sInst = null;
+            instLst.Remove(this);
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -178,6 +198,55 @@ namespace LotteryAnalyze.UI
         {
             GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             this.Invalidate(true);
+        }
+
+        private void comboBoxAvgAlgorithm_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.S_AVG_ALGORITHM = (AvgAlgorithm)comboBoxAvgAlgorithm.SelectedIndex;
+            NotifyOtherGraphRefreshUI(this);
+            GraphDataManager.KGDC.CollectAvgDatas();
+        }
+
+        private void checkBoxAvg5_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg5.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg5.Checked;
+            NotifyOtherGraphRefreshUI(this);
+        }
+
+        private void checkBoxAvg10_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg10.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg10.Checked;
+            NotifyOtherGraphRefreshUI(this);
+        }
+
+        private void checkBoxAvg20_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg20.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg20.Checked;
+            NotifyOtherGraphRefreshUI(this);
+        }
+
+        private void checkBoxAvg30_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg30.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg30.Checked;
+            NotifyOtherGraphRefreshUI(this);
+        }
+
+        private void checkBoxAvg50_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg50.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg50.Checked;
+            NotifyOtherGraphRefreshUI(this);
+        }
+
+        private void checkBoxAvg100_CheckedChanged(object sender, EventArgs e)
+        {
+            KGraphDataContainer.AvgLineSetting als = checkBoxAvg100.Tag as KGraphDataContainer.AvgLineSetting;
+            als.enable = checkBoxAvg100.Checked;
+            NotifyOtherGraphRefreshUI(this);
         }
     }
 }

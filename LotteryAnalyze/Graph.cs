@@ -6,415 +6,6 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
-    public enum CollectDataType
-    {
-        eNone,
-
-        ePath0 = 1 << 0,
-        ePath1 = 1 << 1,
-        ePath2 = 1 << 2,
-
-        eMax = 0xFFFFFFF,
-    }
-
-
-#region Data Manager
-    class KData
-    {
-        public CollectDataType cdt;
-        public KDataDict parent;
-        public int index;
-        public float HitValue;
-        public float MissValue;
-
-        string info = null;
-        public string GetInfo()
-        {
-            if (info == null)
-            {
-                int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-                info = "[" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
-                    GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" + 
-                    HitValue + " : " + MissValue + "]";
-            }
-            return info;
-        }
-    }
-
-    class KDataDict
-    {
-        public int index;
-        public Dictionary<CollectDataType, KData> dataDict = new Dictionary<CollectDataType, KData>();
-        public DataItem startItem = null;
-        public DataItem endItem = null;
-
-        public KData GetData(CollectDataType collectDataType, bool createIfNotExist)
-        {
-            if (dataDict.ContainsKey(collectDataType))
-                return dataDict[collectDataType];
-            else if (createIfNotExist == false)
-                return null;
-            KData data = new KData();
-            data.parent = this;
-            data.cdt = collectDataType;
-            dataDict.Add(collectDataType, data);
-            return data;
-        }
-
-        public void Clear()
-        {
-            dataDict.Clear();
-        }
-    }
-
-    class KDataDictContainer
-    {
-        public List<KDataDict> dataLst = new List<KDataDict>();
-
-        public KDataDict CreateKDataDict()
-        {
-            KDataDict kdd = new KDataDict();
-            kdd.index = dataLst.Count;
-            dataLst.Add(kdd);
-            return kdd;
-        }
-    }
-
-    class GraphDataContainerBase
-    {
-        public virtual int DataLength() { return 0; }
-        public virtual bool HasData() { return false; }
-        public virtual void CollectGraphData() { }
-    }
-    class KGraphDataContainer : GraphDataContainerBase
-    {
-        int dataLength = 0;
-        int cycleLength = 5;
-        List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
-        public int CycleLength
-        {
-            get { return cycleLength; }
-            set { cycleLength = value; }
-        }
-        public override int DataLength() { return dataLength; }
-        public override bool HasData()
-        {
-            return allKDatas.Count > 0;
-        }
-        public override void CollectGraphData()
-        {
-            if (DataManager.GetInst().indexs == null) return;
-            int count = DataManager.GetInst().indexs.Count;
-            if (count == 0) return;
-            Init();
-
-            int loop = 0;
-            KDataDict[] curDatas = CreateKDataDicts();
-
-            for (int i = 0; i < count; ++i)
-            {
-                int oneDayID = DataManager.GetInst().indexs[i];
-                OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
-
-                for (int j = 0; j < odd.datas.Count; ++j)
-                {
-                    DataItem item = odd.datas[j];
-                    for (int numIndex = 0; numIndex < 5; ++numIndex)
-                    {
-                        CollectItem(numIndex, item, curDatas[numIndex]);
-                    }
-
-                    ++loop;
-                    if (loop == cycleLength)
-                    {
-                        curDatas = CreateKDataDicts();
-                        loop = 0;
-                    }
-                }
-            }
-
-            dataLength = allKDatas[0].dataLst.Count;
-        }
-
-        public KDataDictContainer GetKDataDictContainer(int numIndex)
-        {
-            if (allKDatas.Count > numIndex)
-                return allKDatas[numIndex];
-            return null;
-        }
-        void Init()
-        {
-            KDataDictContainer kddc = null;
-            for (int i = 0; i < 5; ++i)
-            {
-                if (i >= allKDatas.Count)
-                {
-                    kddc = new KDataDictContainer();
-                    allKDatas.Add(kddc);
-                }
-                else
-                {
-                    kddc = allKDatas[i];
-                    kddc.dataLst.Clear();
-                }
-            }
-        }
-        void CollectItem(int NUM_INDEX, DataItem item, KDataDict kd)
-        {
-            if (kd.startItem == null)
-                kd.startItem = item;
-            if (kd.endItem == null || item.idGlobal > kd.endItem.idGlobal)
-                kd.endItem = item;
-            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
-            {
-                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
-                KData data = kd.GetData(cdt, true);
-                data.index = kd.index;
-                switch (cdt)
-                {
-                    case CollectDataType.ePath0:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 0)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
-                        break;
-                    case CollectDataType.ePath1:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 1)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
-                        break;
-                    case CollectDataType.ePath2:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 2)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
-                        break;
-                }
-            }
-        }
-        KDataDict[] CreateKDataDicts()
-        {
-            KDataDict[] curDatas = new KDataDict[5];
-            for (int i = 0; i < 5; ++i)
-            {
-                curDatas[i] = allKDatas[i].CreateKDataDict();
-            }
-            return curDatas;
-        }
-    }
-    class BarGraphDataContianer : GraphDataContainerBase
-    {
-        public enum StatisticsType
-        {
-            eAppearCountFrom0To9,
-            eAppearCountPath012,
-        }
-
-        public enum StatisticsRange
-        {
-            e10,
-            e20,
-            e30,
-            e50,
-            e100,
-            eCustom,
-        }
-        public static List<string> S_StatisticsType_STRS = new List<string>();
-        public static List<string> S_StatisticsRange_STRS = new List<string>();
-        static BarGraphDataContianer()
-        {
-            S_StatisticsType_STRS.Add("0-9出现次数");
-            S_StatisticsType_STRS.Add("012路出现次数");
-
-            S_StatisticsRange_STRS.Add("最近10期");
-            S_StatisticsRange_STRS.Add("最近20期");
-            S_StatisticsRange_STRS.Add("最近30期");
-            S_StatisticsRange_STRS.Add("最近50期");
-            S_StatisticsRange_STRS.Add("最近100期");
-            S_StatisticsRange_STRS.Add("自定义期数");
-        }
-
-        public class DataUnit
-        {
-            public StatisticsType type;
-            public int data;
-            public string tag;
-        }
-        public class DataUnitLst
-        {
-            public List<DataUnit> dataLst = new List<DataUnit>();
-        }
-        public StatisticsType curStatisticsType = StatisticsType.eAppearCountFrom0To9;
-        public StatisticsRange curStatisticsRange = StatisticsRange.e100;
-        public int customStatisticsRange = 120;
-        public List<DataUnitLst> allDatas = new List<DataUnitLst>();
-        public int totalCollectCount = 0;
-
-        public BarGraphDataContianer()
-        {
-            for (int i = 0; i < 5; ++i )
-                allDatas.Add(new DataUnitLst());
-        }
-        void Init()
-        {
-            for (int c = 0; c < 5; ++c)
-            {
-                allDatas[c].dataLst.Clear();
-                switch (curStatisticsType)
-                {
-                    case StatisticsType.eAppearCountFrom0To9:
-                        {
-                            for (int i = 0; i <= 9; ++i)
-                            {
-                                DataUnit du = new DataUnit();
-                                du.data = 0;
-                                du.type = StatisticsType.eAppearCountFrom0To9;
-                                du.tag = i.ToString();
-                                allDatas[c].dataLst.Add(du);
-                            }
-                        }
-                        break;
-                    case StatisticsType.eAppearCountPath012:
-                        {
-                            for (int i = 0; i <= 2; ++i)
-                            {
-                                DataUnit du = new DataUnit();
-                                du.data = 0;
-                                du.type = StatisticsType.eAppearCountPath012;
-                                du.tag = i.ToString();
-                                allDatas[c].dataLst.Add(du);
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-        void CollectItem(DataItem item)
-        {
-            for( int i = 0; i < 5; ++i )
-            {
-                switch (curStatisticsType)
-                {
-                    case StatisticsType.eAppearCountFrom0To9:
-                        {
-                            int num = item.GetNumberByIndex(i);
-                            DataUnit du = allDatas[i].dataLst[num];
-                            du.data = du.data + 1;
-                        }
-                        break;
-                    case StatisticsType.eAppearCountPath012:
-                        {
-                            int num = item.path012OfEachSingle[i];
-                            DataUnit du = allDatas[i].dataLst[num];
-                            du.data = du.data + 1;
-                        }
-                        break;
-                }
-            }
-        }
-
-        public override int DataLength() { return allDatas[0].dataLst.Count; }
-        public override bool HasData() { return allDatas[0].dataLst.Count > 0; }
-        public override void CollectGraphData()
-        {
-            totalCollectCount = 0;
-            if (DataManager.GetInst().indexs == null) return;
-            int count = DataManager.GetInst().indexs.Count;
-            if (count == 0) return;
-            Init();
-
-            int CollectCount = customStatisticsRange;
-            switch (curStatisticsRange)
-            {
-                case StatisticsRange.e10: CollectCount = 10; break;
-                case StatisticsRange.e20: CollectCount = 20; break;
-                case StatisticsRange.e30: CollectCount = 30; break;
-                case StatisticsRange.e50: CollectCount = 50; break;
-                case StatisticsRange.e100: CollectCount = 100; break;
-            }
-            DataItem currentItem = DataManager.GetInst().GetLatestItem();
-            if (currentItem == null)
-                return;
-            for (int i = 0; i < CollectCount; ++i)
-            {
-                CollectItem(currentItem);
-                ++totalCollectCount;
-                currentItem = DataManager.GetInst().GetPrevItem(currentItem);
-                if (currentItem == null)
-                    break;
-            }
-        }
-    }
-
-    class GraphDataManager
-    {
-        public static List<CollectDataType> S_CDT_LIST = new List<CollectDataType>();
-        public static List<string> S_CDT_TAG_LIST = new List<string>();
-        public static List<float> S_CDT_PROBABILITY_LIST = new List<float>();
-        public static List<float> S_CDT_MISS_REL_LENGTH_LIST = new List<float>();
-        public static Dictionary<GraphType, GraphDataContainerBase> S_GRAPH_DATA_CONTS = new Dictionary<GraphType, GraphDataContainerBase>();
-
-        public static KGraphDataContainer KGDC;
-        public static BarGraphDataContianer BGDC;
-
-        static GraphDataManager()
-        {
-            AddPreInfo(CollectDataType.ePath0, "0路", 4.0f / 10);
-            AddPreInfo(CollectDataType.ePath1, "1路", 3.0f / 10);
-            AddPreInfo(CollectDataType.ePath2, "2路", 3.0f / 10);
-
-            S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
-            S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new BarGraphDataContianer());
-        }
-        static void AddPreInfo(CollectDataType cdt, string name, float probability)
-        {
-            S_CDT_LIST.Add(cdt);
-            S_CDT_TAG_LIST.Add(name);
-            S_CDT_PROBABILITY_LIST.Add(probability);
-            S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
-        }
-
-
-        static GraphDataManager sInst = null;
-        public static GraphDataManager Instance
-        {
-            get
-            {
-                if (sInst == null) sInst = new GraphDataManager();
-                return sInst;
-            }
-        }
-
-        public static GraphDataContainerBase GetGraphDataContianer(GraphType gt)
-        {
-            if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
-                return (S_GRAPH_DATA_CONTS[gt]);
-            return null;
-        }
-
-        public int DataLength(GraphType gt)
-        {
-            if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
-                return S_GRAPH_DATA_CONTS[gt].DataLength();
-            return 0;
-        }
-
-        public bool HasData(GraphType gt)
-        {
-            if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
-                return S_GRAPH_DATA_CONTS[gt].HasData();
-            return false;
-        }
-
-        public void CollectGraphData(GraphType gt)
-        {
-            if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
-                S_GRAPH_DATA_CONTS[gt].CollectGraphData();
-        }
-    }
-#endregion
-
 #region Graph 
     
     public enum GraphType
@@ -426,6 +17,7 @@ namespace LotteryAnalyze
         eBarGraph,
     }
 
+    // 图表基类
     class GraphBase
     {
         public virtual bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -442,9 +34,10 @@ namespace LotteryAnalyze
         }
     }
 
+    // K线图
     class GraphKCurve : GraphBase
     {
-        float gridScaleH = 5;
+        float gridScaleH = 20;
         float gridScaleW = 10;
 
         float originX = 0;
@@ -459,6 +52,8 @@ namespace LotteryAnalyze
         int selDataIndex = -1;
 
         Font selDataFont;
+        PointF prevPt = new PointF();
+        bool findPrevPt = false;
 
         public GraphKCurve()
         {
@@ -495,6 +90,9 @@ namespace LotteryAnalyze
             int baseY = winH / 2;
             g.DrawLine(GraphUtil.GetSolidPen(Color.White), new Point(0, baseY), new Point(winW, baseY));
 
+            int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+            float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+
             selDataIndex = -1;
             lastDataHitValue = 0;
             lastDataMissValue = 0;
@@ -509,9 +107,23 @@ namespace LotteryAnalyze
                     KData data = kdDict.GetData(cdt, false);
                     if (data == null)
                         continue;
-                    int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-                    float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
                     DrawData(g, data, winW, winH, missRelHeight, mouseRelPos);
+                }
+
+                foreach( AvgDataContainer adc in kddc.avgDataContMap.Values)
+                {
+                    if(adc.avgLineSetting.enable)
+                    {
+                        lastDataHitValue = 0;
+                        lastDataMissValue = 0;
+                        startDataHitValue = 0;
+                        startDataMissValue = 0;
+                        findPrevPt = false;
+                        for ( int i = 0; i < adc.avgPointMapLst.Count; ++i )
+                        {
+                            DrawAvgLine(g, adc.avgPointMapLst[i], winW, winH, missRelHeight, cdt, adc);
+                        }
+                    }
                 }
             }
         }
@@ -562,8 +174,41 @@ namespace LotteryAnalyze
                 g.DrawString(data.GetInfo(), selDataFont, new SolidBrush(Color.White), 0, 0);
             }
         }
+     
+        void DrawAvgLine(Graphics g, AvgPointMap apm, int winW, int winH, float missRelHeight, CollectDataType cdt, AvgDataContainer adc)
+        {
+            AvgPoint ap = apm.apMap[cdt];
+            if (apm.index < startDataIndex)
+            {
+                lastDataHitValue += ap.avgHit;
+                lastDataMissValue += ap.avgMiss;
+                startDataHitValue += ap.avgHit;
+                startDataMissValue += ap.avgMiss;
+                return;
+            }
+            float baseX = 0;
+            float baseY = winH / 2;
+            baseX += (apm.index - startDataIndex) * gridScaleW;
+            baseY -= (lastDataHitValue - startDataHitValue) * gridScaleH;
+            baseY += (lastDataMissValue - startDataMissValue) * gridScaleH * missRelHeight;
+            float avgPtH = baseY - ap.avgHit * gridScaleH + ap.avgMiss * gridScaleH * missRelHeight;
+            lastDataHitValue += ap.avgHit;
+            lastDataMissValue += ap.avgMiss;
+            if(findPrevPt == false)
+            {
+                prevPt.X = baseX + gridScaleW * 0.5f;
+                prevPt.Y = avgPtH;
+                findPrevPt = true;
+            }
+            else
+            {
+                Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, adc.avgLineSetting.color, 1);
+                g.DrawLine(pen, prevPt.X, prevPt.Y, prevPt.X = baseX + gridScaleW * 0.5f, prevPt.Y = avgPtH);
+            }
+        }
     }
 
+    // 柱状图
     class GraphBar : GraphBase
     {
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -602,12 +247,13 @@ namespace LotteryAnalyze
         }
     }
 
-    class GraphSet
+    // 图表管理器
+    class GraphManager
     {
         Dictionary<GraphType, GraphBase> sGraphMap = new Dictionary<GraphType, GraphBase>();
         GraphBase curGraph = null;
         GraphType curGraphType = GraphType.eNone;
-        public GraphSet()
+        public GraphManager()
         {
             sGraphMap.Add(GraphType.eKCurveGraph, new GraphKCurve());
             sGraphMap.Add(GraphType.eBarGraph, new GraphBar());
