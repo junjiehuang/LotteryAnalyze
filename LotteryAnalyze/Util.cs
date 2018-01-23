@@ -68,8 +68,11 @@ namespace LotteryAnalyze
                 string[] strs = line.Split( ' ' );
                 if (strs.Length > 1)
                 {
+                    //if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
+                    //   strs[0] == "-" || strs[1] == "-")
+                    //    continue;
                     if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
-                       strs[0] == "-" || strs[1] == "-")
+                        !IsNumStr(strs[0]) || !IsNumStr(strs[1]))
                         continue;
 
                     DataItem item = new DataItem(strs[0], strs[1], fileID);
@@ -79,6 +82,19 @@ namespace LotteryAnalyze
             }
             sr.Close();
             return true;
+        }
+        public static bool IsNumStr(string str)
+        {
+            int v;
+            if (int.TryParse(str, out v))
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(str);
+                return false;
+            }
         }
 
         public static int CharValue(char ch)
