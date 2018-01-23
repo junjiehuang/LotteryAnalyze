@@ -350,10 +350,111 @@ namespace LotteryAnalyze
         }
     }
 
+    class BollinPoint
+    {
+        // 标准差
+        public float standardDeviation = 0;
+        // 上轨值
+        public float upValue = 0;
+        // 中轨值
+        public float midValue = 0;
+        // 下轨值
+        public float downValue = 0;
+    }
+    class BollinPointMap
+    {
+        public BollinDataContainer parent;
+        public int index = -1;
+        public Dictionary<CollectDataType, BollinPoint> bpMap = new Dictionary<CollectDataType, BollinPoint>();
+
+        public BollinPointMap()
+        {
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+                GetData(GraphDataManager.S_CDT_LIST[i], true);
+        }
+
+        public BollinPoint GetData(CollectDataType collectDataType, bool createIfNotExist)
+        {
+            if (bpMap.ContainsKey(collectDataType))
+                return bpMap[collectDataType];
+            else if (createIfNotExist == false)
+                return null;
+            BollinPoint data = new BollinPoint();
+            bpMap.Add(collectDataType, data);
+            return data;
+        }
+
+        public BollinPointMap GetPrevBPM()
+        {
+            if (index > 0)
+                return parent.bollinMapLst[index - 1];
+            return null;
+        }
+    }
+    class BollinDataContainer
+    {
+        public static bool ENABLE = true;
+        public List<BollinPointMap> bollinMapLst = new List<BollinPointMap>();
+
+        BollinPointMap CreateBollinPointMap()
+        {
+            BollinPointMap bpm = new BollinPointMap();
+            bpm.index = bollinMapLst.Count;
+            bpm.parent = this;
+            bollinMapLst.Add(bpm);
+            return bpm;
+        }
+
+        public void Process(List<KDataDict> srcData, AvgDataContainer avgContainer)
+        {
+            bollinMapLst.Clear();
+            if (ENABLE == false)
+            {                
+                return;
+            }
+            for( int i = 0; i < srcData.Count; ++i )
+            {
+                KDataDict kdd = srcData[i];
+                AvgPointMap apm = avgContainer.avgPointMapLst[i];
+
+                BollinPointMap bpm = CreateBollinPointMap();
+                for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
+                    AvgPoint ap = apm.apMap[cdt];
+                    KData kd = kdd.dataDict[cdt];
+
+                    float MA = ap.avgKValue;
+                    int startIndex = i - avgContainer.cycle + 1;
+                    if (startIndex < 0)
+                        startIndex = 0;
+                    float SD = 0;
+                    int N = 0;
+                    for( int k = startIndex; k <= i; ++k )
+                    {
+                        KData ckd = srcData[k].dataDict[cdt];
+                        SD += (ckd.KValue - MA) * (ckd.KValue - MA);
+                        ++N;
+                    }
+                    SD = (float)Math.Sqrt(SD / N);
+
+                    BollinPoint bp = bpm.GetData(cdt, true);
+                    const float scale = 2;
+                    bp.standardDeviation = SD;
+                    bp.midValue = MA;
+                    bp.upValue = MA + scale * SD;
+                    bp.downValue = MA - scale * SD;
+                }
+            }
+        }
+    }
+
+
     class KDataDictContainer
     {
         public List<KDataDict> dataLst = new List<KDataDict>();
         public Dictionary<int, AvgDataContainer> avgDataContMap = new Dictionary<int, AvgDataContainer>();
+        public BollinDataContainer bollinDataLst = new BollinDataContainer();
 
         public KDataDictContainer()
         {
@@ -432,7 +533,8 @@ namespace LotteryAnalyze
         #endregion
 
         int dataLength = 0;
-        int cycleLength = 5;
+        int cycleLength = 1;
+        int bollinBandCycleLength = 20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
         public int CycleLength
         {
@@ -449,6 +551,7 @@ namespace LotteryAnalyze
             Init();
             CollectKDatas();
             CollectAvgDatas();
+            CollectBollinDatas();
         }
 
         public void CollectKDatas()
@@ -524,6 +627,16 @@ namespace LotteryAnalyze
                 {
                     avd.Process(kddc.dataLst);
                 }
+            }
+        }
+
+        public void CollectBollinDatas()
+        {
+            for (int i = 0; i < allKDatas.Count; ++i)
+            {
+                KDataDictContainer kddc = allKDatas[i];
+                AvgDataContainer adc = kddc.avgDataContMap[bollinBandCycleLength];
+                kddc.bollinDataLst.Process(kddc.dataLst, adc);
             }
         }
 

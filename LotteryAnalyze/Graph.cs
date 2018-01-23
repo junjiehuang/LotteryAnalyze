@@ -24,13 +24,21 @@ namespace LotteryAnalyze
         {
             return false;
         }
-        public virtual bool MoveLeftRight(bool left)
+        //public virtual bool MoveLeftRight(bool left)
+        //{
+        //    return false;
+        //}
+        //public virtual bool MoveUpDown(bool up)
+        //{
+        //    return false;
+        //}
+        public virtual void MoveGraph(float dx, float dy)
         {
-            return false;
+
         }
-        public virtual bool MoveUpDown(bool up)
+        public virtual void ResetGraphPosition()
         {
-            return false;
+
         }
         public virtual void DrawGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
@@ -41,6 +49,9 @@ namespace LotteryAnalyze
     // K线图
     class GraphKCurve : GraphBase
     {
+        public bool enableBollinBand = true;
+        public bool enableMACD = true;
+
         float gridScaleH = 20;
         float gridScaleW = 10;
 
@@ -62,10 +73,15 @@ namespace LotteryAnalyze
         float lastValue = 0;
         PointF canvasOffset = new PointF(0, 0);
 
+        Pen bollinLinePenUp = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Pen bollinLinePenMid = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Pen bollinLinePenDown = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+
         Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
         Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
         Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
@@ -73,7 +89,6 @@ namespace LotteryAnalyze
 
         Dictionary<Pen, List<PointF>> linePools = new Dictionary<Pen, List<PointF>>();
         Dictionary<SolidBrush, List<RectangleF>> rcPools = new Dictionary<SolidBrush,List<RectangleF>>();
-        //List<PointF> linePts = new List<PointF>();
 
         public GraphKCurve()
         {
@@ -89,45 +104,18 @@ namespace LotteryAnalyze
                 return false;
             return true;
         }
-
-        public override bool MoveLeftRight(bool left)
+        public override void MoveGraph(float dx, float dy)
         {
-            //if (left && startDataIndex < (GraphDataManager.Instance.DataLength(GraphType.eKCurveGraph) - 1))
-            //{
-            //    ++startDataIndex;
-            //    return true;
-            //}
-            //else if (startDataIndex > 0)
-            //{
-            //    --startDataIndex;
-            //    return true;
-            //}
-            //return false;
-            if (left && canvasOffset.X > 0)
-            {
-                canvasOffset.X -= gridScaleW;
-                return true;
-            }
-            else if (canvasOffset.X < GraphDataManager.KGDC.DataLength() * gridScaleW)
-            {
-                canvasOffset.X += gridScaleW;
-                return true;
-            }
-            return false;
+            canvasOffset.X += dx;
+            canvasOffset.Y += dy;
+            if (canvasOffset.X < 0)
+                canvasOffset.X = 0;
         }
-        public override bool MoveUpDown(bool up)
+
+        public override void ResetGraphPosition()
         {
-            if (up)
-            {
-                canvasOffset.Y += gridScaleH;
-                return true;
-            }
-            else
-            {
-                canvasOffset.Y -= gridScaleH;
-                return true;
-            }
-            return false;
+            canvasOffset.X = 0;
+            canvasOffset.Y = 0;
         }
 
 
@@ -157,7 +145,7 @@ namespace LotteryAnalyze
                     KData data = kdDict.GetData(cdt, false);
                     if (data == null)
                         continue;
-                    DrawData(g, data, winW, winH, missRelHeight, mouseRelPos);
+                    DrawKData(g, data, winW, winH, missRelHeight, mouseRelPos);
                 }
 
                 foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
@@ -173,6 +161,20 @@ namespace LotteryAnalyze
                         {
                             DrawAvgLine(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
                         }
+                    }
+                }
+
+                if(enableBollinBand)
+                {
+                    GetLineLst(bollinLinePenUp);
+                    GetLineLst(bollinLinePenMid);
+                    GetLineLst(bollinLinePenDown);
+
+                    lastValue = 0;
+                    findPrevPt = false;
+                    for ( int i = 0; i < kddc.bollinDataLst.bollinMapLst.Count; ++i)
+                    {
+                        DrawBollinLine(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                     }
                 }
             }
@@ -231,7 +233,7 @@ namespace LotteryAnalyze
                 return canvasOffset.Y - v;
         }
 
-        void DrawData(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
+        void DrawKData(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
         {
             float standX = data.index * gridScaleW;
             float valudChange = data.HitValue - data.MissValue * missRelHeight;
@@ -302,16 +304,40 @@ namespace LotteryAnalyze
             //linePools[pen].Add(new PointF(cx, cy));
             //g.DrawLine(pen, px, py, cx, cy);
         }
+
+        void DrawBollinLine(Graphics g, BollinPointMap bpm, int winW, int winH, CollectDataType cdt)
+        {
+            BollinPoint bp = bpm.bpMap[cdt];
+            float standX = (bpm.index + 0.5f) * gridScaleW;
+            if (findPrevPt == false)
+            {
+                findPrevPt = true;
+                return;
+            }
+            float cx = StandToCanvas(standX, true);
+            if (cx < 0 || cx > winW)
+            {
+                return;
+            }
+            BollinPointMap prevBPM = bpm.GetPrevBPM();
+            BollinPoint prevBP = prevBPM.bpMap[cdt];
+            float px = StandToCanvas((prevBPM.index + 0.5f) * gridScaleW, true);
+            float pyU = StandToCanvas(prevBP.upValue * gridScaleH, false);
+            float pyM = StandToCanvas(prevBP.midValue * gridScaleH, false);
+            float pyD = StandToCanvas(prevBP.downValue * gridScaleH, false);
+            float cyU = StandToCanvas(bp.upValue * gridScaleH, false);
+            float cyM = StandToCanvas(bp.midValue * gridScaleH, false);
+            float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
+            PushLinePts(bollinLinePenUp, px, pyU, cx, cyU);
+            PushLinePts(bollinLinePenMid, px, pyM, cx, cyM);
+            PushLinePts(bollinLinePenDown, px, pyD, cx, cyD);
+        }
     }
 
     // 柱状图
     class GraphBar : GraphBase
     {
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
-        {
-            return false;
-        }
-        public override bool MoveLeftRight(bool left)
         {
             return false;
         }
@@ -349,17 +375,22 @@ namespace LotteryAnalyze
         Dictionary<GraphType, GraphBase> sGraphMap = new Dictionary<GraphType, GraphBase>();
         GraphBase curGraph = null;
         GraphType curGraphType = GraphType.eNone;
+        public GraphBar barGraph;
+        public GraphKCurve kvalueGraph;
+
+
         public GraphManager()
         {
-            sGraphMap.Add(GraphType.eKCurveGraph, new GraphKCurve());
-            sGraphMap.Add(GraphType.eBarGraph, new GraphBar());
+            barGraph = new GraphBar();
+            kvalueGraph = new GraphKCurve();
+            sGraphMap.Add(GraphType.eKCurveGraph, kvalueGraph);
+            sGraphMap.Add(GraphType.eBarGraph, barGraph);
         }
 
         public GraphType CurrentGraphType
         {
             get { return curGraphType; }
         }
-
         public void SetCurrentGraph(GraphType gt)
         {
             curGraphType = gt;
@@ -374,17 +405,15 @@ namespace LotteryAnalyze
                 return curGraph.NeedRefreshCanvasOnMouseMove(mousePos);
             return false;
         }
-        public bool MoveLeftRight(bool left)
+        public void MoveGraph(float dx, float dy)
         {
             if (curGraph != null)
-                return curGraph.MoveLeftRight(left);
-            return false;
+                curGraph.MoveGraph(dx, dy);
         }
-        public bool MoveUpDown(bool up)
+        public void ResetGraphPosition()
         {
             if (curGraph != null)
-                return curGraph.MoveUpDown(up);
-            return false;
+                curGraph.ResetGraphPosition();
         }
         public void DrawGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {

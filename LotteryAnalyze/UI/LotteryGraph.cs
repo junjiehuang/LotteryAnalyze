@@ -51,6 +51,8 @@ namespace LotteryAnalyze.UI
             comboBoxAvgAlgorithm.DataSource = KGraphDataContainer.S_AVG_ALGORITHM_STRS;
             comboBoxAvgAlgorithm.SelectedIndex = (int)KGraphDataContainer.S_AVG_ALGORITHM;
 
+            checkBoxBollinBand.Checked = graphMgr.kvalueGraph.enableBollinBand;
+            checkBoxMACD.Checked = graphMgr.kvalueGraph.enableMACD;
             RefreshUI();
         }
 
@@ -83,9 +85,9 @@ namespace LotteryAnalyze.UI
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawGraph(g, numberIndex, cdt, this.splitContainer1.Panel1.ClientSize.Width, this.splitContainer1.Panel1.ClientSize.Height, mouseRelPos);
+            graphMgr.DrawGraph(g, numberIndex, cdt, this.splitContainer2.Panel1.ClientSize.Width, this.splitContainer2.Panel1.ClientSize.Height, mouseRelPos);
 
-            Rectangle r = new Rectangle(1, 1, this.splitContainer1.Panel1.ClientSize.Width - 2, this.splitContainer1.Panel1.ClientSize.Height - 2);
+            Rectangle r = new Rectangle(1, 1, this.splitContainer2.Panel1.ClientSize.Width - 2, this.splitContainer2.Panel1.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
             g.DrawRectangle(linePen, r);
 
@@ -118,7 +120,7 @@ namespace LotteryAnalyze.UI
         }
 
 
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        private void splitContainer2_Panel1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             DrawCanvas(g);
@@ -150,32 +152,27 @@ namespace LotteryAnalyze.UI
             }
         }
 
-        private void splitContainer1_Panel1_MouseMove(object sender, MouseEventArgs e)
+        private void splitContainer2_Panel1_MouseMove(object sender, MouseEventArgs e)
         {
             mouseRelPos = e.Location;
-            if (graphMgr.NeedRefreshCanvasOnMouseMove(mouseRelPos))
-                this.Invalidate(true);//触发Paint事件
+            bool needUpdate = false;
+            if(graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
+                needUpdate = true;
             if (e.Button == MouseButtons.Left)
             {
-                int dx = e.Location.X - currentPoint.X;
-                int dy = e.Location.Y - currentPoint.Y;
+                float dx = e.Location.X - currentPoint.X;
+                float dy = e.Location.Y - currentPoint.Y;
                 currentPoint = e.Location;
-                bool moveLeft = dx < 0;
-                for( int i = Math.Abs(dx); i > 0; i -= 5 )
-                {
-                    graphMgr.MoveLeftRight(moveLeft);
-                }
-                if(dy <= -5)
-                    graphMgr.MoveUpDown(true);
-                else if(dy >= 5)
-                    graphMgr.MoveUpDown(false);
+                graphMgr.MoveGraph(dx, dy);
+                needUpdate = true;
             }
+            if (needUpdate)
+                this.Invalidate(true);//触发Paint事件
         }
 
-        private void splitContainer1_Panel1_MouseDown(object sender, MouseEventArgs e)
+        private void splitContainer2_Panel1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-                currentPoint = e.Location;
+            currentPoint = e.Location;
         }
 
         private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
@@ -258,6 +255,18 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg100.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg100.Checked;
             NotifyOtherGraphRefreshUI(this);
+            this.Invalidate(true);
+        }
+
+        private void checkBoxBollinBand_CheckedChanged(object sender, EventArgs e)
+        {
+           graphMgr.kvalueGraph.enableBollinBand = checkBoxBollinBand.Checked;
+            this.Invalidate(true);
+        }
+
+        private void checkBoxMACD_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.enableMACD = checkBoxMACD.Checked;
             this.Invalidate(true);
         }
     }

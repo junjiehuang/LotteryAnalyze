@@ -32,9 +32,12 @@
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new LotteryAnalyze.UI.ExtSplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.checkBoxMACD = new System.Windows.Forms.CheckBox();
+            this.checkBoxBollinBand = new System.Windows.Forms.CheckBox();
             this.comboBoxAvgAlgorithm = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBoxAvgSettings = new System.Windows.Forms.GroupBox();
@@ -65,8 +68,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
             this.groupBoxAvgSettings.SuspendLayout();
@@ -106,9 +112,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
-            this.splitContainer1.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_Panel1_MouseDown);
-            this.splitContainer1.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer1_Panel1_MouseMove);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             // 
             // splitContainer1.Panel2
             // 
@@ -118,9 +122,25 @@
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(647, 412);
+            this.splitContainer1.Size = new System.Drawing.Size(647, 481);
             this.splitContainer1.SplitterDistance = 445;
             this.splitContainer1.TabIndex = 1;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel1_Paint);
+            this.splitContainer2.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer2_Panel1_MouseDown);
+            this.splitContainer2.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer2_Panel1_MouseMove);
+            this.splitContainer2.Size = new System.Drawing.Size(445, 481);
+            this.splitContainer2.SplitterDistance = 294;
+            this.splitContainer2.TabIndex = 0;
             // 
             // label4
             // 
@@ -141,12 +161,14 @@
             this.tabControlView.Location = new System.Drawing.Point(6, 113);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(189, 296);
+            this.tabControlView.Size = new System.Drawing.Size(189, 365);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.checkBoxMACD);
+            this.tabPageKGraph.Controls.Add(this.checkBoxBollinBand);
             this.tabPageKGraph.Controls.Add(this.comboBoxAvgAlgorithm);
             this.tabPageKGraph.Controls.Add(this.label8);
             this.tabPageKGraph.Controls.Add(this.groupBoxAvgSettings);
@@ -155,10 +177,36 @@
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(181, 270);
+            this.tabPageKGraph.Size = new System.Drawing.Size(181, 339);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMACD
+            // 
+            this.checkBoxMACD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxMACD.AutoSize = true;
+            this.checkBoxMACD.Location = new System.Drawing.Point(5, 282);
+            this.checkBoxMACD.Name = "checkBoxMACD";
+            this.checkBoxMACD.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxMACD.TabIndex = 10;
+            this.checkBoxMACD.Text = "MACD指标";
+            this.checkBoxMACD.UseVisualStyleBackColor = true;
+            this.checkBoxMACD.CheckedChanged += new System.EventHandler(this.checkBoxMACD_CheckedChanged);
+            // 
+            // checkBoxBollinBand
+            // 
+            this.checkBoxBollinBand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBollinBand.AutoSize = true;
+            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 259);
+            this.checkBoxBollinBand.Name = "checkBoxBollinBand";
+            this.checkBoxBollinBand.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxBollinBand.TabIndex = 9;
+            this.checkBoxBollinBand.Text = "布林指标";
+            this.checkBoxBollinBand.UseVisualStyleBackColor = true;
+            this.checkBoxBollinBand.CheckedChanged += new System.EventHandler(this.checkBoxBollinBand_CheckedChanged);
             // 
             // comboBoxAvgAlgorithm
             // 
@@ -169,7 +217,7 @@
             "0路",
             "1路",
             "2路"});
-            this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(0, 67);
+            this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(0, 62);
             this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
             this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(181, 20);
             this.comboBoxAvgAlgorithm.TabIndex = 8;
@@ -178,7 +226,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 52);
+            this.label8.Location = new System.Drawing.Point(3, 47);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(101, 12);
             this.label8.TabIndex = 7;
@@ -201,7 +249,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
-            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 102);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 87);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
             this.groupBoxAvgSettings.Size = new System.Drawing.Size(181, 165);
             this.groupBoxAvgSettings.TabIndex = 6;
@@ -337,7 +385,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 12);
+            this.label3.Location = new System.Drawing.Point(3, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 12);
             this.label3.TabIndex = 4;
@@ -347,7 +395,7 @@
             // 
             this.textBoxCycleLength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCycleLength.Location = new System.Drawing.Point(1, 28);
+            this.textBoxCycleLength.Location = new System.Drawing.Point(1, 21);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
             this.textBoxCycleLength.Size = new System.Drawing.Size(180, 21);
             this.textBoxCycleLength.TabIndex = 5;
@@ -364,7 +412,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 270);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 339);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -488,7 +536,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(647, 437);
+            this.ClientSize = new System.Drawing.Size(647, 506);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripGraph);
             this.DoubleBuffered = true;
@@ -498,10 +546,13 @@
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.LotteryGraph_Paint);
             this.menuStripGraph.ResumeLayout(false);
             this.menuStripGraph.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
             this.tabPageKGraph.PerformLayout();
@@ -551,5 +602,8 @@
         private System.Windows.Forms.CheckBox checkBoxAvg10;
         private System.Windows.Forms.Button buttonAvg5;
         private System.Windows.Forms.CheckBox checkBoxAvg5;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.CheckBox checkBoxMACD;
+        private System.Windows.Forms.CheckBox checkBoxBollinBand;
     }
 }
