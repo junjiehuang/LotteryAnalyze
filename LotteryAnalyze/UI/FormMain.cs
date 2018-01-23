@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace LotteryAnalyze
 {
@@ -84,6 +85,18 @@ namespace LotteryAnalyze
 
                 RefreshFileList();
             }
+        }
+
+        void ClearAll()
+        {
+            DataManager dataMgr = DataManager.GetInst();
+            dataMgr.mFileMetaInfo.Clear();
+            dataMgr.indexs.Clear();
+            dataMgr.allDatas.Clear();
+            dataGridViewLotteryDatas.Rows.Clear();
+            progressBar1.Value = progressBar1.Minimum;
+            richTextBoxResult.Text = "";
+            RefreshFileList();
         }
 
         void RefreshFileList()
@@ -186,7 +199,6 @@ namespace LotteryAnalyze
             }
             richTextBoxResult.Text = sb.ToString();
         }
-
         private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string path = "";
@@ -228,15 +240,10 @@ namespace LotteryAnalyze
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataManager dataMgr = DataManager.GetInst();
-            dataMgr.mFileMetaInfo.Clear();
-            dataMgr.indexs.Clear();
-            dataMgr.allDatas.Clear();
-            dataGridViewLotteryDatas.Rows.Clear();
-            progressBar1.Value = progressBar1.Minimum;
-            richTextBoxResult.Text = "";
-            RefreshFileList();
+            ClearAll();
         }
+
+
 
         private void addToSimulatePoolToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -374,6 +381,42 @@ namespace LotteryAnalyze
         private void openGraphToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LotteryAnalyze.UI.LotteryGraph.Open();
+        }
+
+        private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process p = Process.Start("AutoFetchDailyData.exe");
+            p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+
+            ClearAll();
+            DirectoryInfo di = new DirectoryInfo("..\\data");
+            LoopSearchFolder(di);
+            RefreshFileList();
+
+            DataManager dataMgr = DataManager.GetInst();
+            dataMgr.ClearAllDatas();
+
+            DateTime curDate = DateTime.Now;
+            string tag = curDate.Year.ToString();
+            if (curDate.Month < 10)
+                tag += "0";
+            tag += curDate.Month.ToString();
+            if (curDate.Day < 10)
+                tag += "0";
+            tag += curDate.Day.ToString();
+
+            int lastItemID = listViewFileList.Items.Count - 1;
+            if (lastItemID > 0) --lastItemID;
+            while( lastItemID != listViewFileList.Items.Count)
+            {
+                ListViewItem item = listViewFileList.Items[lastItemID];
+                item.Focused = true;
+                int key = (int)(item.Tag);
+                dataMgr.LoadData(key);
+                ++lastItemID;
+            }
+            Util.CollectPath012Info(null);
+            RefreshDataView();
         }
     }
 }
