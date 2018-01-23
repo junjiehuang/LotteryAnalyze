@@ -23,7 +23,7 @@ SetupOCXFile=
 [Comment]
 
 [UIPackage]
-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
+UEsDBBQAAgAIAPabN0wqQ9pTvxQAAAg4AQAJABEAVUlQYWNrYWdlVVQNAAePjWdaj41nWo+NZ1rtXQl8VNX1Pi8ssskaEEEUZVEB2ZFFUAgBQRKISdjXMQQIZDOZKOCG+66ouHaltrZ1qdKCW12opUopbnWp2FqXql2sLbb/v7UL0O/MZMgjJHXOfSc5DDPX3/e7CPPuN/e+u33n3HumCUXTKy93eG/jpm7vU610OjWhvftaUnPf36UBXux/2kf/vwmwd9++fbG/XgfsS6WESXuApnhnpwL8rpsBRwAtgRZAK+BIoDXQBmgbffXUDugAdAI6AunAUUBnoAvQFegGHA10B3oAxwDHAj2B44DjgV7ACUBvoC/QBzgROBk4CegHnAL0BwYAA4HBwCBgCDAMGAoMB0YCI4BRwErgNGA0MAYYG+nTROOAM4AJwHggA8gEJgKTgDOBycAUYBowFTgLyAKmA9nADOBsIAfIBfKBPGAmMBuYBcwB5gFzgfnAQmABsAgIAYuBJcA5wFKgACgElgPLgBXAKqAIKK4eY2XIS4BSoByoAM4FKoEqIAycB6wGzgfWABcAa4ELgYuBi4BLgMuASyPfvwz/hfFOJqHcMMpcQ5LUBT0m1pe8L/ns+sxdm8dteM3jOWPdwujfzUQLDyb31II8L8Z/az2fGX/pWxHeGL//3ybi7WUF+AatfPzNvoQ/lvv/LR/tXY43Px29oiTSA2SpI6VF+DtUz7vxPte0Oud+lULyYnJZRUmA4Uf8/JAAz3sULAV9Pmja/MjOj4LUXzBkG+R513mnZv5LO2C/F+87i82VvOqEsAoWO36Htpj/WlN0nxIvf5pv/puFFbYScP0G7R3q38THnwvWEHYAM9AOxcK1Nzb/t6kuM17+pj7+fPCvjuwcnN+/J61/M9/7n4jdRzFQ4fhN0h34m/vqX8OfgfdQENlzCfkj++V2gvY/otb7LwjY/rw/byHgb0HRPbw/zcKgeM96MnVIRxjzf153m0daMjuvZ16otLJnXmFF0bIG4u/zwKJAz8/DzFOB+acwoibkieffztVjKt7+19LX/7Mw9uSj7sD+3766vHj5W9U5/vPwPVagHWSrYVeM/5gGjpe/tY9/Anb/5ZE1oAIoxXeQrUJdUP+WFNXl8fK38fFPRt1Lg80/4vWP56ux++tfjNV3Ob4Dt3upy/wv5m97wPsPof3D+A7cDhmR9xBbCWr6Rv3pJLR/F6qxecXD387HnxEpPzr+4uGro/956UL+9j7+oPNH0P1n0DS1tLwqnFG2OujzeeFQRXiu/PlE1y/56PnhyN7XpfdF5h/x+Ovg63854F8N9uKIFUue2jrwd6zFz/uvKtTbxQrT1YHfby+P2p/cFSTbn1jPsI20Wz2fidmdcr7XcPanvhT/+sPrZYvqP1voz3SKrgGcNPRnT4ras+Pl70yq+tNjO/qJAv4upKs/u1PU3h8v/1Fkqz8PHH+B9ae4/3UlXf3JfpXegvY/2sdPxus36wb2nbDPxmUFsF4/E11/atgf2H/XQ9D/ulGN/UFBf4rHX3fS1Z99qsdUvPzHkK7+ZB/pyQL+HqSrP9lP20vAfyzZ6k9eqy31Z0/y7z9DmPcq6fxqHShNHR34j/fxJ3oKql/7bVkR6PnuG/NN6x9U/2ZD+RRH7B9ZQKl4D8r2dx7PAwTj/wRf/5se6fclGAXFzvYPaf/v5eOfAr7znK0v0fmvP8nsL71rzX8FeAeVjai/+/j4edWpiDAXV1u/Gn7+60v+9Y/171Dn/u8/f1HfKY6Y7m1I/TtW0P9Zq1nqX16v29aaPyL2r2w5f6Lbv6z1z1iK6h8+0+Wif9IC8mvYP/js4AhB/z+ZdO0ffO5vnIC/H+naP9h6N1DA35+S2/4xgHTtH7x6jBG0/ymk639n28UwAf9AstW/g0hX/55WXWa8/INJV/+Op+iZ3nj5h5Cu/uVzxaMF/EPJVv9yXx1LOinZz19Yp6D618L+MZxs7R8jfPwa+pfrkyEY/6eSrf4dSbr6dwLJ9O8ostW/o8lW/46h2vp3mPP4Zf3L/rQSit5bqSv9L/2b7PavA/Rvpvz5xD//oWP/yBXMf7xftLR/8N5H0//Pd8OmCeo/jnT1bzZFbQjx8p9OuvqX78xlCvjPoOTWv+NJV//yXcUcQftPoEPH/19Z3Xe/Q272rya202fK/4/xx/dipwr6XwbZ2j8mkq79g+8CTxLUP5N07R9833imgH8S6do/eAc4Q8A/mWztH7xeWfr/p5Ct/p1KKf9/LCW6/smoCofLSt2f17B/cHyEOYLxfxbZ2j+mka79YzbJ7B9ZZGv/yCZb+8d0qm3/GO7cf/3+/wX1fKYx/P+S+vNa2Xx/WzS+/s2h6B2ImvkjYv2YWFZcXFggXAAT3f7x7P07nvrFq0897Pp80PtPQdevnV5UP+WlkdMuSsP+wTFsQhT//H822d6/zyVd+wfH7pknqH8e2do/eMcSs79Z3L+fSbr2Dx5BywTtP4t0/f+8a18s4J9NqvrX4x3sQgH/HF/9rXWAtf3G2n886NFg+mP4s8Ge17B/cMyy+YL+N5d07R8c661YwD+PdO0fSygauy1e/vlka//gfXLM/mFx/3Yhqeo/Mf8i0tV/Uv7F5Lf/8L1jtgAVYhWQf4duDvVf4uMPar/ICp1TWBz0+QABtBJdf+z4cPsnrEG2v/H82/c+KX8+qH5QuP/ucYzKVYL57+D77yMCzH+ex+sJx7Qsr6+O1bp/ycsNp/8vFNSftVKz/fNf4+t/1msx+4OG/uOYo1WC+heQrv+bY51eLOBfSrr6j2Owlgr4C8lW/y2jmvMPFvpvOenqP14t1wrafwXp6j8+fFQp4C8iW//nSl/9g9qveB4ZT9H9d67D883INiW7/tTQfxxjukzQ/1eRqv6LzD8XCfiLSVf/8eyxRsBfQrb6j9cqS/93GfnXv2i7V+IthCJ7UNl3cNF/5Qe8/yrwlaH3FWENcdr/ifnPpdr+r1MDvP8a/9dl9Xwmtu+ta/9rnXIqypZXFFZWZoQqgj6flP6roMnC/8lvunX1ny30TyXV+D819M81yK+m+Of/MOnqn2tJdv6ginT1z+VU87sv8TxzHh1W53/F/OeTrv65AvkNgvZf7ePfvXt34DnkcUyC+WlEOxwmw+bG81+i7/+Drj8a+vc65FcK+t8astW/a0n3/O+NFP0tnXj5LyBd/9fNyG8S8F9IuvrnKuTXC/gvIlv9w7bCmP7h3ldUrTpC++NAi9o/Mv/fIqj/JaQb/3k9ydb/dZT6/Z8UogjqP7KOH651/3NiyVKn5xNdP86KeN6rGjX+96Xk1z8x/gw6s5H835dRbfvLyADrj+fxfaIPgdvr+cz/sr9o6e+NgvWH9Zrl/VvWKzH9r6G/v4L8HkH9ryRd/f1V5N8S8F9Fuvr7DuS3CfivpuS+f3sN6ervO5F/Q9D+15Ku//FryO8S8F9HB//+k2sKun7zZLgJmJlG9KDDYmh9/zbR7QcW+vt60tXf30S+QdD/byBd/c13178t4L+RdPX3vci/LuC/iWz1N9srLP2P68n2/u0tpBt/6m7k3xW8/1vp0Ln/G1T/pO7/Brv/a3H/9jbSPX99H8nsXxvI9v7t7WR7//YOqq1/Rzn3H//5gwfq+Uxj6F9J/Xm/bnn/9i7S9T/z/vkRin/+v9v3/qPzx4yqcE5VeHJZ8dJCYQdMdPvXqxtf/yzI84fC/V/+Pa82aeRkxbK4f3sP6do/foj8+4L+/xWytX98lerSH413/uBrpGv/eAj5FkH7f5107R8/Qv4DAf83SPf+7WPIHxTwf5N09e+jyO8X8G/08bck25S6/2t7/1fD/vEE8h8L+t+3SNf+wcE7Ngv47yVb+wfbiizv336HbO/f3ke292+/S7b3b79Hqr8/7D2O/Elyu38Z1H6hFn+5kM9uyxVIouuPzDELZpYWhdfkVJStrFyQVRYOF1asmVAaKl6ztnDg8qLwgnBFVemqBUtD4VCd4a2Chm+N6v/RAeY/z+P+/Evg2Xo+0xj6/xeC/s9awdL/zXu19Oo/a+j/nyHfJqj/A6Tr/34e+U4B/4Okq/+2In9awP8Q2eo/1ioD9o+/xvd/P0y6+u8nyH8uaP9HSFf/vYD8OQH/JrI9f/xD0tV/O5A/I6j/j0jP/8N2VLY/PeGR0y22VmSbkv33izT038vIXxL0v82kq/9eRL5dwL+FbPUf22ss/d+Pka3/+3HS9X//FPmrgvf/BNnGH36SdPXvKyTzf/6YDh3/f7L771XiZ7n/fLKJ//spsvV/P021/d9DaLBj+7Xx+b/fqOczMd1b/nnD6d/3BfMf7xUt40+xnUAz/tSvkb8tqP9W0tW/v0H+OwH/T0hX/76J/DUB/3M+/kS3n23Z9MIjm+/b+umWbW4R9KzvL/E44PuYrOGudXi+dcD2s7B//JRq9LeF/3sb6do/foX8XcH4+xnp2j/eQf6WgP95srV/vEC69o/3kL8uqP920o8/9YGA/+ekq393If+tgH8H6e3/k91/b52C+t8s7B/sq7G0f+wk2/hjL5Jt/LGX6GD94xqCmfUP67lhGHG/r+czMd3TkPrn74L5j+2Vlv4/ttdo/v7sp8j/LKj/q773v//+e1VFZkguP5I+fprG/p/vg7H/5CGn8RcsaejfvyD/P0H/+yXp6t8/IP9IwP8aJff959dJV//8EflngvZ/g3T1z1+R/0nA/ybZ6p9fka7++RvyjwX1f4tS+//DJQW1X2n4f//B70HQ/3aRrv79f+S7Bfxvk63/l+3VlvrnN2Tr/32HdP2/nyD/p+D9/5Zs/b/vkq7/9wuS+X/f8/Enuv9UMX50flk4JHbFJrr+sfD/vk+2/t8P6GD7h6sL3e//3VPPZxrD/iGpP/sqLeNvc6y02P5bw/7RBC2a5sU//39Euv7fpp5s/v2YdPXvXuT/pvjr/3tK7vjbfyBd/cukRwj63x9JV/824xlFwP8n0ov/pRE//MXq+OHvOiyGR5JtSsX/ks//n5Cu/aMFavsfwfz3Z9KN/9UK/C0F4+9T0tW/HribC/j/Qrb6l+112vG32wjqv5t042+3Fq7/n1Fd8W8bb//9N9I7/5Xo8aODxs+qjp9TXliaGQqHEu/+qkX85b/TwfprmOP3h/6ifyE/Hg3Rvp7GONT0F/vKLONPsb1U8/5pF7RoZ8H8+zmp6i9x/f9BuvrrKNS9raD+X5Ct/von6fl/Pnx469Ygz1vHz+qUFr2/mJfmdn+xLdmmoPrDQn//i3T1d0eMvW6C8fdv0tXfXcHdScD/H9KNP3UMuDsI+PeQrv7qDu52Av69pKu/jgV3TwH/PtLVX+ngPlrAz5s2S/3FejGmv1K/gXN4It4UdP1J9vhpQf2fKvc/h7k/bxF/LM2zjT/WxLONP9bUs40/1szTjT/WA+Ud57nFH4vp/+GO/dfvf+1tqP8HC+rPtlrL+7fsq9K8f9sP5Z0sqH8LT9f/2h/lDRXwt/R09X8flHeCgL+VZ6v/2V4d062Jfn5lx55n3tl07+aPn3vsmUflt38Pjfu/aQDvAdIdnm8XsP0s9H8bT1f/90V5AwXj70hPV/8PQHknCvjZVmh5/rydp6v/B6G8XoL6t/f0798OEfB38HT1/0ko7xQBf0dj/d/Jp/+DptT5f9sUVD9anD9P92zv33b2bO/fdvEO9n+OcHx/rH94PZvP8Re/RP+s67GrwfRPhmD+O8pY/3RV1j9jUd5pgvofrax/xqG8TAF/N//6z/OHq/imw0A/fLj9k6ff3/GFW/Qge/2wFRgP8B441+F5Df07EtzDBf2vu7H+Pcanfy30Tw9l/TMK5Y0XtP+xyvrndJQ3WsB/nLH+6amsfyagvBGC+h/fAPpnooD/BB+/1jlw15TSD7ZJQ/+OQWudIeh/vYz1b2/P9v5tH2P909dY/5xYh/5xOXvFye//mVLPZjKmexpS/+QL+j/biyzjD7GvJhY3Ruv3eyaVLp3r8nzCxw/aZ0vPsSzzKHqm1sWDr6F/p+MlZAv6fz9l/TsD5c0U8PdX9v9NRXmTBfwDvOSOP3SKsv45i7WvoP0HKuufHJQ3TcA/yFj/DPbVv4Px9Jnsv79inTT0bx5a60xB/x+iq39pDsqbLeAfquz/m4XyzhbwDzPWP8N9+mcPnrkc+VXAFcCVwNUUjUV+DXAdcANwPUXjFN4M3ASsB24FbgFuA+4ANgC3A3dS9Dfm+Xfu+be+pWdSU6nxkoX+HeHZxp861dONP5WF8uYJxv9Izzb+1Cgff7L//o6i/s12ed5a/2qcf54rvP8+utb619jxp8Z4tvGnTqvD/jXS8f3x/edJKO9cYJGh/WulYP4ba2z/Guezf2nYP5aivAJB/U9Xtn8UorxVAv4zlO0fi1HeAgH/+CS3f0xQtn8sQXkrBO2f4Sn+/p+x/ZPvkrL9k20aLvbPjrZf39z+oWH/Woa2Dwn630Rj+1emsv+/COUtFNR/krL9oxTllQj4JyvbP4pR3nIB/5nG9o8pxv7fqcb69ywffyp+enLrXw37xznoLeWC8T/N2P6RpXz/t0yof7ON9e90Y/07ow79O8qx/8bOf1yNMsOG+nedoP/nGOvfsxvm/Eemy/Op8x/BEttyWf+s9OzOf6wF9xpB/89Vtn9cgPIuFfDnKds/qlBehYA/P8ntHzOV7R/nobyLBe0/S/n8x4Uo73wB/2xj/TvHV/9OxtNn6vyHbdKwf1zCa4+g/89Vtn9cgfIuF/DPU7Z/XIbyLhLwzze2fywwtn8sNLZ/LFL2/69GeVcJ3v9iY/27JOX/35904n/nFi4rDBe4tMTh4P+/Umj/CBnbP84xtn8U1GH/GO34/tj/H+O+7kvsH+szdx0S8c+Xerbxz9lfHvvdGA39ux7l3SyY/5d5tvHPlyvr31tQ3jWC+q8w1r9FPv1lcf97pbL+vQHlbRC0/ypF//+bb23f+NorL+3Y+cGWbS9te2qv9Pl9xvHf+ben+DxzbhrR/Q7Pp5NtCnp/WsP+cSva8EZB/yvWtX94d6C86wX8Jcr+/9tR3rUC/lJl/XsXyrtHwF+mrH9vQnm3CfjLjfXvuT79axH/uMI4/nGl4vyfiv9tq1+DJov412Hj+NdVyvGv70R5dzvGv9ZI0vr7038BUEsBAhcLFAACAAgA9ps3TCpD2lO/FAAACDgBAAkACQAAAAAAAAAAAACAAAAAAFVJUGFja2FnZVVUBQAHj41nWlBLBQYAAAAAAQABAEAAAAD3FAAAAAA=
 
 
 [Script]
@@ -41,65 +41,24 @@ Event Form1.Load
 	Form1.InputBoxStartY.Text = Y
 	Form1.InputBoxStartM.Text = M
 	Form1.InputBoxStartD.Text = D
+	fileHandle = Plugin.File.OpenFile("dataPath.txt")
+	Form1.InputBoxSelectFolder.Text = Plugin.File.ReadLine(fileHandle)
+	Plugin.File.CloseFile (fileHandle)
+	
+	//DoForceFetch 
+	//hwnd = Plugin.Window.Foreground
+	//Plugin.Window.CloseEx(hwnd)
 End Event
-
 
 // 执行数据抓取(强制抓取)
 Event Form1.ButtonStartCollect.Click
-
-	successCount = 0
-	failedCount = 0
-	catchSuccessInfo = "抓取成功的个数： "
-	catchFailedInfo = "抓取失败的个数： "
-	failedLst = ""
-	invalidFileInfos = ""
-
-    //当窗体被加载时触发的事件
-    Dim Y, M, D, Today, Tomorrow, TestDay, TestDayStr, TodayStr, NewData, StartY, StartM, StartD
-    Dim web_addr,TY, TM, TD
-	TodayStr = Form1.InputBoxEndM.Text & " " & Form1.InputBoxEndD.Text & ", " & Form1.InputBoxEndY.Text
-	Today = DateAdd("d", 0, TodayStr)
-	Tomorrow = DateAdd("d", 1, TodayStr)
-	
-	StartY = Form1.InputBoxStartY.Text
-	StartM = Form1.InputBoxStartM.Text
-	StartD = Form1.InputBoxStartD.Text
-	TestDayStr = StartM & " " & StartD & ", " & StartY
-	TestDay = DateAdd("d", 0, TestDayStr)
-	Form1.InputBoxCmd.Text = "开始抓取 " & TestDay & " - " & Today & "的网页信息"
-
-	totalDays = DateDiff("d", TestDayStr, Tomorrow)
-	procCount = 1
-	Form1.ProgressBarTotal.Value = 0
-
-	// 遍历指定的所有日期
-	While Not (TestDay Eqv Tomorrow) 
-		Form1.ProgressBarTotal.Value = procCount * 100 / totalDays
-		TY = Year(TestDay)
-		TM = Month(TestDay)
-		TD = Day(TestDay)
-		TestDayStr = TM & " " & TD & ", " & TY
-		// 抓取指定日期的数据
-		AnalyzeOneDat TestDay, true
-		TestDay = DateAdd("d", 1, TestDayStr)
-		procCount = procCount + 1
-		Form1.ProgressBarTotal.Value = procCount * 100 / totalDays
-	Wend
-	
-	catchSuccessInfo = catchSuccessInfo & successCount & vbCrLf
-	catchFailedInfo = catchFailedInfo & failedCount & vbCrLf
-	Form1.InputBoxCmd.Text = "结束所有操作！" & vbCrLf & catchSuccessInfo & catchFailedInfo & failedLst
-	Form1.ProgressBarCollect.Value = 100
-	Form1.ProgressBarTotal.Value = 100
-	
+	DoForceFetch	
 End Event
-
 
 // 选择文件夹
 Event Form1.ButtonOutPutFolder.Click
 	Form1.InputBoxSelectFolder.Text = Plugin.File.SelectDirectory()
 End Event
-
 
 // 抓取指定日期的数据
 Function AnalyzeOneDat(testDay, forceCache)
@@ -251,18 +210,55 @@ Function AnalyzeOneDat(testDay, forceCache)
 	
 End Function
 
+Function DoForceFetch()	
+	successCount = 0
+	failedCount = 0
+	catchSuccessInfo = "抓取成功的个数： "
+	catchFailedInfo = "抓取失败的个数： "
+	failedLst = ""
+	invalidFileInfos = ""
 
-// 打开数据文件夹
-Event Form1.ButtonOpenDataFolder.Click
-
-	RunApp Form1.InputBoxSelectFolder.Text
+    //当窗体被加载时触发的事件
+    Dim Y, M, D, Today, Tomorrow, TestDay, TestDayStr, TodayStr, NewData, StartY, StartM, StartD
+    Dim web_addr,TY, TM, TD
+	TodayStr = Form1.InputBoxEndM.Text & " " & Form1.InputBoxEndD.Text & ", " & Form1.InputBoxEndY.Text
+	Today = DateAdd("d", 0, TodayStr)
+	Tomorrow = DateAdd("d", 1, TodayStr)
 	
-End Event
+	StartY = Form1.InputBoxStartY.Text
+	StartM = Form1.InputBoxStartM.Text
+	StartD = Form1.InputBoxStartD.Text
+	TestDayStr = StartM & " " & StartD & ", " & StartY
+	TestDay = DateAdd("d", 0, TestDayStr)
+	Form1.InputBoxCmd.Text = "开始抓取 " & TestDay & " - " & Today & "的网页信息"
 
+	totalDays = DateDiff("d", TestDayStr, Tomorrow)
+	procCount = 1
+	Form1.ProgressBarTotal.Value = 0
 
+	// 遍历指定的所有日期
+	While Not (TestDay Eqv Tomorrow) 
+		Form1.ProgressBarTotal.Value = procCount * 100 / totalDays
+		TY = Year(TestDay)
+		TM = Month(TestDay)
+		TD = Day(TestDay)
+		TestDayStr = TM & " " & TD & ", " & TY
+		// 抓取指定日期的数据
+		AnalyzeOneDat TestDay, true
+		TestDay = DateAdd("d", 1, TestDayStr)
+		procCount = procCount + 1
+		Form1.ProgressBarTotal.Value = procCount * 100 / totalDays
+	Wend
+	
+	catchSuccessInfo = catchSuccessInfo & successCount & vbCrLf
+	catchFailedInfo = catchFailedInfo & failedCount & vbCrLf
+	Form1.InputBoxCmd.Text = "结束所有操作！" & vbCrLf & catchSuccessInfo & catchFailedInfo & failedLst
+	Form1.ProgressBarCollect.Value = 100
+	Form1.ProgressBarTotal.Value = 100
+End Function
 
-Event Form1.ButtonRefetch.Click
-
+Function DoRefetch()
+	
 //	Length = Plugin.File.GetFileLength("D:\UnityProjs\LotteryAnalyze.git\trunk\data\20101211.txt")
 //	MessageBox "file data size = " & Length
 
@@ -314,5 +310,16 @@ Event Form1.ButtonRefetch.Click
 	Form1.ProgressBarCollect.Value = 100
 	Form1.ProgressBarTotal.Value = 100
 	MessageBox "重新拉取的文件 : " & vbCrLf & invalidFileInfos
+End Function
+
+// 打开数据文件夹
+Event Form1.ButtonOpenDataFolder.Click
+
+	RunApp Form1.InputBoxSelectFolder.Text
 	
 End Event
+
+Event Form1.ButtonRefetch.Click
+	DoRefetch
+End Event
+
