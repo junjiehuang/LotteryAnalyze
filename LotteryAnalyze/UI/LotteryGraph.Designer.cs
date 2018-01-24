@@ -31,7 +31,7 @@
             this.menuStripGraph = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new LotteryAnalyze.UI.ExtSplitContainer();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
@@ -66,12 +66,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panelUp = new ExtPanel();// new System.Windows.Forms.Panel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
@@ -135,9 +137,10 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel1_Paint);
-            this.splitContainer2.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.splitContainer2_Panel1_MouseDown);
-            this.splitContainer2.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitContainer2_Panel1_MouseMove);
+            this.splitContainer2.Panel1.Controls.Add(this.panelUp);
+            //this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            //this.splitContainer2.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            //this.splitContainer2.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             this.splitContainer2.Size = new System.Drawing.Size(445, 481);
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
@@ -532,6 +535,20 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(439, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -551,6 +568,7 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
@@ -576,7 +594,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxCycleLength;
         private System.Windows.Forms.Label label3;
-        private ExtSplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TabControl tabControlView;
         private System.Windows.Forms.TabPage tabPageKGraph;
@@ -605,5 +623,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
+        private System.Windows.Forms.Panel panelUp;
     }
 }

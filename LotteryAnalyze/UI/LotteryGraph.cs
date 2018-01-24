@@ -29,7 +29,7 @@ namespace LotteryAnalyze.UI
         {
             instLst.Add(this);
             InitializeComponent();
-
+            
             //采用双缓冲技术的控件必需的设置
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -80,14 +80,14 @@ namespace LotteryAnalyze.UI
             }
         } 
 
-        void DrawCanvas(Graphics g)
+        void DrawUpCanvas(Graphics g)
         {
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawGraph(g, numberIndex, cdt, this.splitContainer2.Panel1.ClientSize.Width, this.splitContainer2.Panel1.ClientSize.Height, mouseRelPos);
+            graphMgr.DrawGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mouseRelPos);
 
-            Rectangle r = new Rectangle(1, 1, this.splitContainer2.Panel1.ClientSize.Width - 2, this.splitContainer2.Panel1.ClientSize.Height - 2);
+            Rectangle r = new Rectangle(1, 1, this.panelUp.ClientSize.Width - 2, this.panelUp.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
             g.DrawRectangle(linePen, r);
 
@@ -105,7 +105,7 @@ namespace LotteryAnalyze.UI
         private void LotteryGraph_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            DrawCanvas(g);
+            DrawUpCanvas(g);
         }
 
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
@@ -119,11 +119,33 @@ namespace LotteryAnalyze.UI
             this.Invalidate(true);//触发Paint事件
         }
 
+        private void panelUp_MouseMove(object sender, MouseEventArgs e)
+        {
+            mouseRelPos = e.Location;
+            bool needUpdate = false;
+            if (graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
+                needUpdate = true;
+            if (e.Button == MouseButtons.Left)
+            {
+                float dx = e.Location.X - currentPoint.X;
+                float dy = e.Location.Y - currentPoint.Y;
+                currentPoint = e.Location;
+                graphMgr.MoveGraph(dx, dy);
+                needUpdate = true;
+            }
+            if (needUpdate)
+                this.Invalidate(true);//触发Paint事件
+        }
 
-        private void splitContainer2_Panel1_Paint(object sender, PaintEventArgs e)
+        private void panelUp_MouseDown(object sender, MouseEventArgs e)
+        {
+            currentPoint = e.Location;
+        }
+
+        private void panelUp_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            DrawCanvas(g);
+            DrawUpCanvas(g);
         }
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
@@ -151,30 +173,7 @@ namespace LotteryAnalyze.UI
                 }
             }
         }
-
-        private void splitContainer2_Panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            mouseRelPos = e.Location;
-            bool needUpdate = false;
-            if(graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
-                needUpdate = true;
-            if (e.Button == MouseButtons.Left)
-            {
-                float dx = e.Location.X - currentPoint.X;
-                float dy = e.Location.Y - currentPoint.Y;
-                currentPoint = e.Location;
-                graphMgr.MoveGraph(dx, dy);
-                needUpdate = true;
-            }
-            if (needUpdate)
-                this.Invalidate(true);//触发Paint事件
-        }
-
-        private void splitContainer2_Panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            currentPoint = e.Location;
-        }
-
+        
         private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));

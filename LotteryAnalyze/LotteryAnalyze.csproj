@@ -51,6 +51,9 @@
     <Compile Include="Graph.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />
+    <Compile Include="UI\ExtPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ExtSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
