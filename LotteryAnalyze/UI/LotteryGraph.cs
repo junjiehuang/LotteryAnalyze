@@ -85,10 +85,24 @@ namespace LotteryAnalyze.UI
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mouseRelPos);
+            graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mouseRelPos);
 
             Rectangle r = new Rectangle(1, 1, this.panelUp.ClientSize.Width - 2, this.panelUp.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
+            g.DrawRectangle(linePen, r);
+
+            g.Flush();
+        }
+
+        void DrawDownCanvas(Graphics g)
+        {
+            g.Clear(Color.Black);
+
+            CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
+            graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, mouseRelPos);
+
+            Rectangle r = new Rectangle(1, 1, this.panelDown.ClientSize.Width - 2, this.panelDown.ClientSize.Height - 2);
+            Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
             g.DrawRectangle(linePen, r);
 
             g.Flush();
@@ -99,14 +113,13 @@ namespace LotteryAnalyze.UI
             if (m.Msg == 0x0014) // 禁掉清除背景消息
                 return;
             base.WndProc(ref m);
-
         }
 
-        private void LotteryGraph_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            DrawUpCanvas(g);
-        }
+        //private void LotteryGraph_Paint(object sender, PaintEventArgs e)
+        //{
+        //    Graphics g = e.Graphics;
+        //    DrawUpCanvas(g);
+        //}
 
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -146,6 +159,12 @@ namespace LotteryAnalyze.UI
         {
             Graphics g = e.Graphics;
             DrawUpCanvas(g);
+        }
+
+        private void panelDown_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            DrawDownCanvas(g);
         }
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)

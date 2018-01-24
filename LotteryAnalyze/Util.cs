@@ -330,7 +330,7 @@ namespace LotteryAnalyze
                     {
                         for (int i = 0; i < killNums.Count; ++i)
                         {
-                            int killNum = killNums[i];
+                            byte killNum = (byte)killNums[i];
                             // kill wrong number
                             if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                             {
@@ -424,7 +424,7 @@ namespace LotteryAnalyze
                 {
                     for (int i = 0; i < killNums.Count; ++i)
                     {
-                        int killNum = killNums[i];
+                        byte killNum = (byte)killNums[i];
                         // kill wrong number
                         if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                         {

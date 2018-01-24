@@ -12,9 +12,26 @@ namespace LotteryAnalyze
     {
         eNone,
 
-        ePath0 = 1 << 0,
-        ePath1 = 1 << 1,
-        ePath2 = 1 << 2,
+        ePath0          = 1 << 0,
+        ePath1          = 1 << 1,
+        ePath2          = 1 << 2,
+        eBigNum         = 1 << 3,
+        eSmallNum       = 1 << 4,
+        eOddNum         = 1 << 5,
+        eEvenNum        = 1 << 6,
+        ePrimeNum       = 1 << 7,
+        eCompositeNum   = 1 << 8,
+        eNum0           = 1 << 9,
+        eNum1           = 1 << 10,
+        eNum2           = 1 << 11,
+        eNum3           = 1 << 12,
+        eNum4           = 1 << 13,
+        eNum5           = 1 << 14,
+        eNum6           = 1 << 15,
+        eNum7           = 1 << 16,
+        eNum8           = 1 << 17,
+        eNum9           = 1 << 18,
+
 
         eMax = 0xFFFFFFF,
     }
@@ -40,6 +57,15 @@ namespace LotteryAnalyze
             }
             return info;
         }
+
+        public KData GetPrevKData()
+        {
+            if(index > 0)
+            {
+                return parent.parent.dataLst[index - 1].dataDict[cdt];
+            }
+            return null;
+        }
     }
 
     class KDataDict
@@ -48,6 +74,7 @@ namespace LotteryAnalyze
         public Dictionary<CollectDataType, KData> dataDict = new Dictionary<CollectDataType, KData>();
         public DataItem startItem = null;
         public DataItem endItem = null;
+        public KDataDictContainer parent = null;
 
         public KData GetData(CollectDataType collectDataType, bool createIfNotExist)
         {
@@ -450,11 +477,127 @@ namespace LotteryAnalyze
     }
 
 
+    class MACDLimitValue
+    {
+        public float MaxValue = 0;
+        public float MinValue = 0;
+    }
+    class MACDPoint
+    {
+        public float DIF = 0;
+        public float DEA = 0;
+        public float BAR = 0;
+    }
+    class MACDPointMap
+    {
+        public MACDDataContianer parent;
+        public int index = -1;
+        public Dictionary<CollectDataType, MACDPoint> macdpMap = new Dictionary<CollectDataType, MACDPoint>();
+
+        public MACDPointMap()
+        {
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+                GetData(GraphDataManager.S_CDT_LIST[i], true);
+        }
+        public MACDPoint GetData(CollectDataType collectDataType, bool createIfNotExist)
+        {
+            if (macdpMap.ContainsKey(collectDataType))
+                return macdpMap[collectDataType];
+            else if (createIfNotExist == false)
+                return null;
+            MACDPoint data = new MACDPoint();
+            macdpMap.Add(collectDataType, data);
+            return data;
+        }
+        public MACDPointMap GetPrevMACDPM()
+        {
+            if (index > 0)
+                return parent.macdMapLst[index - 1];
+            return null;
+        }
+    }
+    class MACDDataContianer
+    {
+        public static bool ENABLE = true;
+        public List<MACDPointMap> macdMapLst = new List<MACDPointMap>();
+        public Dictionary<CollectDataType, MACDLimitValue> macdLimitValueMap = new Dictionary<CollectDataType, MACDLimitValue>();
+
+        public MACDDataContianer()
+        {
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+            {
+                macdLimitValueMap.Add(GraphDataManager.S_CDT_LIST[i], new MACDLimitValue());
+            }
+        }
+
+        MACDPointMap CreateMACDPointMap()
+        {
+            MACDPointMap obj = new MACDPointMap();
+            obj.index = macdMapLst.Count;
+            obj.parent = this;
+            macdMapLst.Add(obj);
+            return obj;
+        }
+
+        public void Process(List<KDataDict> srcData, AvgDataContainer avgContainerShort, AvgDataContainer avgContainerLong)
+        {
+            int cycle = avgContainerShort.cycle * 3 / 4;
+            macdMapLst.Clear();
+            if (ENABLE == false)
+            {
+                return;
+            }
+            for (int i = 0; i < srcData.Count; ++i)
+            {
+                KDataDict kdd = srcData[i];
+                AvgPointMap apmS = avgContainerShort.avgPointMapLst[i];
+                AvgPointMap apmL = avgContainerLong.avgPointMapLst[i];
+
+                MACDPointMap bpm = CreateMACDPointMap();
+                for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
+                {                    
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
+                    MACDLimitValue mlv = macdLimitValueMap[cdt];
+                    AvgPoint apS = apmS.apMap[cdt];
+                    AvgPoint apL = apmL.apMap[cdt];
+
+                    float DIF = apS.avgKValue - apL.avgKValue;
+                    float DEA = 0;
+                    float BAR = 0;
+                    if (i == 0)
+                        DEA = DIF;
+                    else
+                    {
+                        MACDPointMap prevMPM = bpm.GetPrevMACDPM();
+                        MACDPoint prevMP = prevMPM.GetData(cdt, false);
+                        DEA = (DIF * 2 + (cycle - 1) * prevMP.DEA) / (cycle + 1);
+                    }
+                    BAR = 2 * (DIF - DEA);
+
+                    MACDPoint bp = bpm.GetData(cdt, true);
+                    bp.DIF = DIF;
+                    bp.DEA = DEA;
+                    bp.BAR = BAR;
+
+                    mlv.MaxValue = Math.Max(mlv.MaxValue, Math.Max(BAR, Math.Max(DIF, DEA)));
+                    mlv.MinValue = Math.Min(mlv.MinValue, Math.Min(BAR, Math.Min(DIF, DEA)));
+                }
+            }
+        }
+
+    }
+
+
     class KDataDictContainer
     {
+        // 一条K线
         public List<KDataDict> dataLst = new List<KDataDict>();
+        // 多条均线
         public Dictionary<int, AvgDataContainer> avgDataContMap = new Dictionary<int, AvgDataContainer>();
+        // 一个布林指标
         public BollinDataContainer bollinDataLst = new BollinDataContainer();
+        // 一个macd指标
+        public MACDDataContianer macdDataLst = new MACDDataContianer();
 
         public KDataDictContainer()
         {
@@ -478,6 +621,7 @@ namespace LotteryAnalyze
         {
             KDataDict kdd = new KDataDict();
             kdd.index = dataLst.Count;
+            kdd.parent = this;
             dataLst.Add(kdd);
             return kdd;
         }
@@ -535,6 +679,8 @@ namespace LotteryAnalyze
         int dataLength = 0;
         int cycleLength = 1;
         int bollinBandCycleLength = 20;
+        int macdEMAShortCycle = 10;
+        int macdEMALongCycle = 20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
         public int CycleLength
         {
@@ -552,6 +698,7 @@ namespace LotteryAnalyze
             CollectKDatas();
             CollectAvgDatas();
             CollectBollinDatas();
+            CollectMACDDatas();
         }
 
         public void CollectKDatas()
@@ -639,6 +786,16 @@ namespace LotteryAnalyze
                 kddc.bollinDataLst.Process(kddc.dataLst, adc);
             }
         }
+        public void CollectMACDDatas()
+        {
+            for (int i = 0; i < allKDatas.Count; ++i)
+            {
+                KDataDictContainer kddc = allKDatas[i];
+                AvgDataContainer adcS = kddc.avgDataContMap[macdEMAShortCycle];
+                AvgDataContainer adcL = kddc.avgDataContMap[macdEMALongCycle];
+                kddc.macdDataLst.Process(kddc.dataLst, adcS, adcL);
+            }
+        }
 
         public AvgDataContainer GetAvgDataContainer(int numIndex, int cycle)
         {
@@ -700,6 +857,102 @@ namespace LotteryAnalyze
                         break;
                     case CollectDataType.ePath2:
                         if (item.path012OfEachSingle[NUM_INDEX] == 2)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eBigNum:
+                        if (item.bigOfEachSingle[NUM_INDEX])
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eSmallNum:
+                        if (item.bigOfEachSingle[NUM_INDEX] == false)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eOddNum:
+                        if (item.oddOfEachSingle[NUM_INDEX])
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eEvenNum:
+                        if (item.oddOfEachSingle[NUM_INDEX] == false)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.ePrimeNum:
+                        if (item.primeOfEachSingle[NUM_INDEX])
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eCompositeNum:
+                        if (item.primeOfEachSingle[NUM_INDEX] == false)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum0:
+                        if (item.fiveNumLst[NUM_INDEX] == 0)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum1:
+                        if (item.fiveNumLst[NUM_INDEX] == 1)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum2:
+                        if (item.fiveNumLst[NUM_INDEX] == 2)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum3:
+                        if (item.fiveNumLst[NUM_INDEX] == 3)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum4:
+                        if (item.fiveNumLst[NUM_INDEX] == 4)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum5:
+                        if (item.fiveNumLst[NUM_INDEX] == 5)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum6:
+                        if (item.fiveNumLst[NUM_INDEX] == 6)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum7:
+                        if (item.fiveNumLst[NUM_INDEX] == 7)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum8:
+                        if (item.fiveNumLst[NUM_INDEX] == 8)
+                            data.HitValue++;
+                        else
+                            data.MissValue++;
+                        break;
+                    case CollectDataType.eNum9:
+                        if (item.fiveNumLst[NUM_INDEX] == 9)
                             data.HitValue++;
                         else
                             data.MissValue++;
@@ -890,6 +1143,22 @@ namespace LotteryAnalyze
             AddPreInfo(CollectDataType.ePath0, "0路", 4.0f / 10);
             AddPreInfo(CollectDataType.ePath1, "1路", 3.0f / 10);
             AddPreInfo(CollectDataType.ePath2, "2路", 3.0f / 10);
+            AddPreInfo(CollectDataType.eBigNum, "大数", 5.0f / 10);
+            AddPreInfo(CollectDataType.eSmallNum, "小数", 5.0f / 10);
+            AddPreInfo(CollectDataType.eOddNum, "奇数", 5.0f / 10);
+            AddPreInfo(CollectDataType.eEvenNum, "偶数", 5.0f / 10);
+            AddPreInfo(CollectDataType.ePrimeNum, "质数", 5.0f / 10);
+            AddPreInfo(CollectDataType.eCompositeNum, "合数", 5.0f / 10);
+            AddPreInfo(CollectDataType.eNum0, "数字0", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum1, "数字1", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum2, "数字2", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum3, "数字3", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum4, "数字4", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum5, "数字5", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum6, "数字6", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum7, "数字7", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum8, "数字8", 1.0f / 10);
+            AddPreInfo(CollectDataType.eNum9, "数字9", 1.0f / 10);
 
             S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
             S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new BarGraphDataContianer());

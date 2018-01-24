@@ -88,8 +88,18 @@ namespace LotteryAnalyze
         public int rearValue;
         public int crossValue;
         public GroupType groupType;
-        public List<int> valuesOfLastThree = new List<int>();
-        public List<int> path012OfEachSingle = new List<int>();
+        // 5个数字
+        public List<byte> fiveNumLst = new List<byte>();
+        // 后三数字
+        public List<byte> valuesOfLastThree = new List<byte>();
+        // 每个数字的012路属性
+        public List<byte> path012OfEachSingle = new List<byte>();
+        // 每个数是否奇数
+        public List<bool> oddOfEachSingle = new List<bool>();
+        // 每个数是否质数
+        public List<bool> primeOfEachSingle = new List<bool>();
+        // 每个数是否大数
+        public List<bool> bigOfEachSingle = new List<bool>();
 
         public SimData simData = new SimData();
 
@@ -103,41 +113,56 @@ namespace LotteryAnalyze
             crossValue = Util.CalCrossValue(lotteryNumber);
             groupType = Util.GetGroupType(lotteryNumber);
             GetValuesInThreePos();
+            fiveNumLst.Clear();
+            fiveNumLst.Add(GetWanNumber());
+            fiveNumLst.Add(GetQianNumber());
+            fiveNumLst.Add(GetBaiNumber());
+            fiveNumLst.Add(GetShiNumber());
+            fiveNumLst.Add(GetGeNumber());
             path012OfEachSingle.Clear();
-            path012OfEachSingle.Add(GetWanNumber() % 3);
-            path012OfEachSingle.Add(GetQianNumber() % 3);
-            path012OfEachSingle.Add(GetBaiNumber() % 3);
-            path012OfEachSingle.Add(GetShiNumber() % 3);
-            path012OfEachSingle.Add(GetGeNumber() % 3);
+            oddOfEachSingle.Clear();
+            bigOfEachSingle.Clear();
+            primeOfEachSingle.Clear();
+            for (int i = 0; i < fiveNumLst.Count; ++i)
+            {
+                int v = fiveNumLst[i];
+                path012OfEachSingle.Add((byte)(v % 3));
+                oddOfEachSingle.Add((v % 2) == 1);
+                bigOfEachSingle.Add(v > 4);
+                if(v == 1 || v == 2 || v == 3 || v == 5 || v ==7)
+                    primeOfEachSingle.Add(true);
+                else
+                    primeOfEachSingle.Add(false);
+            }
         }
-        public int GetNumberByIndex(int index)
+        public byte GetNumberByIndex(int index)
         {
-            return Util.CharValue(lotteryNumber[index]);
+            return (byte)Util.CharValue(lotteryNumber[index]);
         }
-        public int GetGeNumber()
+        public byte GetGeNumber()
         {
             int value = Util.CharValue(lotteryNumber[4]);
-            return value;
+            return (byte)value;
         }
-        public int GetShiNumber()
+        public byte GetShiNumber()
         {
             int value = Util.CharValue(lotteryNumber[3]);
-            return value;
+            return (byte)value;
         }
-        public int GetBaiNumber()
+        public byte GetBaiNumber()
         {
             int value = Util.CharValue(lotteryNumber[2]);
-            return value;
+            return (byte)value;
         }
-        public int GetQianNumber()
+        public byte GetQianNumber()
         {
             int value = Util.CharValue(lotteryNumber[1]);
-            return value;
+            return (byte)value;
         }
-        public int GetWanNumber()
+        public byte GetWanNumber()
         {
             int value = Util.CharValue(lotteryNumber[0]);
-            return value;
+            return (byte)value;
         }
         public void GetValuesInThreePos()
         {

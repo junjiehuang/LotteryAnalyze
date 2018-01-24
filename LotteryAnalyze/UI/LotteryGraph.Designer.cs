@@ -33,6 +33,7 @@
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
@@ -66,7 +67,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelUp = new ExtPanel();// new System.Windows.Forms.Panel();
+            this.panelDown = new ExtPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -74,6 +75,7 @@
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
@@ -138,12 +140,26 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.panelUp);
-            //this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            //this.splitContainer2.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            //this.splitContainer2.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.panelDown);
             this.splitContainer2.Size = new System.Drawing.Size(445, 481);
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(439, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             // 
             // label4
             // 
@@ -535,19 +551,16 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // panelUp
+            // panelDown
             // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(439, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(439, 177);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             // 
             // LotteryGraph
             // 
@@ -560,7 +573,6 @@
             this.Name = "LotteryGraph";
             this.Text = "LotteryGraph";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LotteryGraph_FormClosed);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.LotteryGraph_Paint);
             this.menuStripGraph.ResumeLayout(false);
             this.menuStripGraph.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -569,6 +581,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
@@ -623,6 +636,7 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
-        private System.Windows.Forms.Panel panelUp;
+        private System.Windows.Forms.Panel panelDown;
+        private ExtPanel panelUp;
     }
 }
