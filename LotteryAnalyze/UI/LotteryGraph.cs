@@ -19,10 +19,13 @@ namespace LotteryAnalyze.UI
         Point currentPoint = new Point();
         Point mouseRelPos = new Point();
 
-        public static void Open()
+        public static void Open(bool forceCreateNewOne)
         {
-            LotteryGraph graphInst = new LotteryGraph();
-            graphInst.Show();
+            if (forceCreateNewOne || instLst.Count == 0)
+            {
+                LotteryGraph graphInst = new LotteryGraph();
+                graphInst.Show();
+            }
         }
         
         public LotteryGraph()
@@ -57,6 +60,8 @@ namespace LotteryAnalyze.UI
             textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleW.ToString();
             textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleH.ToString();
             RefreshUI();
+
+            graphMgr.kvalueGraph.autoAllign = true;
         }
 
         void RefreshUI()
@@ -81,7 +86,15 @@ namespace LotteryAnalyze.UI
                     instLst[i].RefreshUI();
                 }
             }
-        } 
+        }
+
+        public static void NotifyAllGraphsRefresh()
+        {
+            for (int i = 0; i < instLst.Count; ++i)
+            {
+                instLst[i].Invalidate(true);//触发Paint事件
+            }
+        }
 
         void DrawUpCanvas(Graphics g)
         {
@@ -172,12 +185,14 @@ namespace LotteryAnalyze.UI
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
         {
+            graphMgr.kvalueGraph.autoAllign = true;
             numberIndex = comboBoxNumIndex.SelectedIndex;
             this.Invalidate(true);//触发Paint事件
         }
 
         private void comboBoxCollectionDataType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            graphMgr.kvalueGraph.autoAllign = true;
             curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
             this.Invalidate(true);//触发Paint事件
         }

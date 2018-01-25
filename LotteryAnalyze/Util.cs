@@ -76,7 +76,8 @@ namespace LotteryAnalyze
                         continue;
 
                     DataItem item = new DataItem(strs[0], strs[1], fileID);
-                    item.parent = datas;                    
+                    item.parent = datas;
+                    item.id = datas.datas.Count;
                     datas.datas.Add(item);
                 }
             }

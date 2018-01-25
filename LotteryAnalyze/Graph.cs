@@ -126,13 +126,13 @@ namespace LotteryAnalyze
 
                 if (autoAllign)
                 {
-                    float startY = kddc.dataLst[startIndex].dataDict[cdt].KValue * gridScaleH;
+                    //float startY = kddc.dataLst[startIndex].dataDict[cdt].KValue * gridScaleH;
                     float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
-                    float relSY = StandToCanvas(startY, false);
+                    //float relSY = StandToCanvas(startY, false);
                     float relEY = StandToCanvas(endY, false);
-                    bool isSYOut = relSY < 0 || relSY > winH;
+                    //bool isSYOut = relSY < 0 || relSY > winH;
                     bool isEYOut = relEY < 0 || relEY > winH;
-                    if (isEYOut && isSYOut)
+                    if (isEYOut )//&& isSYOut)
                         canvasOffset.Y = endY + winH * 0.5f;
                     autoAllign = false;
                 }

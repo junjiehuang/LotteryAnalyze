@@ -51,9 +51,19 @@ namespace LotteryAnalyze
             if (info == null)
             {
                 int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-                info = "[" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
+                if (parent.startItem == parent.endItem)
+                {
+                    info = "[" + parent.startItem.idTag + "-" + parent.startItem.lotteryNumber + "] [" +
+                    parent.parent.GetNumberIndexName() + " " +
                     GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
                     HitValue + " : " + MissValue + "]";
+                }
+                else
+                {
+                    info = "[" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
+                    GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
+                    HitValue + " : " + MissValue + "]";
+                }
             }
             return info;
         }
@@ -590,6 +600,10 @@ namespace LotteryAnalyze
 
     class KDataDictContainer
     {
+        static string[] C_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
+
+        // 数字序号0-4，对应万千百十个位
+        public int numberIndex = -1;
         // 一条K线
         public List<KDataDict> dataLst = new List<KDataDict>();
         // 多条均线
@@ -624,6 +638,11 @@ namespace LotteryAnalyze
             kdd.parent = this;
             dataLst.Add(kdd);
             return kdd;
+        }
+
+        public string GetNumberIndexName()
+        {
+            return C_TAGS[numberIndex];
         }
     }
 
@@ -821,6 +840,7 @@ namespace LotteryAnalyze
                 if (i >= allKDatas.Count)
                 {
                     kddc = new KDataDictContainer();
+                    kddc.numberIndex = allKDatas.Count;
                     allKDatas.Add(kddc);
                 }
                 else

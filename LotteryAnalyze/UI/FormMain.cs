@@ -380,7 +380,7 @@ namespace LotteryAnalyze
 
         private void openGraphToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LotteryAnalyze.UI.LotteryGraph.Open();
+            LotteryAnalyze.UI.LotteryGraph.Open(true);
         }
 
         private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
@@ -417,6 +417,10 @@ namespace LotteryAnalyze
             }
             Util.CollectPath012Info(null);
             RefreshDataView();
+
+            GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+            LotteryAnalyze.UI.LotteryGraph.Open(false);
+            LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh();
         }
     }
 }
