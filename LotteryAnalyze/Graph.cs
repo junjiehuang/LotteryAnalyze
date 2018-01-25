@@ -45,11 +45,13 @@ namespace LotteryAnalyze
         public bool enableBollinBand = true;
         public bool enableMACD = true;
 
-        float upGridScaleH = 20;
-        float downGridScaleH = 20;
-        float gridScaleW = 10;
+        public float gridScaleH = 20;
+        public float gridScaleW = 5;
+
+        public bool autoAllign = false;
         
         int selDataIndex = -1;
+        float selDataPtX = -1;
 
         Font selDataFont;
         PointF prevPt = new PointF();
@@ -121,6 +123,20 @@ namespace LotteryAnalyze
                 int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                 if (endIndex > kddc.dataLst.Count)
                     endIndex = kddc.dataLst.Count;
+
+                if (autoAllign)
+                {
+                    float startY = kddc.dataLst[startIndex].dataDict[cdt].KValue * gridScaleH;
+                    float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
+                    float relSY = StandToCanvas(startY, false);
+                    float relEY = StandToCanvas(endY, false);
+                    bool isSYOut = relSY < 0 || relSY > winH;
+                    bool isEYOut = relEY < 0 || relEY > winH;
+                    if (isEYOut && isSYOut)
+                        canvasOffset.Y = endY + winH * 0.5f;
+                    autoAllign = false;
+                }
+
                 for (int i = startIndex; i < endIndex; ++i)
                 {
                     KDataDict kdDict = kddc.dataLst[i];
@@ -186,6 +202,12 @@ namespace LotteryAnalyze
                     DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt);
                 }
                 canvasOffset.Y = oriYOff;
+
+                if (selDataIndex != -1)
+                {
+                    g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
+                    g.DrawLine(grayDotLinePen, selDataPtX + gridScaleW, 0, selDataPtX + gridScaleW, winH);
+                }
             }
             EndDraw(g);
         }
@@ -267,15 +289,15 @@ namespace LotteryAnalyze
 
             float standX = data.index * gridScaleW;
             float valudChange = data.HitValue - data.MissValue * missRelHeight;
-            float standY = lastValue * upGridScaleH;
-            float up = standY + data.HitValue * upGridScaleH;
-            float dowm = standY - data.MissValue * missRelHeight * upGridScaleH;
+            float standY = lastValue * gridScaleH;
+            float up = standY + data.HitValue * gridScaleH;
+            float dowm = standY - data.MissValue * missRelHeight * gridScaleH;
             float rcY = standY;
-            float rcH = Math.Abs(valudChange * upGridScaleH);
+            float rcH = Math.Abs(valudChange * gridScaleH);
             if (rcH < 1)
                 rcH = 1;
             if (valudChange > 0)
-                rcY += valudChange * upGridScaleH;
+                rcY += valudChange * gridScaleH;
             lastValue += valudChange;
 
             standX = StandToCanvas(standX, true);
@@ -295,6 +317,7 @@ namespace LotteryAnalyze
 
             if (selDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
             {
+                selDataPtX = standX;
                 selDataIndex = data.index;
                 g.DrawLine(grayDotLinePen, standX, 0, standX, winH);
                 g.DrawLine(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
@@ -307,7 +330,7 @@ namespace LotteryAnalyze
         {
             AvgPoint ap = apm.apMap[cdt];
             float standX = (apm.index + 0.5f) * gridScaleW;  
-            float standY = ap.avgKValue * upGridScaleH;
+            float standY = ap.avgKValue * gridScaleH;
             if (findPrevPt == false)
             {
                 findPrevPt = true;
@@ -346,12 +369,12 @@ namespace LotteryAnalyze
             BollinPointMap prevBPM = bpm.GetPrevBPM();
             BollinPoint prevBP = prevBPM.bpMap[cdt];
             float px = StandToCanvas((prevBPM.index + 0.5f) * gridScaleW, true);
-            float pyU = StandToCanvas(prevBP.upValue * upGridScaleH, false);
-            float pyM = StandToCanvas(prevBP.midValue * upGridScaleH, false);
-            float pyD = StandToCanvas(prevBP.downValue * upGridScaleH, false);
-            float cyU = StandToCanvas(bp.upValue * upGridScaleH, false);
-            float cyM = StandToCanvas(bp.midValue * upGridScaleH, false);
-            float cyD = StandToCanvas(bp.downValue * upGridScaleH, false);
+            float pyU = StandToCanvas(prevBP.upValue * gridScaleH, false);
+            float pyM = StandToCanvas(prevBP.midValue * gridScaleH, false);
+            float pyD = StandToCanvas(prevBP.downValue * gridScaleH, false);
+            float cyU = StandToCanvas(bp.upValue * gridScaleH, false);
+            float cyM = StandToCanvas(bp.midValue * gridScaleH, false);
+            float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
             PushLinePts(bollinLinePenUp, px, pyU, cx, cyU);
             PushLinePts(bollinLinePenMid, px, pyM, cx, cyM);
             PushLinePts(bollinLinePenDown, px, pyD, cx, cyD);
@@ -359,7 +382,7 @@ namespace LotteryAnalyze
         void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt)
         {
             MACDPoint mp = mpm.macdpMap[cdt];
-            float standX = (mpm.index + 0.5f) * gridScaleW;
+            float standX = (mpm.index + 0.5f) * gridScaleW;            
             if (findPrevPt == false)
             {
                 findPrevPt = true;

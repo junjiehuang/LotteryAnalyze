@@ -53,6 +53,9 @@ namespace LotteryAnalyze.UI
 
             checkBoxBollinBand.Checked = graphMgr.kvalueGraph.enableBollinBand;
             checkBoxMACD.Checked = graphMgr.kvalueGraph.enableMACD;
+
+            textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleW.ToString();
+            textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleH.ToString();
             RefreshUI();
         }
 
@@ -285,6 +288,38 @@ namespace LotteryAnalyze.UI
         private void checkBoxMACD_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.enableMACD = checkBoxMACD.Checked;
+            this.Invalidate(true);
+        }
+
+        private void textBoxGridScaleH_TextChanged(object sender, EventArgs e)
+        {
+            int v = 0;
+            int.TryParse(textBoxGridScaleH.Text, out v);
+            if (v < 1)
+            {
+                textBoxGridScaleH.Text = "1";
+                v = 1;
+            }
+            graphMgr.kvalueGraph.gridScaleH = v;
+            this.Invalidate(true);
+        }
+
+        private void textBoxGridScaleW_TextChanged(object sender, EventArgs e)
+        {
+            int v = 0;
+            int.TryParse(textBoxGridScaleW.Text, out v);
+            if (v < 1)
+            {
+                textBoxGridScaleW.Text = "1";
+                v = 1;
+            }
+            graphMgr.kvalueGraph.gridScaleW = v;
+            this.Invalidate(true);
+        }
+
+        private void autoAllignToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.autoAllign = true;
             this.Invalidate(true);
         }
     }

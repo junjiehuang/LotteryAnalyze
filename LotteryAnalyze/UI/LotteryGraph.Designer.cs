@@ -33,7 +33,6 @@
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
@@ -67,7 +66,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelDown = new ExtPanel();
+            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
+            this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -86,17 +91,19 @@
             // menuStripGraph
             // 
             this.menuStripGraph.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.operationToolStripMenuItem});
+            this.operationToolStripMenuItem,
+            this.设置ToolStripMenuItem});
             this.menuStripGraph.Location = new System.Drawing.Point(0, 0);
             this.menuStripGraph.Name = "menuStripGraph";
-            this.menuStripGraph.Size = new System.Drawing.Size(647, 25);
+            this.menuStripGraph.Size = new System.Drawing.Size(696, 25);
             this.menuStripGraph.TabIndex = 0;
             this.menuStripGraph.Text = "menuStripGraph";
             // 
             // operationToolStripMenuItem
             // 
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.refreshToolStripMenuItem});
+            this.refreshToolStripMenuItem,
+            this.autoAllignToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -104,7 +111,7 @@
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.refreshToolStripMenuItem.Text = "刷新";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -120,14 +127,17 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.textBoxGridScaleH);
+            this.splitContainer1.Panel2.Controls.Add(this.textBoxGridScaleW);
+            this.splitContainer1.Panel2.Controls.Add(this.label9);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.tabControlView);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxCollectionDataType);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(647, 481);
-            this.splitContainer1.SplitterDistance = 445;
+            this.splitContainer1.Size = new System.Drawing.Size(696, 481);
+            this.splitContainer1.SplitterDistance = 495;
             this.splitContainer1.TabIndex = 1;
             // 
             // splitContainer2
@@ -144,27 +154,14 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panelDown);
-            this.splitContainer2.Size = new System.Drawing.Size(445, 481);
+            this.splitContainer2.Size = new System.Drawing.Size(495, 481);
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
-            // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(439, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 92);
+            this.label4.Location = new System.Drawing.Point(4, 122);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 7;
@@ -177,10 +174,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlView.Controls.Add(this.tabPageKGraph);
             this.tabControlView.Controls.Add(this.tabPageBarGraph);
-            this.tabControlView.Location = new System.Drawing.Point(6, 113);
+            this.tabControlView.Location = new System.Drawing.Point(6, 138);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(189, 365);
+            this.tabControlView.Size = new System.Drawing.Size(188, 340);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
@@ -196,7 +193,7 @@
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(181, 339);
+            this.tabPageKGraph.Size = new System.Drawing.Size(180, 314);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
@@ -238,7 +235,7 @@
             "2路"});
             this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(0, 62);
             this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
-            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(181, 20);
+            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(180, 20);
             this.comboBoxAvgAlgorithm.TabIndex = 8;
             this.comboBoxAvgAlgorithm.SelectedIndexChanged += new System.EventHandler(this.comboBoxAvgAlgorithm_SelectedIndexChanged);
             // 
@@ -268,9 +265,9 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
-            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 87);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 92);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
-            this.groupBoxAvgSettings.Size = new System.Drawing.Size(181, 165);
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(180, 140);
             this.groupBoxAvgSettings.TabIndex = 6;
             this.groupBoxAvgSettings.TabStop = false;
             this.groupBoxAvgSettings.Text = "均线设置:";
@@ -279,7 +276,7 @@
             // 
             this.buttonAvg100.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg100.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg100.Location = new System.Drawing.Point(106, 136);
+            this.buttonAvg100.Location = new System.Drawing.Point(105, 136);
             this.buttonAvg100.Name = "buttonAvg100";
             this.buttonAvg100.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg100.TabIndex = 11;
@@ -300,7 +297,7 @@
             // 
             this.buttonAvg50.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg50.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg50.Location = new System.Drawing.Point(106, 112);
+            this.buttonAvg50.Location = new System.Drawing.Point(105, 112);
             this.buttonAvg50.Name = "buttonAvg50";
             this.buttonAvg50.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg50.TabIndex = 9;
@@ -321,7 +318,7 @@
             // 
             this.buttonAvg30.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg30.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg30.Location = new System.Drawing.Point(106, 88);
+            this.buttonAvg30.Location = new System.Drawing.Point(105, 88);
             this.buttonAvg30.Name = "buttonAvg30";
             this.buttonAvg30.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg30.TabIndex = 7;
@@ -342,7 +339,7 @@
             // 
             this.buttonAvg20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg20.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg20.Location = new System.Drawing.Point(106, 64);
+            this.buttonAvg20.Location = new System.Drawing.Point(105, 64);
             this.buttonAvg20.Name = "buttonAvg20";
             this.buttonAvg20.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg20.TabIndex = 5;
@@ -363,7 +360,7 @@
             // 
             this.buttonAvg10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg10.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg10.Location = new System.Drawing.Point(106, 40);
+            this.buttonAvg10.Location = new System.Drawing.Point(105, 40);
             this.buttonAvg10.Name = "buttonAvg10";
             this.buttonAvg10.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg10.TabIndex = 3;
@@ -384,7 +381,7 @@
             // 
             this.buttonAvg5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg5.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg5.Location = new System.Drawing.Point(106, 16);
+            this.buttonAvg5.Location = new System.Drawing.Point(105, 16);
             this.buttonAvg5.Name = "buttonAvg5";
             this.buttonAvg5.Size = new System.Drawing.Size(75, 23);
             this.buttonAvg5.TabIndex = 1;
@@ -416,7 +413,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCycleLength.Location = new System.Drawing.Point(1, 21);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(180, 21);
+            this.textBoxCycleLength.Size = new System.Drawing.Size(179, 21);
             this.textBoxCycleLength.TabIndex = 5;
             this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
@@ -431,7 +428,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 339);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(180, 314);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -442,7 +439,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
             this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
-            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(154, 21);
+            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(152, 21);
             this.textBoxCustomCollectRange.TabIndex = 5;
             this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
             // 
@@ -462,7 +459,7 @@
             this.comboBoxCollectRange.FormattingEnabled = true;
             this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
             this.comboBoxCollectRange.Name = "comboBoxCollectRange";
-            this.comboBoxCollectRange.Size = new System.Drawing.Size(154, 20);
+            this.comboBoxCollectRange.Size = new System.Drawing.Size(152, 20);
             this.comboBoxCollectRange.TabIndex = 3;
             this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
             // 
@@ -482,7 +479,7 @@
             this.comboBoxBarCollectType.FormattingEnabled = true;
             this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
             this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
-            this.comboBoxBarCollectType.Size = new System.Drawing.Size(154, 20);
+            this.comboBoxBarCollectType.Size = new System.Drawing.Size(152, 20);
             this.comboBoxBarCollectType.TabIndex = 1;
             this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
             // 
@@ -504,16 +501,16 @@
             "0路",
             "1路",
             "2路"});
-            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 63);
+            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 90);
             this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
-            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(189, 20);
+            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(188, 20);
             this.comboBoxCollectionDataType.TabIndex = 3;
             this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 47);
+            this.label2.Location = new System.Drawing.Point(6, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 2;
@@ -536,20 +533,65 @@
             "百位",
             "十位",
             "个位"});
-            this.comboBoxNumIndex.Location = new System.Drawing.Point(6, 20);
+            this.comboBoxNumIndex.Location = new System.Drawing.Point(6, 47);
             this.comboBoxNumIndex.Name = "comboBoxNumIndex";
-            this.comboBoxNumIndex.Size = new System.Drawing.Size(189, 20);
+            this.comboBoxNumIndex.Size = new System.Drawing.Size(188, 20);
             this.comboBoxNumIndex.TabIndex = 1;
             this.comboBoxNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxNumIndex_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 4);
+            this.label1.Location = new System.Drawing.Point(4, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
+            // 
+            // 设置ToolStripMenuItem
+            // 
+            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.设置ToolStripMenuItem.Text = "设置";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(5, 9);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(29, 12);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "缩放";
+            // 
+            // textBoxGridScaleW
+            // 
+            this.textBoxGridScaleW.Location = new System.Drawing.Point(39, 4);
+            this.textBoxGridScaleW.Name = "textBoxGridScaleW";
+            this.textBoxGridScaleW.Size = new System.Drawing.Size(73, 21);
+            this.textBoxGridScaleW.TabIndex = 9;
+            this.textBoxGridScaleW.TextChanged += new System.EventHandler(this.textBoxGridScaleW_TextChanged);
+            // 
+            // textBoxGridScaleH
+            // 
+            this.textBoxGridScaleH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxGridScaleH.Location = new System.Drawing.Point(121, 4);
+            this.textBoxGridScaleH.Name = "textBoxGridScaleH";
+            this.textBoxGridScaleH.Size = new System.Drawing.Size(73, 21);
+            this.textBoxGridScaleH.TabIndex = 10;
+            this.textBoxGridScaleH.TextChanged += new System.EventHandler(this.textBoxGridScaleH_TextChanged);
+            // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             // 
             // panelDown
             // 
@@ -558,15 +600,22 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelDown.Location = new System.Drawing.Point(3, 3);
             this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(439, 177);
+            this.panelDown.Size = new System.Drawing.Size(489, 177);
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            // 
+            // 对齐ToolStripMenuItem
+            // 
+            this.autoAllignToolStripMenuItem.Name = "对齐ToolStripMenuItem";
+            this.autoAllignToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.autoAllignToolStripMenuItem.Text = "对齐";
+            this.autoAllignToolStripMenuItem.Click += new System.EventHandler(this.autoAllignToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(647, 506);
+            this.ClientSize = new System.Drawing.Size(696, 506);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripGraph);
             this.DoubleBuffered = true;
@@ -636,7 +685,12 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
-        private System.Windows.Forms.Panel panelDown;
         private ExtPanel panelUp;
+        private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxGridScaleH;
+        private System.Windows.Forms.TextBox textBoxGridScaleW;
+        private System.Windows.Forms.Label label9;
+        private ExtPanel panelDown;
+        private System.Windows.Forms.ToolStripMenuItem autoAllignToolStripMenuItem;
     }
 }
