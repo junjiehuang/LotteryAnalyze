@@ -175,6 +175,8 @@ namespace LotteryAnalyze
                         DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                     }
                 }
+
+                g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
             }
             EndDraw(g);
         }

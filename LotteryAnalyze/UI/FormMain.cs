@@ -13,6 +13,8 @@ namespace LotteryAnalyze
 {
     public partial class FormMain : Form
     {
+        System.Windows.Forms.Timer updateTimer;
+
         public FormMain()
         {
             InitializeComponent();
@@ -385,8 +387,36 @@ namespace LotteryAnalyze
 
         private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if(updateTimer == null)
+            {
+                updateTimer = new System.Windows.Forms.Timer();
+                updateTimer.Interval = 60000;
+                updateTimer.Tick += UpdateTimer_Tick;
+                updateTimer.Enabled = true;
+                updateTimer.Start();
+            }
+            else
+            {
+                RefreshLatestData();
+            }
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            RefreshLatestData();
+        }
+
+        private void collectDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LotteryAnalyze.UI.CollectDataWindow win = new UI.CollectDataWindow();
+            win.Show();
+        }
+
+        void RefreshLatestData()
+        {
             //Process p = Process.Start("AutoFetchDailyData.exe");
             //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+
             AutoUpdateUtil.AutoFetchTodayData();
 
             ClearAll();
@@ -408,7 +438,7 @@ namespace LotteryAnalyze
 
             int lastItemID = listViewFileList.Items.Count - 1;
             if (lastItemID > 0) --lastItemID;
-            while( lastItemID != listViewFileList.Items.Count)
+            while (lastItemID != listViewFileList.Items.Count)
             {
                 ListViewItem item = listViewFileList.Items[lastItemID];
                 item.Focused = true;
@@ -422,12 +452,6 @@ namespace LotteryAnalyze
             GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             LotteryAnalyze.UI.LotteryGraph.Open(false);
             LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh();
-        }
-
-        private void collectDatasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LotteryAnalyze.UI.CollectDataWindow win = new UI.CollectDataWindow();
-            win.Show();
         }
     }
 }
