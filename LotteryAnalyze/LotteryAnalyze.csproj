@@ -51,6 +51,12 @@
     <Compile Include="Graph.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />
+    <Compile Include="UI\CollectDataWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\CollectDataWindow.Designer.cs">
+      <DependentUpon>CollectDataWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ExtPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -74,6 +80,9 @@
       <DependentUpon>LotteryGraph.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="UI\CollectDataWindow.resx">
+      <DependentUpon>CollectDataWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -98,6 +107,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlAgilityPack1_4_0\HtmlAgilityPack\HtmlAgilityPack_Main.csproj">
+      <Project>{193bb801-054f-4729-9d5d-fce1e32594bf}</Project>
+      <Name>HtmlAgilityPack_Main</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

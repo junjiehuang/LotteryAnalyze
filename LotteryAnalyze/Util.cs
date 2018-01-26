@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using HtmlAgilityPack;
+using System.Text.RegularExpressions;
+using System.Net;
+using System.Windows.Forms;
 
 namespace LotteryAnalyze
 {
@@ -68,12 +72,12 @@ namespace LotteryAnalyze
                 string[] strs = line.Split( ' ' );
                 if (strs.Length > 1)
                 {
-                    //if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
-                    //   strs[0] == "-" || strs[1] == "-")
-                    //    continue;
                     if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
                         !IsNumStr(strs[0]) || !IsNumStr(strs[1]))
+                    {
+                        Console.WriteLine(strs[0] + " : " + strs[1]);
                         continue;
+                    }
 
                     DataItem item = new DataItem(strs[0], strs[1], fileID);
                     item.parent = datas;
@@ -88,14 +92,9 @@ namespace LotteryAnalyze
         {
             int v;
             if (int.TryParse(str, out v))
-            {
                 return true;
-            }
             else
-            {
-                Console.WriteLine(str);
                 return false;
-            }
         }
 
         public static int CharValue(char ch)
@@ -526,6 +525,191 @@ namespace LotteryAnalyze
                 }
             }
             return true;
+        }
+    }
+
+
+    public class AutoUpdateUtil
+    {
+        public delegate void OnCollecting(string info);
+        public static OnCollecting sCallBackOnCollecting;
+
+        enum ECType
+        {
+            UTF8,
+            Default,
+        };
+
+        /// <summary>
+        /// 自动获取当天数据
+        /// </summary>
+        public static void AutoFetchTodayData()
+        {
+            DateTime curDate = DateTime.Now;
+            string filename = combineFileName(curDate.Year, curDate.Month, curDate.Day);
+            string url = "http://chart.cp.360.cn/kaijiang/ssccq?sb_spm=36335ab32b7a2ac5a4fa0881e40a5f6a";
+            FetchData(filename, url);
+        }
+
+        static string combineFileName(int y, int m, int d)
+        {
+            string fileName = "..\\data\\" + y;
+            if (m < 10)
+                fileName += "0";
+            fileName += m;
+            if (d < 10)
+                fileName += "0";
+            fileName += d + ".txt";
+            return fileName;
+        }
+
+        static string combineUrlName(int y, int m, int d)
+        {
+            string url = "http://chart.cp.360.cn/kaijiang/kaijiang?lotId=255401&spanType=2&span=" + y + "-";
+            if (m < 10)
+                url += "0";
+            url += m + "-";
+            if (d < 10)
+                url += "0";
+            url += d + "_" + y + "-";
+            if (m < 10)
+                url += "0";
+            url += m + "-";
+            if (d < 10)
+                url += "0";
+            url += d;
+            return url;
+        }
+
+        /// <summary>
+        /// 获取指定日期的数据
+        /// </summary>
+        /// <param name="startYear"></param>
+        /// <param name="startMonth"></param>
+        /// <param name="startDay"></param>
+        /// <param name="endYear"></param>
+        /// <param name="endMonth"></param>
+        /// <param name="endDay"></param>
+        public static void FetchDatas(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay)
+        {
+            string filename = "";
+            string url = "";
+            DateTime startDate = new DateTime(startYear, startMonth, startDay);
+            DateTime endDate = new DateTime(endYear, endMonth, endDay);
+            int diff = DateTime.Compare(startDate, endDate);
+            if (diff == 0)
+            {
+                filename = combineFileName(startDate.Year, startDate.Month, startDate.Day);
+                url = combineUrlName(startDate.Year, startDate.Month, startDate.Day);
+                FetchData(filename, url);
+                sCallBackOnCollecting("fetch " + startDate.ToString() + "\r\n");
+            }
+            else
+            {
+                DateTime curDate = diff < 0 ? startDate : endDate;
+                while (DateTime.Compare(curDate, endDate) < 1)
+                {
+                    filename = combineFileName(curDate.Year, curDate.Month, curDate.Day);
+                    url = combineUrlName(curDate.Year, curDate.Month, curDate.Day);
+                    FetchData(filename, url);
+                    sCallBackOnCollecting("fetch " + curDate.ToString() + "\r\n");
+
+                    curDate = curDate.AddDays(1);
+                }
+            }
+        }
+
+        public static void FetchData(DateTime date)
+        {
+            string filename = combineFileName(date.Year, date.Month, date.Day);
+            string url = combineUrlName(date.Year, date.Month, date.Day);
+            FetchData(filename, url);
+        }
+
+        public static void FetchData(string fileName, string webUrl)
+        {
+            //--------------------------
+            // load web page
+            ECType t = ECType.Default;
+            //WebRequest request = WebRequest.Create("http://chart.cp.360.cn/kaijiang/kaijiang?lotId=255401&spanType=2&span=2018-01-19_2018-01-19"); //请求url
+            WebRequest request = WebRequest.Create(webUrl);
+            WebResponse response = request.GetResponse();
+            StreamReader reader = null;
+            switch (t)
+            {
+                case ECType.UTF8:
+                    reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("UTF-8"));
+                    break;
+                case ECType.Default:
+                default:
+                    reader = new StreamReader(response.GetResponseStream(), Encoding.Default);
+                    break;
+            }
+            string strWebContent = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+            response.Close();
+
+            string lotteryData = "";
+            HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(strWebContent);
+            HtmlNodeCollection collection = htmlDocument.DocumentNode.SelectSingleNode("html/body").ChildNodes;
+            foreach (HtmlNode wrapNode in collection)
+            {
+                if (wrapNode.Name == "div" && wrapNode.GetAttributeValue("class", "") == "wrap")
+                {
+                    foreach (HtmlNode histTabNode in wrapNode.ChildNodes)
+                    {
+                        if (histTabNode.GetAttributeValue("class", "") == "history-tab")
+                        {
+                            string htmlTxt = histTabNode.InnerHtml;
+
+                            
+                            string strRegexR = @"(?<=<tr>)([\s\S]*?)(?=</tr>)"; //构造解析表格数据的正则表达式
+                            string strRegexD = @"(?<=<td[^>]*>[\s]*?)([\S]*)(?=[\s]*?</td>)";
+                            Regex regexR = new Regex(strRegexR);
+                            MatchCollection mcR = regexR.Matches(htmlTxt); //执行匹配
+                            //bool first = true;
+                            int totalCount = 120;
+                            foreach (Match mr in mcR)
+                            {
+                                Regex regexD = new Regex(strRegexD);
+                                MatchCollection mcD = regexD.Matches(mr.Groups[0].ToString()); //执行匹配                                                                
+                                for (int i = 0; i < mcD.Count; i++)
+                                {
+                                    if (totalCount > 0 && Util.IsNumStr(mcD[i].Value) && mcD[i].Value.Length == 3)
+                                    {
+                                        lotteryData += mcD[i].Value + " ";
+                                        ++i;
+                                        if (Util.IsNumStr(mcD[i].Value))
+                                            lotteryData += mcD[i].Value;
+                                        else
+                                            lotteryData += "-";
+                                        lotteryData += "\n";
+                                        --totalCount;
+                                        if (totalCount == 0)
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Console.WriteLine("=> " + fileName);
+            //Console.WriteLine(lotteryData);
+
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            //开始写入
+            sw.Write(lotteryData);
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+            //--------------------------
         }
     }
 }

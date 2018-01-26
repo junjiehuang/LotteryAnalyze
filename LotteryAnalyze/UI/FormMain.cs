@@ -385,8 +385,9 @@ namespace LotteryAnalyze
 
         private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process p = Process.Start("AutoFetchDailyData.exe");
-            p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+            //Process p = Process.Start("AutoFetchDailyData.exe");
+            //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+            AutoUpdateUtil.AutoFetchTodayData();
 
             ClearAll();
             DirectoryInfo di = new DirectoryInfo("..\\data");
@@ -421,6 +422,12 @@ namespace LotteryAnalyze
             GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             LotteryAnalyze.UI.LotteryGraph.Open(false);
             LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh();
+        }
+
+        private void collectDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LotteryAnalyze.UI.CollectDataWindow win = new UI.CollectDataWindow();
+            win.Show();
         }
     }
 }
