@@ -54,6 +54,8 @@ namespace LotteryAnalyze.UI
             comboBoxAvgAlgorithm.DataSource = KGraphDataContainer.S_AVG_ALGORITHM_STRS;
             comboBoxAvgAlgorithm.SelectedIndex = (int)KGraphDataContainer.S_AVG_ALGORITHM;
 
+            checkBoxShowAvgLines.Checked = graphMgr.kvalueGraph.enableAvgLines;
+            groupBoxAvgSettings.Enabled = graphMgr.kvalueGraph.enableAvgLines;
             checkBoxBollinBand.Checked = graphMgr.kvalueGraph.enableBollinBand;
             checkBoxMACD.Checked = graphMgr.kvalueGraph.enableMACD;
 
@@ -335,6 +337,16 @@ namespace LotteryAnalyze.UI
         private void autoAllignToolStripMenuItem_Click(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.autoAllign = true;
+            this.Invalidate(true);
+        }
+
+        private void checkBoxShowAvgLines_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxShowAvgLines.Checked)
+                groupBoxAvgSettings.Enabled = true;
+            else
+                groupBoxAvgSettings.Enabled = false;
+            graphMgr.kvalueGraph.enableAvgLines = checkBoxShowAvgLines.Checked;
             this.Invalidate(true);
         }
     }

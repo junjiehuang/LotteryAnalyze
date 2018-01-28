@@ -42,6 +42,7 @@ namespace LotteryAnalyze
     // K线图
     class GraphKCurve : GraphBase
     {
+        public bool enableAvgLines = true;
         public bool enableBollinBand = true;
         public bool enableMACD = true;
 
@@ -146,22 +147,25 @@ namespace LotteryAnalyze
                     DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos);
                 }
 
-                foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
+                if (enableAvgLines)
                 {
-                    if (adc.avgLineSetting.enable)
+                    foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
                     {
-                        lastValue = 0;
-                        findPrevPt = false;
-
-                        startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
-                        if (startIndex < 0)
-                            startIndex = 1;
-                        endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
-                        if (endIndex > adc.avgPointMapLst.Count)
-                            endIndex = adc.avgPointMapLst.Count;
-                        for (int i = startIndex; i < endIndex; ++i)
+                        if (adc.avgLineSetting.enable)
                         {
-                            DrawAvgLineGraph(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
+                            lastValue = 0;
+                            findPrevPt = false;
+
+                            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                            if (startIndex < 0)
+                                startIndex = 1;
+                            endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                            if (endIndex > adc.avgPointMapLst.Count)
+                                endIndex = adc.avgPointMapLst.Count;
+                            for (int i = startIndex; i < endIndex; ++i)
+                            {
+                                DrawAvgLineGraph(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
+                            }
                         }
                     }
                 }
@@ -274,6 +278,13 @@ namespace LotteryAnalyze
             return rcLst;
         }
 
+        float CanvasToStand(float v, bool isX)
+        {
+            if (isX)
+                return v + canvasOffset.X;
+            else
+                return canvasOffset.Y - v;
+        }
         float StandToCanvas(float v, bool isX)
         {
             if (isX)

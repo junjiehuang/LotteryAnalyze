@@ -35,8 +35,6 @@
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
             this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -73,6 +71,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.checkBoxShowAvgLines = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.comboBoxOperations = new System.Windows.Forms.ComboBox();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -171,33 +174,8 @@
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
             // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(489, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(489, 177);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            // 
             // textBoxGridScaleH
             // 
-            this.textBoxGridScaleH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxGridScaleH.Location = new System.Drawing.Point(121, 4);
             this.textBoxGridScaleH.Name = "textBoxGridScaleH";
             this.textBoxGridScaleH.Size = new System.Drawing.Size(73, 21);
@@ -246,6 +224,9 @@
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.comboBoxOperations);
+            this.tabPageKGraph.Controls.Add(this.label10);
+            this.tabPageKGraph.Controls.Add(this.checkBoxShowAvgLines);
             this.tabPageKGraph.Controls.Add(this.checkBoxMACD);
             this.tabPageKGraph.Controls.Add(this.checkBoxBollinBand);
             this.tabPageKGraph.Controls.Add(this.comboBoxAvgAlgorithm);
@@ -266,7 +247,7 @@
             this.checkBoxMACD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxMACD.AutoSize = true;
-            this.checkBoxMACD.Location = new System.Drawing.Point(5, 282);
+            this.checkBoxMACD.Location = new System.Drawing.Point(5, 125);
             this.checkBoxMACD.Name = "checkBoxMACD";
             this.checkBoxMACD.Size = new System.Drawing.Size(72, 16);
             this.checkBoxMACD.TabIndex = 10;
@@ -279,7 +260,7 @@
             this.checkBoxBollinBand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxBollinBand.AutoSize = true;
-            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 259);
+            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 102);
             this.checkBoxBollinBand.Name = "checkBoxBollinBand";
             this.checkBoxBollinBand.Size = new System.Drawing.Size(72, 16);
             this.checkBoxBollinBand.TabIndex = 9;
@@ -296,20 +277,20 @@
             "0路",
             "1路",
             "2路"});
-            this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(0, 62);
+            this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(65, 37);
             this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
-            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(180, 20);
+            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(112, 20);
             this.comboBoxAvgAlgorithm.TabIndex = 8;
             this.comboBoxAvgAlgorithm.SelectedIndexChanged += new System.EventHandler(this.comboBoxAvgAlgorithm_SelectedIndexChanged);
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 47);
+            this.label8.Location = new System.Drawing.Point(3, 40);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(101, 12);
+            this.label8.Size = new System.Drawing.Size(65, 12);
             this.label8.TabIndex = 7;
-            this.label8.Text = "平均线计算方式：";
+            this.label8.Text = "均线计算：";
             // 
             // groupBoxAvgSettings
             // 
@@ -327,27 +308,25 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
-            this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 92);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 162);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
-            this.groupBoxAvgSettings.Size = new System.Drawing.Size(180, 161);
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(174, 83);
             this.groupBoxAvgSettings.TabIndex = 6;
             this.groupBoxAvgSettings.TabStop = false;
-            this.groupBoxAvgSettings.Text = "均线设置:";
             // 
             // buttonAvg100
             // 
-            this.buttonAvg100.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg100.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg100.Location = new System.Drawing.Point(105, 136);
+            this.buttonAvg100.Location = new System.Drawing.Point(140, 57);
             this.buttonAvg100.Name = "buttonAvg100";
-            this.buttonAvg100.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg100.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg100.TabIndex = 11;
             this.buttonAvg100.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg100
             // 
             this.checkBoxAvg100.AutoSize = true;
-            this.checkBoxAvg100.Location = new System.Drawing.Point(6, 140);
+            this.checkBoxAvg100.Location = new System.Drawing.Point(102, 61);
             this.checkBoxAvg100.Name = "checkBoxAvg100";
             this.checkBoxAvg100.Size = new System.Drawing.Size(42, 16);
             this.checkBoxAvg100.TabIndex = 10;
@@ -357,18 +336,17 @@
             // 
             // buttonAvg50
             // 
-            this.buttonAvg50.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg50.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg50.Location = new System.Drawing.Point(105, 112);
+            this.buttonAvg50.Location = new System.Drawing.Point(42, 57);
             this.buttonAvg50.Name = "buttonAvg50";
-            this.buttonAvg50.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg50.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg50.TabIndex = 9;
             this.buttonAvg50.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg50
             // 
             this.checkBoxAvg50.AutoSize = true;
-            this.checkBoxAvg50.Location = new System.Drawing.Point(6, 116);
+            this.checkBoxAvg50.Location = new System.Drawing.Point(6, 61);
             this.checkBoxAvg50.Name = "checkBoxAvg50";
             this.checkBoxAvg50.Size = new System.Drawing.Size(36, 16);
             this.checkBoxAvg50.TabIndex = 8;
@@ -378,18 +356,17 @@
             // 
             // buttonAvg30
             // 
-            this.buttonAvg30.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg30.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg30.Location = new System.Drawing.Point(105, 88);
+            this.buttonAvg30.Location = new System.Drawing.Point(140, 33);
             this.buttonAvg30.Name = "buttonAvg30";
-            this.buttonAvg30.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg30.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg30.TabIndex = 7;
             this.buttonAvg30.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg30
             // 
             this.checkBoxAvg30.AutoSize = true;
-            this.checkBoxAvg30.Location = new System.Drawing.Point(6, 92);
+            this.checkBoxAvg30.Location = new System.Drawing.Point(102, 37);
             this.checkBoxAvg30.Name = "checkBoxAvg30";
             this.checkBoxAvg30.Size = new System.Drawing.Size(36, 16);
             this.checkBoxAvg30.TabIndex = 6;
@@ -399,18 +376,17 @@
             // 
             // buttonAvg20
             // 
-            this.buttonAvg20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg20.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg20.Location = new System.Drawing.Point(105, 64);
+            this.buttonAvg20.Location = new System.Drawing.Point(42, 33);
             this.buttonAvg20.Name = "buttonAvg20";
-            this.buttonAvg20.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg20.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg20.TabIndex = 5;
             this.buttonAvg20.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg20
             // 
             this.checkBoxAvg20.AutoSize = true;
-            this.checkBoxAvg20.Location = new System.Drawing.Point(6, 68);
+            this.checkBoxAvg20.Location = new System.Drawing.Point(6, 37);
             this.checkBoxAvg20.Name = "checkBoxAvg20";
             this.checkBoxAvg20.Size = new System.Drawing.Size(36, 16);
             this.checkBoxAvg20.TabIndex = 4;
@@ -420,18 +396,17 @@
             // 
             // buttonAvg10
             // 
-            this.buttonAvg10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg10.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg10.Location = new System.Drawing.Point(105, 40);
+            this.buttonAvg10.Location = new System.Drawing.Point(140, 10);
             this.buttonAvg10.Name = "buttonAvg10";
-            this.buttonAvg10.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg10.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg10.TabIndex = 3;
             this.buttonAvg10.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg10
             // 
             this.checkBoxAvg10.AutoSize = true;
-            this.checkBoxAvg10.Location = new System.Drawing.Point(6, 44);
+            this.checkBoxAvg10.Location = new System.Drawing.Point(102, 14);
             this.checkBoxAvg10.Name = "checkBoxAvg10";
             this.checkBoxAvg10.Size = new System.Drawing.Size(36, 16);
             this.checkBoxAvg10.TabIndex = 2;
@@ -441,18 +416,17 @@
             // 
             // buttonAvg5
             // 
-            this.buttonAvg5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAvg5.BackColor = System.Drawing.Color.Red;
-            this.buttonAvg5.Location = new System.Drawing.Point(105, 16);
+            this.buttonAvg5.Location = new System.Drawing.Point(42, 10);
             this.buttonAvg5.Name = "buttonAvg5";
-            this.buttonAvg5.Size = new System.Drawing.Size(75, 23);
+            this.buttonAvg5.Size = new System.Drawing.Size(34, 23);
             this.buttonAvg5.TabIndex = 1;
             this.buttonAvg5.UseVisualStyleBackColor = false;
             // 
             // checkBoxAvg5
             // 
             this.checkBoxAvg5.AutoSize = true;
-            this.checkBoxAvg5.Location = new System.Drawing.Point(6, 20);
+            this.checkBoxAvg5.Location = new System.Drawing.Point(6, 14);
             this.checkBoxAvg5.Name = "checkBoxAvg5";
             this.checkBoxAvg5.Size = new System.Drawing.Size(30, 16);
             this.checkBoxAvg5.TabIndex = 0;
@@ -463,7 +437,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 5);
+            this.label3.Location = new System.Drawing.Point(3, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 12);
             this.label3.TabIndex = 4;
@@ -473,9 +447,9 @@
             // 
             this.textBoxCycleLength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCycleLength.Location = new System.Drawing.Point(1, 21);
+            this.textBoxCycleLength.Location = new System.Drawing.Point(65, 9);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(179, 21);
+            this.textBoxCycleLength.Size = new System.Drawing.Size(112, 21);
             this.textBoxCycleLength.TabIndex = 5;
             this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
@@ -610,6 +584,64 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(489, 177);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            // 
+            // checkBoxShowAvgLines
+            // 
+            this.checkBoxShowAvgLines.AutoSize = true;
+            this.checkBoxShowAvgLines.Location = new System.Drawing.Point(5, 147);
+            this.checkBoxShowAvgLines.Name = "checkBoxShowAvgLines";
+            this.checkBoxShowAvgLines.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxShowAvgLines.TabIndex = 12;
+            this.checkBoxShowAvgLines.Text = "均线指标";
+            this.checkBoxShowAvgLines.UseVisualStyleBackColor = true;
+            this.checkBoxShowAvgLines.CheckedChanged += new System.EventHandler(this.checkBoxShowAvgLines_CheckedChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(3, 69);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 13;
+            this.label10.Text = "操作方式：";
+            // 
+            // comboBoxOperations
+            // 
+            this.comboBoxOperations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxOperations.FormattingEnabled = true;
+            this.comboBoxOperations.Items.AddRange(new object[] {
+            "0路",
+            "1路",
+            "2路"});
+            this.comboBoxOperations.Location = new System.Drawing.Point(65, 66);
+            this.comboBoxOperations.Name = "comboBoxOperations";
+            this.comboBoxOperations.Size = new System.Drawing.Size(112, 20);
+            this.comboBoxOperations.TabIndex = 14;
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -691,5 +723,8 @@
         private System.Windows.Forms.Label label9;
         private ExtPanel panelDown;
         private System.Windows.Forms.ToolStripMenuItem autoAllignToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBoxOperations;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox checkBoxShowAvgLines;
     }
 }
