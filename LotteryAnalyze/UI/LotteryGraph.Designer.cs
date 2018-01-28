@@ -28,19 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStripGraph = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
+            this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
             this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.checkBoxShowAuxLines = new System.Windows.Forms.CheckBox();
+            this.comboBoxOperations = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.checkBoxShowAvgLines = new System.Windows.Forms.CheckBox();
             this.checkBoxMACD = new System.Windows.Forms.CheckBox();
             this.checkBoxBollinBand = new System.Windows.Forms.CheckBox();
             this.comboBoxAvgAlgorithm = new System.Windows.Forms.ComboBox();
@@ -71,11 +83,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.checkBoxShowAvgLines = new System.Windows.Forms.CheckBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.comboBoxOperations = new System.Windows.Forms.ComboBox();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -85,6 +92,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.contextMenuStripRightClick.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
             this.groupBoxAvgSettings.SuspendLayout();
@@ -106,7 +114,8 @@
             // 
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
-            this.autoAllignToolStripMenuItem});
+            this.autoAllignToolStripMenuItem,
+            this.delAllAuxLinesToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -114,16 +123,23 @@
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.refreshToolStripMenuItem.Text = "刷新";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // autoAllignToolStripMenuItem
             // 
             this.autoAllignToolStripMenuItem.Name = "autoAllignToolStripMenuItem";
-            this.autoAllignToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.autoAllignToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.autoAllignToolStripMenuItem.Text = "对齐";
             this.autoAllignToolStripMenuItem.Click += new System.EventHandler(this.autoAllignToolStripMenuItem_Click);
+            // 
+            // delAllAuxLinesToolStripMenuItem
+            // 
+            this.delAllAuxLinesToolStripMenuItem.Name = "delAllAuxLinesToolStripMenuItem";
+            this.delAllAuxLinesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.delAllAuxLinesToolStripMenuItem.Text = "清除所有辅助线";
+            this.delAllAuxLinesToolStripMenuItem.Click += new System.EventHandler(this.delAllAuxLinesToolStripMenuItem_Click);
             // 
             // 设置ToolStripMenuItem
             // 
@@ -173,6 +189,62 @@
             this.splitContainer2.Size = new System.Drawing.Size(495, 481);
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            // 
+            // contextMenuStripRightClick
+            // 
+            this.contextMenuStripRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.delSelAuxLineToolStripMenuItem,
+            this.delAllLinesToolStripMenuItem,
+            this.cancelAddAuxLineToolStripMenuItem});
+            this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 70);
+            // 
+            // delSelAuxLineToolStripMenuItem
+            // 
+            this.delSelAuxLineToolStripMenuItem.Name = "delSelAuxLineToolStripMenuItem";
+            this.delSelAuxLineToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.delSelAuxLineToolStripMenuItem.Text = "删除选中的辅助线";
+            this.delSelAuxLineToolStripMenuItem.Click += new System.EventHandler(this.delSelAuxLineToolStripMenuItem_Click);
+            // 
+            // delAllLinesToolStripMenuItem
+            // 
+            this.delAllLinesToolStripMenuItem.Name = "delAllLinesToolStripMenuItem";
+            this.delAllLinesToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.delAllLinesToolStripMenuItem.Text = "删除所有辅助线";
+            this.delAllLinesToolStripMenuItem.Click += new System.EventHandler(this.delAllAuxLinesToolStripMenuItem_Click);
+            // 
+            // cancelAddAuxLineToolStripMenuItem
+            // 
+            this.cancelAddAuxLineToolStripMenuItem.Name = "cancelAddAuxLineToolStripMenuItem";
+            this.cancelAddAuxLineToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.cancelAddAuxLineToolStripMenuItem.Text = "取消当前辅助线";
+            this.cancelAddAuxLineToolStripMenuItem.Click += new System.EventHandler(this.cancelAddAuxLineToolStripMenuItem_Click);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(489, 177);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             // 
             // textBoxGridScaleH
             // 
@@ -224,6 +296,7 @@
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.checkBoxShowAuxLines);
             this.tabPageKGraph.Controls.Add(this.comboBoxOperations);
             this.tabPageKGraph.Controls.Add(this.label10);
             this.tabPageKGraph.Controls.Add(this.checkBoxShowAvgLines);
@@ -242,12 +315,60 @@
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
             // 
+            // checkBoxShowAuxLines
+            // 
+            this.checkBoxShowAuxLines.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxShowAuxLines.AutoSize = true;
+            this.checkBoxShowAuxLines.Location = new System.Drawing.Point(5, 98);
+            this.checkBoxShowAuxLines.Name = "checkBoxShowAuxLines";
+            this.checkBoxShowAuxLines.Size = new System.Drawing.Size(60, 16);
+            this.checkBoxShowAuxLines.TabIndex = 15;
+            this.checkBoxShowAuxLines.Text = "辅助线";
+            this.checkBoxShowAuxLines.UseVisualStyleBackColor = true;
+            this.checkBoxShowAuxLines.CheckedChanged += new System.EventHandler(this.checkBoxShowAuxLines_CheckedChanged);
+            // 
+            // comboBoxOperations
+            // 
+            this.comboBoxOperations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxOperations.FormattingEnabled = true;
+            this.comboBoxOperations.Items.AddRange(new object[] {
+            "0路",
+            "1路",
+            "2路"});
+            this.comboBoxOperations.Location = new System.Drawing.Point(65, 66);
+            this.comboBoxOperations.Name = "comboBoxOperations";
+            this.comboBoxOperations.Size = new System.Drawing.Size(112, 20);
+            this.comboBoxOperations.TabIndex = 14;
+            this.comboBoxOperations.SelectedIndexChanged += new System.EventHandler(this.comboBoxOperations_SelectedIndexChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(3, 69);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 13;
+            this.label10.Text = "操作方式：";
+            // 
+            // checkBoxShowAvgLines
+            // 
+            this.checkBoxShowAvgLines.AutoSize = true;
+            this.checkBoxShowAvgLines.Location = new System.Drawing.Point(5, 165);
+            this.checkBoxShowAvgLines.Name = "checkBoxShowAvgLines";
+            this.checkBoxShowAvgLines.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxShowAvgLines.TabIndex = 12;
+            this.checkBoxShowAvgLines.Text = "均线指标";
+            this.checkBoxShowAvgLines.UseVisualStyleBackColor = true;
+            this.checkBoxShowAvgLines.CheckedChanged += new System.EventHandler(this.checkBoxShowAvgLines_CheckedChanged);
+            // 
             // checkBoxMACD
             // 
             this.checkBoxMACD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxMACD.AutoSize = true;
-            this.checkBoxMACD.Location = new System.Drawing.Point(5, 125);
+            this.checkBoxMACD.Location = new System.Drawing.Point(5, 143);
             this.checkBoxMACD.Name = "checkBoxMACD";
             this.checkBoxMACD.Size = new System.Drawing.Size(72, 16);
             this.checkBoxMACD.TabIndex = 10;
@@ -260,7 +381,7 @@
             this.checkBoxBollinBand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxBollinBand.AutoSize = true;
-            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 102);
+            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 120);
             this.checkBoxBollinBand.Name = "checkBoxBollinBand";
             this.checkBoxBollinBand.Size = new System.Drawing.Size(72, 16);
             this.checkBoxBollinBand.TabIndex = 9;
@@ -308,7 +429,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
-            this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 162);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 180);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
             this.groupBoxAvgSettings.Size = new System.Drawing.Size(174, 83);
             this.groupBoxAvgSettings.TabIndex = 6;
@@ -584,64 +705,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(489, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(489, 177);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            // 
-            // checkBoxShowAvgLines
-            // 
-            this.checkBoxShowAvgLines.AutoSize = true;
-            this.checkBoxShowAvgLines.Location = new System.Drawing.Point(5, 147);
-            this.checkBoxShowAvgLines.Name = "checkBoxShowAvgLines";
-            this.checkBoxShowAvgLines.Size = new System.Drawing.Size(72, 16);
-            this.checkBoxShowAvgLines.TabIndex = 12;
-            this.checkBoxShowAvgLines.Text = "均线指标";
-            this.checkBoxShowAvgLines.UseVisualStyleBackColor = true;
-            this.checkBoxShowAvgLines.CheckedChanged += new System.EventHandler(this.checkBoxShowAvgLines_CheckedChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(3, 69);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(65, 12);
-            this.label10.TabIndex = 13;
-            this.label10.Text = "操作方式：";
-            // 
-            // comboBoxOperations
-            // 
-            this.comboBoxOperations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxOperations.FormattingEnabled = true;
-            this.comboBoxOperations.Items.AddRange(new object[] {
-            "0路",
-            "1路",
-            "2路"});
-            this.comboBoxOperations.Location = new System.Drawing.Point(65, 66);
-            this.comboBoxOperations.Name = "comboBoxOperations";
-            this.comboBoxOperations.Size = new System.Drawing.Size(112, 20);
-            this.comboBoxOperations.TabIndex = 14;
-            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -664,6 +727,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.contextMenuStripRightClick.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
             this.tabPageKGraph.PerformLayout();
@@ -726,5 +790,11 @@
         private System.Windows.Forms.ComboBox comboBoxOperations;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox checkBoxShowAvgLines;
+        private System.Windows.Forms.ToolStripMenuItem delAllAuxLinesToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxShowAuxLines;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripRightClick;
+        private System.Windows.Forms.ToolStripMenuItem delSelAuxLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem delAllLinesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cancelAddAuxLineToolStripMenuItem;
     }
 }

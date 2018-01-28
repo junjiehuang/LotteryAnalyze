@@ -16,8 +16,11 @@ namespace LotteryAnalyze.UI
         GraphManager graphMgr = new GraphManager();
         int numberIndex = 0;        
         int curCDTIndex = 0;
-        Point currentPoint = new Point();
-        Point mouseRelPos = new Point();
+        Point mousePosOnLeftBtnPress = new Point();
+        Point mousePosOnMove = new Point();
+
+
+        #region ctor and common
 
         public static void Open(bool forceCreateNewOne)
         {
@@ -64,6 +67,9 @@ namespace LotteryAnalyze.UI
             RefreshUI();
 
             graphMgr.kvalueGraph.autoAllign = true;
+            comboBoxOperations.DataSource = GraphKCurve.S_AUX_LINE_OPERATIONS;
+            comboBoxOperations.SelectedIndex = (int)graphMgr.kvalueGraph.auxOperationIndex;
+            checkBoxShowAuxLines.Checked = graphMgr.kvalueGraph.enableAuxiliaryLine;
         }
 
         void RefreshUI()
@@ -98,12 +104,16 @@ namespace LotteryAnalyze.UI
             }
         }
 
+        #endregion
+
+        #region Draw and Operations
+
         void DrawUpCanvas(Graphics g)
         {
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mouseRelPos);
+            graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelUp.ClientSize.Width - 2, this.panelUp.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
@@ -117,7 +127,7 @@ namespace LotteryAnalyze.UI
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, mouseRelPos);
+            graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, mousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelDown.ClientSize.Width - 2, this.panelDown.ClientSize.Height - 2);
             Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
@@ -125,44 +135,31 @@ namespace LotteryAnalyze.UI
 
             g.Flush();
         }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x0014) // 禁掉清除背景消息
-                return;
-            base.WndProc(ref m);
-        }
-
-        //private void LotteryGraph_Paint(object sender, PaintEventArgs e)
-        //{
-        //    Graphics g = e.Graphics;
-        //    DrawUpCanvas(g);
-        //}
-
-        private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            instLst.Remove(this);
-        }
-
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
-            this.Invalidate(true);//触发Paint事件
-        }
+        
 
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseRelPos = e.Location;
+            mousePosOnMove = e.Location;
             bool needUpdate = false;
             if (graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
                 needUpdate = true;
             if (e.Button == MouseButtons.Left)
             {
-                float dx = e.Location.X - currentPoint.X;
-                float dy = e.Location.Y - currentPoint.Y;
-                currentPoint = e.Location;
-                graphMgr.MoveGraph(dx, dy);
-                needUpdate = true;
+                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                {
+                    if (graphMgr.kvalueGraph.selAuxLine == null)
+                    {
+                        float dx = e.Location.X - mousePosOnLeftBtnPress.X;
+                        float dy = e.Location.Y - mousePosOnLeftBtnPress.Y;
+                        mousePosOnLeftBtnPress = e.Location;
+                        graphMgr.MoveGraph(dx, dy);
+                        needUpdate = true;
+                    }
+                    else
+                    {
+                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( mousePosOnMove );
+                    }
+                }
             }
             if (needUpdate)
                 this.Invalidate(true);//触发Paint事件
@@ -170,7 +167,91 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseDown(object sender, MouseEventArgs e)
         {
-            currentPoint = e.Location;
+            mousePosOnLeftBtnPress = e.Location;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
+                    graphMgr.kvalueGraph.enableAuxiliaryLine)
+                {
+                    if(graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone)
+                        graphMgr.kvalueGraph.SelectAuxLine(e.Location);
+                }
+            }
+        }
+
+        private void panelUp_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
+                    graphMgr.kvalueGraph.enableAuxiliaryLine)
+                {
+                    switch (graphMgr.kvalueGraph.auxOperationIndex)
+                    {
+                        case AuxLineType.eNone:
+                            {
+                                //graphMgr.kvalueGraph.selAuxLine = null;
+                                //graphMgr.kvalueGraph.selAuxLinePointIndex = -1;
+                                graphMgr.kvalueGraph.SelectAuxLine(e.Location);
+                            }
+                            break;
+                        case AuxLineType.eHorzLine:
+                            {
+                                graphMgr.kvalueGraph.AddHorzLine(e.Location);
+                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                            }
+                            break;
+                        case AuxLineType.eVertLine:
+                            {
+                                graphMgr.kvalueGraph.AddVertLine(e.Location);
+                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                            }
+                            break;
+                        case AuxLineType.eSingleLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddSingleLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1]);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eChannelLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
+                                {
+                                    graphMgr.kvalueGraph.AddChannelLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1],
+                                        graphMgr.kvalueGraph.mouseHitPts[2]);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eGoldSegmentedLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddGoldSegLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1]);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            else if(e.Button == MouseButtons.Right)
+            {
+                graphMgr.kvalueGraph.mouseHitPts.Clear();
+            }
         }
 
         private void panelUp_Paint(object sender, PaintEventArgs e)
@@ -183,6 +264,38 @@ namespace LotteryAnalyze.UI
         {
             Graphics g = e.Graphics;
             DrawDownCanvas(g);
+        }
+
+        private void delSelAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                if (graphMgr.kvalueGraph.selAuxLine != null)
+                {
+                    graphMgr.kvalueGraph.RemoveSelectAuxLine();
+                }
+            }
+        }
+
+        #endregion
+
+        #region control callbacks
+        private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            instLst.Remove(this);
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            this.Invalidate(true);//触发Paint事件
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0014) // 禁掉清除背景消息
+                return;
+            base.WndProc(ref m);
         }
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
@@ -349,5 +462,26 @@ namespace LotteryAnalyze.UI
             graphMgr.kvalueGraph.enableAvgLines = checkBoxShowAvgLines.Checked;
             this.Invalidate(true);
         }
+
+        private void comboBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.auxOperationIndex = (AuxLineType)comboBoxOperations.SelectedIndex;
+        }
+        private void delAllAuxLinesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.RemoveAllAuxLines();
+            this.Invalidate(true);
+        }
+        private void checkBoxShowAuxLines_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.enableAuxiliaryLine = checkBoxShowAuxLines.Checked;
+            this.Invalidate(true);
+        }
+        private void cancelAddAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.mouseHitPts.Clear();
+        }
+
+        #endregion
     }
 }

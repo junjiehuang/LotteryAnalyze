@@ -17,6 +17,16 @@ namespace LotteryAnalyze
         eBarGraph,
     }
 
+    public enum AuxLineType
+    {
+        eNone,
+        eHorzLine,
+        eVertLine,
+        eSingleLine,
+        eChannelLine,
+        eGoldSegmentedLine,
+    }
+
     // 图表基类
     class GraphBase
     {
@@ -39,13 +49,96 @@ namespace LotteryAnalyze
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
     }
 
+    // 辅助线基类
+    class AuxiliaryLine
+    {
+        public AuxLineType lineType = AuxLineType.eNone;
+        public List<Point> keyPoints = new List<Point>();
+        public virtual Pen GetPen() { return null; }
+    }
+    // 水平线
+    class HorzLine : AuxiliaryLine
+    {
+        public static Color lineColor = Color.Aqua;
+        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+
+        public HorzLine()
+        {
+            lineType = AuxLineType.eHorzLine;
+        }
+        public override Pen GetPen() { return solidPen; }
+    }
+    // 垂直线
+    class VertLine : AuxiliaryLine
+    {
+        public static Color lineColor = Color.Azure;
+        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+
+        public VertLine()
+        {
+            lineType = AuxLineType.eVertLine;
+        }
+        public override Pen GetPen() { return solidPen; }
+    }
+    class SingleLine : AuxiliaryLine
+    {
+        public static Color lineColor = Color.Blue;
+        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public SingleLine()
+        {
+            lineType = AuxLineType.eSingleLine;
+        }
+        public override Pen GetPen() { return solidPen; }
+    }
+
+    // 通道线
+    class ChannelLine : AuxiliaryLine
+    {
+        public static Color lineColor = Color.Pink;
+        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public static Pen dotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, lineColor, 1);
+
+        public ChannelLine()
+        {
+            lineType = AuxLineType.eChannelLine;
+        }
+        public override Pen GetPen() { return solidPen; }
+    }
+    // 黄金分割线
+    class GoldSegmentedLine : AuxiliaryLine
+    {
+        public static Color lineColor = Color.Yellow;
+        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public static Pen dotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, lineColor, 1);
+
+        public GoldSegmentedLine()
+        {
+            lineType = AuxLineType.eGoldSegmentedLine;
+        }
+        public override Pen GetPen() { return solidPen; }
+    }
+
     // K线图
     class GraphKCurve : GraphBase
     {
+        const float rcHalfSize = 4;
+        const float rcSize = 8;
+        public static string[] S_AUX_LINE_OPERATIONS = new string[]
+        {
+            "浏览",
+            "画水平线",
+            "画垂直线",
+            "画直线",
+            "画通道线",
+            "画黄金分割线",
+        };
+
+        public bool enableAuxiliaryLine = true;
         public bool enableAvgLines = true;
         public bool enableBollinBand = true;
         public bool enableMACD = true;
 
+        public AuxLineType auxOperationIndex = AuxLineType.eNone;
         public float gridScaleH = 20;
         public float gridScaleW = 5;
 
@@ -55,6 +148,7 @@ namespace LotteryAnalyze
         float selDataPtX = -1;
 
         Font selDataFont;
+        Font auxFont;
         PointF prevPt = new PointF();
         bool findPrevPt = false;
 
@@ -74,14 +168,20 @@ namespace LotteryAnalyze
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
+        SolidBrush greenBrush = new SolidBrush(Color.Green);
         SolidBrush tmpBrush;
 
         Dictionary<Pen, List<PointF>> linePools = new Dictionary<Pen, List<PointF>>();
         Dictionary<SolidBrush, List<RectangleF>> rcPools = new Dictionary<SolidBrush,List<RectangleF>>();
+        List<AuxiliaryLine> auxiliaryLineList = new List<AuxiliaryLine>();
+        public List<Point> mouseHitPts = new List<Point>();
+        public AuxiliaryLine selAuxLine = null;
+        public int selAuxLinePointIndex = -1;
 
         public GraphKCurve()
         {
-            selDataFont = new Font(FontFamily.GenericSerif, 16);
+            selDataFont = new Font(FontFamily.GenericSerif, 14);
+            auxFont = new Font(FontFamily.GenericMonospace, 12);
         }
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -118,66 +218,76 @@ namespace LotteryAnalyze
             float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
             if (kddc != null)
             {
-                int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
-                if (startIndex < 0)
-                    startIndex = 1;
-                int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
-                if (endIndex > kddc.dataLst.Count)
-                    endIndex = kddc.dataLst.Count;
-
-                if (autoAllign)
+                if (kddc.dataLst.Count > 0)
                 {
-                    //float startY = kddc.dataLst[startIndex].dataDict[cdt].KValue * gridScaleH;
-                    float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
-                    //float relSY = StandToCanvas(startY, false);
-                    float relEY = StandToCanvas(endY, false);
-                    //bool isSYOut = relSY < 0 || relSY > winH;
-                    bool isEYOut = relEY < 0 || relEY > winH;
-                    if (isEYOut )//&& isSYOut)
-                        canvasOffset.Y = endY + winH * 0.5f;
-                    autoAllign = false;
-                }
+                    int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                    if (startIndex < 0)
+                        startIndex = 1;
+                    int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                    if (endIndex > kddc.dataLst.Count)
+                        endIndex = kddc.dataLst.Count;
 
-                for (int i = startIndex; i < endIndex; ++i)
-                {
-                    KDataDict kdDict = kddc.dataLst[i];
-                    KData data = kdDict.GetData(cdt, false);
-                    if (data == null)
-                        continue;
-                    DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos);
-                }
-
-                if (enableAvgLines)
-                {
-                    foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
+                    // 自动对齐
+                    if (autoAllign)
                     {
-                        if (adc.avgLineSetting.enable)
-                        {
-                            lastValue = 0;
-                            findPrevPt = false;
+                        float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
+                        float relEY = StandToCanvas(endY, false);
+                        bool isEYOut = relEY < 0 || relEY > winH;
+                        if (isEYOut)
+                            canvasOffset.Y = endY + winH * 0.5f;
+                        autoAllign = false;
+                    }
 
-                            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
-                            if (startIndex < 0)
-                                startIndex = 1;
-                            endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
-                            if (endIndex > adc.avgPointMapLst.Count)
-                                endIndex = adc.avgPointMapLst.Count;
-                            for (int i = startIndex; i < endIndex; ++i)
+                    // 画K线图
+                    for (int i = startIndex; i < endIndex; ++i)
+                    {
+                        KDataDict kdDict = kddc.dataLst[i];
+                        KData data = kdDict.GetData(cdt, false);
+                        if (data == null)
+                            continue;
+                        DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos);
+                    }
+
+                    // 画均线图
+                    if (enableAvgLines)
+                    {
+                        foreach (AvgDataContainer adc in kddc.avgDataContMap.Values)
+                        {
+                            if (adc.avgLineSetting.enable)
                             {
-                                DrawAvgLineGraph(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
+                                lastValue = 0;
+                                findPrevPt = false;
+
+                                startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                                if (startIndex < 0)
+                                    startIndex = 1;
+                                endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                                if (endIndex > adc.avgPointMapLst.Count)
+                                    endIndex = adc.avgPointMapLst.Count;
+                                for (int i = startIndex; i < endIndex; ++i)
+                                {
+                                    DrawAvgLineGraph(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
+                                }
                             }
+                        }
+                    }
+
+                    // 画布林带
+                    if (enableBollinBand)
+                    {
+                        lastValue = 0;
+                        findPrevPt = false;
+                        for (int i = 0; i < kddc.bollinDataLst.bollinMapLst.Count; ++i)
+                        {
+                            DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                         }
                     }
                 }
 
-                if(enableBollinBand)
+                // 画辅助线
+                if(enableAuxiliaryLine)
                 {
-                    lastValue = 0;
-                    findPrevPt = false;
-                    for ( int i = 0; i < kddc.bollinDataLst.bollinMapLst.Count; ++i)
-                    {
-                        DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
-                    }
+                    DrawAuxLineGraph(g, winW, winH, mouseRelPos);
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
@@ -216,6 +326,86 @@ namespace LotteryAnalyze
                 }
             }
             EndDraw(g);
+        }
+
+        public void UpdateSelectAuxLinePoint(Point mouseRelPos)
+        {
+            if(selAuxLine != null && selAuxLinePointIndex >= 0 && selAuxLinePointIndex < selAuxLine.keyPoints.Count)
+            {
+                selAuxLine.keyPoints[selAuxLinePointIndex] = CanvasToStand(mouseRelPos);
+            }
+        }
+        public void SelectAuxLine(Point mouseRelPos)
+        {
+            selAuxLine = null;
+            selAuxLinePointIndex = -1;
+            Point standMousePos = CanvasToStand(mouseRelPos);
+            for( int i = 0; i < auxiliaryLineList.Count; ++i )
+            {
+                AuxiliaryLine al = auxiliaryLineList[i];
+                for(int j = 0; j < al.keyPoints.Count; ++j)
+                {
+                    Point pt = al.keyPoints[j];
+                    if (pt.X - rcHalfSize > standMousePos.X ||
+                        pt.X + rcHalfSize < standMousePos.X ||
+                        pt.Y - rcHalfSize > standMousePos.Y ||
+                        pt.Y + rcHalfSize < standMousePos.Y)
+                        continue;
+                    else
+                    {
+                        selAuxLine = al;
+                        selAuxLinePointIndex = j;
+                        return;
+                    }
+                }
+            }
+        }
+        public void RemoveAllAuxLines()
+        {
+            auxiliaryLineList.Clear();
+        }
+        public void RemoveSelectAuxLine()
+        {
+            if(selAuxLine!=null)
+            {
+                auxiliaryLineList.Remove(selAuxLine);
+                selAuxLine = null;
+                selAuxLinePointIndex = -1;
+            }
+        }
+        public void AddHorzLine( Point pt )
+        {
+            HorzLine line = new HorzLine();
+            line.keyPoints.Add( CanvasToStand(pt) );
+            auxiliaryLineList.Add(line);
+        }
+        public void AddVertLine(Point pt)
+        {
+            VertLine line = new VertLine();
+            line.keyPoints.Add(CanvasToStand(pt));
+            auxiliaryLineList.Add(line);
+        }
+        public void AddSingleLine(Point p1, Point p2)
+        {
+            SingleLine line = new SingleLine();
+            line.keyPoints.Add(CanvasToStand(p1));
+            line.keyPoints.Add(CanvasToStand(p2));
+            auxiliaryLineList.Add(line);
+        }
+        public void AddChannelLine(Point line0P1, Point line0P2, Point line1P)
+        {
+            ChannelLine line = new ChannelLine();
+            line.keyPoints.Add(CanvasToStand(line0P1));
+            line.keyPoints.Add(CanvasToStand(line0P2));
+            line.keyPoints.Add(CanvasToStand(line1P));
+            auxiliaryLineList.Add(line);
+        }
+        public void AddGoldSegLine(Point p1, Point P2)
+        {
+            GoldSegmentedLine line = new GoldSegmentedLine();
+            line.keyPoints.Add(CanvasToStand(p1));
+            line.keyPoints.Add(CanvasToStand(P2));
+            auxiliaryLineList.Add(line);
         }
 
         void BeforeDraw()
@@ -281,9 +471,9 @@ namespace LotteryAnalyze
         float CanvasToStand(float v, bool isX)
         {
             if (isX)
-                return v + canvasOffset.X;
+                return (v + canvasOffset.X);
             else
-                return canvasOffset.Y - v;
+                return (canvasOffset.Y) - v;
         }
         float StandToCanvas(float v, bool isX)
         {
@@ -292,6 +482,21 @@ namespace LotteryAnalyze
             else
                 return canvasOffset.Y - v;
         }
+        Point CanvasToStand(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)CanvasToStand((float)pt.X, true);
+            res.Y = (int)CanvasToStand((float)pt.Y, false);
+            return res;
+        }
+        Point StandToCanvas(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)StandToCanvas((float)pt.X, true);
+            res.Y = (int)StandToCanvas((float)pt.Y, false);
+            return res;
+        }
+
         void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
         {
             KData prevData = data.GetPrevKData();
@@ -422,6 +627,249 @@ namespace LotteryAnalyze
             PushLinePts(yellowLinePen, px, pyDIF, cx, cyDIF);
             PushLinePts(whiteLinePen, px, pyDEA, cx, cyDEA);
             PushRcPts(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
+        }
+
+        void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos)
+        {
+            float rcHalfSize = 3;
+            float rcSize = rcHalfSize * 2;
+            for ( int i = 0; i < auxiliaryLineList.Count; ++i )
+            {
+                AuxiliaryLine al = auxiliaryLineList[i];
+                DrawAuxLine(g, winW, winH, al.keyPoints, al.lineType);
+            }
+
+            if(mouseHitPts.Count > 0 && auxOperationIndex > AuxLineType.eNone)
+            {
+                DrawPreviewAuxLine(g, winW, winH, mouseRelPos);
+            }
+
+            if(selAuxLine!=null && selAuxLinePointIndex != -1)
+            {
+                Point pt = StandToCanvas(selAuxLine.keyPoints[selAuxLinePointIndex]);
+                g.DrawRectangle(selAuxLine.GetPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+            }
+        }
+
+        void DrawPreviewAuxLine(Graphics g, int winW, int winH, Point mouseRelPos)
+        {
+            switch(auxOperationIndex)
+            {
+                case AuxLineType.eSingleLine:
+                    {
+                        float sx, sy, ex, ey;
+                        sx = mouseHitPts[0].X;
+                        sy = mouseHitPts[0].Y;
+                        if (sx == mouseRelPos.X)
+                        {
+                            g.DrawLine(SingleLine.solidPen, sx, 0, sx, winH);
+                        }
+                        else
+                        {
+                            ex = mouseRelPos.X;
+                            ey = mouseRelPos.Y;
+                            float k = (ey - sy) / (ex - sx);
+                            float fyl = sy - sx * k;
+                            float fyr = sy + (winW - sx) * k;
+                            g.DrawLine(SingleLine.solidPen, 0, fyl, winW, fyr);
+                        }
+                        g.DrawRectangle(SingleLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eChannelLine:
+                    {
+                        float sx, sy, ex, ey;
+                        sx = mouseHitPts[0].X;
+                        sy = mouseHitPts[0].Y;
+                        g.DrawRectangle(ChannelLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        if (mouseHitPts.Count == 1)
+                        {
+                            ex = mouseRelPos.X;
+                            ey = mouseRelPos.Y;
+                            if (sx == ex)
+                            {
+                                g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
+                            }
+                            else
+                            {
+                                float k = (ey - sy) / (ex - sx);
+                                float fyl = sy - sx * k;
+                                float fyr = sy + (winW - sx) * k;
+                                g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
+                            }
+                        }
+                        else if(mouseHitPts.Count == 2)
+                        {
+                            ex = mouseHitPts[1].X;
+                            ey = mouseHitPts[1].Y;
+                            g.DrawRectangle(ChannelLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                            if (sx == ex)
+                            {
+                                g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
+                            }
+                            else
+                            {
+                                float k = (ey - sy) / (ex - sx);
+                                float fyl = sy - sx * k;
+                                float fyr = sy + (winW - sx) * k;
+                                g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
+                            }
+                            float mx = mouseRelPos.X;
+                            float my = mouseRelPos.Y;
+                            if (sx == ex)
+                            {
+                                g.DrawLine(ChannelLine.solidPen, mx, 0, mx, winH);
+                            }
+                            else
+                            {
+                                float k = (ey - sy) / (ex - sx);
+                                float oyl = my - mx * k;
+                                float oyr = my + (winW - mx) * k;
+                                g.DrawLine(ChannelLine.solidPen, 0, oyl, winW, oyr);
+                            }
+                            g.DrawLine(ChannelLine.dotPen, sx, sy, mx, my);
+                        }
+                    }
+                    break;
+                case AuxLineType.eGoldSegmentedLine:
+                    {
+                        float sx = mouseHitPts[0].X;
+                        float sy = mouseHitPts[0].Y;
+                        float ex = mouseRelPos.X;
+                        float ey = mouseRelPos.Y;
+                        float y382 = (ey - sy) * 0.382f + sy;
+                        float y618 = (ey - sy) * 0.618f + sy;
+                        float y1382 = (ey - sy) * 1.382f + sy;
+                        float y1618 = (ey - sy) * 1.618f + sy;
+                        float y2 = (ey - sy) * 2.0f + sy;
+                        float y2618 = (ey - sy) * 2.618f + sy;
+                        g.DrawLine(GoldSegmentedLine.solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
+                        g.DrawLine(GoldSegmentedLine.solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, sx, sy, ex, ey);
+                        g.DrawRectangle(GoldSegmentedLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+            }
+        }
+
+        void DrawAuxLine(Graphics g, int winW, int winH, List<Point> pts, AuxLineType lineType)
+        {
+            switch (lineType)
+            {
+                case AuxLineType.eHorzLine:
+                    {
+                        float x = StandToCanvas(pts[0].X, true);
+                        float y = StandToCanvas(pts[0].Y, false);
+                        g.DrawLine(HorzLine.solidPen, 0, y, winW, y);
+                        g.DrawRectangle(HorzLine.solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+
+                case AuxLineType.eVertLine:
+                    {
+                        float x = StandToCanvas(pts[0].X, true);
+                        float y = StandToCanvas(pts[0].Y, false);
+                        g.DrawLine(VertLine.solidPen, x, 0, x, winH);
+                        g.DrawRectangle(VertLine.solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+
+                case AuxLineType.eSingleLine:
+                    {
+                        float sx, sy, ex, ey, ox, oy;
+                        if (pts[0].X == pts[1].X)
+                        {
+                            sx = StandToCanvas(pts[0].X, true);
+                            sy = StandToCanvas(pts[0].Y, false);
+                            ex = sx;
+                            ey = StandToCanvas(pts[1].Y, false);
+                            g.DrawLine(SingleLine.solidPen, sx, 0, sx, winH);
+                        }
+                        else
+                        {
+                            sx = StandToCanvas(pts[0].X, true);
+                            ex = StandToCanvas(pts[1].X, true);
+                            sy = StandToCanvas(pts[0].Y, false);
+                            ey = StandToCanvas(pts[1].Y, false);
+                            float k = (ey - sy) / (ex - sx);
+                            float fyl = sy - sx * k;
+                            float fyr = sy + (winW - sx) * k;
+                            g.DrawLine(SingleLine.solidPen, 0, fyl, winW, fyr);
+                        }
+                        g.DrawRectangle(SingleLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(SingleLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+
+                case AuxLineType.eChannelLine:
+                    {
+                        float sx, sy, ex, ey, ox, oy;
+                        if (pts[0].X == pts[1].X)
+                        {
+                            sx = StandToCanvas(pts[0].X, true);
+                            sy = StandToCanvas(pts[0].Y, false);
+                            ex = sx;
+                            ey = StandToCanvas(pts[1].Y, false);
+                            ox = StandToCanvas(pts[2].X, true);
+                            oy = StandToCanvas(pts[2].Y, false);
+                            g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
+                            g.DrawLine(ChannelLine.solidPen, ox, 0, ox, winH);
+                        }
+                        else
+                        {
+                            sx = StandToCanvas(pts[0].X, true);
+                            ex = StandToCanvas(pts[1].X, true);
+                            ox = StandToCanvas(pts[2].X, true);
+                            sy = StandToCanvas(pts[0].Y, false);
+                            ey = StandToCanvas(pts[1].Y, false);
+                            oy = StandToCanvas(pts[2].Y, false);
+                            float k = (ey - sy) / (ex - sx);
+                            float fyl = sy - sx * k;
+                            float fyr = sy + (winW - sx) * k;
+                            float oyl = oy - ox * k;
+                            float oyr = oy + (winW - ox) * k;
+                            g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
+                            g.DrawLine(ChannelLine.solidPen, 0, oyl, winW, oyr);
+                        }
+                        g.DrawLine(ChannelLine.dotPen, sx, sy, ox, oy);
+                        g.DrawRectangle(ChannelLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(ChannelLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(ChannelLine.solidPen, ox - rcHalfSize, oy - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+
+                case AuxLineType.eGoldSegmentedLine:
+                    {
+                        float sx = StandToCanvas(pts[0].X, true);
+                        float sy = StandToCanvas(pts[0].Y, false);
+                        float ex = StandToCanvas(pts[1].X, true);
+                        float ey = StandToCanvas(pts[1].Y, false);
+                        float y382 = (ey - sy) * 0.382f + sy;
+                        float y618 = (ey - sy) * 0.618f + sy;
+                        float y1382 = (ey - sy) * 1.382f + sy;
+                        float y1618 = (ey - sy) * 1.618f + sy;
+                        float y2 = (ey - sy) * 2.0f + sy;
+                        float y2618 = (ey - sy) * 2.618f + sy;
+                        g.DrawLine(GoldSegmentedLine.solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
+                        g.DrawLine(GoldSegmentedLine.solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
+                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
+                        g.DrawLine(GoldSegmentedLine.dotPen, sx, sy, ex, ey);
+                        g.DrawRectangle(GoldSegmentedLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(GoldSegmentedLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+            }
         }
     }
 
