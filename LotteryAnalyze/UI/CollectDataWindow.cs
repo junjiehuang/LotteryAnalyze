@@ -14,6 +14,7 @@ namespace LotteryAnalyze.UI
     {
         System.Windows.Forms.Timer updateTimer;
         List<DateTime> jobLst = new List<DateTime>();
+        int curJobIndex = -1;
 
         public CollectDataWindow()
         {
@@ -31,7 +32,7 @@ namespace LotteryAnalyze.UI
             dateTimePickerEndDate.Value = curDate;
 
             updateTimer = new System.Windows.Forms.Timer();
-            updateTimer.Interval = 500;
+            updateTimer.Interval = 30;
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Enabled = true;
             updateTimer.Start();
@@ -39,16 +40,21 @@ namespace LotteryAnalyze.UI
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            if (jobLst.Count == 0)
+            if (jobLst.Count == 0 || curJobIndex == -1)
                 return;
-            DateTime date = jobLst[0];
-            jobLst.RemoveAt(0);
+            DateTime date = jobLst[curJobIndex];
+            ++curJobIndex;
+            progressBarCollectDatas.Value = curJobIndex * 100 / jobLst.Count;
             AutoUpdateUtil.FetchData(date);
             textBoxCmd.Text += date.ToString() + "\r\n";
-            if (jobLst.Count == 0)
+            textBoxCmd.ScrollToCaret();
+            if (jobLst.Count == curJobIndex)
             {
-                textBoxCmd.Text += "Exec Completed!";
-                MessageBox.Show("Collect Completed!");
+                textBoxCmd.Text += "收集完毕!";
+                progressBarCollectDatas.Value = 100;
+                jobLst.Clear();
+                curJobIndex = -1;
+                MessageBox.Show("收集完毕!");
             }
         }
 
@@ -78,6 +84,9 @@ namespace LotteryAnalyze.UI
                     curDate = curDate.AddDays(1);
                 }
             }
+            if (jobLst.Count > 0)
+                curJobIndex = 0;
+            progressBarCollectDatas.Value = 0;
         }
 
         private void dateTimePickerStartDate_ValueChanged(object sender, EventArgs e)
@@ -96,6 +105,11 @@ namespace LotteryAnalyze.UI
 
         private void CollectDataWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer = null;
+            }
         }
 
         private void CollectDataWindow_Paint(object sender, PaintEventArgs e)

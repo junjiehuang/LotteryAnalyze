@@ -31,8 +31,15 @@
             this.menuStripGraph = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
+            this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
@@ -66,13 +73,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label9 = new System.Windows.Forms.Label();
-            this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
-            this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -111,9 +111,22 @@
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.refreshToolStripMenuItem.Text = "刷新";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // autoAllignToolStripMenuItem
+            // 
+            this.autoAllignToolStripMenuItem.Name = "autoAllignToolStripMenuItem";
+            this.autoAllignToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.autoAllignToolStripMenuItem.Text = "对齐";
+            this.autoAllignToolStripMenuItem.Click += new System.EventHandler(this.autoAllignToolStripMenuItem_Click);
+            // 
+            // 设置ToolStripMenuItem
+            // 
+            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.设置ToolStripMenuItem.Text = "设置";
             // 
             // splitContainer1
             // 
@@ -157,6 +170,56 @@
             this.splitContainer2.Size = new System.Drawing.Size(495, 481);
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(489, 177);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            // 
+            // textBoxGridScaleH
+            // 
+            this.textBoxGridScaleH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxGridScaleH.Location = new System.Drawing.Point(121, 4);
+            this.textBoxGridScaleH.Name = "textBoxGridScaleH";
+            this.textBoxGridScaleH.Size = new System.Drawing.Size(73, 21);
+            this.textBoxGridScaleH.TabIndex = 10;
+            this.textBoxGridScaleH.TextChanged += new System.EventHandler(this.textBoxGridScaleH_TextChanged);
+            // 
+            // textBoxGridScaleW
+            // 
+            this.textBoxGridScaleW.Location = new System.Drawing.Point(39, 4);
+            this.textBoxGridScaleW.Name = "textBoxGridScaleW";
+            this.textBoxGridScaleW.Size = new System.Drawing.Size(73, 21);
+            this.textBoxGridScaleW.TabIndex = 9;
+            this.textBoxGridScaleW.TextChanged += new System.EventHandler(this.textBoxGridScaleW_TextChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(5, 9);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(29, 12);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "缩放";
             // 
             // label4
             // 
@@ -250,8 +313,7 @@
             // 
             // groupBoxAvgSettings
             // 
-            this.groupBoxAvgSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxAvgSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg100);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg100);
@@ -267,7 +329,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
             this.groupBoxAvgSettings.Location = new System.Drawing.Point(0, 92);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
-            this.groupBoxAvgSettings.Size = new System.Drawing.Size(180, 140);
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(180, 161);
             this.groupBoxAvgSettings.TabIndex = 6;
             this.groupBoxAvgSettings.TabStop = false;
             this.groupBoxAvgSettings.Text = "均线设置:";
@@ -547,69 +609,6 @@
             this.label1.Size = new System.Drawing.Size(77, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
-            // 
-            // 设置ToolStripMenuItem
-            // 
-            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
-            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.设置ToolStripMenuItem.Text = "设置";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(5, 9);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(29, 12);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "缩放";
-            // 
-            // textBoxGridScaleW
-            // 
-            this.textBoxGridScaleW.Location = new System.Drawing.Point(39, 4);
-            this.textBoxGridScaleW.Name = "textBoxGridScaleW";
-            this.textBoxGridScaleW.Size = new System.Drawing.Size(73, 21);
-            this.textBoxGridScaleW.TabIndex = 9;
-            this.textBoxGridScaleW.TextChanged += new System.EventHandler(this.textBoxGridScaleW_TextChanged);
-            // 
-            // textBoxGridScaleH
-            // 
-            this.textBoxGridScaleH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxGridScaleH.Location = new System.Drawing.Point(121, 4);
-            this.textBoxGridScaleH.Name = "textBoxGridScaleH";
-            this.textBoxGridScaleH.Size = new System.Drawing.Size(73, 21);
-            this.textBoxGridScaleH.TabIndex = 10;
-            this.textBoxGridScaleH.TextChanged += new System.EventHandler(this.textBoxGridScaleH_TextChanged);
-            // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(489, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(489, 177);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            // 
-            // 对齐ToolStripMenuItem
-            // 
-            this.autoAllignToolStripMenuItem.Name = "对齐ToolStripMenuItem";
-            this.autoAllignToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.autoAllignToolStripMenuItem.Text = "对齐";
-            this.autoAllignToolStripMenuItem.Click += new System.EventHandler(this.autoAllignToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 

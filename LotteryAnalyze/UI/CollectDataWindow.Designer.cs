@@ -40,6 +40,7 @@
             this.dateTimePickerEndDate = new System.Windows.Forms.DateTimePicker();
             this.buttonCollect = new System.Windows.Forms.Button();
             this.textBoxCmd = new System.Windows.Forms.TextBox();
+            this.progressBarCollectDatas = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // label1
@@ -137,14 +138,25 @@
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
             this.textBoxCmd.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxCmd.Size = new System.Drawing.Size(589, 211);
+            this.textBoxCmd.Size = new System.Drawing.Size(589, 181);
             this.textBoxCmd.TabIndex = 11;
+            // 
+            // progressBarCollectDatas
+            // 
+            this.progressBarCollectDatas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarCollectDatas.Location = new System.Drawing.Point(5, 320);
+            this.progressBarCollectDatas.Name = "progressBarCollectDatas";
+            this.progressBarCollectDatas.Size = new System.Drawing.Size(589, 23);
+            this.progressBarCollectDatas.TabIndex = 12;
             // 
             // CollectDataWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 346);
+            this.Controls.Add(this.progressBarCollectDatas);
             this.Controls.Add(this.textBoxCmd);
             this.Controls.Add(this.buttonCollect);
             this.Controls.Add(this.dateTimePickerEndDate);
@@ -180,5 +192,6 @@
         private System.Windows.Forms.DateTimePicker dateTimePickerEndDate;
         private System.Windows.Forms.Button buttonCollect;
         private System.Windows.Forms.TextBox textBoxCmd;
+        private System.Windows.Forms.ProgressBar progressBarCollectDatas;
     }
 }

@@ -105,7 +105,7 @@ namespace LotteryAnalyze
 
         public DataItem(string idStr, string numStr, int fileID)
         {
-            id = int.Parse(idStr);
+            //id = int.Parse(idStr);
             lotteryNumber = numStr;
             idTag = fileID + "-" + idStr;
             andValue = Util.CalAndValue(lotteryNumber);
@@ -243,8 +243,8 @@ namespace LotteryAnalyze
         public DataItem GetPrevItem(DataItem curItem)
         {
             int curID = curItem.id - 1;
-            if (curID > 0)
-                return datas[curID-1];
+            if (curID >= 0)
+                return datas[curID];
             else
             {
                 OneDayDatas prevODD = DataManager.GetInst().GetPrevOneDayDatas(this);
@@ -255,9 +255,9 @@ namespace LotteryAnalyze
         }
         public DataItem GetNextItem(DataItem curItem)
         {
-            int curID = curItem.id-1;
-            if (curID < datas.Count - 1)
-                return datas[curID + 1];
+            int curID = curItem.id + 1;
+            if (curID < datas.Count)
+                return datas[curID];
             else
             {
                 OneDayDatas nextODD = DataManager.GetInst().GetNextOneDayDatas(this);
@@ -309,6 +309,12 @@ namespace LotteryAnalyze
         {
             allDatas.Clear();
             indexs.Clear();
+        }
+
+        public void AddMetaInfo(int key, string fileFullName)
+        {
+            if (mFileMetaInfo.ContainsKey(key) == false)
+                mFileMetaInfo.Add(key, fileFullName);
         }
 
         public void LoadAllDatas(ref List<int> selectIDs)
@@ -383,7 +389,15 @@ namespace LotteryAnalyze
                 if (allDatas.ContainsKey(lastIndex))
                 {
                     OneDayDatas odd = allDatas[lastIndex];
-                    return odd.datas[odd.datas.Count - 1];
+                    if(odd.datas.Count > 0)
+                        return odd.datas[odd.datas.Count - 1];
+                    else if(indexs.Count > 1)
+                    { 
+                        lastIndex = indexs[indexs.Count - 2];
+                        odd = allDatas[lastIndex];
+                        if(odd.datas.Count > 0)
+                            return odd.datas[odd.datas.Count - 1];
+                    }
                 }
             }
             return null;

@@ -543,15 +543,30 @@ namespace LotteryAnalyze
         /// <summary>
         /// 自动获取当天数据
         /// </summary>
-        public static void AutoFetchTodayData()
+        public static int AutoFetchTodayData()
         {
             DateTime curDate = DateTime.Now;
+            DateTime lastDate = curDate.AddDays(-1);
+            FetchData(lastDate);
+
             string filename = combineFileName(curDate.Year, curDate.Month, curDate.Day);
             string url = "http://chart.cp.360.cn/kaijiang/ssccq?sb_spm=36335ab32b7a2ac5a4fa0881e40a5f6a";
-            FetchData(filename, url);
+            return FetchData(filename, url);
         }
 
-        static string combineFileName(int y, int m, int d)
+        public static string combineDateString(int y, int m, int d)
+        {
+            string dateStr = y.ToString();
+            if (m < 10)
+                dateStr += "0";
+            dateStr += m;
+            if (d < 10)
+                dateStr += "0";
+            dateStr += d;
+            return dateStr;
+        }
+
+        public static string combineFileName(int y, int m, int d)
         {
             string fileName = "..\\data\\" + y;
             if (m < 10)
@@ -563,7 +578,7 @@ namespace LotteryAnalyze
             return fileName;
         }
 
-        static string combineUrlName(int y, int m, int d)
+        public static string combineUrlName(int y, int m, int d)
         {
             string url = "http://chart.cp.360.cn/kaijiang/kaijiang?lotId=255401&spanType=2&span=" + y + "-";
             if (m < 10)
@@ -619,19 +634,24 @@ namespace LotteryAnalyze
             }
         }
 
-        public static void FetchData(DateTime date)
+        public static int FetchData(DateTime date)
         {
             string filename = combineFileName(date.Year, date.Month, date.Day);
             string url = combineUrlName(date.Year, date.Month, date.Day);
-            FetchData(filename, url);
+            return FetchData(filename, url);
         }
 
-        public static void FetchData(string fileName, string webUrl)
+        static HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
+        static string strRegexR = @"(?<=<tr>)([\s\S]*?)(?=</tr>)"; //构造解析表格数据的正则表达式
+        static string strRegexD = @"(?<=<td[^>]*>[\s]*?)([\S]*)(?=[\s]*?</td>)";
+        static Regex regexR = new Regex(strRegexR);
+        static Regex regexD = new Regex(strRegexD);
+
+        public static int FetchData(string fileName, string webUrl)
         {
-            //--------------------------
+            int validCount = 0;
             // load web page
             ECType t = ECType.Default;
-            //WebRequest request = WebRequest.Create("http://chart.cp.360.cn/kaijiang/kaijiang?lotId=255401&spanType=2&span=2018-01-19_2018-01-19"); //请求url
             WebRequest request = WebRequest.Create(webUrl);
             WebResponse response = request.GetResponse();
             StreamReader reader = null;
@@ -651,7 +671,6 @@ namespace LotteryAnalyze
             response.Close();
 
             string lotteryData = "";
-            HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
             htmlDocument.LoadHtml(strWebContent);
             HtmlNodeCollection collection = htmlDocument.DocumentNode.SelectSingleNode("html/body").ChildNodes;
             foreach (HtmlNode wrapNode in collection)
@@ -662,18 +681,10 @@ namespace LotteryAnalyze
                     {
                         if (histTabNode.GetAttributeValue("class", "") == "history-tab")
                         {
-                            string htmlTxt = histTabNode.InnerHtml;
-
-                            
-                            string strRegexR = @"(?<=<tr>)([\s\S]*?)(?=</tr>)"; //构造解析表格数据的正则表达式
-                            string strRegexD = @"(?<=<td[^>]*>[\s]*?)([\S]*)(?=[\s]*?</td>)";
-                            Regex regexR = new Regex(strRegexR);
-                            MatchCollection mcR = regexR.Matches(htmlTxt); //执行匹配
-                            //bool first = true;
+                            MatchCollection mcR = regexR.Matches(histTabNode.InnerHtml); //执行匹配
                             int totalCount = 120;
                             foreach (Match mr in mcR)
                             {
-                                Regex regexD = new Regex(strRegexD);
                                 MatchCollection mcD = regexD.Matches(mr.Groups[0].ToString()); //执行匹配                                                                
                                 for (int i = 0; i < mcD.Count; i++)
                                 {
@@ -682,7 +693,10 @@ namespace LotteryAnalyze
                                         lotteryData += mcD[i].Value + " ";
                                         ++i;
                                         if (Util.IsNumStr(mcD[i].Value))
+                                        {
                                             lotteryData += mcD[i].Value;
+                                            ++validCount;
+                                        }
                                         else
                                             lotteryData += "-";
                                         lotteryData += "\n";
@@ -709,7 +723,7 @@ namespace LotteryAnalyze
             //关闭流
             sw.Close();
             fs.Close();
-            //--------------------------
+            return validCount;
         }
     }
 }

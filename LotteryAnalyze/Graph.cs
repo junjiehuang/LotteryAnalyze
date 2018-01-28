@@ -417,9 +417,14 @@ namespace LotteryAnalyze
     // 柱状图
     class GraphBar : GraphBase
     {
+        SolidBrush redBrush = new SolidBrush(Color.Red);
+        SolidBrush tagBrush = new SolidBrush(Color.White);
+        SolidBrush greenBrush = new SolidBrush(Color.Green);
+
+
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
         {
-            return false;
+            return true;
         }
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
@@ -434,12 +439,26 @@ namespace LotteryAnalyze
 
             BarGraphDataContianer.DataUnitLst dul = bgdc.allDatas[numIndex];
             float gap = (float)winW / dul.dataLst.Count;
-            SolidBrush brush = new SolidBrush(Color.Red);
-            SolidBrush tagBrush = new SolidBrush(Color.White);
+
             Font tagFont = new Font(FontFamily.GenericSerif, 16);
             for (int i = 0; i < dul.dataLst.Count; ++i)
             {
-                float rcH = MaxRcH * ((float)(dul.dataLst[i].data) / (float)bgdc.totalCollectCount);
+                Brush brush = greenBrush;
+                float rate = ((float)(dul.dataLst[i].data) / (float)bgdc.totalCollectCount);
+                if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountPath012)
+                {
+                    if (i == 0 && rate > 0.4f)
+                        brush = redBrush;
+                    else if (i > 0 && rate > 0.3f)
+                        brush = redBrush;
+                }
+                else if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountFrom0To9)
+                {
+                    if(rate > 0.1f)
+                        brush = redBrush;
+                }
+
+                float rcH = MaxRcH * rate;
                 startY = bottom - rcH;
                 g.FillRectangle(brush, startX, startY, gap * 0.9f, rcH);
                 g.DrawString(dul.dataLst[i].tag, tagFont, tagBrush, startX, bottom);

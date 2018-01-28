@@ -14,6 +14,7 @@ namespace LotteryAnalyze
     public partial class FormMain : Form
     {
         System.Windows.Forms.Timer updateTimer;
+        int lastFetchCount = -1;
 
         public FormMain()
         {
@@ -387,17 +388,14 @@ namespace LotteryAnalyze
 
         private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(updateTimer == null)
+            RefreshLatestData();
+            if (updateTimer == null)
             {
                 updateTimer = new System.Windows.Forms.Timer();
-                updateTimer.Interval = 60000;
+                updateTimer.Interval = 10000;
                 updateTimer.Tick += UpdateTimer_Tick;
                 updateTimer.Enabled = true;
                 updateTimer.Start();
-            }
-            else
-            {
-                RefreshLatestData();
             }
         }
 
@@ -417,24 +415,36 @@ namespace LotteryAnalyze
             //Process p = Process.Start("AutoFetchDailyData.exe");
             //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
 
-            AutoUpdateUtil.AutoFetchTodayData();
-
-            ClearAll();
-            DirectoryInfo di = new DirectoryInfo("..\\data");
-            LoopSearchFolder(di);
-            RefreshFileList();
+            int currentFetchCount = AutoUpdateUtil.AutoFetchTodayData();
+            if (currentFetchCount == lastFetchCount)
+                return;
+            lastFetchCount = currentFetchCount;
+            
+            if (listViewFileList.Items.Count == 0)
+            {
+                DirectoryInfo di = new DirectoryInfo("..\\data");
+                LoopSearchFolder(di);
+                RefreshFileList();
+            }
 
             DataManager dataMgr = DataManager.GetInst();
             dataMgr.ClearAllDatas();
 
             DateTime curDate = DateTime.Now;
-            string tag = curDate.Year.ToString();
-            if (curDate.Month < 10)
-                tag += "0";
-            tag += curDate.Month.ToString();
-            if (curDate.Day < 10)
-                tag += "0";
-            tag += curDate.Day.ToString();
+            string dateTag = AutoUpdateUtil.combineDateString(curDate.Year, curDate.Month, curDate.Day);
+            string filePath = AutoUpdateUtil.combineFileName(curDate.Year, curDate.Month, curDate.Day);
+            ListViewItem[] res = listViewFileList.Items.Find(dateTag, true);
+            if(res.Length == 0)
+            {
+                int id = int.Parse(dateTag);
+                dataMgr.AddMetaInfo(id, filePath);
+
+                ListViewItem item = new ListViewItem();
+                item.Name = dateTag;
+                item.Text = dateTag;
+                item.Tag = id;
+                listViewFileList.Items.Add(item);
+            }
 
             int lastItemID = listViewFileList.Items.Count - 1;
             if (lastItemID > 0) --lastItemID;
@@ -452,6 +462,15 @@ namespace LotteryAnalyze
             GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             LotteryAnalyze.UI.LotteryGraph.Open(false);
             LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh();
+        }
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer = null;
+            }
         }
     }
 }
