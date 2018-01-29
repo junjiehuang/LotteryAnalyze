@@ -35,9 +35,8 @@ namespace LotteryAnalyze
     {
         public TradeStatus tradeStatus = TradeStatus.eWaiting;
         public TradeType tradeType = TradeType.eNone;
-        public int dayID = -1;
-        public int lotteryItemID = -1;
-        public DataItem lotteryItem = null;
+        public DataItem lastDateItem = null;
+        public DataItem targetLotteryItem = null;
 
         public float reward = 0;
         public float cost = 0;
@@ -62,19 +61,17 @@ namespace LotteryAnalyze
         {
             if(tradeStatus == TradeStatus.eWaiting)
             {
-                DataManager DM = DataManager.GetInst();
-                if(DM.allDatas.ContainsKey(dayID))
+                if(lastDateItem != null)
                 {
-                    OneDayDatas odd = DM.allDatas[dayID];
-                    if(odd.datas.Count > lotteryItemID && lotteryItemID >= 0)
+                    targetLotteryItem = lastDateItem.parent.GetNextItem(lastDateItem);
+                    if(targetLotteryItem != null)
                     {
                         reward = 0;
                         cost = 0;
-                        lotteryItem = odd.datas[lotteryItemID];
                         foreach( int numIndex in tradeInfo.Keys)
                         {
                             TradeNumbers tns = tradeInfo[numIndex];
-                            byte dstValue = lotteryItem.GetNumberByIndex(numIndex);
+                            byte dstValue = targetLotteryItem.GetNumberByIndex(numIndex);
                             if(tns.tradeNumbers.Contains(dstValue))
                                 reward += SingleTradeReward * tns.tradeCount;
                             cost += SingleTradeCost * tns.tradeCount;
