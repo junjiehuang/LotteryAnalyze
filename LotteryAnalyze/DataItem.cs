@@ -219,6 +219,7 @@ namespace LotteryAnalyze
     {
         public int dateID = 0;
         public List<DataItem> datas = new List<DataItem>();
+        public Dictionary<string, DataItem> searchMap = new Dictionary<string, DataItem>();
         public SimData simData = new SimData();
 
 
@@ -226,7 +227,29 @@ namespace LotteryAnalyze
         {
             simData.Reset();
         }
+        public void AddItem(DataItem item)
+        {
+            if(searchMap.ContainsKey(item.idTag) == false)
+            {
+                item.parent = this;
+                item.id = datas.Count;
 
+                searchMap.Add(item.idTag, item);
+                datas.Add(item);
+            }
+            else
+            {
+                throw new Exception("has contains dataitem " + item.idTag);
+            }
+        }
+        public DataItem FindItem(string idTag)
+        {
+            if (searchMap.ContainsKey(idTag) == false)
+            {
+                return searchMap[idTag];
+            }
+            return null;
+        }
 
         public DataItem GetTailItem()
         {
@@ -338,6 +361,32 @@ namespace LotteryAnalyze
                     indexs.Sort();
                 }
             }
+        }
+        public bool LoadDataExt(int key, ref OneDayDatas newODD, ref int newIndex)
+        {
+            newODD = null;
+            newIndex = -1;
+
+            OneDayDatas data = null;
+            if (allDatas.ContainsKey(key))
+                data = allDatas[key];
+            if (data == null)
+            {
+                LoadData(key);
+                newODD = allDatas[key];
+                newIndex = 0;
+                return true;
+            }
+            else
+            {
+                string fullPath = mFileMetaInfo[key];
+                if (Util.ReadFile(key, fullPath, ref data, ref newIndex))
+                {
+                    newODD = data;
+                    return true;
+                }
+            }
+            return false;
         }
         public OneDayDatas GetPrevOneDayDatas(OneDayDatas curData)
         {

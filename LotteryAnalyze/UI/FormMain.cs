@@ -397,6 +397,7 @@ namespace LotteryAnalyze
                 updateTimer.Enabled = true;
                 updateTimer.Start();
             }
+            MessageBox.Show("更新数据完成！");
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -428,7 +429,7 @@ namespace LotteryAnalyze
             }
 
             DataManager dataMgr = DataManager.GetInst();
-            dataMgr.ClearAllDatas();
+            //dataMgr.ClearAllDatas();
 
             DateTime curDate = DateTime.Now;
             string dateTag = AutoUpdateUtil.combineDateString(curDate.Year, curDate.Month, curDate.Day);
@@ -446,6 +447,9 @@ namespace LotteryAnalyze
                 listViewFileList.Items.Add(item);
             }
 
+            int newAddItemIndex = -1, tmpAddItemIndex = -1;
+            OneDayDatas newAddODD = null, tmpAddODD = null;
+
             int lastItemID = listViewFileList.Items.Count - 1;
             if (lastItemID > 0) --lastItemID;
             while (lastItemID != listViewFileList.Items.Count)
@@ -453,15 +457,20 @@ namespace LotteryAnalyze
                 ListViewItem item = listViewFileList.Items[lastItemID];
                 item.Focused = true;
                 int key = (int)(item.Tag);
-                dataMgr.LoadData(key);
+                dataMgr.LoadDataExt(key, ref tmpAddODD, ref tmpAddItemIndex);
+                if(newAddItemIndex == -1 && tmpAddItemIndex != -1)
+                {
+                    newAddODD = tmpAddODD;
+                    newAddItemIndex = tmpAddItemIndex;
+                }
                 ++lastItemID;
             }
-            Util.CollectPath012Info(null);
+            Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
             RefreshDataView();
 
             GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             LotteryAnalyze.UI.LotteryGraph.Open(false);
-            LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh();
+            LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh(newAddItemIndex != -1);
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)

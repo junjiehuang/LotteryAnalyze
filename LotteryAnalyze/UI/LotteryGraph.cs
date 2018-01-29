@@ -18,6 +18,11 @@ namespace LotteryAnalyze.UI
         int curCDTIndex = 0;
         Point mousePosOnLeftBtnPress = new Point();
         Point mousePosOnMove = new Point();
+        bool hasNewDataUpdate = false;
+        static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
+        static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
+        Pen curUpdatePen;
+        System.Windows.Forms.Timer updateTimer;
 
 
         #region ctor and common
@@ -70,6 +75,28 @@ namespace LotteryAnalyze.UI
             comboBoxOperations.DataSource = GraphKCurve.S_AUX_LINE_OPERATIONS;
             comboBoxOperations.SelectedIndex = (int)graphMgr.kvalueGraph.auxOperationIndex;
             checkBoxShowAuxLines.Checked = graphMgr.kvalueGraph.enableAuxiliaryLine;
+
+            updateTimer = new Timer();
+            updateTimer.Interval = 500;
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Start();
+            curUpdatePen = redPen;
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if(hasNewDataUpdate)
+            {
+                if (curUpdatePen == redPen)
+                    curUpdatePen = greenPen;
+                else if (curUpdatePen == greenPen)
+                    curUpdatePen = redPen;
+                else
+                    curUpdatePen = redPen;
+                Invalidate(true);
+            }
+            else
+                curUpdatePen = redPen;
         }
 
         void RefreshUI()
@@ -96,10 +123,11 @@ namespace LotteryAnalyze.UI
             }
         }
 
-        public static void NotifyAllGraphsRefresh()
+        public static void NotifyAllGraphsRefresh(bool hasDataUpdate = false)
         {
             for (int i = 0; i < instLst.Count; ++i)
             {
+                instLst[i].hasNewDataUpdate = hasDataUpdate;
                 instLst[i].Invalidate(true);//触发Paint事件
             }
         }
@@ -116,8 +144,7 @@ namespace LotteryAnalyze.UI
             graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelUp.ClientSize.Width - 2, this.panelUp.ClientSize.Height - 2);
-            Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
-            g.DrawRectangle(linePen, r);
+            g.DrawRectangle(curUpdatePen, r);
 
             g.Flush();
         }
@@ -130,8 +157,7 @@ namespace LotteryAnalyze.UI
             graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, mousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelDown.ClientSize.Width - 2, this.panelDown.ClientSize.Height - 2);
-            Pen linePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
-            g.DrawRectangle(linePen, r);
+            g.DrawRectangle(curUpdatePen, r);
 
             g.Flush();
         }
@@ -167,6 +193,8 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseDown(object sender, MouseEventArgs e)
         {
+            if (hasNewDataUpdate)
+                hasNewDataUpdate = false;
             mousePosOnLeftBtnPress = e.Location;
 
             if (e.Button == MouseButtons.Left)

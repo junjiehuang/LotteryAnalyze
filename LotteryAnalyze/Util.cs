@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG_LOAD_DATA
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +52,49 @@ namespace LotteryAnalyze
 
     public class Util
     {
+        public static bool ReadFile(int fileID, string filePath, ref OneDayDatas odd, ref int newDataIndex)
+        {
+            newDataIndex = -1;
+            String line;
+            StreamReader sr = null;
+            try
+            {
+                sr = new StreamReader(filePath, Encoding.Default);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                sr.Close();
+                return false;
+            }
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] strs = line.Split(' ');
+                if (strs.Length > 1)
+                {
+                    if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
+                        !IsNumStr(strs[0]) || !IsNumStr(strs[1]))
+                    {
+#if DEBUG_LOAD_DATA
+                        Console.WriteLine(strs[0] + " : " + strs[1]);
+#endif
+                        continue;
+                    }
+                    string tag = fileID + "-" + strs[0];
+                    if (odd.FindItem(tag) != null)
+                        continue;
+
+                    DataItem item = new DataItem(strs[0], strs[1], fileID);
+                    odd.AddItem(item);
+                    if (newDataIndex == -1)
+                        newDataIndex = item.id;
+                }
+            }
+            sr.Close();
+            return true;
+
+        }
+
         public static bool ReadFile(int fileID, string filePath, ref OneDayDatas datas)
         {
             String line;
@@ -75,14 +120,17 @@ namespace LotteryAnalyze
                     if (string.IsNullOrEmpty(strs[0]) || string.IsNullOrEmpty(strs[1]) ||
                         !IsNumStr(strs[0]) || !IsNumStr(strs[1]))
                     {
+#if DEBUG_LOAD_DATA
                         Console.WriteLine(strs[0] + " : " + strs[1]);
+#endif
                         continue;
                     }
 
                     DataItem item = new DataItem(strs[0], strs[1], fileID);
-                    item.parent = datas;
-                    item.id = datas.datas.Count;
-                    datas.datas.Add(item);
+                    datas.AddItem(item);
+                    //item.parent = datas;
+                    //item.id = datas.datas.Count;
+                    //datas.datas.Add(item);
                 }
             }
             sr.Close();
@@ -465,13 +513,14 @@ namespace LotteryAnalyze
             return item.simData.predictResult;
         }
 
-        public static bool CollectPath012Info(List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo)
+        public static bool CollectPath012Info(List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo, OneDayDatas newAddOdd = null, int newAddIndex = -1)
         {
-            if (DataManager.GetInst().indexs == null) return false;
-            int count = DataManager.GetInst().indexs.Count;
+            DataManager dataMgr = DataManager.GetInst();
+            if (dataMgr.indexs == null) return false;
+            int count = dataMgr.indexs.Count;
             if (count == 0) return false;
 
-            if (maxMissingInfo != null)
+            if (maxMissingInfo != null && newAddIndex == -1)
             {
                 for (int i = 0; i < 5; ++i)
                 {
@@ -479,52 +528,109 @@ namespace LotteryAnalyze
                     maxMissingInfo[i].maxPath012MissingID[0] = maxMissingInfo[i].maxPath012MissingID[1] = maxMissingInfo[i].maxPath012MissingID[2] = -1;
                 }
             }
-            for (int i = 0; i < count; ++i)
+            OneDayDatas curODD = dataMgr.allDatas[dataMgr.indexs[0]];
+            if (newAddOdd != null)
+                curODD = newAddOdd;
+            DataItem curItem = null;
+            if(curODD.datas.Count > 0)
+                curItem = curODD.datas[0];
+            if(newAddIndex != -1)
+                curItem = curODD.datas[newAddIndex];
+            curODD.CollectShortPath012Info();
+
+            while(curItem != null)
             {
-                int oneDayID = DataManager.GetInst().indexs[i];
-                OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
-                odd.CollectShortPath012Info();
-
-                for (int j = 0; j < odd.datas.Count; ++j)
+                if(curItem.parent != curODD)
                 {
-                    DataItem item = odd.datas[j];
-                    item.CollectShortPath012Info();
+                    curODD = curItem.parent;
+                    curODD.CollectShortPath012Info();
+                }
+                CollectPath012Info(curItem, maxMissingInfo);
 
-                    DataItem prevItem = item.parent.GetPrevItem(item);
-                    if (prevItem != null)
+                curItem = curItem.parent.GetNextItem(curItem);
+            }
+
+            //for (int i = 0; i < count; ++i)
+            //{
+            //    int oneDayID = DataManager.GetInst().indexs[i];
+            //    OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+            //    odd.CollectShortPath012Info();
+
+            //    for (int j = 0; j < odd.datas.Count; ++j)
+            //    {
+            //        DataItem item = odd.datas[j];
+            //        item.CollectShortPath012Info();
+
+            //        DataItem prevItem = item.parent.GetPrevItem(item);
+            //        if (prevItem != null)
+            //        {
+            //            for (int k = 0; k < 5; ++k)
+            //            {
+            //                for (int t = 0; t < 3; ++t)
+            //                {
+            //                    if (prevItem.path012OfEachSingle[k] == t)
+            //                        item.simData.path012MissingInfo[k][t] = 0;
+            //                    else
+            //                        item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
+
+            //                    if (prevItem.path012OfEachSingle[k] == t)
+            //                        item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
+            //                    else
+            //                        item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
+
+            //                    if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
+            //                    {
+            //                        maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
+            //                        maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
+            //                    }
+            //                }
+            //                int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
+            //                if(totalCount > 0)
+            //                {
+            //                    item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
+            //                    item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
+            //                    item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            return true;
+        }
+        static void CollectPath012Info(DataItem item, List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo)
+        {
+            DataItem prevItem = item.parent.GetPrevItem(item);
+            if (prevItem != null)
+            {
+                for (int k = 0; k < 5; ++k)
+                {
+                    for (int t = 0; t < 3; ++t)
                     {
-                        for (int k = 0; k < 5; ++k)
+                        if (prevItem.path012OfEachSingle[k] == t)
+                            item.simData.path012MissingInfo[k][t] = 0;
+                        else
+                            item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
+
+                        if (prevItem.path012OfEachSingle[k] == t)
+                            item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
+                        else
+                            item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
+
+                        if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
                         {
-                            for (int t = 0; t < 3; ++t)
-                            {
-                                if (prevItem.path012OfEachSingle[k] == t)
-                                    item.simData.path012MissingInfo[k][t] = 0;
-                                else
-                                    item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
-
-                                if (prevItem.path012OfEachSingle[k] == t)
-                                    item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
-                                else
-                                    item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
-
-                                if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
-                                {
-                                    maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
-                                    maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
-                                }
-                            }
-                            int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
-                            if(totalCount > 0)
-                            {
-                                item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
-                                item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
-                                item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
-                            }
+                            maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
+                            maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
                         }
+                    }
+                    int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
+                    if (totalCount > 0)
+                    {
+                        item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
+                        item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
+                        item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
                     }
                 }
             }
-            return true;
         }
     }
 
