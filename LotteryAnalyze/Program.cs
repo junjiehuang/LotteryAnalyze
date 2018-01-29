@@ -53,6 +53,8 @@ namespace LotteryAnalyze
         }
         static void Update()
         {
+            TradeDataManager.Instance.Update();
+
             Simulator.UpdateSimulate();
         }
 

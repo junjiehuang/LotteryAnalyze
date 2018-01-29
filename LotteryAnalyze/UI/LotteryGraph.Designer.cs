@@ -83,6 +83,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -115,7 +116,8 @@
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
             this.autoAllignToolStripMenuItem,
-            this.delAllAuxLinesToolStripMenuItem});
+            this.delAllAuxLinesToolStripMenuItem,
+            this.tradeToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -705,6 +707,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // tradeToolStripMenuItem
+            // 
+            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.tradeToolStripMenuItem.Text = "下单";
+            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -796,5 +805,6 @@
         private System.Windows.Forms.ToolStripMenuItem delSelAuxLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem delAllLinesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cancelAddAuxLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tradeToolStripMenuItem;
     }
 }

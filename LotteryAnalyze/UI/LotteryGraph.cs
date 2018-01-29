@@ -510,6 +510,14 @@ namespace LotteryAnalyze.UI
             graphMgr.kvalueGraph.mouseHitPts.Clear();
         }
 
+        private void tradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeWindow win = new TradeWindow();
+            win.Show();
+        }
+
         #endregion
+
+
     }
 }

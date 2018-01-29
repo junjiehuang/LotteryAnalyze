@@ -105,6 +105,9 @@
     <EmbeddedResource Include="UI\LotteryGraph.resx">
       <DependentUpon>LotteryGraph.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\TradeWindow.resx">
+      <DependentUpon>TradeWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

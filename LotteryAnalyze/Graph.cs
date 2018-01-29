@@ -15,6 +15,8 @@ namespace LotteryAnalyze
         eKCurveGraph,
         // 柱状图
         eBarGraph,
+        // 资金图
+        eTradeGraph,
     }
 
     public enum AuxLineType
@@ -30,6 +32,40 @@ namespace LotteryAnalyze
     // 图表基类
     class GraphBase
     {
+        public float gridScaleH = 20;
+        public float gridScaleW = 5;
+        public PointF canvasOffset = new PointF(0, 0);
+
+        public float CanvasToStand(float v, bool isX)
+        {
+            if (isX)
+                return (v + canvasOffset.X);
+            else
+                return (canvasOffset.Y) - v;
+        }
+        public float StandToCanvas(float v, bool isX)
+        {
+            if (isX)
+                return v - canvasOffset.X;
+            else
+                return canvasOffset.Y - v;
+        }
+        public Point CanvasToStand(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)CanvasToStand((float)pt.X, true);
+            res.Y = (int)CanvasToStand((float)pt.Y, false);
+            return res;
+        }
+        public Point StandToCanvas(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)StandToCanvas((float)pt.X, true);
+            res.Y = (int)StandToCanvas((float)pt.Y, false);
+            return res;
+        }
+
+
         public virtual bool NeedRefreshCanvasOnMouseMove(Point mousePos)
         {
             return false;
@@ -80,6 +116,7 @@ namespace LotteryAnalyze
         }
         public override Pen GetPen() { return solidPen; }
     }
+    // 通道直线
     class SingleLine : AuxiliaryLine
     {
         public static Color lineColor = Color.Blue;
@@ -139,8 +176,7 @@ namespace LotteryAnalyze
         public bool enableMACD = true;
 
         public AuxLineType auxOperationIndex = AuxLineType.eNone;
-        public float gridScaleH = 20;
-        public float gridScaleW = 5;
+
 
         public bool autoAllign = false;
         
@@ -153,7 +189,7 @@ namespace LotteryAnalyze
         bool findPrevPt = false;
 
         float lastValue = 0;
-        PointF canvasOffset = new PointF(0, 0);
+        
         
         Pen bollinLinePenUp = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         Pen bollinLinePenMid = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
@@ -468,34 +504,6 @@ namespace LotteryAnalyze
             return rcLst;
         }
 
-        float CanvasToStand(float v, bool isX)
-        {
-            if (isX)
-                return (v + canvasOffset.X);
-            else
-                return (canvasOffset.Y) - v;
-        }
-        float StandToCanvas(float v, bool isX)
-        {
-            if (isX)
-                return v - canvasOffset.X;
-            else
-                return canvasOffset.Y - v;
-        }
-        Point CanvasToStand(Point pt)
-        {
-            Point res = new Point();
-            res.X = (int)CanvasToStand((float)pt.X, true);
-            res.Y = (int)CanvasToStand((float)pt.Y, false);
-            return res;
-        }
-        Point StandToCanvas(Point pt)
-        {
-            Point res = new Point();
-            res.X = (int)StandToCanvas((float)pt.X, true);
-            res.Y = (int)StandToCanvas((float)pt.Y, false);
-            return res;
-        }
 
         void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
         {
@@ -927,6 +935,25 @@ namespace LotteryAnalyze
         }
     }
 
+    class GraphTrade : GraphBase
+    {
+
+        public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
+        {
+            return true;
+        }
+        public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+            TradeDataManager tdm = TradeDataManager.Instance;
+
+            for(int i = 0; i < tdm.historyTradeDatas.Count; ++i)
+            {
+
+            }
+        }
+
+    }
+
     // 图表管理器
     class GraphManager
     {
@@ -935,14 +962,17 @@ namespace LotteryAnalyze
         GraphType curGraphType = GraphType.eNone;
         public GraphBar barGraph;
         public GraphKCurve kvalueGraph;
+        public GraphTrade tradeGraph;
 
 
         public GraphManager()
         {
             barGraph = new GraphBar();
             kvalueGraph = new GraphKCurve();
+            tradeGraph = new GraphTrade();
             sGraphMap.Add(GraphType.eKCurveGraph, kvalueGraph);
             sGraphMap.Add(GraphType.eBarGraph, barGraph);
+            sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
         }
 
         public GraphType CurrentGraphType

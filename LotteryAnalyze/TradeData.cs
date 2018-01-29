@@ -40,6 +40,8 @@ namespace LotteryAnalyze
 
         public float reward = 0;
         public float cost = 0;
+        public float moneyBeforeTrade = 0;
+        public float moneyAtferTrade = 0;
 
         public virtual void Update() { }
     }
@@ -55,6 +57,17 @@ namespace LotteryAnalyze
         public TradeDataOneStar()
         {
             tradeType = TradeType.eOneStar;
+        }
+
+        public void AddSelNum(int numIndex, ref List<byte> selNums, int tradeCount)
+        {
+            if(tradeInfo.ContainsKey(numIndex) == false)
+            {
+                TradeNumbers tn = new TradeNumbers();
+                tradeInfo.Add(numIndex, tn);
+                tn.tradeNumbers.AddRange(selNums);
+                tn.tradeCount = tradeCount;
+            }
         }
 
         public override void Update()
@@ -76,7 +89,9 @@ namespace LotteryAnalyze
                                 reward += SingleTradeReward * tns.tradeCount;
                             cost += SingleTradeCost * tns.tradeCount;
                         }
+                        moneyBeforeTrade = TradeDataManager.Instance.currentMoney;
                         TradeDataManager.Instance.currentMoney += reward - cost;
+                        moneyAtferTrade = TradeDataManager.Instance.currentMoney;
                         tradeStatus = TradeStatus.eDone;
                     }
                 }
@@ -90,7 +105,7 @@ namespace LotteryAnalyze
         static TradeDataManager sInst = null;
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
         public List<TradeDataBase> waitingTradeDatas = new List<TradeDataBase>();
-        public float currentMoney = 0;
+        public float currentMoney = 2000;
 
 
         TradeDataManager()

@@ -244,7 +244,7 @@ namespace LotteryAnalyze
         }
         public DataItem FindItem(string idTag)
         {
-            if (searchMap.ContainsKey(idTag) == false)
+            if (searchMap.ContainsKey(idTag))
             {
                 return searchMap[idTag];
             }
