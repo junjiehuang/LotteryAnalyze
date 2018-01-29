@@ -51,6 +51,7 @@
     <Compile Include="Graph.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />
+    <Compile Include="TradeData.cs" />
     <Compile Include="UI\CollectDataWindow.cs">
       <SubType>Form</SubType>
     </Compile>
