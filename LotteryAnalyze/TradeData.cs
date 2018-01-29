@@ -106,6 +106,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public TradeDataBase NewTrade(TradeType tradeType)
+        {
+            TradeDataBase trade = null;
+            switch(tradeType)
+            {
+                case TradeType.eOneStar:
+                    trade = new TradeDataOneStar();
+                    break;
+            }
+            if (trade != null)
+                waitingTradeDatas.Add(trade);
+            return trade;
+        }
+
         public void Update()
         {
             if(waitingTradeDatas.Count > 0)
