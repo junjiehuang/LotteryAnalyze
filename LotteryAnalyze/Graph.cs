@@ -85,6 +85,7 @@ namespace LotteryAnalyze
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
     }
 
+    #region Aux Lines
     // 辅助线基类
     class AuxiliaryLine
     {
@@ -154,6 +155,7 @@ namespace LotteryAnalyze
         }
         public override Pen GetPen() { return solidPen; }
     }
+    #endregion
 
     // K线图
     class GraphKCurve : GraphBase
@@ -937,18 +939,103 @@ namespace LotteryAnalyze
 
     class GraphTrade : GraphBase
     {
+        public bool autoAllign = false;
 
+        Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+        Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
+        Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
+        Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Font tipsFont = new Font(FontFamily.GenericMonospace, 12);
+        SolidBrush whiteBrush = new SolidBrush(Color.White);
+
+        public GraphTrade()
+        {
+            gridScaleW = 10;
+        }
+
+        public override void MoveGraph(float dx, float dy)
+        {
+            canvasOffset.X += dx;
+            canvasOffset.Y += dy;
+            if (canvasOffset.X < 0)
+                canvasOffset.X = 0;
+        }
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
         {
             return true;
         }
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
+            g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+
+            float halfSize = gridScaleW * 0.2f;
+            if (halfSize < 4)
+                halfSize = 4;
+            float fullSize = halfSize * 2;
+            float halfWinH = winH * 0.5f;
+            float halfGridW = gridScaleW * 0.5f;
+
             TradeDataManager tdm = TradeDataManager.Instance;
-
-            for(int i = 0; i < tdm.historyTradeDatas.Count; ++i)
+            if(tdm.historyTradeDatas.Count == 0)
             {
+                float y = tdm.currentMoney * gridScaleH;
+                float relY = StandToCanvas(y, false);
+                if(relY < 0 || relY > winH)
+                {
+                    canvasOffset.Y = y + winH * 0.5f;
+                }
+                relY = StandToCanvas(y, false);
+                g.DrawRectangle(whiteLinePen, halfGridW - halfSize, halfWinH - halfSize, fullSize, fullSize);
+                g.DrawLine(whiteLinePen, halfGridW, halfWinH, winW, halfWinH);
+                return;
+            }
 
+            canvasOffset.Y = winH / 2;
+            float maxGap = Math.Max(Math.Abs(tdm.maxValue), Math.Abs(tdm.minValue)) * 2;
+            gridScaleH = winH / maxGap * 0.9f;
+            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            if (endIndex > tdm.historyTradeDatas.Count)
+                endIndex = tdm.historyTradeDatas.Count;
+
+            // 自动对齐
+            if (autoAllign)
+            {
+                float endY = tdm.historyTradeDatas[endIndex - 1].moneyAtferTrade;
+                float relEY = StandToCanvas(endY, false);
+                bool isEYOut = relEY < 0 || relEY > winH;
+                if (isEYOut)
+                    canvasOffset.Y = endY + winH * 0.5f;
+                autoAllign = false;
+            }
+
+            int selIndex = -1;
+            for(int i = startIndex; i < endIndex; ++i)
+            {
+                TradeDataBase tdb = tdm.historyTradeDatas[i];
+                float cx = (i + 1) * gridScaleW + halfGridW;
+                float px = cx - gridScaleW;
+                float py = tdb.moneyBeforeTrade * gridScaleH;
+                float cy = tdb.moneyAtferTrade * gridScaleH;
+                cx = StandToCanvas(cx, true);
+                px = StandToCanvas(px, true);
+                cy = StandToCanvas(cy, false);
+                py = StandToCanvas(py, false);
+                Pen pen = tdb.moneyBeforeTrade > tdb.moneyAtferTrade ? cyanLinePen : redLinePen;
+                if(i == 0)
+                    g.DrawRectangle(whiteLinePen, px - halfSize, py - halfSize, fullSize, fullSize);
+                g.DrawRectangle(pen, cx - halfSize, cy - halfSize, fullSize, fullSize);
+                g.DrawLine(pen, px, py, cx, cy);
+
+                if(mouseRelPos.X >= px && mouseRelPos.X <= cx && selIndex == -1)
+                {
+                    selIndex = i;
+                    g.DrawLine(grayDotLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
+                    g.DrawLine(grayDotLinePen, cx + halfGridW, 0, cx + halfGridW, winH);
+                    g.DrawString(tdb.GetTips(), tipsFont, whiteBrush, 2, 2);
+                }
             }
         }
 

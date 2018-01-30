@@ -67,8 +67,7 @@ namespace LotteryAnalyze.UI
             checkBoxBollinBand.Checked = graphMgr.kvalueGraph.enableBollinBand;
             checkBoxMACD.Checked = graphMgr.kvalueGraph.enableMACD;
 
-            textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleW.ToString();
-            textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleH.ToString();
+            SetUIGridWH();
             RefreshUI();
 
             graphMgr.kvalueGraph.autoAllign = true;
@@ -81,6 +80,20 @@ namespace LotteryAnalyze.UI
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Start();
             curUpdatePen = redPen;
+        }
+
+        void SetUIGridWH()
+        {
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleW.ToString();
+                textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleH.ToString();
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+            {
+                textBoxGridScaleW.Text = graphMgr.tradeGraph.gridScaleW.ToString();
+                textBoxGridScaleH.Text = graphMgr.tradeGraph.gridScaleH.ToString();
+            }
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -186,6 +199,14 @@ namespace LotteryAnalyze.UI
                         graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( mousePosOnMove );
                     }
                 }
+                else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                {
+                    float dx = e.Location.X - mousePosOnLeftBtnPress.X;
+                    float dy = e.Location.Y - mousePosOnLeftBtnPress.Y;
+                    mousePosOnLeftBtnPress = e.Location;
+                    graphMgr.MoveGraph(dx, dy);
+                    needUpdate = true;
+                }
             }
             if (needUpdate)
                 this.Invalidate(true);//触发Paint事件
@@ -219,8 +240,6 @@ namespace LotteryAnalyze.UI
                     {
                         case AuxLineType.eNone:
                             {
-                                //graphMgr.kvalueGraph.selAuxLine = null;
-                                //graphMgr.kvalueGraph.selAuxLinePointIndex = -1;
                                 graphMgr.kvalueGraph.SelectAuxLine(e.Location);
                             }
                             break;
@@ -358,6 +377,7 @@ namespace LotteryAnalyze.UI
         {
             graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));
             GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            SetUIGridWH();
             this.Invalidate(true);
         }
 
@@ -458,7 +478,10 @@ namespace LotteryAnalyze.UI
                 textBoxGridScaleH.Text = "1";
                 v = 1;
             }
-            graphMgr.kvalueGraph.gridScaleH = v;
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                graphMgr.kvalueGraph.gridScaleH = v;
+            else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                graphMgr.tradeGraph.gridScaleH = v;
             this.Invalidate(true);
         }
 
@@ -471,13 +494,19 @@ namespace LotteryAnalyze.UI
                 textBoxGridScaleW.Text = "1";
                 v = 1;
             }
-            graphMgr.kvalueGraph.gridScaleW = v;
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                graphMgr.kvalueGraph.gridScaleW = v;
+            else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                graphMgr.tradeGraph.gridScaleW = v;
             this.Invalidate(true);
         }
 
         private void autoAllignToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            graphMgr.kvalueGraph.autoAllign = true;
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                graphMgr.kvalueGraph.autoAllign = true;
+            else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                graphMgr.tradeGraph.autoAllign = true;
             this.Invalidate(true);
         }
 
@@ -514,6 +543,10 @@ namespace LotteryAnalyze.UI
         {
             TradeWindow win = new TradeWindow();
             win.Show();
+        }
+        private void testAutoTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.SimTrade();
         }
 
         #endregion

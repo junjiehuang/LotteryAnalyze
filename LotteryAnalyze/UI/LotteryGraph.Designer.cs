@@ -34,6 +34,7 @@
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -79,11 +80,12 @@
             this.label6 = new System.Windows.Forms.Label();
             this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.tabPageTrade = new System.Windows.Forms.TabPage();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testAutoTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -117,7 +119,8 @@
             this.refreshToolStripMenuItem,
             this.autoAllignToolStripMenuItem,
             this.delAllAuxLinesToolStripMenuItem,
-            this.tradeToolStripMenuItem});
+            this.tradeToolStripMenuItem,
+            this.testAutoTradeToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -142,6 +145,13 @@
             this.delAllAuxLinesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.delAllAuxLinesToolStripMenuItem.Text = "清除所有辅助线";
             this.delAllAuxLinesToolStripMenuItem.Click += new System.EventHandler(this.delAllAuxLinesToolStripMenuItem_Click);
+            // 
+            // tradeToolStripMenuItem
+            // 
+            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.tradeToolStripMenuItem.Text = "下单";
+            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
             // 
             // 设置ToolStripMenuItem
             // 
@@ -289,6 +299,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlView.Controls.Add(this.tabPageKGraph);
             this.tabControlView.Controls.Add(this.tabPageBarGraph);
+            this.tabControlView.Controls.Add(this.tabPageTrade);
             this.tabControlView.Location = new System.Drawing.Point(6, 138);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
@@ -651,6 +662,15 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "统计类型：";
             // 
+            // tabPageTrade
+            // 
+            this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
+            this.tabPageTrade.Name = "tabPageTrade";
+            this.tabPageTrade.Size = new System.Drawing.Size(180, 314);
+            this.tabPageTrade.TabIndex = 2;
+            this.tabPageTrade.Text = "交易图";
+            this.tabPageTrade.UseVisualStyleBackColor = true;
+            // 
             // comboBoxCollectionDataType
             // 
             this.comboBoxCollectionDataType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -707,12 +727,12 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // tradeToolStripMenuItem
+            // testAutoTradeToolStripMenuItem
             // 
-            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
-            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.tradeToolStripMenuItem.Text = "下单";
-            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
+            this.testAutoTradeToolStripMenuItem.Name = "testAutoTradeToolStripMenuItem";
+            this.testAutoTradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.testAutoTradeToolStripMenuItem.Text = "测试大数据";
+            this.testAutoTradeToolStripMenuItem.Click += new System.EventHandler(this.testAutoTradeToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
@@ -806,5 +826,7 @@
         private System.Windows.Forms.ToolStripMenuItem delAllLinesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cancelAddAuxLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tradeToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPageTrade;
+        private System.Windows.Forms.ToolStripMenuItem testAutoTradeToolStripMenuItem;
     }
 }

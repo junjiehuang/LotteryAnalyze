@@ -388,6 +388,11 @@ namespace LotteryAnalyze
             }
             return false;
         }
+        /// <summary>
+        /// 获取上一日的开奖数据列表
+        /// </summary>
+        /// <param name="curData"></param>
+        /// <returns></returns>
         public OneDayDatas GetPrevOneDayDatas(OneDayDatas curData)
         {
             int index = indexs.IndexOf(curData.dateID);
@@ -399,6 +404,11 @@ namespace LotteryAnalyze
             }
             return null;
         }
+        /// <summary>
+        /// 获取下一日的开奖数据列表
+        /// </summary>
+        /// <param name="curData"></param>
+        /// <returns></returns>
         public OneDayDatas GetNextOneDayDatas(OneDayDatas curData)
         {
             int index = indexs.IndexOf(curData.dateID);
@@ -410,6 +420,11 @@ namespace LotteryAnalyze
             }
             return null;
         }
+        /// <summary>
+        /// 获取上一期的开奖数据
+        /// </summary>
+        /// <param name="curItem"></param>
+        /// <returns></returns>
         public DataItem GetPrevItem(DataItem curItem)
         {
             DataItem prevItem = curItem.parent.GetPrevItem(curItem);
@@ -420,6 +435,11 @@ namespace LotteryAnalyze
                 return prevODD.GetTailItem();
             return null;
         }
+        /// <summary>
+        /// 获取下一期的开奖数据
+        /// </summary>
+        /// <param name="curItem"></param>
+        /// <returns></returns>
         public DataItem GetNextItem(DataItem curItem)
         {
             DataItem nextItem = curItem.parent.GetNextItem(curItem);
@@ -430,6 +450,10 @@ namespace LotteryAnalyze
                 return nextODD.GetFirstItem();
             return null;
         }
+        /// <summary>
+        /// 获取最新的开奖数据
+        /// </summary>
+        /// <returns></returns>
         public DataItem GetLatestItem()
         {
             if (allDatas.Count > 0)
@@ -447,6 +471,25 @@ namespace LotteryAnalyze
                         if(odd.datas.Count > 0)
                             return odd.datas[odd.datas.Count - 1];
                     }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取第一个开奖数据
+        /// </summary>
+        /// <returns></returns>
+        public DataItem GetFirstItem()
+        {
+            if (allDatas.Count > 0)
+            {
+                int firstDayIndex = indexs[0];
+                if (allDatas.ContainsKey(firstDayIndex))
+                {
+                    OneDayDatas odd = allDatas[firstDayIndex];
+                    if (odd.datas.Count > 0)
+                        return odd.datas[0];
                 }
             }
             return null;

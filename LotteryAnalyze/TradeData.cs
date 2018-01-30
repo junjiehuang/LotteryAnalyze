@@ -29,10 +29,38 @@ namespace LotteryAnalyze
     {
         public List<byte> tradeNumbers = new List<byte>();
         public int tradeCount = 0;
+
+        public void GetInfo(ref string info)
+        {
+            if (tradeNumbers.Count > 0)
+            {
+                info += " { ";
+                for (int i = 0; i < tradeNumbers.Count; ++i)
+                {
+                    info += tradeNumbers[i].ToString();
+                    if (i != tradeNumbers.Count - 1)
+                        info += ",";
+                }
+                info += "} 倍数：" + tradeCount + "\n";
+            }
+        }
+        public void SelPath012Number(int path, int tradeCount)
+        {
+            this.tradeCount = tradeCount;
+            tradeNumbers.Clear();
+            if (path == 0)
+            { tradeNumbers.Add(0); tradeNumbers.Add(3); tradeNumbers.Add(6); tradeNumbers.Add(9); }
+            else if (path == 1)
+            { tradeNumbers.Add(1); tradeNumbers.Add(4); tradeNumbers.Add(7); }
+            else if (path == 2)
+            { tradeNumbers.Add(2); tradeNumbers.Add(5); tradeNumbers.Add(8); }
+        }
     }
 
     class TradeDataBase
     {
+        public static string[] NUM_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
+
         public TradeStatus tradeStatus = TradeStatus.eWaiting;
         public TradeType tradeType = TradeType.eNone;
         public DataItem lastDateItem = null;
@@ -42,7 +70,9 @@ namespace LotteryAnalyze
         public float cost = 0;
         public float moneyBeforeTrade = 0;
         public float moneyAtferTrade = 0;
+        protected string tips = "";
 
+        public virtual string GetTips() { return tips; }
         public virtual void Update() { }
     }
 
@@ -87,7 +117,7 @@ namespace LotteryAnalyze
                             byte dstValue = targetLotteryItem.GetNumberByIndex(numIndex);
                             if(tns.tradeNumbers.Contains(dstValue))
                                 reward += SingleTradeReward * tns.tradeCount;
-                            cost += SingleTradeCost * tns.tradeCount;
+                            cost += SingleTradeCost * tns.tradeCount * tns.tradeNumbers.Count;
                         }
                         moneyBeforeTrade = TradeDataManager.Instance.currentMoney;
                         TradeDataManager.Instance.currentMoney += reward - cost;
@@ -96,6 +126,25 @@ namespace LotteryAnalyze
                     }
                 }
             }
+        }
+
+        public override string GetTips()
+        {
+            if(tips.Length == 0 && targetLotteryItem != null)
+            {
+                tips += targetLotteryItem.idTag + "\n";
+                foreach( int key in tradeInfo.Keys)
+                {
+                    TradeNumbers tn = tradeInfo[key];
+                    if(tn.tradeNumbers.Count > 0)
+                    {
+                        tips += TradeDataBase.NUM_TAGS[key];
+                        tn.GetInfo(ref tips);
+                    }
+                }
+                tips += "[成本：" + cost + "] [奖金：" + reward + "] [剩余：" + moneyAtferTrade + "]";
+            }
+            return tips;
         }
     }
 
@@ -106,10 +155,14 @@ namespace LotteryAnalyze
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
         public List<TradeDataBase> waitingTradeDatas = new List<TradeDataBase>();
         public float currentMoney = 2000;
+        public float minValue = 0;
+        public float maxValue = 0;
+        DataItem curTestTradeItem = null;
 
 
         TradeDataManager()
         {
+            minValue = maxValue = currentMoney;
         }
         public static TradeDataManager Instance
         {
@@ -120,7 +173,7 @@ namespace LotteryAnalyze
                 return sInst;
             }
         }
-
+        
         public TradeDataBase NewTrade(TradeType tradeType)
         {
             TradeDataBase trade = null;
@@ -144,11 +197,42 @@ namespace LotteryAnalyze
                     waitingTradeDatas[i].Update();
                     if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
                     {
+                        if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
+                            maxValue = waitingTradeDatas[i].moneyAtferTrade;
+                        if (minValue > waitingTradeDatas[i].moneyAtferTrade)
+                            minValue = waitingTradeDatas[i].moneyAtferTrade;
                         historyTradeDatas.Add(waitingTradeDatas[i]);
                         waitingTradeDatas.RemoveAt(i);
                     }
                 }
             }
+        }
+
+
+        public void SimTrade()
+        {
+            DataItem latestItem = DataManager.GetInst().GetLatestItem();
+            if (latestItem == curTestTradeItem)
+                return;
+
+            DataItem curItem = DataManager.GetInst().GetFirstItem();
+            if (curTestTradeItem != null)
+                curItem = curTestTradeItem;
+            while(curItem != null)
+            {
+                PredictAndTrade(curItem);
+                if (curItem != null)
+                    curTestTradeItem = curItem;
+                curItem = curItem.parent.GetNextItem(curItem);
+            }
+        }
+        void PredictAndTrade(DataItem item)
+        {
+            TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
+            trade.lastDateItem = item;
+            TradeNumbers tn = new TradeNumbers();
+            tn.SelPath012Number(2, 2);
+            trade.tradeInfo.Add(0, tn);
         }
     }
 }
