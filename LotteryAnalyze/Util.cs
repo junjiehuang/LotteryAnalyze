@@ -534,7 +534,7 @@ namespace LotteryAnalyze
             DataItem curItem = null;
             if(curODD.datas.Count > 0)
                 curItem = curODD.datas[0];
-            if(newAddIndex != -1)
+            if(newAddIndex != -1 && newAddIndex < curODD.datas.Count)
                 curItem = curODD.datas[newAddIndex];
             curODD.CollectShortPath012Info();
 

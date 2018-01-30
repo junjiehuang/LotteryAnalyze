@@ -547,6 +547,7 @@ namespace LotteryAnalyze.UI
         private void testAutoTradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TradeDataManager.Instance.SimTrade();
+            graphMgr.tradeGraph.autoAllign = true;
         }
 
         #endregion

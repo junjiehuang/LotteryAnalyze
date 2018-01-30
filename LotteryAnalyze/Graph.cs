@@ -990,7 +990,7 @@ namespace LotteryAnalyze
                 return;
             }
 
-            canvasOffset.Y = winH / 2;
+            //canvasOffset.Y = winH / 2;
             float maxGap = Math.Max(Math.Abs(tdm.maxValue), Math.Abs(tdm.minValue)) * 2;
             gridScaleH = winH / maxGap * 0.9f;
             int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
@@ -1003,7 +1003,7 @@ namespace LotteryAnalyze
             // 自动对齐
             if (autoAllign)
             {
-                float endY = tdm.historyTradeDatas[endIndex - 1].moneyAtferTrade;
+                float endY = tdm.historyTradeDatas[endIndex - 1].moneyAtferTrade * gridScaleH;
                 float relEY = StandToCanvas(endY, false);
                 bool isEYOut = relEY < 0 || relEY > winH;
                 if (isEYOut)
@@ -1023,7 +1023,7 @@ namespace LotteryAnalyze
                 px = StandToCanvas(px, true);
                 cy = StandToCanvas(cy, false);
                 py = StandToCanvas(py, false);
-                Pen pen = tdb.moneyBeforeTrade > tdb.moneyAtferTrade ? cyanLinePen : redLinePen;
+                Pen pen = (tdb.cost == 0 ? whiteLinePen : (tdb.reward > 0 ? redLinePen : cyanLinePen));
                 if(i == 0)
                     g.DrawRectangle(whiteLinePen, px - halfSize, py - halfSize, fullSize, fullSize);
                 g.DrawRectangle(pen, cx - halfSize, cy - halfSize, fullSize, fullSize);
@@ -1034,7 +1034,10 @@ namespace LotteryAnalyze
                     selIndex = i;
                     g.DrawLine(grayDotLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
                     g.DrawLine(grayDotLinePen, cx + halfGridW, 0, cx + halfGridW, winH);
-                    g.DrawString(tdb.GetTips(), tipsFont, whiteBrush, 2, 2);
+                    string info = "[对：" + tdm.rightCount + 
+                        "] [错：" + tdm.wrongCount + 
+                        "] [放弃：" + tdm.untradeCount + "]\n" + tdb.GetTips();
+                    g.DrawString(info, tipsFont, whiteBrush, 5, 5);
                 }
             }
         }

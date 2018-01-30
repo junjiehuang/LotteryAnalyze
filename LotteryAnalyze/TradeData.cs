@@ -123,6 +123,12 @@ namespace LotteryAnalyze
                         TradeDataManager.Instance.currentMoney += reward - cost;
                         moneyAtferTrade = TradeDataManager.Instance.currentMoney;
                         tradeStatus = TradeStatus.eDone;
+                        if (cost == 0)
+                            TradeDataManager.Instance.untradeCount++;
+                        else if (reward > 0)
+                            TradeDataManager.Instance.rightCount++;
+                        else
+                            TradeDataManager.Instance.wrongCount++;
                     }
                 }
             }
@@ -132,7 +138,7 @@ namespace LotteryAnalyze
         {
             if(tips.Length == 0 && targetLotteryItem != null)
             {
-                tips += targetLotteryItem.idTag + "\n";
+                tips += "[期号：" + targetLotteryItem.idTag + "] [号码：" + targetLotteryItem.lotteryNumber + "]\n";
                 foreach( int key in tradeInfo.Keys)
                 {
                     TradeNumbers tn = tradeInfo[key];
@@ -157,6 +163,12 @@ namespace LotteryAnalyze
         public float currentMoney = 2000;
         public float minValue = 0;
         public float maxValue = 0;
+        public int rightCount = 0;
+        public int wrongCount = 0;
+        public int untradeCount = 0;
+
+        public bool simTradeFromFirstEveryTime = true;
+        public int simSelNumIndex = 0;
         DataItem curTestTradeItem = null;
 
 
@@ -184,7 +196,7 @@ namespace LotteryAnalyze
                     break;
             }
             if (trade != null)
-                waitingTradeDatas.Add(trade);
+                waitingTradeDatas.Insert(0,trade);
             return trade;
         }
 
@@ -211,13 +223,22 @@ namespace LotteryAnalyze
 
         public void SimTrade()
         {
-            DataItem latestItem = DataManager.GetInst().GetLatestItem();
-            if (latestItem == curTestTradeItem)
-                return;
-
             DataItem curItem = DataManager.GetInst().GetFirstItem();
-            if (curTestTradeItem != null)
-                curItem = curTestTradeItem;
+
+            if (simTradeFromFirstEveryTime)
+            {
+                waitingTradeDatas.Clear();
+                historyTradeDatas.Clear();
+            }
+            else
+            {
+                DataItem latestItem = DataManager.GetInst().GetLatestItem();
+                if (latestItem == curTestTradeItem)
+                    return;
+                if (curTestTradeItem != null)
+                    curItem = curTestTradeItem;
+            }
+
             while(curItem != null)
             {
                 PredictAndTrade(curItem);
@@ -228,11 +249,56 @@ namespace LotteryAnalyze
         }
         void PredictAndTrade(DataItem item)
         {
+            float maxV = -10;
+            int bestNumIndex = -1;
+            int bestPath = -1;
+            if (simSelNumIndex == -1)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath);
+                }
+            }
+            else
+            {
+                JudgeNumberPath(item, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath);
+            }
             TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
             trade.lastDateItem = item;
-            TradeNumbers tn = new TradeNumbers();
-            tn.SelPath012Number(2, 2);
-            trade.tradeInfo.Add(0, tn);
+            if (bestNumIndex >=0 && bestPath >= 0)
+            {
+                TradeNumbers tn = new TradeNumbers();
+                tn.SelPath012Number(bestPath, 1);
+                trade.tradeInfo.Add(bestNumIndex, tn);
+            }
+        }
+
+        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
+        {
+            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+            BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[item.idGlobal];
+            KDataDict kdd = kddc.dataLst[item.idGlobal];
+            KData kdPath0 = kdd.dataDict[CollectDataType.ePath0];
+            KData kdPath1 = kdd.dataDict[CollectDataType.ePath1];
+            KData kdPath2 = kdd.dataDict[CollectDataType.ePath2];
+            BollinPoint bmPath0 = bpm.bpMap[CollectDataType.ePath0];
+            BollinPoint bmPath1 = bpm.bpMap[CollectDataType.ePath1];
+            BollinPoint bmPath2 = bpm.bpMap[CollectDataType.ePath2];
+            float d0 = (kdPath0.KValue - bmPath0.midValue) / bmPath0.standardDeviation * 0.5f;
+            float d1 = (kdPath1.KValue - bmPath1.midValue) / bmPath1.standardDeviation * 0.5f;
+            float d2 = (kdPath2.KValue - bmPath2.midValue) / bmPath2.standardDeviation * 0.5f;
+            float tmpMaxV = Math.Max(d0, Math.Max(d1, d2));
+            if (tmpMaxV > maxV)
+            {
+                maxV = tmpMaxV;
+                bestNumIndex = numIndex;
+                if (tmpMaxV == d0)
+                    bestPath = 0;
+                else if (tmpMaxV == d1)
+                    bestPath = 1;
+                else
+                    bestPath = 2;
+            }
         }
     }
 }

@@ -805,6 +805,7 @@ namespace LotteryAnalyze
                 kddc.bollinDataLst.Process(kddc.dataLst, adc);
             }
         }
+
         public void CollectMACDDatas()
         {
             for (int i = 0; i < allKDatas.Count; ++i)
