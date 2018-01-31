@@ -536,14 +536,14 @@ namespace LotteryAnalyze
                 curItem = curODD.datas[0];
             if(newAddIndex != -1 && newAddIndex < curODD.datas.Count)
                 curItem = curODD.datas[newAddIndex];
-            curODD.CollectShortPath012Info();
+            curODD.CollectOneDayLotteryInfo();
 
             while(curItem != null)
             {
                 if(curItem.parent != curODD)
                 {
                     curODD = curItem.parent;
-                    curODD.CollectShortPath012Info();
+                    curODD.CollectOneDayLotteryInfo();
                 }
                 CollectPath012Info(curItem, maxMissingInfo);
 

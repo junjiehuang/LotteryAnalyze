@@ -936,17 +936,17 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShortNormalize[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)

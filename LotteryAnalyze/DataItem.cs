@@ -6,6 +6,356 @@ using System.Text;
 namespace LotteryAnalyze
 {
     #region data manage
+
+    // 针对指定类型的统计信息
+    public class StatisticUnit
+    {
+        // 统计类型
+        public CollectDataType cdt = CollectDataType.eNone;
+        // 针对该统计类型的遗漏值
+        public int missCount = 0;
+        // 统计短期内出现该统计类型数据的次数
+        public int appearCountShort = 0;
+        // 统计长期内出现该统计类型数据的次数
+        public int appearCountLong = 0;
+        // 统计短期内出现该统计类型数据的百分比
+        public float appearProbabilityShort = 0;
+        // 统计长期内出现该统计类型数据的百分比
+        public float appearProbabilityLong = 0;
+        // 统计短期内出现该统计类型数据的百分比与理论概率的差值
+        public float appearProbabilityDiffWithTheoryShort = 0;
+        // 统计长期内出现该统计类型数据的百分比与理论概率的差值
+        public float appearProbabilityDiffWithTheoryLong = 0;
+    }
+
+    // 记录某个数字位的所有类型的统计信息
+    public class StatisticUnitMap
+    {
+        public LotteryStatisticInfo parent;
+        public Dictionary<CollectDataType, StatisticUnit> statisticUnitMap = new Dictionary<CollectDataType, StatisticUnit>();
+
+        public StatisticUnitMap()
+        {
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+            {
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+                StatisticUnit su = new StatisticUnit();
+                su.cdt = cdt;
+                statisticUnitMap.Add(cdt, su);
+            }
+        }
+        public void CollectMissCount(DataItem prevItem, int numIndex)
+        {
+            if (prevItem == null)
+                return;
+            foreach (StatisticUnit su in statisticUnitMap.Values)
+            {
+                switch (su.cdt)
+                {
+                    case CollectDataType.ePath0:
+                        if (prevItem.path012OfEachSingle[numIndex] == parent.lotteryData.path012OfEachSingle[numIndex] && parent.lotteryData.path012OfEachSingle[numIndex] == 0)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.ePath1:
+                        if (prevItem.path012OfEachSingle[numIndex] == parent.lotteryData.path012OfEachSingle[numIndex] && parent.lotteryData.path012OfEachSingle[numIndex] == 1)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.ePath2:
+                        if (prevItem.path012OfEachSingle[numIndex] == parent.lotteryData.path012OfEachSingle[numIndex] && parent.lotteryData.path012OfEachSingle[numIndex] == 2)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eBigNum:
+                        if (prevItem.bigOfEachSingle[numIndex] && parent.lotteryData.bigOfEachSingle[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eSmallNum:
+                        if (prevItem.bigOfEachSingle[numIndex] == false && parent.lotteryData.bigOfEachSingle[numIndex] == false)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eOddNum:
+                        if (prevItem.oddOfEachSingle[numIndex] && parent.lotteryData.oddOfEachSingle[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eEvenNum:
+                        if (prevItem.oddOfEachSingle[numIndex] == false && parent.lotteryData.oddOfEachSingle[numIndex] == false)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.ePrimeNum:
+                        if (prevItem.primeOfEachSingle[numIndex] && parent.lotteryData.primeOfEachSingle[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eCompositeNum:
+                        if (prevItem.primeOfEachSingle[numIndex] == false && parent.lotteryData.primeOfEachSingle[numIndex] == false)
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum0:
+                        if (prevItem.fiveNumLst[numIndex] == 0 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum1:
+                        if (prevItem.fiveNumLst[numIndex] == 1 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum2:
+                        if (prevItem.fiveNumLst[numIndex] == 2 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum3:
+                        if (prevItem.fiveNumLst[numIndex] == 3 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum4:
+                        if (prevItem.fiveNumLst[numIndex] == 4 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum5:
+                        if (prevItem.fiveNumLst[numIndex] == 5 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum6:
+                        if (prevItem.fiveNumLst[numIndex] == 6 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum7:
+                        if (prevItem.fiveNumLst[numIndex] == 7 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum8:
+                        if (prevItem.fiveNumLst[numIndex] == 8 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                    case CollectDataType.eNum9:
+                        if (prevItem.fiveNumLst[numIndex] == 9 && prevItem.fiveNumLst[numIndex] == parent.lotteryData.fiveNumLst[numIndex])
+                            su.missCount = 0;
+                        else
+                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                        break;
+                }
+            }
+        }
+        public void CollectCount(DataItem cmpItem, int numIndex, bool onShort, bool onLong)
+        {
+            foreach(StatisticUnit su in statisticUnitMap.Values)
+            {
+                switch (su.cdt)
+                {
+                    case CollectDataType.ePath0:
+                        if (cmpItem.path012OfEachSingle[numIndex] == 0)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.ePath1:
+                        if (cmpItem.path012OfEachSingle[numIndex] == 1)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.ePath2:
+                        if (cmpItem.path012OfEachSingle[numIndex] == 2)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eBigNum:
+                        if (cmpItem.bigOfEachSingle[numIndex])
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eSmallNum:
+                        if (cmpItem.bigOfEachSingle[numIndex] == false)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eOddNum:
+                        if (cmpItem.oddOfEachSingle[numIndex])
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eEvenNum:
+                        if (cmpItem.oddOfEachSingle[numIndex] == false)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.ePrimeNum:
+                        if (cmpItem.primeOfEachSingle[numIndex])
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eCompositeNum:
+                        if (cmpItem.primeOfEachSingle[numIndex] == false)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum0:
+                        if (cmpItem.fiveNumLst[numIndex] == 0)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum1:
+                        if (cmpItem.fiveNumLst[numIndex] == 1)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum2:
+                        if (cmpItem.fiveNumLst[numIndex] == 2)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum3:
+                        if (cmpItem.fiveNumLst[numIndex] == 3)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum4:
+                        if (cmpItem.fiveNumLst[numIndex] == 4)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum5:
+                        if (cmpItem.fiveNumLst[numIndex] == 5)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum6:
+                        if (cmpItem.fiveNumLst[numIndex] == 6)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum7:
+                        if (cmpItem.fiveNumLst[numIndex] == 7)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum8:
+                        if (cmpItem.fiveNumLst[numIndex] == 8)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+                    case CollectDataType.eNum9:
+                        if (cmpItem.fiveNumLst[numIndex] == 9)
+                        {
+                            if (onShort) su.appearCountShort++;
+                            if (onLong) su.appearCountLong++;
+                        }
+                        break;
+
+                }
+            }
+        }
+    }
+
+    // 记录某期开奖号的所有统计信息
+    public class LotteryStatisticInfo
+    {
+        const int LONG_COUNT = 30;
+        const int SHOR_COUNT = 10;
+        public int validCount = 0;
+        public DataItem lotteryData;
+        public List<StatisticUnitMap> allStatisticInfo = new List<StatisticUnitMap>(); 
+
+        public LotteryStatisticInfo(DataItem item)
+        {
+            lotteryData = item;
+            for( int i = 0; i < 5; ++i )
+            {
+                allStatisticInfo.Add(new StatisticUnitMap());
+            }
+        }
+
+        public void Collect()
+        {
+            if (lotteryData == null)
+                return;
+            validCount = 0;
+            DataItem curItem = lotteryData.parent.GetPrevItem(lotteryData);
+            while(curItem != null)
+            {
+                if (validCount <= LONG_COUNT)
+                {
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        allStatisticInfo[i].CollectCount(curItem, i, validCount <= SHOR_COUNT, validCount <= LONG_COUNT);
+                    }
+                }
+                else
+                    break;
+
+                curItem = curItem.parent.GetPrevItem(curItem);
+                ++validCount;
+            }
+        }
+    }
+
     public class SimData
     {
         public string killList;
@@ -26,13 +376,22 @@ namespace LotteryAnalyze
         public float g3Score;
         public float g1Score;
 
+        // 记录当期每个数字位012路的遗漏值
         public List<int[]> path012MissingInfo = new List<int[]>();
-        public List<int[]> path012CountInfoLong = new List<int[]>();
-        public List<int[]> path012ProbabilityLong = new List<int[]>();
 
+        // 统计当期前N期（长期）每个数字位012路开出的数量
+        public List<int[]> path012CountInfoLong = new List<int[]>();
+        // 统计当期前N期（长期）每个数字位012路开出的比率
+        public List<int[]> path012ProbabilityLong = new List<int[]>();
+        // 统计当期前N期（长期）每个数字位012路开出的比率与理论开出概率的差值
+        public List<int[]> path012ProbabilityLongDiffWithTheory = new List<int[]>();
+
+        // 统计当期前M期（短期）每个数字位012路开出的数量
         public List<int[]> path012CountInfoShort = new List<int[]>();
+        // 统计当期前M期（短期）每个数字位012路开出的比率
         public List<int[]> path012ProbabilityShort = new List<int[]>();
-        public List<int[]> path012ProbabilityShortNormalize = new List<int[]>();
+        // 统计当期前M期（短期）每个数字位012路开出的比率与理论开出概率的差值
+        public List<int[]> path012ProbabilityShortDiffWithTheory = new List<int[]>();
 
         public SimData()
         {
@@ -42,7 +401,7 @@ namespace LotteryAnalyze
                 path012CountInfoLong.Add(new int[3]);
                 path012CountInfoShort.Add(new int[3]);
                 path012ProbabilityShort.Add(new int[3]);
-                path012ProbabilityShortNormalize.Add(new int[3]);
+                path012ProbabilityShortDiffWithTheory.Add(new int[3]);
                 path012ProbabilityLong.Add(new int[3]);
             }
         }
@@ -69,7 +428,7 @@ namespace LotteryAnalyze
                 path012ProbabilityLong[i][0] = path012ProbabilityLong[i][1] = path012ProbabilityLong[i][2] = 0;                
                 path012CountInfoShort[i][0] = path012CountInfoShort[i][1] = path012CountInfoShort[i][2] = 0;
                 path012ProbabilityShort[i][0] = path012ProbabilityShort[i][1] = path012ProbabilityShort[i][2] = 0;
-                path012ProbabilityShortNormalize[i][0] = path012ProbabilityShortNormalize[i][1] = path012ProbabilityShortNormalize[i][2] = 0;
+                path012ProbabilityShortDiffWithTheory[i][0] = path012ProbabilityShortDiffWithTheory[i][1] = path012ProbabilityShortDiffWithTheory[i][2] = 0;
             }
         }
     }
@@ -101,7 +460,8 @@ namespace LotteryAnalyze
         // 每个数是否大数
         public List<bool> bigOfEachSingle = new List<bool>();
 
-        public SimData simData = new SimData();
+        public LotteryStatisticInfo statisticInfo;
+        public SimData simData;
 
         public DataItem(string idStr, string numStr, int fileID)
         {
@@ -134,6 +494,9 @@ namespace LotteryAnalyze
                 else
                     primeOfEachSingle.Add(false);
             }
+
+            statisticInfo = new LotteryStatisticInfo(this);
+            simData = new SimData();
         }
         public byte GetNumberByIndex(int index)
         {
@@ -181,7 +544,7 @@ namespace LotteryAnalyze
                 simData.path012ProbabilityLong[i][0] = simData.path012ProbabilityLong[i][1] = simData.path012ProbabilityLong[i][2] = 0;                
                 simData.path012CountInfoShort[i][0] = simData.path012CountInfoShort[i][1] = simData.path012CountInfoShort[i][2] = 0;
                 simData.path012ProbabilityShort[i][0] = simData.path012ProbabilityShort[i][1] = simData.path012ProbabilityShort[i][2] = 0;
-                simData.path012ProbabilityShortNormalize[i][0] = simData.path012ProbabilityShortNormalize[i][1] = simData.path012ProbabilityShortNormalize[i][2] = 0;
+                simData.path012ProbabilityShortDiffWithTheory[i][0] = simData.path012ProbabilityShortDiffWithTheory[i][1] = simData.path012ProbabilityShortDiffWithTheory[i][2] = 0;
             }
 
             int validCount = 0;
@@ -208,7 +571,7 @@ namespace LotteryAnalyze
                     for (int k = 0; k < 3; ++k)
                     {
                         simData.path012ProbabilityShort[i][k] = simData.path012CountInfoShort[i][k] * 100 / validCount;
-                        simData.path012ProbabilityShortNormalize[i][k] = simData.path012ProbabilityShort[i][k] - TheoryProbabilityOfPath012[k];
+                        simData.path012ProbabilityShortDiffWithTheory[i][k] = simData.path012ProbabilityShort[i][k] - TheoryProbabilityOfPath012[k];
                     }
                 }
             }
@@ -289,21 +652,20 @@ namespace LotteryAnalyze
             }
             return null;
         }
-        public void CollectShortPath012Info()
+        public void CollectOneDayLotteryInfo()
         {
             simData.ResetPath012Info();
-            for (int i = 0; i < datas.Count; ++i)
+            for (int lotIndex = 0; lotIndex < datas.Count; ++lotIndex)
             {
-                DataItem data = datas[i];
-                for (int j = 0; j < 5; ++j)
+                DataItem data = datas[lotIndex];
+                for (int numIndex = 0; numIndex < 5; ++numIndex)
                 {
-                    for (int k = 0; k < 3; ++k)
+                    for (int pathIndex = 0; pathIndex < 3; ++pathIndex)
                     {
-                        if (data.path012OfEachSingle[j] == k)
-                            simData.path012CountInfoShort[j][k] = simData.path012CountInfoShort[j][k] + 1;
+                        if (data.path012OfEachSingle[numIndex] == pathIndex)
+                            simData.path012CountInfoShort[numIndex][pathIndex] = simData.path012CountInfoShort[numIndex][pathIndex] + 1;
                     }
                 }
-
             }
         }
     }
