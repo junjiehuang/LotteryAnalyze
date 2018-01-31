@@ -1054,7 +1054,9 @@ namespace LotteryAnalyze
         public BarGraphDataContianer()
         {
             for (int i = 0; i < 5; ++i)
+            {
                 allDatas.Add(new DataUnitLst());
+            }
         }
         void Init()
         {
@@ -1190,6 +1192,11 @@ namespace LotteryAnalyze
             S_CDT_TAG_LIST.Add(name);
             S_CDT_PROBABILITY_LIST.Add(probability);
             S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
+        }
+        public static float GetTheoryProbability(CollectDataType cdt)
+        {
+            int index = S_CDT_LIST.IndexOf(cdt);
+            return S_CDT_PROBABILITY_LIST[index] * 100.0f;
         }
 
 

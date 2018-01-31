@@ -599,6 +599,8 @@ namespace LotteryAnalyze
         }
         static void CollectPath012Info(DataItem item, List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo)
         {
+            item.statisticInfo.Collect();
+            /*
             DataItem prevItem = item.parent.GetPrevItem(item);
             if (prevItem != null)
             {
@@ -631,6 +633,7 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            */
         }
     }
 

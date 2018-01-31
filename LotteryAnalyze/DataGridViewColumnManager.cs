@@ -771,17 +771,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
-                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                //string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+                //    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                //    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info =   sum.statisticUnitMap[CollectDataType.ePath0].missCount + " ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].missCount + " : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].missCount;
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
-                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            //string info = item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " ; " +
+            //        item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+            //        item.simData.path012MissingInfo[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].missCount + " ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].missCount + " : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].missCount;
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -804,17 +812,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
-                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                //string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+                //    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                //    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountLong + " ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].appearCountLong + " : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].appearCountLong;
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
-                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            //string info = item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+            //        item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+            //        item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountLong + " ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].appearCountLong + " : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].appearCountLong;
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -837,17 +853,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                //string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                //     item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                //    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityLong + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityLong + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityLong + "%";
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            //string info = item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+            //        item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+            //        item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityLong + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityLong + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityLong + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -870,17 +894,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
-                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                //string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+                //    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+                //    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountShort + " ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].appearCountShort + " : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].appearCountShort;
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
-                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
-                    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            //string info = item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + " : " +
+            //        item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
+            //        item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountShort + " ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].appearCountShort + " : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].appearCountShort;
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -903,17 +935,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                //string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                //    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                //    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort + "%";
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            //string info = item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+            //        item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+            //        item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -936,17 +976,25 @@ namespace LotteryAnalyze
             if (columnID >= 0)
             {
                 DataGridViewCell cell = row.Cells[columnID];
-                string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                //string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+                //    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+                //    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityDiffWithTheoryShort + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityDiffWithTheoryShort + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityDiffWithTheoryShort + "%";
                 cell.Value = (info);
             }
         }
         public override void OnAddRow(DataItem item, List<object> colValues)
         {
-            string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
-                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
-                    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            //string info = item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][0] + "% : " +
+            //        item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
+            //        item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityDiffWithTheoryShort + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityDiffWithTheoryShort + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityDiffWithTheoryShort + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)

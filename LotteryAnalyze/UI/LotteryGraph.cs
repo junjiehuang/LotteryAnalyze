@@ -539,19 +539,41 @@ namespace LotteryAnalyze.UI
             graphMgr.kvalueGraph.mouseHitPts.Clear();
         }
 
+        #endregion
+
+        #region trade call back
+
         private void tradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TradeWindow win = new TradeWindow();
             win.Show();
         }
-        private void testAutoTradeToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void tradeSimFromFirstToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TradeDataManager.Instance.SimTrade();
-            graphMgr.tradeGraph.autoAllign = true;
+            TradeDataManager.Instance.StartAutoTradeJob(false);
+        }
+
+        private void tradeSimFromLatestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.StartAutoTradeJob(true);
+        }
+
+        private void pauseSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.PauseAutoTradeJob();
+        }
+
+        private void resumeSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.ResumeAutoTradeJob();
+        }
+
+        private void stopSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.StopAutoTradeJob();
         }
 
         #endregion
-
-
     }
 }

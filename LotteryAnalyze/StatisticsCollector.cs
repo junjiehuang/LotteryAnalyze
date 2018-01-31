@@ -382,7 +382,7 @@ namespace LotteryAnalyze
                     node.Tag = new CollectTag(-1, maxPath012Missing[i].maxPath012MissingID[j]);
                 }
             }
-
+            /*
             TreeNode dayNodes = new TreeNode("每日012路个数统计");
             parentNode.Nodes.Add(dayNodes);
             if (DataManager.GetInst().indexs == null) return;
@@ -402,6 +402,7 @@ namespace LotteryAnalyze
                     dn.Nodes.Add(sn);
                 }
             }
+            */
         }
     }
 

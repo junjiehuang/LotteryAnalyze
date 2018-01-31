@@ -167,9 +167,11 @@ namespace LotteryAnalyze
         public int wrongCount = 0;
         public int untradeCount = 0;
 
-        public bool simTradeFromFirstEveryTime = true;
+        //public bool simTradeFromFirstEveryTime = true;
         public int simSelNumIndex = 0;
         DataItem curTestTradeItem = null;
+        bool pauseAutoTrade = true;
+        bool needGetLatestItem = false;
 
 
         TradeDataManager()
@@ -218,9 +220,50 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            UpdateAutoTrade();
         }
 
 
+        public void StartAutoTradeJob(bool fromLatestItem)
+        {
+            if (fromLatestItem == false)
+                curTestTradeItem = DataManager.GetInst().GetFirstItem();
+            else
+                curTestTradeItem = DataManager.GetInst().GetLatestItem();
+            pauseAutoTrade = false;
+        }
+        public void StopAutoTradeJob()
+        {
+            curTestTradeItem = null;
+        }
+        public void PauseAutoTradeJob()
+        {
+            pauseAutoTrade = true;
+        }
+        public void ResumeAutoTradeJob()
+        {
+            pauseAutoTrade = false;
+        }
+        void UpdateAutoTrade()
+        {
+            if (pauseAutoTrade)
+                return;
+            if (curTestTradeItem == null)
+                return;
+            if (waitingTradeDatas.Count > 0)
+                return;
+            if(needGetLatestItem)
+            {
+                curTestTradeItem = curTestTradeItem.parent.GetNextItem(curTestTradeItem);
+                needGetLatestItem = false;
+            }
+            PredictAndTrade(curTestTradeItem);
+            if (curTestTradeItem == DataManager.GetInst().GetLatestItem())
+                needGetLatestItem = true;
+            else
+                curTestTradeItem = curTestTradeItem.parent.GetNextItem(curTestTradeItem);
+        }
+        /*
         public void SimTrade()
         {
             DataItem curItem = DataManager.GetInst().GetFirstItem();
@@ -247,6 +290,7 @@ namespace LotteryAnalyze
                 curItem = curItem.parent.GetNextItem(curItem);
             }
         }
+        */
         void PredictAndTrade(DataItem item)
         {
             float maxV = -10;
@@ -275,6 +319,30 @@ namespace LotteryAnalyze
 
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
         {
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
+            StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
+            StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
+            StatisticUnit maxSU;
+            if (su0.appearProbabilityShort >= su1.appearProbabilityShort)
+                maxSU = su0;
+            else
+                maxSU = su1;
+            if (su2.appearProbabilityShort >= maxSU.appearProbabilityShort)
+                maxSU = su2;
+
+            if (maxSU.appearProbabilityShort > maxV)
+            {
+                if (maxSU.cdt == CollectDataType.ePath0)
+                    bestPath = 0;
+                else if (maxSU.cdt == CollectDataType.ePath1)
+                    bestPath = 1;
+                else
+                    bestPath = 2;
+                bestNumIndex = numIndex;
+                maxV = maxSU.appearProbabilityShort;
+            }
+            /*
             KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
             BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[item.idGlobal];
             KDataDict kdd = kddc.dataLst[item.idGlobal];
@@ -299,6 +367,7 @@ namespace LotteryAnalyze
                 else
                     bestPath = 2;
             }
+            */
         }
     }
 }

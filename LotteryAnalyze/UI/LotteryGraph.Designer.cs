@@ -34,8 +34,6 @@
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testAutoTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -86,6 +84,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.tradeSimFromFirstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resumeSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -118,9 +123,7 @@
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
             this.autoAllignToolStripMenuItem,
-            this.delAllAuxLinesToolStripMenuItem,
-            this.tradeToolStripMenuItem,
-            this.testAutoTradeToolStripMenuItem});
+            this.delAllAuxLinesToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -146,25 +149,19 @@
             this.delAllAuxLinesToolStripMenuItem.Text = "清除所有辅助线";
             this.delAllAuxLinesToolStripMenuItem.Click += new System.EventHandler(this.delAllAuxLinesToolStripMenuItem_Click);
             // 
-            // tradeToolStripMenuItem
-            // 
-            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
-            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.tradeToolStripMenuItem.Text = "下单";
-            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
-            // 
-            // testAutoTradeToolStripMenuItem
-            // 
-            this.testAutoTradeToolStripMenuItem.Name = "testAutoTradeToolStripMenuItem";
-            this.testAutoTradeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.testAutoTradeToolStripMenuItem.Text = "测试大数据";
-            this.testAutoTradeToolStripMenuItem.Click += new System.EventHandler(this.testAutoTradeToolStripMenuItem_Click);
-            // 
             // 设置ToolStripMenuItem
             // 
+            this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tradeSimFromFirstToolStripMenuItem,
+            this.tradeSimFromLatestToolStripMenuItem,
+            this.pauseSimTradeToolStripMenuItem,
+            this.resumeSimTradeToolStripMenuItem,
+            this.stopSimTradeToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.tradeToolStripMenuItem});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.设置ToolStripMenuItem.Text = "设置";
+            this.设置ToolStripMenuItem.Text = "交易";
             // 
             // splitContainer1
             // 
@@ -735,6 +732,53 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             // 
+            // tradeSimFromFirstToolStripMenuItem
+            // 
+            this.tradeSimFromFirstToolStripMenuItem.Name = "tradeSimFromFirstToolStripMenuItem";
+            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromFirstToolStripMenuItem.Text = "从第一期开始模拟";
+            this.tradeSimFromFirstToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromFirstToolStripMenuItem_Click);
+            // 
+            // tradeSimFromLatestToolStripMenuItem
+            // 
+            this.tradeSimFromLatestToolStripMenuItem.Name = "tradeSimFromLatestToolStripMenuItem";
+            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromLatestToolStripMenuItem.Text = "从最后期开始模拟";
+            this.tradeSimFromLatestToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromLatestToolStripMenuItem_Click);
+            // 
+            // pauseSimTradeToolStripMenuItem
+            // 
+            this.pauseSimTradeToolStripMenuItem.Name = "pauseSimTradeToolStripMenuItem";
+            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.pauseSimTradeToolStripMenuItem.Text = "暂停模拟";
+            this.pauseSimTradeToolStripMenuItem.Click += new System.EventHandler(this.pauseSimTradeToolStripMenuItem_Click);
+            // 
+            // resumeSimTradeToolStripMenuItem
+            // 
+            this.resumeSimTradeToolStripMenuItem.Name = "resumeSimTradeToolStripMenuItem";
+            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.resumeSimTradeToolStripMenuItem.Text = "恢复模拟";
+            this.resumeSimTradeToolStripMenuItem.Click += new System.EventHandler(this.resumeSimTradeToolStripMenuItem_Click);
+            // 
+            // stopSimTradeToolStripMenuItem
+            // 
+            this.stopSimTradeToolStripMenuItem.Name = "stopSimTradeToolStripMenuItem";
+            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.stopSimTradeToolStripMenuItem.Text = "停止模拟";
+            this.stopSimTradeToolStripMenuItem.Click += new System.EventHandler(this.stopSimTradeToolStripMenuItem_Click);
+            // 
+            // tradeToolStripMenuItem
+            // 
+            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeToolStripMenuItem.Text = "下单";
+            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -826,8 +870,13 @@
         private System.Windows.Forms.ToolStripMenuItem delSelAuxLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem delAllLinesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cancelAddAuxLineToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tradeToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageTrade;
-        private System.Windows.Forms.ToolStripMenuItem testAutoTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tradeSimFromFirstToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tradeSimFromLatestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pauseSimTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resumeSimTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopSimTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem tradeToolStripMenuItem;
     }
 }

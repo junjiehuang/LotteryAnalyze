@@ -1034,9 +1034,12 @@ namespace LotteryAnalyze
                     selIndex = i;
                     g.DrawLine(grayDotLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
                     g.DrawLine(grayDotLinePen, cx + halfGridW, 0, cx + halfGridW, winH);
-                    string info = "[对：" + tdm.rightCount + 
-                        "] [错：" + tdm.wrongCount + 
-                        "] [放弃：" + tdm.untradeCount + "]\n" + tdb.GetTips();
+                    string info = tdb.GetTips() + "\n" + 
+                        "[对:" + tdm.rightCount + 
+                        "] [错:" + tdm.wrongCount + 
+                        "] [放弃:" + tdm.untradeCount + 
+                        "]\n[最高:" + tdm.maxValue + 
+                        "] [最低:" + tdm.minValue + "]";
                     g.DrawString(info, tipsFont, whiteBrush, 5, 5);
                 }
             }
