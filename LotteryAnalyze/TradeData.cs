@@ -161,7 +161,8 @@ namespace LotteryAnalyze
         static TradeDataManager sInst = null;
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
         public List<TradeDataBase> waitingTradeDatas = new List<TradeDataBase>();
-        public float currentMoney = 2000;
+        public float startMoney = 2000;
+        public float currentMoney = 0;
         public float minValue = 0;
         public float maxValue = 0;
         public int rightCount = 0;
@@ -173,8 +174,8 @@ namespace LotteryAnalyze
         DataItem curTestTradeItem = null;
         bool pauseAutoTrade = true;
         bool needGetLatestItem = false;
-        List<int> tradeCountList = new List<int>();
-        int defaultTradeCount = 1;
+        public List<int> tradeCountList = new List<int>();
+        public int defaultTradeCount = 1;
         int currentTradeCountIndex = -1;
 
 
@@ -251,13 +252,26 @@ namespace LotteryAnalyze
                 tradeCountList.Add(int.Parse(nums[i]));
             }
         }
+        public string GetTradeCountInfoStr()
+        {
+            string info = "";
+            for (int i = 0; i < tradeCountList.Count; ++i)
+            {
+                info += tradeCountList[i];
+                if (i != tradeCountList.Count - 1)
+                    info += ",";
+            }
+            return info;
+        }
         public void StartAutoTradeJob(bool fromLatestItem)
         {
+            ClearAllTradeDatas();
             if (fromLatestItem == false)
                 curTestTradeItem = DataManager.GetInst().GetFirstItem();
             else
                 curTestTradeItem = DataManager.GetInst().GetLatestItem();
             pauseAutoTrade = false;
+
         }
         public void StopAutoTradeJob()
         {
@@ -271,6 +285,21 @@ namespace LotteryAnalyze
         {
             pauseAutoTrade = false;
         }
+        public void ClearAllTradeDatas()
+        {
+            waitingTradeDatas.Clear();
+            historyTradeDatas.Clear();
+            pauseAutoTrade = true;
+            needGetLatestItem = false;
+            curTestTradeItem = null;
+            currentTradeCountIndex = -1;
+            currentMoney = startMoney;
+            minValue = startMoney;
+            maxValue = startMoney;
+            rightCount = 0;
+            wrongCount = 0;
+            untradeCount = 0;
+    }
         void UpdateAutoTrade()
         {
             if (pauseAutoTrade)

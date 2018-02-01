@@ -35,6 +35,14 @@
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeSimFromFirstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resumeSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearAllTradeDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -78,19 +86,24 @@
             this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPageTrade = new System.Windows.Forms.TabPage();
+            this.label14 = new System.Windows.Forms.Label();
+            this.comboBoxTradeNumIndex = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.checkBoxTradeSpecNumIndex = new System.Windows.Forms.CheckBox();
+            this.buttonCommitTradeCount = new System.Windows.Forms.Button();
+            this.textBoxDefaultCount = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.textBoxMultiCount = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.textBoxStartMoney = new System.Windows.Forms.TextBox();
+            this.trackBarKData = new System.Windows.Forms.TrackBar();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.tradeSimFromFirstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resumeSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.trackBarTradeData = new System.Windows.Forms.TrackBar();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -105,6 +118,9 @@
             this.tabPageKGraph.SuspendLayout();
             this.groupBoxAvgSettings.SuspendLayout();
             this.tabPageBarGraph.SuspendLayout();
+            this.tabPageTrade.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -158,10 +174,65 @@
             this.resumeSimTradeToolStripMenuItem,
             this.stopSimTradeToolStripMenuItem,
             this.toolStripSeparator1,
-            this.tradeToolStripMenuItem});
+            this.tradeToolStripMenuItem,
+            this.clearAllTradeDatasToolStripMenuItem});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "交易";
+            // 
+            // tradeSimFromFirstToolStripMenuItem
+            // 
+            this.tradeSimFromFirstToolStripMenuItem.Name = "tradeSimFromFirstToolStripMenuItem";
+            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromFirstToolStripMenuItem.Text = "从第一期开始模拟";
+            this.tradeSimFromFirstToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromFirstToolStripMenuItem_Click);
+            // 
+            // tradeSimFromLatestToolStripMenuItem
+            // 
+            this.tradeSimFromLatestToolStripMenuItem.Name = "tradeSimFromLatestToolStripMenuItem";
+            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromLatestToolStripMenuItem.Text = "从最后期开始模拟";
+            this.tradeSimFromLatestToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromLatestToolStripMenuItem_Click);
+            // 
+            // pauseSimTradeToolStripMenuItem
+            // 
+            this.pauseSimTradeToolStripMenuItem.Name = "pauseSimTradeToolStripMenuItem";
+            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.pauseSimTradeToolStripMenuItem.Text = "暂停模拟";
+            this.pauseSimTradeToolStripMenuItem.Click += new System.EventHandler(this.pauseSimTradeToolStripMenuItem_Click);
+            // 
+            // resumeSimTradeToolStripMenuItem
+            // 
+            this.resumeSimTradeToolStripMenuItem.Name = "resumeSimTradeToolStripMenuItem";
+            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.resumeSimTradeToolStripMenuItem.Text = "恢复模拟";
+            this.resumeSimTradeToolStripMenuItem.Click += new System.EventHandler(this.resumeSimTradeToolStripMenuItem_Click);
+            // 
+            // stopSimTradeToolStripMenuItem
+            // 
+            this.stopSimTradeToolStripMenuItem.Name = "stopSimTradeToolStripMenuItem";
+            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.stopSimTradeToolStripMenuItem.Text = "停止模拟";
+            this.stopSimTradeToolStripMenuItem.Click += new System.EventHandler(this.stopSimTradeToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            // 
+            // tradeToolStripMenuItem
+            // 
+            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeToolStripMenuItem.Text = "下单";
+            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
+            // 
+            // clearAllTradeDatasToolStripMenuItem
+            // 
+            this.clearAllTradeDatasToolStripMenuItem.Name = "clearAllTradeDatasToolStripMenuItem";
+            this.clearAllTradeDatasToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.clearAllTradeDatasToolStripMenuItem.Text = "清空所有交易数据";
+            this.clearAllTradeDatasToolStripMenuItem.Click += new System.EventHandler(this.clearAllTradeDatasToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -287,6 +358,7 @@
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.trackBarKData);
             this.tabPageKGraph.Controls.Add(this.checkBoxShowAuxLines);
             this.tabPageKGraph.Controls.Add(this.comboBoxOperations);
             this.tabPageKGraph.Controls.Add(this.label10);
@@ -643,12 +715,110 @@
             // 
             // tabPageTrade
             // 
+            this.tabPageTrade.Controls.Add(this.trackBarTradeData);
+            this.tabPageTrade.Controls.Add(this.textBoxStartMoney);
+            this.tabPageTrade.Controls.Add(this.label14);
+            this.tabPageTrade.Controls.Add(this.comboBoxTradeNumIndex);
+            this.tabPageTrade.Controls.Add(this.label13);
+            this.tabPageTrade.Controls.Add(this.checkBoxTradeSpecNumIndex);
+            this.tabPageTrade.Controls.Add(this.buttonCommitTradeCount);
+            this.tabPageTrade.Controls.Add(this.textBoxDefaultCount);
+            this.tabPageTrade.Controls.Add(this.label12);
+            this.tabPageTrade.Controls.Add(this.textBoxMultiCount);
+            this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
             this.tabPageTrade.Size = new System.Drawing.Size(180, 314);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(3, 139);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(65, 12);
+            this.label14.TabIndex = 8;
+            this.label14.Text = "初始金额：";
+            // 
+            // comboBoxTradeNumIndex
+            // 
+            this.comboBoxTradeNumIndex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxTradeNumIndex.FormattingEnabled = true;
+            this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 110);
+            this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(98, 20);
+            this.comboBoxTradeNumIndex.TabIndex = 7;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 113);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 12);
+            this.label13.TabIndex = 6;
+            this.label13.Text = "投注数字位：";
+            // 
+            // checkBoxTradeSpecNumIndex
+            // 
+            this.checkBoxTradeSpecNumIndex.AutoSize = true;
+            this.checkBoxTradeSpecNumIndex.Location = new System.Drawing.Point(3, 88);
+            this.checkBoxTradeSpecNumIndex.Name = "checkBoxTradeSpecNumIndex";
+            this.checkBoxTradeSpecNumIndex.Size = new System.Drawing.Size(132, 16);
+            this.checkBoxTradeSpecNumIndex.TabIndex = 5;
+            this.checkBoxTradeSpecNumIndex.Text = "是否投注指定数字位";
+            this.checkBoxTradeSpecNumIndex.UseVisualStyleBackColor = true;
+            this.checkBoxTradeSpecNumIndex.Click += new System.EventHandler(this.checkBoxTradeSpecNumIndex_Click);
+            // 
+            // buttonCommitTradeCount
+            // 
+            this.buttonCommitTradeCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCommitTradeCount.Location = new System.Drawing.Point(3, 58);
+            this.buttonCommitTradeCount.Name = "buttonCommitTradeCount";
+            this.buttonCommitTradeCount.Size = new System.Drawing.Size(174, 23);
+            this.buttonCommitTradeCount.TabIndex = 4;
+            this.buttonCommitTradeCount.Text = "提交投注设定";
+            this.buttonCommitTradeCount.UseVisualStyleBackColor = true;
+            this.buttonCommitTradeCount.Click += new System.EventHandler(this.buttonCommitTradeCount_Click);
+            // 
+            // textBoxDefaultCount
+            // 
+            this.textBoxDefaultCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
+            this.textBoxDefaultCount.Name = "textBoxDefaultCount";
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(98, 21);
+            this.textBoxDefaultCount.TabIndex = 3;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 34);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(65, 12);
+            this.label12.TabIndex = 2;
+            this.label12.Text = "固定倍率：";
+            // 
+            // textBoxMultiCount
+            // 
+            this.textBoxMultiCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
+            this.textBoxMultiCount.Name = "textBoxMultiCount";
+            this.textBoxMultiCount.Size = new System.Drawing.Size(98, 21);
+            this.textBoxMultiCount.TabIndex = 1;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 7);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(65, 12);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "倍投设置：";
             // 
             // comboBoxCollectionDataType
             // 
@@ -706,6 +876,27 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // textBoxStartMoney
+            // 
+            this.textBoxStartMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
+            this.textBoxStartMoney.Name = "textBoxStartMoney";
+            this.textBoxStartMoney.Size = new System.Drawing.Size(98, 21);
+            this.textBoxStartMoney.TabIndex = 9;
+            this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
+            // 
+            // trackBarKData
+            // 
+            this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarKData.Location = new System.Drawing.Point(3, 266);
+            this.trackBarKData.Name = "trackBarKData";
+            this.trackBarKData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarKData.TabIndex = 16;
+            this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
+            // 
             // panelUp
             // 
             this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -732,52 +923,16 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             // 
-            // tradeSimFromFirstToolStripMenuItem
+            // trackBarTradeData
             // 
-            this.tradeSimFromFirstToolStripMenuItem.Name = "tradeSimFromFirstToolStripMenuItem";
-            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.tradeSimFromFirstToolStripMenuItem.Text = "从第一期开始模拟";
-            this.tradeSimFromFirstToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromFirstToolStripMenuItem_Click);
-            // 
-            // tradeSimFromLatestToolStripMenuItem
-            // 
-            this.tradeSimFromLatestToolStripMenuItem.Name = "tradeSimFromLatestToolStripMenuItem";
-            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.tradeSimFromLatestToolStripMenuItem.Text = "从最后期开始模拟";
-            this.tradeSimFromLatestToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromLatestToolStripMenuItem_Click);
-            // 
-            // pauseSimTradeToolStripMenuItem
-            // 
-            this.pauseSimTradeToolStripMenuItem.Name = "pauseSimTradeToolStripMenuItem";
-            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.pauseSimTradeToolStripMenuItem.Text = "暂停模拟";
-            this.pauseSimTradeToolStripMenuItem.Click += new System.EventHandler(this.pauseSimTradeToolStripMenuItem_Click);
-            // 
-            // resumeSimTradeToolStripMenuItem
-            // 
-            this.resumeSimTradeToolStripMenuItem.Name = "resumeSimTradeToolStripMenuItem";
-            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.resumeSimTradeToolStripMenuItem.Text = "恢复模拟";
-            this.resumeSimTradeToolStripMenuItem.Click += new System.EventHandler(this.resumeSimTradeToolStripMenuItem_Click);
-            // 
-            // stopSimTradeToolStripMenuItem
-            // 
-            this.stopSimTradeToolStripMenuItem.Name = "stopSimTradeToolStripMenuItem";
-            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.stopSimTradeToolStripMenuItem.Text = "停止模拟";
-            this.stopSimTradeToolStripMenuItem.Click += new System.EventHandler(this.stopSimTradeToolStripMenuItem_Click);
-            // 
-            // tradeToolStripMenuItem
-            // 
-            this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
-            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.tradeToolStripMenuItem.Text = "下单";
-            this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            this.trackBarTradeData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
+            this.trackBarTradeData.Name = "trackBarTradeData";
+            this.trackBarTradeData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarTradeData.TabIndex = 10;
+            this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
             // 
             // LotteryGraph
             // 
@@ -809,6 +964,10 @@
             this.groupBoxAvgSettings.PerformLayout();
             this.tabPageBarGraph.ResumeLayout(false);
             this.tabPageBarGraph.PerformLayout();
+            this.tabPageTrade.ResumeLayout(false);
+            this.tabPageTrade.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -878,5 +1037,18 @@
         private System.Windows.Forms.ToolStripMenuItem stopSimTradeToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem tradeToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBoxTradeNumIndex;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox checkBoxTradeSpecNumIndex;
+        private System.Windows.Forms.Button buttonCommitTradeCount;
+        private System.Windows.Forms.TextBox textBoxDefaultCount;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBoxMultiCount;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ToolStripMenuItem clearAllTradeDatasToolStripMenuItem;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBoxStartMoney;
+        private System.Windows.Forms.TrackBar trackBarKData;
+        private System.Windows.Forms.TrackBar trackBarTradeData;
     }
 }

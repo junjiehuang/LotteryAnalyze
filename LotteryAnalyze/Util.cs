@@ -762,7 +762,19 @@ namespace LotteryAnalyze
             // load web page
             ECType t = ECType.Default;
             WebRequest request = WebRequest.Create(webUrl);
-            WebResponse response = request.GetResponse();
+            WebResponse response = null;
+            try
+            {
+                response = request.GetResponse();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Request url <" + webUrl + "> failed! info = " + e.ToString());
+            }
+
+            if (response == null)
+                return 0;
+
             StreamReader reader = null;
             switch (t)
             {

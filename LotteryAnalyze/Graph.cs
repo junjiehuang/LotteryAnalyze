@@ -1066,6 +1066,12 @@ namespace LotteryAnalyze
                 }
             }
         }
+        public override void ScrollToData(int index, int winW, int winH)
+        {
+            selectTradeIndex = index;
+            canvasOffset.X = (selectTradeIndex + 1) * gridScaleW;
+            autoAllign = true;
+        }
 
         public int SelectTradeData(Point mouseRelPos)
         {

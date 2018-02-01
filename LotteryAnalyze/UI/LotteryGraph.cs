@@ -81,6 +81,14 @@ namespace LotteryAnalyze.UI
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Start();
             curUpdatePen = redPen;
+
+            comboBoxTradeNumIndex.DataSource = KDataDictContainer.C_TAGS;
+            comboBoxTradeNumIndex.SelectedIndex = TradeDataManager.Instance.simSelNumIndex;
+            checkBoxTradeSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
+            textBoxDefaultCount.Text = TradeDataManager.Instance.defaultTradeCount.ToString();
+            textBoxMultiCount.Text = TradeDataManager.Instance.GetTradeCountInfoStr();
+            textBoxStartMoney.Text = TradeDataManager.Instance.startMoney.ToString();
+
         }
 
         void SetUIGridWH()
@@ -99,6 +107,10 @@ namespace LotteryAnalyze.UI
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
+            trackBarKData.Minimum = 0;
+            trackBarKData.Maximum = GraphDataManager.KGDC.DataLength();
+            trackBarTradeData.Minimum = 0;
+            trackBarTradeData.Maximum = TradeDataManager.Instance.historyTradeDatas.Count;
             if(hasNewDataUpdate)
             {
                 if (curUpdatePen == redPen)
@@ -247,6 +259,8 @@ namespace LotteryAnalyze.UI
                     else
                         graphMgr.tradeGraph.UnselectTradeData();
                     graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+                    if (kdataID != -1)
+                        FormMain.Instance.SelectDataItem(kdataID);
                 }
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
@@ -337,6 +351,19 @@ namespace LotteryAnalyze.UI
                     graphMgr.kvalueGraph.RemoveSelectAuxLine();
                 }
             }
+        }
+
+        private void trackBarKData_Scroll(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+            this.Invalidate(true);//触发Paint事件
+        }
+
+        private void trackBarTradeData_Scroll(object sender, EventArgs e)
+        {
+            TradeDataManager tdm = TradeDataManager.Instance;
+            graphMgr.tradeGraph.ScrollToData(trackBarTradeData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+            this.Invalidate(true);//触发Paint事件
         }
 
         #endregion
@@ -593,6 +620,32 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.StopAutoTradeJob();
         }
 
+        private void buttonCommitTradeCount_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.defaultTradeCount = int.Parse(textBoxDefaultCount.Text);
+            TradeDataManager.Instance.SetTradeCountInfo(textBoxMultiCount.Text);
+        }
+
+        private void checkBoxTradeSpecNumIndex_Click(object sender, EventArgs e)
+        {
+            if (checkBoxTradeSpecNumIndex.Checked)
+                TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
+            else
+                TradeDataManager.Instance.simSelNumIndex = -1;
+        }
+
+        private void clearAllTradeDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.ClearAllTradeDatas();
+        }
+
+        private void textBoxStartMoney_TextChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.startMoney = int.Parse(textBoxStartMoney.Text);
+        }
+
         #endregion
+
+
     }
 }

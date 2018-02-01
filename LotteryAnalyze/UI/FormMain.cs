@@ -13,11 +13,17 @@ namespace LotteryAnalyze
 {
     public partial class FormMain : Form
     {
+        static FormMain sInst;
+        public static FormMain Instance
+        {
+            get { return sInst; }
+        }
         System.Windows.Forms.Timer updateTimer;
         int lastFetchCount = -1;
 
         public FormMain()
         {
+            sInst = this;
             InitializeComponent();
 
             Dictionary<string, KillNumberStrategy> funcList = KillNumberStrategyManager.GetInst().funcList;
@@ -323,6 +329,30 @@ namespace LotteryAnalyze
                 cb.OutPutToTreeView(nodeParent);
             }
             RefreshDataView();
+        }
+
+        public void SelectDataItem(DataItem item)
+        {
+            if(item != null)
+            {
+                SelectDataItem(item.idGlobal);
+            }
+        }
+        public void SelectDataItem(int id)
+        {
+            if (id != -1)
+            {
+                for (int i = 0; i < dataGridViewLotteryDatas.Rows.Count; ++i)
+                {
+                    if (i != id)
+                        dataGridViewLotteryDatas.Rows[i].Selected = false;
+                    else
+                    {
+                        dataGridViewLotteryDatas.Rows[i].Selected = true;
+                        dataGridViewLotteryDatas.CurrentCell = dataGridViewLotteryDatas.Rows[i].Cells[0];
+                    }
+                }
+            }
         }
 
         private void treeViewCollectorInfo_DoubleClick(object sender, EventArgs e)
