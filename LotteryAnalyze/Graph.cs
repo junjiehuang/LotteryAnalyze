@@ -83,6 +83,7 @@ namespace LotteryAnalyze
 
         }
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
+        public virtual void ScrollToData(int index,int winW, int winH) { }
     }
 
     #region Aux Lines
@@ -181,8 +182,9 @@ namespace LotteryAnalyze
 
 
         public bool autoAllign = false;
-        
-        int selDataIndex = -1;
+
+        int selectKDataIndex = -1;
+        int preViewDataIndex = -1;
         float selDataPtX = -1;
 
         Font selDataFont;
@@ -227,7 +229,7 @@ namespace LotteryAnalyze
             if (GraphDataManager.Instance.HasData(GraphType.eKCurveGraph) == false)
                 return false;
             int curIndex = (int)((mousePos.X + canvasOffset.X) / gridScaleW);
-            if (curIndex == selDataIndex)
+            if (curIndex == preViewDataIndex)
                 return false;
             return true;
         }
@@ -247,7 +249,7 @@ namespace LotteryAnalyze
         {
             BeforeDraw();
 
-            selDataIndex = -1;
+            preViewDataIndex = -1;
             lastValue = 0;
             if (canvasOffset.Y == 0 && canvasOffset.X == 0)
                 canvasOffset.Y = winH * 0.5f;
@@ -357,13 +359,19 @@ namespace LotteryAnalyze
                 }
                 canvasOffset.Y = oriYOff;
 
-                if (selDataIndex != -1)
+                if (preViewDataIndex != -1)
                 {
                     g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
                     g.DrawLine(grayDotLinePen, selDataPtX + gridScaleW, 0, selDataPtX + gridScaleW, winH);
                 }
             }
             EndDraw(g);
+        }
+        public override void ScrollToData(int index, int winW, int winH)
+        {
+            selectKDataIndex = index;
+            canvasOffset.X = index * gridScaleW;
+            autoAllign = true;
         }
 
         public void UpdateSelectAuxLinePoint(Point mouseRelPos)
@@ -373,6 +381,7 @@ namespace LotteryAnalyze
                 selAuxLine.keyPoints[selAuxLinePointIndex] = CanvasToStand(mouseRelPos);
             }
         }
+
         public void SelectAuxLine(Point mouseRelPos)
         {
             selAuxLine = null;
@@ -543,15 +552,21 @@ namespace LotteryAnalyze
             //PushLinePts(linePen, midX, up, midX, dowm);
             PushRcPts(tmpBrush, standX, rcY, gridScaleW, rcH);
 
-            if (selDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
+            if (preViewDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
             {
                 selDataPtX = standX;
-                selDataIndex = data.index;
+                preViewDataIndex = data.index;
                 g.DrawLine(grayDotLinePen, standX, 0, standX, winH);
                 g.DrawLine(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 //PushLinePts(grayDotLinePen, standX, 0, standX, winH);
                 //PushLinePts(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 0, 0);
+            }
+
+            if(data.index == selectKDataIndex)
+            {
+                g.DrawLine(yellowLinePen, standX, 0, standX, winH);
+                g.DrawLine(yellowLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
             }
         }
         void DrawAvgLineGraph(Graphics g, AvgPointMap apm, int winW, int winH, CollectDataType cdt, Pen pen)
@@ -947,6 +962,7 @@ namespace LotteryAnalyze
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         Font tipsFont = new Font(FontFamily.GenericMonospace, 12);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
+        int selectTradeIndex = -1;
 
         public GraphTrade()
         {
@@ -1042,9 +1058,30 @@ namespace LotteryAnalyze
                         "] [最低:" + tdm.minValue + "]";
                     g.DrawString(info, tipsFont, whiteBrush, 5, 5);
                 }
+
+                if(selectTradeIndex == i)
+                {
+                    g.DrawLine(whiteLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
+                    g.DrawLine(whiteLinePen, cx + halfGridW, 0, cx + halfGridW, winH);
+                }
             }
         }
 
+        public int SelectTradeData(Point mouseRelPos)
+        {
+            TradeDataManager tdm = TradeDataManager.Instance;
+            selectTradeIndex = -1;
+            Point standMousePos = CanvasToStand(mouseRelPos);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleW) - 1;
+            if (mouseHoverID >= tdm.historyTradeDatas.Count)
+                mouseHoverID = -1;
+            selectTradeIndex = mouseHoverID;
+            return selectTradeIndex;
+        }
+        public void UnselectTradeData()
+        {
+            selectTradeIndex = -1;
+        }
     }
 
     // 图表管理器

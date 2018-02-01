@@ -16,8 +16,9 @@ namespace LotteryAnalyze.UI
         GraphManager graphMgr = new GraphManager();
         int numberIndex = 0;        
         int curCDTIndex = 0;
-        Point mousePosOnLeftBtnPress = new Point();
+        Point mousePosLastDrag = new Point();
         Point mousePosOnMove = new Point();
+        Point mousePosOnBtnDown = new Point();
         bool hasNewDataUpdate = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
@@ -188,9 +189,9 @@ namespace LotteryAnalyze.UI
                 {
                     if (graphMgr.kvalueGraph.selAuxLine == null)
                     {
-                        float dx = e.Location.X - mousePosOnLeftBtnPress.X;
-                        float dy = e.Location.Y - mousePosOnLeftBtnPress.Y;
-                        mousePosOnLeftBtnPress = e.Location;
+                        float dx = e.Location.X - mousePosLastDrag.X;
+                        float dy = e.Location.Y - mousePosLastDrag.Y;
+                        mousePosLastDrag = e.Location;
                         graphMgr.MoveGraph(dx, dy);
                         needUpdate = true;
                     }
@@ -201,9 +202,9 @@ namespace LotteryAnalyze.UI
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
-                    float dx = e.Location.X - mousePosOnLeftBtnPress.X;
-                    float dy = e.Location.Y - mousePosOnLeftBtnPress.Y;
-                    mousePosOnLeftBtnPress = e.Location;
+                    float dx = e.Location.X - mousePosLastDrag.X;
+                    float dy = e.Location.Y - mousePosLastDrag.Y;
+                    mousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
                 }
@@ -216,7 +217,8 @@ namespace LotteryAnalyze.UI
         {
             if (hasNewDataUpdate)
                 hasNewDataUpdate = false;
-            mousePosOnLeftBtnPress = e.Location;
+            mousePosLastDrag = e.Location;
+            mousePosOnBtnDown = e.Location;
 
             if (e.Button == MouseButtons.Left)
             {
@@ -233,7 +235,20 @@ namespace LotteryAnalyze.UI
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
+                if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                {
+                    int kdataID = -1;
+                    if (e.X == mousePosOnBtnDown.X && e.Y == mousePosOnBtnDown.Y)
+                    {
+                        int selID = graphMgr.tradeGraph.SelectTradeData(e.Location);
+                        if (selID != -1)
+                            kdataID = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem.idGlobal;
+                    }
+                    else
+                        graphMgr.tradeGraph.UnselectTradeData();
+                    graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+                }
+                else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
                 {
                     switch (graphMgr.kvalueGraph.auxOperationIndex)
@@ -552,11 +567,15 @@ namespace LotteryAnalyze.UI
         private void tradeSimFromFirstToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TradeDataManager.Instance.StartAutoTradeJob(false);
+            graphMgr.kvalueGraph.autoAllign = true;
+            graphMgr.tradeGraph.autoAllign = true;
         }
 
         private void tradeSimFromLatestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TradeDataManager.Instance.StartAutoTradeJob(true);
+            graphMgr.kvalueGraph.autoAllign = true;
+            graphMgr.tradeGraph.autoAllign = true;
         }
 
         private void pauseSimTradeToolStripMenuItem_Click(object sender, EventArgs e)

@@ -71,6 +71,7 @@ namespace LotteryAnalyze
         public float moneyBeforeTrade = 0;
         public float moneyAtferTrade = 0;
         protected string tips = "";
+        public bool isAutoTrade = false;
 
         public virtual string GetTips() { return tips; }
         public virtual void Update() { }
@@ -172,11 +173,19 @@ namespace LotteryAnalyze
         DataItem curTestTradeItem = null;
         bool pauseAutoTrade = true;
         bool needGetLatestItem = false;
+        List<int> tradeCountList = new List<int>();
+        int defaultTradeCount = 1;
+        int currentTradeCountIndex = -1;
 
 
         TradeDataManager()
         {
             minValue = maxValue = currentMoney;
+            tradeCountList.Add(1);
+            tradeCountList.Add(2);
+            tradeCountList.Add(4);
+            tradeCountList.Add(8);
+            tradeCountList.Add(16);
         }
         public static TradeDataManager Instance
         {
@@ -211,6 +220,16 @@ namespace LotteryAnalyze
                     waitingTradeDatas[i].Update();
                     if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
                     {
+                        if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
+                        {
+                            if (waitingTradeDatas[i].reward > 0)
+                                currentTradeCountIndex = 0;
+                            else if(waitingTradeDatas[i].cost > 0)
+                                ++currentTradeCountIndex;
+                            if (currentTradeCountIndex == tradeCountList.Count)
+                                currentTradeCountIndex = 0;
+                        }
+
                         if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
                             maxValue = waitingTradeDatas[i].moneyAtferTrade;
                         if (minValue > waitingTradeDatas[i].moneyAtferTrade)
@@ -223,7 +242,15 @@ namespace LotteryAnalyze
             UpdateAutoTrade();
         }
 
-
+        public void SetTradeCountInfo(string info)
+        {
+            string[] nums = info.Split(',');
+            tradeCountList.Clear();
+            for( int i = 0; i < nums.Length; ++i )
+            {
+                tradeCountList.Add(int.Parse(nums[i]));
+            }
+        }
         public void StartAutoTradeJob(bool fromLatestItem)
         {
             if (fromLatestItem == false)
@@ -309,10 +336,23 @@ namespace LotteryAnalyze
             }
             TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
             trade.lastDateItem = item;
+            trade.isAutoTrade = true;
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
             if (bestNumIndex >=0 && bestPath >= 0)
             {
                 TradeNumbers tn = new TradeNumbers();
-                tn.SelPath012Number(bestPath, 1);
+                tn.SelPath012Number(bestPath, tradeCount);
                 trade.tradeInfo.Add(bestNumIndex, tn);
             }
         }
