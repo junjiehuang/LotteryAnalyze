@@ -17,11 +17,11 @@ namespace LotteryAnalyze.UI
         List<CheckBox> cbs = new List<CheckBox>();
         List<CheckBox> cbg = new List<CheckBox>();
 
-        List<byte> wSels = new List<byte>();
-        List<byte> qSels = new List<byte>();
-        List<byte> bSels = new List<byte>();
-        List<byte> sSels = new List<byte>();
-        List<byte> gSels = new List<byte>();
+        List<SByte> wSels = new List<SByte>();
+        List<SByte> qSels = new List<SByte>();
+        List<SByte> bSels = new List<SByte>();
+        List<SByte> sSels = new List<SByte>();
+        List<SByte> gSels = new List<SByte>();
 
 
         public TradeWindow()
@@ -83,14 +83,14 @@ namespace LotteryAnalyze.UI
             }
         }
 
-        void CheckSelectNum(ref List<CheckBox> cbLst, ref List<byte> numLst)
+        void CheckSelectNum(ref List<CheckBox> cbLst, ref List<SByte> numLst)
         {
             numLst.Clear();
             for(int i = 0; i < cbLst.Count; ++i)
             {
                 if(cbLst[i].Checked)
                 {
-                    numLst.Add((byte)i);
+                    numLst.Add((SByte)i);
                 }
             }
         }

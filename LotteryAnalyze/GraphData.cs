@@ -40,12 +40,23 @@ namespace LotteryAnalyze
     {
         public CollectDataType cdt;
         public KDataDict parent;
-        public int index;
+
         public float HitValue;
         public float MissValue;
         public float KValue;
 
         string info = null;
+
+        public int index
+        {
+            get
+            {
+                if (parent == null)
+                    return -1;
+                return parent.index;
+            }
+        }
+
         public string GetInfo()
         {
             if (info == null)
@@ -861,7 +872,7 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 KData data = kd.GetData(cdt, true);
-                data.index = kd.index;
+                //data.index = kd.index;
                 switch (cdt)
                 {
                     case CollectDataType.ePath0:

@@ -27,7 +27,7 @@ namespace LotteryAnalyze
 
     class TradeNumbers
     {
-        public List<byte> tradeNumbers = new List<byte>();
+        public List<SByte> tradeNumbers = new List<SByte>();
         public int tradeCount = 0;
 
         public void GetInfo(ref string info)
@@ -90,7 +90,7 @@ namespace LotteryAnalyze
             tradeType = TradeType.eOneStar;
         }
 
-        public void AddSelNum(int numIndex, ref List<byte> selNums, int tradeCount)
+        public void AddSelNum(int numIndex, ref List<SByte> selNums, int tradeCount)
         {
             if(tradeInfo.ContainsKey(numIndex) == false)
             {
@@ -115,7 +115,7 @@ namespace LotteryAnalyze
                         foreach( int numIndex in tradeInfo.Keys)
                         {
                             TradeNumbers tns = tradeInfo[numIndex];
-                            byte dstValue = targetLotteryItem.GetNumberByIndex(numIndex);
+                            SByte dstValue = targetLotteryItem.GetNumberByIndex(numIndex);
                             if(tns.tradeNumbers.Contains(dstValue))
                                 reward += SingleTradeReward * tns.tradeCount;
                             cost += SingleTradeCost * tns.tradeCount * tns.tradeNumbers.Count;

@@ -13,11 +13,11 @@ namespace LotteryAnalyze
         // 统计类型
         public CollectDataType cdt = CollectDataType.eNone;
         // 针对该统计类型的遗漏值
-        public int missCount = 0;
+        public short missCount = 0;
         // 统计短期内出现该统计类型数据的次数
-        public int appearCountShort = 0;
+        public short appearCountShort = 0;
         // 统计长期内出现该统计类型数据的次数
-        public int appearCountLong = 0;
+        public short appearCountLong = 0;
         // 统计短期内出现该统计类型数据的百分比
         public float appearProbabilityShort = 0;
         // 统计长期内出现该统计类型数据的百分比
@@ -56,7 +56,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.ePath1:
                         if (parent.lotteryData.path012OfEachSingle[numIndex] == 1)
@@ -64,7 +64,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.ePath2:
                         if (parent.lotteryData.path012OfEachSingle[numIndex] == 2)
@@ -72,7 +72,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eBigNum:
                         if (parent.lotteryData.bigOfEachSingle[numIndex])
@@ -80,7 +80,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eSmallNum:
                         if (parent.lotteryData.bigOfEachSingle[numIndex] == false)
@@ -88,7 +88,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eOddNum:
                         if (parent.lotteryData.oddOfEachSingle[numIndex])
@@ -96,7 +96,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eEvenNum:
                         if (parent.lotteryData.oddOfEachSingle[numIndex] == false)
@@ -104,7 +104,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.ePrimeNum:
                         if (parent.lotteryData.primeOfEachSingle[numIndex])
@@ -112,7 +112,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eCompositeNum:
                         if (parent.lotteryData.primeOfEachSingle[numIndex] == false)
@@ -120,7 +120,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum0:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 0)
@@ -128,7 +128,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum1:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 1)
@@ -136,7 +136,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum2:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 2)
@@ -144,7 +144,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum3:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 3)
@@ -152,7 +152,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum4:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 4)
@@ -160,7 +160,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum5:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 5)
@@ -168,7 +168,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum6:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 6)
@@ -176,7 +176,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum7:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 7)
@@ -184,7 +184,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
 
                         break;
                     case CollectDataType.eNum8:
@@ -193,7 +193,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                     case CollectDataType.eNum9:
                         if (parent.lotteryData.fiveNumLst[numIndex] == 9)
@@ -201,7 +201,7 @@ namespace LotteryAnalyze
                         else if (prevItem == null)
                             su.missCount++;
                         else
-                            su.missCount = prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1;
+                            su.missCount = (short)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
                 }
             }
@@ -434,7 +434,7 @@ namespace LotteryAnalyze
         public long profit;
         public KillType killType;
 
-        public List<int> killAndValue;
+        public List<SByte> killAndValue;
         public GroupType killAndValueAtGroup;
 
         public float g6Score;
@@ -511,20 +511,20 @@ namespace LotteryAnalyze
         public OneDayDatas parent = null;
 
         public int idGlobal = -1;
-        public int id;
+        public int idInOneDay;
         public string idTag;
         public string lotteryNumber;
-        public int andValue;
-        public int rearValue;
-        public int crossValue;
+        public SByte andValue;
+        public SByte rearValue;
+        public SByte crossValue;
         public GroupType groupType;
         // 5个数字
-        public List<byte> fiveNumLst = new List<byte>();
+        public List<SByte> fiveNumLst = new List<SByte>();
         // 后三数字
-        public List<byte> valuesOfLastThree = new List<byte>();
+        public List<SByte> valuesOfLastThree = new List<SByte>();
 
         // 每个数字的012路属性
-        public List<byte> path012OfEachSingle = new List<byte>();
+        public List<SByte> path012OfEachSingle = new List<SByte>();
         // 每个数是否奇数
         public List<bool> oddOfEachSingle = new List<bool>();
         // 每个数是否质数
@@ -558,7 +558,7 @@ namespace LotteryAnalyze
             for (int i = 0; i < fiveNumLst.Count; ++i)
             {
                 int v = fiveNumLst[i];
-                path012OfEachSingle.Add((byte)(v % 3));
+                path012OfEachSingle.Add((SByte)(v % 3));
                 oddOfEachSingle.Add((v % 2) == 1);
                 bigOfEachSingle.Add(v > 4);
                 if(v == 1 || v == 2 || v == 3 || v == 5 || v ==7)
@@ -570,34 +570,34 @@ namespace LotteryAnalyze
             statisticInfo = new LotteryStatisticInfo(this);
             simData = new SimData();
         }
-        public byte GetNumberByIndex(int index)
+        public SByte GetNumberByIndex(int index)
         {
-            return (byte)Util.CharValue(lotteryNumber[index]);
+            return (SByte)Util.CharValue(lotteryNumber[index]);
         }
-        public byte GetGeNumber()
+        public SByte GetGeNumber()
         {
             int value = Util.CharValue(lotteryNumber[4]);
-            return (byte)value;
+            return (SByte)value;
         }
-        public byte GetShiNumber()
+        public SByte GetShiNumber()
         {
             int value = Util.CharValue(lotteryNumber[3]);
-            return (byte)value;
+            return (SByte)value;
         }
-        public byte GetBaiNumber()
+        public SByte GetBaiNumber()
         {
             int value = Util.CharValue(lotteryNumber[2]);
-            return (byte)value;
+            return (SByte)value;
         }
-        public byte GetQianNumber()
+        public SByte GetQianNumber()
         {
             int value = Util.CharValue(lotteryNumber[1]);
-            return (byte)value;
+            return (SByte)value;
         }
-        public byte GetWanNumber()
+        public SByte GetWanNumber()
         {
             int value = Util.CharValue(lotteryNumber[0]);
-            return (byte)value;
+            return (SByte)value;
         }
         public void GetValuesInThreePos()
         {
@@ -669,7 +669,7 @@ namespace LotteryAnalyze
             if(searchMap.ContainsKey(item.idTag) == false)
             {
                 item.parent = this;
-                item.id = datas.Count;
+                item.idInOneDay = datas.Count;
 
                 searchMap.Add(item.idTag, item);
                 datas.Add(item);
@@ -702,7 +702,7 @@ namespace LotteryAnalyze
         }
         public DataItem GetPrevItem(DataItem curItem)
         {
-            int curID = curItem.id - 1;
+            int curID = curItem.idInOneDay - 1;
             if (curID >= 0)
                 return datas[curID];
             else
@@ -715,7 +715,7 @@ namespace LotteryAnalyze
         }
         public DataItem GetNextItem(DataItem curItem)
         {
-            int curID = curItem.id + 1;
+            int curID = curItem.idInOneDay + 1;
             if (curID < datas.Count)
                 return datas[curID];
             else

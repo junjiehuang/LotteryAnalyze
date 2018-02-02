@@ -87,7 +87,7 @@ namespace LotteryAnalyze
                     DataItem item = new DataItem(strs[0], strs[1], fileID);
                     odd.AddItem(item);
                     if (newDataIndex == -1)
-                        newDataIndex = item.id;
+                        newDataIndex = item.idInOneDay;
                 }
             }
             sr.Close();
@@ -145,37 +145,37 @@ namespace LotteryAnalyze
                 return false;
         }
 
-        public static int CharValue(char ch)
+        public static SByte CharValue(char ch)
         {
-            int value = ch - '0';
+            SByte value = (SByte)(ch - '0');
             return value;
         }
 
-        public static int CalAndValue(string str)
+        public static SByte CalAndValue(string str)
         {
             int curId = str.Length - 1;
-            int ge = CharValue(str[curId]); curId--;
-            int shi = CharValue(str[curId]); curId--;
-            int bai = CharValue(str[curId]); curId--;
-            return ge + shi + bai;
+            SByte ge = CharValue(str[curId]); curId--;
+            SByte shi = CharValue(str[curId]); curId--;
+            SByte bai = CharValue(str[curId]); curId--;
+            return (SByte)(ge + shi + bai);
         }
 
-        public static int CalRearValue(string str)
+        public static SByte CalRearValue(string str)
         {
-            int andValue = CalAndValue(str);
-            int rearValue = andValue % 10;
+            SByte andValue = CalAndValue(str);
+            SByte rearValue = (SByte)(andValue % 10);
             return rearValue;
         }
 
-        public static int CalCrossValue(string str)
+        public static SByte CalCrossValue(string str)
         {
             int curId = str.Length - 1;
-            int ge = CharValue(str[curId]); curId--;
-            int shi = CharValue(str[curId]); curId--;
-            int bai = CharValue(str[curId]); curId--;
-            int abs1 = Math.Abs(ge - shi);
-            int abs2 = Math.Abs(ge - bai);
-            int abs3 = Math.Abs(shi - bai);
+            SByte ge = CharValue(str[curId]); curId--;
+            SByte shi = CharValue(str[curId]); curId--;
+            SByte bai = CharValue(str[curId]); curId--;
+            SByte abs1 = (SByte)Math.Abs(ge - shi);
+            SByte abs2 = (SByte)Math.Abs(ge - bai);
+            SByte abs3 = (SByte)Math.Abs(shi - bai);
             return Math.Max( abs3, Math.Max(abs1, abs2) );
         }
 
@@ -206,7 +206,7 @@ namespace LotteryAnalyze
             return chValue;
         }
 
-        public static int GetCostByExceptAndValue(List<int> andValue, int ratio, GroupType gt)
+        public static int GetCostByExceptAndValue(List<SByte> andValue, int ratio, GroupType gt)
         {
             int pairCount = AndValueSearchMap.GetPairCountExcept(andValue, gt);
             return pairCount * 2 * ratio;
@@ -378,7 +378,7 @@ namespace LotteryAnalyze
                     {
                         for (int i = 0; i < killNums.Count; ++i)
                         {
-                            byte killNum = (byte)killNums[i];
+                            SByte killNum = (SByte)killNums[i];
                             // kill wrong number
                             if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                             {
@@ -472,7 +472,7 @@ namespace LotteryAnalyze
                 {
                     for (int i = 0; i < killNums.Count; ++i)
                     {
-                        byte killNum = (byte)killNums[i];
+                        SByte killNum = (SByte)killNums[i];
                         // kill wrong number
                         if (item.valuesOfLastThree.IndexOf(killNum) != -1)
                         {

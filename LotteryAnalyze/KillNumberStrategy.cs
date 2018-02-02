@@ -133,7 +133,7 @@ namespace LotteryAnalyze
             }
             pl.pairList.Add(pairInfo);
         }
-        public static int GetPairCountExcept(List<int> andValue, GroupType gt)
+        public static int GetPairCountExcept(List<SByte> andValue, GroupType gt)
         {
             int TotalCount = 0;
             switch (gt)
@@ -212,7 +212,7 @@ namespace LotteryAnalyze
         }
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
-            int dateGeValue = Util.GetNumberByPos(item.id, 0);
+            int dateGeValue = Util.GetNumberByPos(item.idInOneDay, 0);
             if (killList.Contains(dateGeValue) == false)
                 killList.Add(dateGeValue);
             //int dateShiValue = Util.GetNumberByPos(item.id, 1);
@@ -233,7 +233,7 @@ namespace LotteryAnalyze
         public override void KillNumber(DataItem item, ref List<int> killList)
         {
             int prevCount = 3;
-            item.simData.killAndValue = new List<int>();
+            item.simData.killAndValue = new List<SByte>();
             DataItem prevItem = DataManager.GetInst().GetPrevItem(item);
             while (prevItem != null)
             {
