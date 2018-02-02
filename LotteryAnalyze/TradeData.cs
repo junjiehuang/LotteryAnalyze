@@ -439,4 +439,104 @@ namespace LotteryAnalyze
             */
         }
     }
+
+    class BatchTradeSimulator
+    {
+        enum SimState
+        {
+            ePrepareData,
+            eSimTrade,
+            eFinishBatch,
+        }
+
+        static BatchTradeSimulator sInst;
+        public static BatchTradeSimulator Instance
+        {
+            get
+            {
+                if (sInst == null)
+                    sInst = new BatchTradeSimulator();
+                return sInst;
+            }
+        }
+
+        List<int> fileIDLst = new List<int>();
+        int lastIndex = -1;
+        int batch = 5;
+        SimState state = SimState.ePrepareData;
+        string lastTradeIDTag = null;
+        DataItem curTradeItem;
+
+        public void Start()
+        {
+            fileIDLst.Clear();
+            DataManager dm = DataManager.GetInst();
+            foreach( int id in dm.mFileMetaInfo.Keys )
+            {
+                fileIDLst.Add(id);
+            }
+            fileIDLst.Sort();
+        }
+
+        public void Update()
+        {
+            switch(state)
+            {
+                case SimState.ePrepareData:
+                    DoPrepareData();
+                    break;
+                case SimState.eSimTrade:
+                    DoSimTrade();
+                    break;
+                case SimState.eFinishBatch:
+                    DoFinishBatch();
+                    break;
+            }
+        }
+
+        void DoPrepareData()
+        {
+            if(fileIDLst.Count > lastIndex)
+            {
+                if (lastIndex == -1)
+                    lastIndex = 0;
+                DataManager dataMgr = DataManager.GetInst();
+                dataMgr.ClearAllDatas();
+                int startIndex = lastIndex;
+                int endIndex = lastIndex + batch;
+                if (endIndex >= fileIDLst.Count)
+                {
+                    endIndex = fileIDLst.Count - 1;
+                    lastIndex = fileIDLst.Count;
+                }
+                else
+                    lastIndex = endIndex - 1;
+
+                for( int i = startIndex; i <= endIndex; ++i )
+                {
+                    int key = fileIDLst[i];
+                    dataMgr.LoadData(key);
+                }
+                Util.CollectPath012Info(null);
+                GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+
+                curTradeItem = dataMgr.GetFirstItem();
+                if (lastTradeIDTag != null)
+                {
+                    while(curTradeItem.idTag != lastTradeIDTag && curTradeItem != null)
+                    {
+                        curTradeItem = dataMgr.GetNextItem(curTradeItem);
+                    }
+                }
+            }
+        }
+        void DoSimTrade()
+        {
+
+        }
+        void DoFinishBatch()
+        {
+
+        }
+    }
 }
