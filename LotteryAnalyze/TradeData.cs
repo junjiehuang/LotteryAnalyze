@@ -204,6 +204,13 @@ namespace LotteryAnalyze
             }
         }
         
+        public DataItem GetLatestTradedDataItem()
+        {
+            if (historyTradeDatas.Count > 0)
+                return historyTradeDatas[historyTradeDatas.Count - 1].targetLotteryItem;
+            return null;
+        }
+
         public TradeDataBase NewTrade(TradeType tradeType)
         {
             TradeDataBase trade = null;
@@ -464,9 +471,12 @@ namespace LotteryAnalyze
     {
         enum SimState
         {
+            eNone,
             ePrepareData,
             eSimTrade,
+            eSimPause,
             eFinishBatch,
+            eFinishAll,
         }
 
         static BatchTradeSimulator sInst;
@@ -481,22 +491,47 @@ namespace LotteryAnalyze
         }
 
         List<int> fileIDLst = new List<int>();
-        int lastIndex = -1;
-        int batch = 5;
+        int lastIndex = -1;        
         SimState state = SimState.ePrepareData;
         string lastTradeIDTag = null;
         DataItem curTradeItem;
+        SimState backUpState = SimState.eNone;
 
-        float startMoney;
-        float minMoney;
-        float maxMoney;
-        int totalCount;
-        int tradeRightCount;
-        int tradeWrongCount;
-        int untradeCount;
+        public int batch = 5;
+        public float currentMoney;
+        public float startMoney;
+        public float minMoney;
+        public float maxMoney;
+        public int totalCount;
+        public int tradeRightCount;
+        public int tradeWrongCount;
+        public int untradeCount;
+
+        public int GetMainProgress()
+        {
+            if (state == SimState.eFinishAll)
+                return 100;
+            else if (lastIndex < 0 || fileIDLst.Count == 0)
+                return 0;
+            else
+                return (lastIndex * 100 / fileIDLst.Count);
+        }
+        public int GetBatchProgress()
+        {
+            if (state == SimState.ePrepareData)
+                return 0;
+            else if (state == SimState.eFinishBatch || state == SimState.eFinishAll)
+                return 100;
+            int v = TradeDataManager.Instance.historyTradeDatas.Count * 100 / DataManager.GetInst().GetAllDataItemCount();
+            return v;
+        }
 
         public void Start()
         {
+            TradeDataManager.Instance.startMoney = startMoney;
+            minMoney = maxMoney = currentMoney = startMoney;
+            totalCount = tradeRightCount = tradeWrongCount = untradeCount = 0;
+
             fileIDLst.Clear();
             DataManager dm = DataManager.GetInst();
             foreach( int id in dm.mFileMetaInfo.Keys )
@@ -508,7 +543,7 @@ namespace LotteryAnalyze
 
         public void Update()
         {
-            switch(state)
+            switch (state)
             {
                 case SimState.ePrepareData:
                     DoPrepareData();
@@ -522,9 +557,41 @@ namespace LotteryAnalyze
             }
         }
 
+        public bool IsPause()
+        {
+            return state == SimState.eSimPause;
+        }
+
+        public void Pause()
+        {
+            backUpState = state;
+            state = SimState.eSimPause;
+            TradeDataManager.Instance.PauseAutoTradeJob();
+        }
+        public void Resume()
+        {
+            state = backUpState;
+            TradeDataManager.Instance.ResumeAutoTradeJob();
+        }
+        public void Stop()
+        {
+            TradeDataManager.Instance.StopAutoTradeJob();
+            DoFinishBatch();
+            state = SimState.eFinishAll;
+            lastIndex = fileIDLst.Count;
+        }
+        public bool HasFinished()
+        {
+            return state == SimState.eFinishAll;
+        }
+        public bool HasJob()
+        {
+            return fileIDLst.Count > 0 && lastIndex < fileIDLst.Count;
+        }
+
         void DoPrepareData()
         {
-            if(fileIDLst.Count > lastIndex)
+            if (fileIDLst.Count > lastIndex)
             {
                 if (lastIndex == -1)
                     lastIndex = 0;
@@ -540,7 +607,7 @@ namespace LotteryAnalyze
                 else
                     lastIndex = endIndex - 1;
 
-                for( int i = startIndex; i <= endIndex; ++i )
+                for (int i = startIndex; i <= endIndex; ++i)
                 {
                     int key = fileIDLst[i];
                     dataMgr.LoadData(key);
@@ -548,28 +615,34 @@ namespace LotteryAnalyze
                 Util.CollectPath012Info(null);
                 GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
 
-                //curTradeItem = dataMgr.GetFirstItem();
-                //if (lastTradeIDTag != null)
-                //{
-                //    while(curTradeItem.idTag != lastTradeIDTag && curTradeItem != null)
-                //    {
-                //        curTradeItem = dataMgr.GetNextItem(curTradeItem);
-                //    }
-                //}
-                if(string.IsNullOrEmpty(lastTradeIDTag))
+                TradeDataManager.Instance.startMoney = currentMoney;
+                if (string.IsNullOrEmpty(lastTradeIDTag))
                     TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, lastTradeIDTag);
                 else
                     TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromSpec, lastTradeIDTag);
                 state = SimState.eSimTrade;
             }
+            else
+                state = SimState.eFinishAll;
         }
         void DoSimTrade()
         {
-
+            currentMoney = TradeDataManager.Instance.currentMoney;
+            if (maxMoney < currentMoney)
+                maxMoney = currentMoney;
+            if (minMoney > currentMoney)
+                minMoney = currentMoney;
+            if (TradeDataManager.Instance.hasCompleted == true)
+                state = SimState.eFinishBatch;
         }
         void DoFinishBatch()
         {
-
+            currentMoney = TradeDataManager.Instance.currentMoney;
+            tradeRightCount += TradeDataManager.Instance.rightCount;
+            tradeWrongCount += TradeDataManager.Instance.wrongCount;
+            untradeCount += TradeDataManager.Instance.untradeCount;
+            totalCount += TradeDataManager.Instance.rightCount + TradeDataManager.Instance.wrongCount + TradeDataManager.Instance.untradeCount;
+            state = SimState.ePrepareData;
         }
     }
 }

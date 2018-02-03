@@ -943,6 +943,16 @@ namespace LotteryAnalyze
             DataItem item = odd.FindItem(idTag);
             return item;
         }
+
+        public int GetAllDataItemCount()
+        {
+            int count = 0;
+            foreach( OneDayDatas odd in allDatas.Values)
+            {
+                count += odd.datas.Count;
+            }
+            return count;
+        }
     }
 
     #endregion
