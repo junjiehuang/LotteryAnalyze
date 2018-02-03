@@ -511,5 +511,10 @@ namespace LotteryAnalyze
                 updateTimer = null;
             }
         }
+
+        private void globalSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UI.GlobalSimTradeWindow.Open();
+        }
     }
 }

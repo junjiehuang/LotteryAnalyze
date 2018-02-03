@@ -593,14 +593,14 @@ namespace LotteryAnalyze.UI
 
         private void tradeSimFromFirstToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TradeDataManager.Instance.StartAutoTradeJob(false);
+            TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, null);
             graphMgr.kvalueGraph.autoAllign = true;
             graphMgr.tradeGraph.autoAllign = true;
         }
 
         private void tradeSimFromLatestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TradeDataManager.Instance.StartAutoTradeJob(true);
+            TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromLatest, null);
             graphMgr.kvalueGraph.autoAllign = true;
             graphMgr.tradeGraph.autoAllign = true;
         }
@@ -644,8 +644,12 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.startMoney = int.Parse(textBoxStartMoney.Text);
         }
 
+
         #endregion
 
-
+        private void globalSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GlobalSimTradeWindow.Open();
+        }
     }
 }

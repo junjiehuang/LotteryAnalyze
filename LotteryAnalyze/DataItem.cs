@@ -932,6 +932,17 @@ namespace LotteryAnalyze
             }
             return null;
         }
+
+        public DataItem GetDataItemByIdTag(string idTag)
+        {
+            if (string.IsNullOrEmpty(idTag))
+                return null;
+            string[] strs = idTag.Split('-');
+            int key = int.Parse(strs[0]);
+            OneDayDatas odd = allDatas[key];
+            DataItem item = odd.FindItem(idTag);
+            return item;
+        }
     }
 
     #endregion

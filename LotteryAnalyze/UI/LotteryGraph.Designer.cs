@@ -55,6 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.trackBarKData = new System.Windows.Forms.TrackBar();
             this.checkBoxShowAuxLines = new System.Windows.Forms.CheckBox();
             this.comboBoxOperations = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -86,6 +87,8 @@
             this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPageTrade = new System.Windows.Forms.TabPage();
+            this.trackBarTradeData = new System.Windows.Forms.TrackBar();
+            this.textBoxStartMoney = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.comboBoxTradeNumIndex = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -99,11 +102,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBoxStartMoney = new System.Windows.Forms.TextBox();
-            this.trackBarKData = new System.Windows.Forms.TrackBar();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.trackBarTradeData = new System.Windows.Forms.TrackBar();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -116,10 +118,10 @@
             this.contextMenuStripRightClick.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).BeginInit();
             this.groupBoxAvgSettings.SuspendLayout();
             this.tabPageBarGraph.SuspendLayout();
             this.tabPageTrade.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
             this.SuspendLayout();
             // 
@@ -175,7 +177,9 @@
             this.stopSimTradeToolStripMenuItem,
             this.toolStripSeparator1,
             this.tradeToolStripMenuItem,
-            this.clearAllTradeDatasToolStripMenuItem});
+            this.clearAllTradeDatasToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.globalSimTradeToolStripMenuItem});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "交易";
@@ -183,54 +187,54 @@
             // tradeSimFromFirstToolStripMenuItem
             // 
             this.tradeSimFromFirstToolStripMenuItem.Name = "tradeSimFromFirstToolStripMenuItem";
-            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.tradeSimFromFirstToolStripMenuItem.Text = "从第一期开始模拟";
             this.tradeSimFromFirstToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromFirstToolStripMenuItem_Click);
             // 
             // tradeSimFromLatestToolStripMenuItem
             // 
             this.tradeSimFromLatestToolStripMenuItem.Name = "tradeSimFromLatestToolStripMenuItem";
-            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.tradeSimFromLatestToolStripMenuItem.Text = "从最后期开始模拟";
             this.tradeSimFromLatestToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromLatestToolStripMenuItem_Click);
             // 
             // pauseSimTradeToolStripMenuItem
             // 
             this.pauseSimTradeToolStripMenuItem.Name = "pauseSimTradeToolStripMenuItem";
-            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.pauseSimTradeToolStripMenuItem.Text = "暂停模拟";
             this.pauseSimTradeToolStripMenuItem.Click += new System.EventHandler(this.pauseSimTradeToolStripMenuItem_Click);
             // 
             // resumeSimTradeToolStripMenuItem
             // 
             this.resumeSimTradeToolStripMenuItem.Name = "resumeSimTradeToolStripMenuItem";
-            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.resumeSimTradeToolStripMenuItem.Text = "恢复模拟";
             this.resumeSimTradeToolStripMenuItem.Click += new System.EventHandler(this.resumeSimTradeToolStripMenuItem_Click);
             // 
             // stopSimTradeToolStripMenuItem
             // 
             this.stopSimTradeToolStripMenuItem.Name = "stopSimTradeToolStripMenuItem";
-            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.stopSimTradeToolStripMenuItem.Text = "停止模拟";
             this.stopSimTradeToolStripMenuItem.Click += new System.EventHandler(this.stopSimTradeToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
             // 
             // tradeToolStripMenuItem
             // 
             this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
-            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.tradeToolStripMenuItem.Text = "下单";
             this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
             // 
             // clearAllTradeDatasToolStripMenuItem
             // 
             this.clearAllTradeDatasToolStripMenuItem.Name = "clearAllTradeDatasToolStripMenuItem";
-            this.clearAllTradeDatasToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.clearAllTradeDatasToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.clearAllTradeDatasToolStripMenuItem.Text = "清空所有交易数据";
             this.clearAllTradeDatasToolStripMenuItem.Click += new System.EventHandler(this.clearAllTradeDatasToolStripMenuItem_Click);
             // 
@@ -377,6 +381,17 @@
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
+            // 
+            // trackBarKData
+            // 
+            this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarKData.Location = new System.Drawing.Point(3, 266);
+            this.trackBarKData.Name = "trackBarKData";
+            this.trackBarKData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarKData.TabIndex = 16;
+            this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
             // 
             // checkBoxShowAuxLines
             // 
@@ -733,6 +748,27 @@
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
             // 
+            // trackBarTradeData
+            // 
+            this.trackBarTradeData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
+            this.trackBarTradeData.Name = "trackBarTradeData";
+            this.trackBarTradeData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarTradeData.TabIndex = 10;
+            this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
+            // 
+            // textBoxStartMoney
+            // 
+            this.textBoxStartMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
+            this.textBoxStartMoney.Name = "textBoxStartMoney";
+            this.textBoxStartMoney.Size = new System.Drawing.Size(98, 21);
+            this.textBoxStartMoney.TabIndex = 9;
+            this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
@@ -876,27 +912,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // textBoxStartMoney
-            // 
-            this.textBoxStartMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
-            this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(98, 21);
-            this.textBoxStartMoney.TabIndex = 9;
-            this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
-            // 
-            // trackBarKData
-            // 
-            this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarKData.Location = new System.Drawing.Point(3, 266);
-            this.trackBarKData.Name = "trackBarKData";
-            this.trackBarKData.Size = new System.Drawing.Size(174, 45);
-            this.trackBarKData.TabIndex = 16;
-            this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
-            // 
             // panelUp
             // 
             this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -923,16 +938,17 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             // 
-            // trackBarTradeData
+            // toolStripSeparator2
             // 
-            this.trackBarTradeData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
-            this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(174, 45);
-            this.trackBarTradeData.TabIndex = 10;
-            this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(193, 6);
+            // 
+            // globalSimTradeToolStripMenuItem
+            // 
+            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
+            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
@@ -960,13 +976,13 @@
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
             this.tabPageKGraph.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).EndInit();
             this.groupBoxAvgSettings.ResumeLayout(false);
             this.groupBoxAvgSettings.PerformLayout();
             this.tabPageBarGraph.ResumeLayout(false);
             this.tabPageBarGraph.PerformLayout();
             this.tabPageTrade.ResumeLayout(false);
             this.tabPageTrade.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBarKData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1050,5 +1066,7 @@
         private System.Windows.Forms.TextBox textBoxStartMoney;
         private System.Windows.Forms.TrackBar trackBarKData;
         private System.Windows.Forms.TrackBar trackBarTradeData;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
     }
 }

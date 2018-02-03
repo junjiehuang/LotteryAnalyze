@@ -177,7 +177,13 @@ namespace LotteryAnalyze
         public List<int> tradeCountList = new List<int>();
         public int defaultTradeCount = 1;
         int currentTradeCountIndex = -1;
-
+        public bool hasCompleted = false;
+        bool stopAtTheLatestItem = false;
+        public bool StopAtTheLatestItem
+        {
+            get { return stopAtTheLatestItem; }
+            set { stopAtTheLatestItem = value; }
+        }
 
         TradeDataManager()
         {
@@ -263,19 +269,29 @@ namespace LotteryAnalyze
             }
             return info;
         }
-        public void StartAutoTradeJob(bool fromLatestItem)
+
+        public enum StartTradeType
+        {
+            eFromFirst,
+            eFromLatest,
+            eFromSpec,
+        }
+        public void StartAutoTradeJob(StartTradeType srt, string idTag)
         {
             ClearAllTradeDatas();
-            if (fromLatestItem == false)
+            if (srt == StartTradeType.eFromFirst)
                 curTestTradeItem = DataManager.GetInst().GetFirstItem();
-            else
+            else if (srt == StartTradeType.eFromLatest)
                 curTestTradeItem = DataManager.GetInst().GetLatestItem();
+            else if (srt == StartTradeType.eFromSpec)
+                curTestTradeItem = DataManager.GetInst().GetDataItemByIdTag(idTag);
             pauseAutoTrade = false;
-
+            hasCompleted = false;
         }
         public void StopAutoTradeJob()
         {
             curTestTradeItem = null;
+            hasCompleted = true;
         }
         public void PauseAutoTradeJob()
         {
@@ -302,13 +318,17 @@ namespace LotteryAnalyze
     }
         void UpdateAutoTrade()
         {
+            if (hasCompleted)
+                return;
             if (pauseAutoTrade)
                 return;
             if (curTestTradeItem == null)
                 return;
             if (waitingTradeDatas.Count > 0)
                 return;
-            if(needGetLatestItem)
+            if (stopAtTheLatestItem && curTestTradeItem == DataManager.GetInst().GetLatestItem())
+                hasCompleted = true;
+            if (needGetLatestItem)
             {
                 curTestTradeItem = curTestTradeItem.parent.GetNextItem(curTestTradeItem);
                 needGetLatestItem = false;
@@ -467,6 +487,14 @@ namespace LotteryAnalyze
         string lastTradeIDTag = null;
         DataItem curTradeItem;
 
+        float startMoney;
+        float minMoney;
+        float maxMoney;
+        int totalCount;
+        int tradeRightCount;
+        int tradeWrongCount;
+        int untradeCount;
+
         public void Start()
         {
             fileIDLst.Clear();
@@ -520,14 +548,19 @@ namespace LotteryAnalyze
                 Util.CollectPath012Info(null);
                 GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
 
-                curTradeItem = dataMgr.GetFirstItem();
-                if (lastTradeIDTag != null)
-                {
-                    while(curTradeItem.idTag != lastTradeIDTag && curTradeItem != null)
-                    {
-                        curTradeItem = dataMgr.GetNextItem(curTradeItem);
-                    }
-                }
+                //curTradeItem = dataMgr.GetFirstItem();
+                //if (lastTradeIDTag != null)
+                //{
+                //    while(curTradeItem.idTag != lastTradeIDTag && curTradeItem != null)
+                //    {
+                //        curTradeItem = dataMgr.GetNextItem(curTradeItem);
+                //    }
+                //}
+                if(string.IsNullOrEmpty(lastTradeIDTag))
+                    TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, lastTradeIDTag);
+                else
+                    TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromSpec, lastTradeIDTag);
+                state = SimState.eSimTrade;
             }
         }
         void DoSimTrade()

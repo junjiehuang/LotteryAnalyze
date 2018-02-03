@@ -108,6 +108,8 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -365,78 +367,80 @@
             this.pushToSimulatePoolToolStripMenuItem,
             this.clearSimPoolDataToolStripMenuItem,
             this.toolStripSeparator2,
-            this.openGraphToolStripMenuItem});
+            this.openGraphToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.globalSimTradeToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(149, 198);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(197, 248);
             // 
             // getLatestDataToolStripMenuItem
             // 
             this.getLatestDataToolStripMenuItem.Name = "getLatestDataToolStripMenuItem";
-            this.getLatestDataToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.getLatestDataToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.getLatestDataToolStripMenuItem.Text = "获取最新数据";
             this.getLatestDataToolStripMenuItem.Click += new System.EventHandler(this.getLatestDataToolStripMenuItem_Click);
             // 
             // collectDatasToolStripMenuItem
             // 
             this.collectDatasToolStripMenuItem.Name = "collectDatasToolStripMenuItem";
-            this.collectDatasToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.collectDatasToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.collectDatasToolStripMenuItem.Text = "收集数据";
             this.collectDatasToolStripMenuItem.Click += new System.EventHandler(this.collectDatasToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
             // 
             // addFilesToolStripMenuItem
             // 
             this.addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.addFilesToolStripMenuItem.Text = "添加文件";
             this.addFilesToolStripMenuItem.Click += new System.EventHandler(this.addFilesToolStripMenuItem_Click);
             // 
             // addFolderToolStripMenuItem
             // 
             this.addFolderToolStripMenuItem.Name = "addFolderToolStripMenuItem";
-            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.addFolderToolStripMenuItem.Text = "添加文件夹";
             this.addFolderToolStripMenuItem.Click += new System.EventHandler(this.addFolderToolStripMenuItem_Click);
             // 
             // clearDataToolStripMenuItem
             // 
             this.clearDataToolStripMenuItem.Name = "clearDataToolStripMenuItem";
-            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.clearDataToolStripMenuItem.Text = "清空文件列表";
             this.clearDataToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(145, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(193, 6);
             // 
             // pushToSimulatePoolToolStripMenuItem
             // 
             this.pushToSimulatePoolToolStripMenuItem.Name = "pushToSimulatePoolToolStripMenuItem";
-            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.pushToSimulatePoolToolStripMenuItem.Text = "放入模拟池";
             this.pushToSimulatePoolToolStripMenuItem.Click += new System.EventHandler(this.addToSimulatePoolToolStripMenuItem_Click);
             // 
             // clearSimPoolDataToolStripMenuItem
             // 
             this.clearSimPoolDataToolStripMenuItem.Name = "clearSimPoolDataToolStripMenuItem";
-            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.clearSimPoolDataToolStripMenuItem.Text = "清空模拟池";
             this.clearSimPoolDataToolStripMenuItem.Click += new System.EventHandler(this.clearSimPoolDataToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(145, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(193, 6);
             // 
             // openGraphToolStripMenuItem
             // 
             this.openGraphToolStripMenuItem.Name = "openGraphToolStripMenuItem";
-            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.openGraphToolStripMenuItem.Text = "打开走势图";
             this.openGraphToolStripMenuItem.Click += new System.EventHandler(this.openGraphToolStripMenuItem_Click);
             // 
@@ -901,6 +905,18 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(193, 6);
+            // 
+            // globalSimTradeToolStripMenuItem
+            // 
+            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
+            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1013,6 +1029,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
     }
 }
 
