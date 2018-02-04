@@ -122,6 +122,7 @@
             // 
             // textBoxCmd
             // 
+            this.textBoxCmd.AcceptsReturn = true;
             this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCmd.Location = new System.Drawing.Point(15, 118);

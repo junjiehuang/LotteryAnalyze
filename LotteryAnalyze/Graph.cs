@@ -904,7 +904,7 @@ namespace LotteryAnalyze
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush tagBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.Green);
-
+        int selKDataIndex = -1;
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
         {
@@ -949,6 +949,12 @@ namespace LotteryAnalyze
                 g.DrawString(dul.dataLst[i].data.ToString(), tagFont, tagBrush, startX, startY - 30);
                 startX += gap;
             }
+
+            DataItem currentItem = DataManager.GetInst().GetLatestItem();
+            if (bgdc.CurrentSelectItem != null)
+                currentItem = bgdc.CurrentSelectItem;
+            string info = "[" + currentItem.idTag + "] [" + currentItem.lotteryNumber + "]";
+            g.DrawString(info, tagFont, tagBrush, 5, 5);
         }
     }
 
@@ -1066,6 +1072,31 @@ namespace LotteryAnalyze
                 }
             }
         }
+        public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+            int selID = -1;
+            TradeDataManager tdm = TradeDataManager.Instance;
+            if(tdm.waitingTradeDatas.Count > 0)
+            {
+                float y = winH - 2 * gridScaleW;
+
+                for (int i = 0; i < tdm.waitingTradeDatas.Count; ++i)
+                {
+                    float x = i * gridScaleW;
+                    g.DrawRectangle(whiteLinePen, x, y, gridScaleW, gridScaleW);
+
+                    if(selID == -1 && mouseRelPos.X >= x && mouseRelPos.X <= x + gridScaleW)
+                    {
+                        selID = i;
+                        g.DrawLine(grayDotLinePen, x, 0, x, winH);
+                        g.DrawLine(grayDotLinePen, x + gridScaleW, 0, x + gridScaleW, winH);
+
+                        g.DrawString(tdm.waitingTradeDatas[i].GetTips(), tipsFont, whiteBrush, 5, 5);
+                    }
+                }
+            }
+        }
+
         public override void ScrollToData(int index, int winW, int winH)
         {
             selectTradeIndex = index;

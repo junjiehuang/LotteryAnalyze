@@ -43,12 +43,16 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAllTradeDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
             this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -102,10 +106,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -238,6 +238,18 @@
             this.clearAllTradeDatasToolStripMenuItem.Text = "清空所有交易数据";
             this.clearAllTradeDatasToolStripMenuItem.Click += new System.EventHandler(this.clearAllTradeDatasToolStripMenuItem_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(193, 6);
+            // 
+            // globalSimTradeToolStripMenuItem
+            // 
+            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
+            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -281,6 +293,21 @@
             this.splitContainer2.SplitterDistance = 294;
             this.splitContainer2.TabIndex = 0;
             // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            // 
             // contextMenuStripRightClick
             // 
             this.contextMenuStripRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -310,6 +337,18 @@
             this.cancelAddAuxLineToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.cancelAddAuxLineToolStripMenuItem.Text = "取消当前辅助线";
             this.cancelAddAuxLineToolStripMenuItem.Click += new System.EventHandler(this.cancelAddAuxLineToolStripMenuItem_Click);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(489, 177);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
             // 
             // textBoxGridScaleH
             // 
@@ -911,44 +950,6 @@
             this.label1.Size = new System.Drawing.Size(77, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
-            // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(489, 287);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(489, 177);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(193, 6);
-            // 
-            // globalSimTradeToolStripMenuItem
-            // 
-            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
-            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
-            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 

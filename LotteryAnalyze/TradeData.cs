@@ -137,6 +137,7 @@ namespace LotteryAnalyze
 
         public override string GetTips()
         {
+            // 已开奖
             if(tips.Length == 0 && targetLotteryItem != null)
             {
                 tips += "[期号：" + targetLotteryItem.idTag + "] [号码：" + targetLotteryItem.lotteryNumber + "]\n";
@@ -150,6 +151,21 @@ namespace LotteryAnalyze
                     }
                 }
                 tips += "[成本：" + cost + "] [奖金：" + reward + "] [剩余：" + moneyAtferTrade + "]";
+            }
+            // 等待开奖
+            else if(targetLotteryItem == null)
+            {
+                string info = "";
+                foreach (int key in tradeInfo.Keys)
+                {
+                    TradeNumbers tn = tradeInfo[key];
+                    if (tn.tradeNumbers.Count > 0)
+                    {
+                        info += TradeDataBase.NUM_TAGS[key];
+                        tn.GetInfo(ref info);
+                    }
+                }
+                return info;
             }
             return tips;
         }
@@ -334,7 +350,10 @@ namespace LotteryAnalyze
             if (waitingTradeDatas.Count > 0)
                 return;
             if (stopAtTheLatestItem && curTestTradeItem == DataManager.GetInst().GetLatestItem())
+            {
                 hasCompleted = true;
+                return;
+            }
             if (needGetLatestItem)
             {
                 curTestTradeItem = curTestTradeItem.parent.GetNextItem(curTestTradeItem);
@@ -492,14 +511,14 @@ namespace LotteryAnalyze
 
         List<int> fileIDLst = new List<int>();
         int lastIndex = -1;        
-        SimState state = SimState.ePrepareData;
+        SimState state = SimState.eNone;
         string lastTradeIDTag = null;
         DataItem curTradeItem;
         SimState backUpState = SimState.eNone;
 
         public int batch = 5;
         public float currentMoney;
-        public float startMoney;
+        public float startMoney = 2000;
         public float minMoney;
         public float maxMoney;
         public int totalCount;
@@ -522,13 +541,17 @@ namespace LotteryAnalyze
                 return 0;
             else if (state == SimState.eFinishBatch || state == SimState.eFinishAll)
                 return 100;
-            int v = TradeDataManager.Instance.historyTradeDatas.Count * 100 / DataManager.GetInst().GetAllDataItemCount();
+            int totalItemCount = DataManager.GetInst().GetAllDataItemCount();
+            if (totalItemCount == 0)
+                return 0;
+            int v = TradeDataManager.Instance.historyTradeDatas.Count * 100 / totalItemCount;
             return v;
         }
 
         public void Start()
         {
             TradeDataManager.Instance.startMoney = startMoney;
+            TradeDataManager.Instance.StopAtTheLatestItem = true;
             minMoney = maxMoney = currentMoney = startMoney;
             totalCount = tradeRightCount = tradeWrongCount = untradeCount = 0;
 
@@ -539,6 +562,8 @@ namespace LotteryAnalyze
                 fileIDLst.Add(id);
             }
             fileIDLst.Sort();
+            state = SimState.ePrepareData;
+            lastIndex = -1;
         }
 
         public void Update()
@@ -612,6 +637,9 @@ namespace LotteryAnalyze
                     int key = fileIDLst[i];
                     dataMgr.LoadData(key);
                 }
+                dataMgr.SetDataItemsGlobalID();
+                if (dataMgr.GetAllDataItemCount() == 0)
+                    return;
                 Util.CollectPath012Info(null);
                 GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
 

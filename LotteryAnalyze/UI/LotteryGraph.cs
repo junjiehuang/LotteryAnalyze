@@ -16,9 +16,10 @@ namespace LotteryAnalyze.UI
         GraphManager graphMgr = new GraphManager();
         int numberIndex = 0;        
         int curCDTIndex = 0;
-        Point mousePosLastDrag = new Point();
-        Point mousePosOnMove = new Point();
-        Point mousePosOnBtnDown = new Point();
+        Point upPanelMousePosLastDrag = new Point();
+        Point upPanelMousePosOnMove = new Point();
+        Point upPanelMousePosOnBtnDown = new Point();
+        Point downPanelMousePosOnMove = new Point();
         bool hasNewDataUpdate = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
@@ -167,7 +168,7 @@ namespace LotteryAnalyze.UI
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, mousePosOnMove);
+            graphMgr.DrawUpGraph(g, numberIndex, cdt, this.panelUp.ClientSize.Width, this.panelUp.ClientSize.Height, upPanelMousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelUp.ClientSize.Width - 2, this.panelUp.ClientSize.Height - 2);
             g.DrawRectangle(curUpdatePen, r);
@@ -180,7 +181,7 @@ namespace LotteryAnalyze.UI
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
-            graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, mousePosOnMove);
+            graphMgr.DrawDownGraph(g, numberIndex, cdt, this.panelDown.ClientSize.Width, this.panelDown.ClientSize.Height, downPanelMousePosOnMove);
 
             Rectangle r = new Rectangle(1, 1, this.panelDown.ClientSize.Width - 2, this.panelDown.ClientSize.Height - 2);
             g.DrawRectangle(curUpdatePen, r);
@@ -191,7 +192,7 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
-            mousePosOnMove = e.Location;
+            upPanelMousePosOnMove = e.Location;
             bool needUpdate = false;
             if (graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
                 needUpdate = true;
@@ -201,22 +202,22 @@ namespace LotteryAnalyze.UI
                 {
                     if (graphMgr.kvalueGraph.selAuxLine == null)
                     {
-                        float dx = e.Location.X - mousePosLastDrag.X;
-                        float dy = e.Location.Y - mousePosLastDrag.Y;
-                        mousePosLastDrag = e.Location;
+                        float dx = e.Location.X - upPanelMousePosLastDrag.X;
+                        float dy = e.Location.Y - upPanelMousePosLastDrag.Y;
+                        upPanelMousePosLastDrag = e.Location;
                         graphMgr.MoveGraph(dx, dy);
                         needUpdate = true;
                     }
                     else
                     {
-                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( mousePosOnMove );
+                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( upPanelMousePosOnMove );
                     }
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
-                    float dx = e.Location.X - mousePosLastDrag.X;
-                    float dy = e.Location.Y - mousePosLastDrag.Y;
-                    mousePosLastDrag = e.Location;
+                    float dx = e.Location.X - upPanelMousePosLastDrag.X;
+                    float dy = e.Location.Y - upPanelMousePosLastDrag.Y;
+                    upPanelMousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
                 }
@@ -229,8 +230,8 @@ namespace LotteryAnalyze.UI
         {
             if (hasNewDataUpdate)
                 hasNewDataUpdate = false;
-            mousePosLastDrag = e.Location;
-            mousePosOnBtnDown = e.Location;
+            upPanelMousePosLastDrag = e.Location;
+            upPanelMousePosOnBtnDown = e.Location;
 
             if (e.Button == MouseButtons.Left)
             {
@@ -250,14 +251,29 @@ namespace LotteryAnalyze.UI
                 if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
                     int kdataID = -1;
-                    if (e.X == mousePosOnBtnDown.X && e.Y == mousePosOnBtnDown.Y)
+                    if (e.X == upPanelMousePosOnBtnDown.X && e.Y == upPanelMousePosOnBtnDown.Y)
                     {
                         int selID = graphMgr.tradeGraph.SelectTradeData(e.Location);
                         if (selID != -1)
+                        {
                             kdataID = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem.idGlobal;
+
+                            GraphDataManager.BGDC.CurrentSelectItem = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem;
+                            GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                        }
+                        else
+                        {
+                            GraphDataManager.BGDC.CurrentSelectItem = null;
+                            GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                        }
                     }
                     else
+                    {
+                        GraphDataManager.BGDC.CurrentSelectItem = null;
+                        GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+
                         graphMgr.tradeGraph.UnselectTradeData();
+                    }
                     graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
                     if (kdataID != -1)
                         FormMain.Instance.SelectDataItem(kdataID);
@@ -328,6 +344,11 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.mouseHitPts.Clear();
             }
+        }
+        private void panelDown_MouseMove(object sender, MouseEventArgs e)
+        {
+            downPanelMousePosOnMove = e.Location;
+            this.Invalidate(true);//触发Paint事件
         }
 
         private void panelUp_Paint(object sender, PaintEventArgs e)
@@ -418,7 +439,8 @@ namespace LotteryAnalyze.UI
         private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));
-            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            //if(graphMgr.CurrentGraphType == GraphType.eBarGraph)
+            //    GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             SetUIGridWH();
             this.Invalidate(true);
         }
@@ -439,6 +461,7 @@ namespace LotteryAnalyze.UI
 
         private void textBoxCustomCollectRange_TextChanged(object sender, EventArgs e)
         {
+            GraphDataManager.BGDC.customStatisticsRange = int.Parse(textBoxCustomCollectRange.Text);
             GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             this.Invalidate(true);
         }
@@ -641,7 +664,7 @@ namespace LotteryAnalyze.UI
 
         private void textBoxStartMoney_TextChanged(object sender, EventArgs e)
         {
-            TradeDataManager.Instance.startMoney = int.Parse(textBoxStartMoney.Text);
+            TradeDataManager.Instance.startMoney = float.Parse(textBoxStartMoney.Text);
         }
 
 
@@ -651,5 +674,6 @@ namespace LotteryAnalyze.UI
         {
             GlobalSimTradeWindow.Open();
         }
+
     }
 }

@@ -826,6 +826,19 @@ namespace LotteryAnalyze
             }
             return false;
         }
+        public void SetDataItemsGlobalID()
+        {
+            int curID = 0;
+            foreach (int key in allDatas.Keys)
+            {
+                OneDayDatas data = allDatas[key];
+                for (int i = 0; i < data.datas.Count; ++i)
+                {
+                    DataItem di = data.datas[i];
+                    di.idGlobal = curID++;
+                }
+            }
+        }
         /// <summary>
         /// 获取上一日的开奖数据列表
         /// </summary>

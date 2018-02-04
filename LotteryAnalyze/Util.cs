@@ -91,8 +91,7 @@ namespace LotteryAnalyze
                 }
             }
             sr.Close();
-            return true;
-
+            return odd.datas.Count > 0;
         }
 
         public static bool ReadFile(int fileID, string filePath, ref OneDayDatas datas)
@@ -134,7 +133,7 @@ namespace LotteryAnalyze
                 }
             }
             sr.Close();
-            return true;
+            return datas.datas.Count > 0;
         }
         public static bool IsNumStr(string str)
         {
@@ -654,13 +653,14 @@ namespace LotteryAnalyze
         /// </summary>
         public static int AutoFetchTodayData()
         {
+            string error = "";
             DateTime curDate = DateTime.Now;
             DateTime lastDate = curDate.AddDays(-1);
-            FetchData(lastDate);
+            FetchData(lastDate, ref error);
 
             string filename = combineFileName(curDate.Year, curDate.Month, curDate.Day);
             string url = "http://chart.cp.360.cn/kaijiang/ssccq?sb_spm=36335ab32b7a2ac5a4fa0881e40a5f6a";
-            return FetchData(filename, url);
+            return FetchData(filename, url, ref error);
         }
 
         public static string combineDateString(int y, int m, int d)
@@ -716,6 +716,7 @@ namespace LotteryAnalyze
         /// <param name="endDay"></param>
         public static void FetchDatas(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay)
         {
+            string error = "";
             string filename = "";
             string url = "";
             DateTime startDate = new DateTime(startYear, startMonth, startDay);
@@ -725,7 +726,7 @@ namespace LotteryAnalyze
             {
                 filename = combineFileName(startDate.Year, startDate.Month, startDate.Day);
                 url = combineUrlName(startDate.Year, startDate.Month, startDate.Day);
-                FetchData(filename, url);
+                FetchData(filename, url, ref error);
                 sCallBackOnCollecting("fetch " + startDate.ToString() + "\r\n");
             }
             else
@@ -735,7 +736,7 @@ namespace LotteryAnalyze
                 {
                     filename = combineFileName(curDate.Year, curDate.Month, curDate.Day);
                     url = combineUrlName(curDate.Year, curDate.Month, curDate.Day);
-                    FetchData(filename, url);
+                    FetchData(filename, url, ref error);
                     sCallBackOnCollecting("fetch " + curDate.ToString() + "\r\n");
 
                     curDate = curDate.AddDays(1);
@@ -743,11 +744,11 @@ namespace LotteryAnalyze
             }
         }
 
-        public static int FetchData(DateTime date)
+        public static int FetchData(DateTime date, ref string error)
         {
             string filename = combineFileName(date.Year, date.Month, date.Day);
             string url = combineUrlName(date.Year, date.Month, date.Day);
-            return FetchData(filename, url);
+            return FetchData(filename, url, ref error);
         }
 
         static HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
@@ -756,7 +757,7 @@ namespace LotteryAnalyze
         static Regex regexR = new Regex(strRegexR);
         static Regex regexD = new Regex(strRegexD);
 
-        public static int FetchData(string fileName, string webUrl)
+        public static int FetchData(string fileName, string webUrl, ref string error)
         {
             int validCount = 0;
             // load web page
@@ -769,7 +770,8 @@ namespace LotteryAnalyze
             }
             catch(Exception e)
             {
-                Console.WriteLine("Request url <" + webUrl + "> failed! info = " + e.ToString());
+                error = "Request url <" + webUrl + "> failed! info = " + e.ToString();
+                Console.WriteLine(error);
             }
 
             if (response == null)

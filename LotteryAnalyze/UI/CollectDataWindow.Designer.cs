@@ -41,6 +41,7 @@
             this.buttonCollect = new System.Windows.Forms.Button();
             this.textBoxCmd = new System.Windows.Forms.TextBox();
             this.progressBarCollectDatas = new System.Windows.Forms.ProgressBar();
+            this.buttonReFetchFailedDatas = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -151,11 +152,22 @@
             this.progressBarCollectDatas.Size = new System.Drawing.Size(589, 23);
             this.progressBarCollectDatas.TabIndex = 12;
             // 
+            // buttonReFetchFailedDatas
+            // 
+            this.buttonReFetchFailedDatas.Location = new System.Drawing.Point(99, 104);
+            this.buttonReFetchFailedDatas.Name = "buttonReFetchFailedDatas";
+            this.buttonReFetchFailedDatas.Size = new System.Drawing.Size(117, 23);
+            this.buttonReFetchFailedDatas.TabIndex = 13;
+            this.buttonReFetchFailedDatas.Text = "重取失败的数据";
+            this.buttonReFetchFailedDatas.UseVisualStyleBackColor = true;
+            this.buttonReFetchFailedDatas.Click += new System.EventHandler(this.buttonReFetchFailedDatas_Click);
+            // 
             // CollectDataWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 346);
+            this.Controls.Add(this.buttonReFetchFailedDatas);
             this.Controls.Add(this.progressBarCollectDatas);
             this.Controls.Add(this.textBoxCmd);
             this.Controls.Add(this.buttonCollect);
@@ -193,5 +205,6 @@
         private System.Windows.Forms.Button buttonCollect;
         private System.Windows.Forms.TextBox textBoxCmd;
         private System.Windows.Forms.ProgressBar progressBarCollectDatas;
+        private System.Windows.Forms.Button buttonReFetchFailedDatas;
     }
 }

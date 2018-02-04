@@ -14,6 +14,7 @@ namespace LotteryAnalyze.UI
     {
         System.Windows.Forms.Timer updateTimer;
         List<DateTime> jobLst = new List<DateTime>();
+        List<DateTime> jobUnFinishLst = new List<DateTime>();
         int curJobIndex = -1;
 
         public CollectDataWindow()
@@ -45,8 +46,18 @@ namespace LotteryAnalyze.UI
             DateTime date = jobLst[curJobIndex];
             ++curJobIndex;
             progressBarCollectDatas.Value = curJobIndex * 100 / jobLst.Count;
-            AutoUpdateUtil.FetchData(date);
-            textBoxCmd.Text += date.ToString() + "\r\n";
+            string error = "";
+            int lotteryCount = AutoUpdateUtil.FetchData(date, ref error);
+            if (lotteryCount < 120)
+            {
+                jobUnFinishLst.Add(date);
+                if (string.IsNullOrEmpty(error))
+                    textBoxCmd.Text = date.ToString() + "--------------> " + lotteryCount + "\r\n" + textBoxCmd.Text;
+                else
+                    textBoxCmd.Text = date.ToString() + "--------------> " + error + "\r\n" + textBoxCmd.Text;
+            }
+            else
+                textBoxCmd.Text = date.ToString() + "\r\n" + textBoxCmd.Text;
             textBoxCmd.ScrollToCaret();
             if (jobLst.Count == curJobIndex)
             {
@@ -87,6 +98,7 @@ namespace LotteryAnalyze.UI
             if (jobLst.Count > 0)
                 curJobIndex = 0;
             progressBarCollectDatas.Value = 0;
+            jobUnFinishLst.Clear();
         }
 
         private void dateTimePickerStartDate_ValueChanged(object sender, EventArgs e)
@@ -115,6 +127,17 @@ namespace LotteryAnalyze.UI
         private void CollectDataWindow_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void buttonReFetchFailedDatas_Click(object sender, EventArgs e)
+        {
+            jobLst.Clear();
+            jobLst.AddRange(jobUnFinishLst);
+            if (jobLst.Count > 0)
+                curJobIndex = 0;
+            progressBarCollectDatas.Value = 0;
+            jobUnFinishLst.Clear();
+            textBoxCmd.Text = "";
         }
     }
 }

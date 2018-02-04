@@ -1061,6 +1061,12 @@ namespace LotteryAnalyze
         public int customStatisticsRange = 120;
         public List<DataUnitLst> allDatas = new List<DataUnitLst>();
         public int totalCollectCount = 0;
+        DataItem currentSelectItem = null;
+        public DataItem CurrentSelectItem
+        {
+            get { return currentSelectItem; }
+            set { currentSelectItem = value; }
+        }
 
         public BarGraphDataContianer()
         {
@@ -1147,6 +1153,8 @@ namespace LotteryAnalyze
                 case StatisticsRange.e100: CollectCount = 100; break;
             }
             DataItem currentItem = DataManager.GetInst().GetLatestItem();
+            if (CurrentSelectItem != null)
+                currentItem = CurrentSelectItem;
             if (currentItem == null)
                 return;
             for (int i = 0; i < CollectCount; ++i)

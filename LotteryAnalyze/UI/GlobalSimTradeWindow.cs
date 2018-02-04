@@ -37,27 +37,26 @@ namespace LotteryAnalyze.UI
 
             if (BatchTradeSimulator.Instance.HasFinished())
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("结束任务!\n---------------------\n");
-                sb.Append("[当前金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.currentMoney);
-                sb.Append("] [最高金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.maxMoney);
-                sb.Append("] [最低金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.minMoney);
-                sb.Append("]\n---------------------\n");
-                sb.Append("[总次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.totalCount);
-                sb.Append("] [对次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.tradeRightCount);
-                sb.Append("] [错次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.tradeWrongCount);
-                sb.Append("] [忽略次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.untradeCount);
-                sb.Append("]\n");
+                string info = "";
+                info += ("结束任务!\r\n---------------------\r\n");
+                info += ("[当前金额 - ");
+                info += (BatchTradeSimulator.Instance.currentMoney);
+                info += ("] [最高金额 - ");
+                info += (BatchTradeSimulator.Instance.maxMoney);
+                info += ("] [最低金额 - ");
+                info += (BatchTradeSimulator.Instance.minMoney);
+                info += ("]\r\n---------------------\r\n");
+                info += ("[总次数 - ");
+                info += (BatchTradeSimulator.Instance.totalCount);
+                info += ("] [对次数 - ");
+                info += (BatchTradeSimulator.Instance.tradeRightCount);
+                info += ("] [错次数 - ");
+                info += (BatchTradeSimulator.Instance.tradeWrongCount);
+                info += ("] [忽略次数 - ");
+                info += (BatchTradeSimulator.Instance.untradeCount);
+                info += ("]\r\n");
 
-                textBoxCmd.Text = sb.ToString();
-                sb = null;
+                textBoxCmd.Text = info;
             }
             else if (BatchTradeSimulator.Instance.HasJob())
             {
@@ -65,41 +64,41 @@ namespace LotteryAnalyze.UI
                 DataItem lItem = DataManager.GetInst().GetLatestItem();
                 DataItem cItem = TradeDataManager.Instance.GetLatestTradedDataItem();
 
-                StringBuilder sb = new StringBuilder();
-                sb.Append("[当前进度 - ");
-                sb.Append(progressBarCurrent.Value);
-                sb.Append("] [总进度 - ");
-                sb.Append(progressBarTotal.Value);
-                sb.Append("]\n---------------------\n");
+                string info = "";
+                info += ("[当前进度 - ");
+                info += (progressBarCurrent.Value);
+                info += ("] [总进度 - ");
+                info += (progressBarTotal.Value);
+                info += ("]\r\n---------------------\r\n");
                 if (fItem != null && lItem != null && cItem != null)
                 {
-                    sb.Append("[首期 - ");
-                    sb.Append(fItem.idTag);
-                    sb.Append("] [末期 - ");
-                    sb.Append(lItem.idTag);
-                    sb.Append("] [当期 - ");
-                    sb.Append(cItem.idTag);
-                    sb.Append("]\n---------------------\n");
+                    info += ("[首期 - ");
+                    info += (fItem.idTag);
+                    info += ("] [末期 - ");
+                    info += (lItem.idTag);
+                    info += ("] [当期 - ");
+                    info += (cItem.idTag);
+                    info += ("]\r\n---------------------\r\n");
                 }
-                sb.Append("[当前金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.currentMoney);
-                sb.Append("] [最高金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.maxMoney);
-                sb.Append("] [最低金额 - ");
-                sb.Append(BatchTradeSimulator.Instance.minMoney);
-                sb.Append("]\n---------------------\n");
-                sb.Append("[总次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.totalCount);
-                sb.Append("] [对次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.tradeRightCount);
-                sb.Append("] [错次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.tradeWrongCount);
-                sb.Append("] [忽略次数 - ");
-                sb.Append(BatchTradeSimulator.Instance.untradeCount);
-                sb.Append("]\n");
+                info += ("[当前金额 - ");
+                info += (BatchTradeSimulator.Instance.currentMoney);
+                info += ("] [最高金额 - ");
+                info += (BatchTradeSimulator.Instance.maxMoney);
+                info += ("] [最低金额 - ");
+                info += (BatchTradeSimulator.Instance.minMoney);
+                info += ("]\r\n---------------------\r\n");
+                info += ("[总次数 - ");
+                info += (BatchTradeSimulator.Instance.totalCount);
+                info += ("] [对次数 - ");
+                info += (BatchTradeSimulator.Instance.tradeRightCount);
+                info += ("] [错次数 - ");
+                info += (BatchTradeSimulator.Instance.tradeWrongCount);
+                info += ("] [忽略次数 - ");
+                info += (BatchTradeSimulator.Instance.untradeCount);
+                info += ("]\r\n");
 
-                textBoxCmd.Text = sb.ToString();
-                sb = null;
+                textBoxCmd.Text = info;
+                info = null;
             }
             else
                 textBoxCmd.Text = "";
