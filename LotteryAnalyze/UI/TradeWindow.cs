@@ -116,15 +116,35 @@ namespace LotteryAnalyze.UI
                     TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
                     trade.lastDateItem = lastItem;
                     if (wSels.Count > 0)
-                        trade.AddSelNum(0, ref wSels, tradeCount);
+                    {
+                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 0, ref nci);
+                        trade.AddSelNum(0, ref wSels, tradeCount, ref nci);
+                    }
                     if (qSels.Count > 0)
-                        trade.AddSelNum(1, ref qSels, tradeCount);
+                    {
+                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 1, ref nci);
+                        trade.AddSelNum(1, ref qSels, tradeCount, ref nci);
+                    }
                     if (bSels.Count > 0)
-                        trade.AddSelNum(2, ref bSels, tradeCount);
+                    {
+                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 2, ref nci);
+                        trade.AddSelNum(2, ref bSels, tradeCount, ref nci);
+                    }
                     if (sSels.Count > 0)
-                        trade.AddSelNum(3, ref sSels, tradeCount);
+                    {
+                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 3, ref nci);
+                        trade.AddSelNum(3, ref sSels, tradeCount, ref nci);
+                    }
                     if (gSels.Count > 0)
-                        trade.AddSelNum(4, ref gSels, tradeCount);
+                    {
+                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 4, ref nci);
+                        trade.AddSelNum(4, ref gSels, tradeCount, ref nci);
+                    }
                 }
             }
         }

@@ -25,9 +25,31 @@ namespace LotteryAnalyze
         eDone,
     }
 
+    struct NumberCmpInfo
+    {
+        public SByte number;
+        public float rate;
+        public bool largerThanTheoryProbability;
+
+        public string ToString()
+        {
+            return number + "(" + rate.ToString("f2") + "%) ";
+        }
+
+        public static int FindIndex(List<NumberCmpInfo> nums, SByte number)
+        {
+            for(int i = 0; i < nums.Count; ++i )
+            {
+                if (nums[i].number == number)
+                    return i;
+            }
+            return -1;
+        }
+    }
+
     class TradeNumbers
     {
-        public List<SByte> tradeNumbers = new List<SByte>();
+        public List<NumberCmpInfo> tradeNumbers = new List<NumberCmpInfo>();
         public int tradeCount = 0;
 
         public void GetInfo(ref string info)
@@ -44,16 +66,33 @@ namespace LotteryAnalyze
                 info += "} 倍数：" + tradeCount + "\n";
             }
         }
-        public void SelPath012Number(int path, int tradeCount)
+        public void SelPath012Number(int path, int tradeCount, ref List<NumberCmpInfo> nums)
         {
+            //this.tradeCount = tradeCount;
+            //tradeNumbers.Clear();
+            //if (path == 0)
+            //{ tradeNumbers.Add(0); tradeNumbers.Add(3); tradeNumbers.Add(6); tradeNumbers.Add(9); }
+            //else if (path == 1)
+            //{ tradeNumbers.Add(1); tradeNumbers.Add(4); tradeNumbers.Add(7); }
+            //else if (path == 2)
+            //{ tradeNumbers.Add(2); tradeNumbers.Add(5); tradeNumbers.Add(8); }
             this.tradeCount = tradeCount;
-            tradeNumbers.Clear();
-            if (path == 0)
-            { tradeNumbers.Add(0); tradeNumbers.Add(3); tradeNumbers.Add(6); tradeNumbers.Add(9); }
-            else if (path == 1)
-            { tradeNumbers.Add(1); tradeNumbers.Add(4); tradeNumbers.Add(7); }
-            else if (path == 2)
-            { tradeNumbers.Add(2); tradeNumbers.Add(5); tradeNumbers.Add(8); }
+            for( int i = 0; i < nums.Count; ++i )
+            {
+                if(nums[i].number % 3 == path && ContainsNumber(nums[i].number) == false)
+                {
+                    tradeNumbers.Add(nums[i]);
+                }
+            }
+        }
+        public bool ContainsNumber( SByte number)
+        {
+            for(int i = 0; i < tradeNumbers.Count; ++i )
+            {
+                if (tradeNumbers[i].number == number)
+                    return true;
+            }
+            return false;
         }
     }
 
@@ -90,14 +129,22 @@ namespace LotteryAnalyze
             tradeType = TradeType.eOneStar;
         }
 
-        public void AddSelNum(int numIndex, ref List<SByte> selNums, int tradeCount)
+        public void AddSelNum(int numIndex, ref List<SByte> selNums, int tradeCount, ref List<NumberCmpInfo> nums)
         {
             if(tradeInfo.ContainsKey(numIndex) == false)
             {
                 TradeNumbers tn = new TradeNumbers();
-                tradeInfo.Add(numIndex, tn);
-                tn.tradeNumbers.AddRange(selNums);
+                tradeInfo.Add(numIndex, tn);                
                 tn.tradeCount = tradeCount;
+
+                for (int i = 0; i < selNums.Count; ++i)
+                {
+                    int index = NumberCmpInfo.FindIndex(nums, selNums[i]);
+                    if (index != -1)
+                    {
+                        tn.tradeNumbers.Add(nums[i]);
+                    }
+                }
             }
         }
 
@@ -116,7 +163,7 @@ namespace LotteryAnalyze
                         {
                             TradeNumbers tns = tradeInfo[numIndex];
                             SByte dstValue = targetLotteryItem.GetNumberByIndex(numIndex);
-                            if(tns.tradeNumbers.Contains(dstValue))
+                            if(tns.ContainsNumber(dstValue))
                                 reward += SingleTradeReward * tns.tradeCount;
                             cost += SingleTradeCost * tns.tradeCount * tns.tradeNumbers.Count;
                         }
@@ -200,6 +247,7 @@ namespace LotteryAnalyze
             get { return stopAtTheLatestItem; }
             set { stopAtTheLatestItem = value; }
         }
+        List<NumberCmpInfo> maxProbilityNums = new List<NumberCmpInfo>();
 
         TradeDataManager()
         {
@@ -427,7 +475,17 @@ namespace LotteryAnalyze
             if (bestNumIndex >=0 && bestPath >= 0)
             {
                 TradeNumbers tn = new TradeNumbers();
-                tn.SelPath012Number(bestPath, tradeCount);
+                tn.tradeCount = tradeCount;
+
+                FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+                for (int i = 0; i < maxProbilityNums.Count; ++i)
+                {
+                    if (maxProbilityNums[i].largerThanTheoryProbability)
+                        tn.tradeNumbers.Add(maxProbilityNums[i]);
+                    //if (tn.tradeNumbers.Count == 5)
+                    //    break;
+                }
+                tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
             }
         }
@@ -438,13 +496,46 @@ namespace LotteryAnalyze
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
             StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
+            float v0 = su0.appearProbabilityLong;// * su0.appearProbabilityShort;
+            float v1 = su1.appearProbabilityLong;// * su1.appearProbabilityShort;
+            float v2 = su2.appearProbabilityLong;// * su2.appearProbabilityShort;
+            float vm, dm;
             StatisticUnit maxSU;
-            if (su0.appearProbabilityShort >= su1.appearProbabilityShort)
+            if (v0 > v1)
+            {
+                dm = su0.appearProbabilityDiffWithTheoryShort;
+                vm = v0;
                 maxSU = su0;
-            else
+            }
+            else if(v0 < v1)
+            {
+                dm = su1.appearProbabilityDiffWithTheoryShort;
+                vm = v1;
                 maxSU = su1;
-            if (su2.appearProbabilityShort >= maxSU.appearProbabilityShort)
+            }
+            else
+            {
+                if(su0.appearProbabilityDiffWithTheoryShort > su1.appearProbabilityDiffWithTheoryShort)
+                {
+                    dm = su0.appearProbabilityDiffWithTheoryShort;
+                    vm = v0;
+                    maxSU = su0;
+                }
+                else
+                {
+                    dm = su1.appearProbabilityDiffWithTheoryShort;
+                    vm = v1;
+                    maxSU = su1;
+                }
+            }
+            if (v2 > vm)
+            {
                 maxSU = su2;
+            }
+            else if(su2.appearProbabilityDiffWithTheoryShort > dm)
+            {
+                maxSU = su2;
+            }
 
             if (maxSU.appearProbabilityShort > maxV)
             {
@@ -483,6 +574,47 @@ namespace LotteryAnalyze
                     bestPath = 2;
             }
             */
+        }
+
+
+        public static void FindOverTheoryProbabilityNums(DataItem item, int numIndex, ref List<NumberCmpInfo> nums)
+        {
+            nums.Clear();
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+            int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+            for (int i = startIndex; i <= endIndex; ++i)
+            {
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+                {
+                    NumberCmpInfo info = new NumberCmpInfo();
+                    info.number = (SByte)(i - startIndex);
+                    info.rate = sum.statisticUnitMap[cdt].appearProbabilityLong;
+                    info.largerThanTheoryProbability = sum.statisticUnitMap[cdt].appearProbabilityLong > GraphDataManager.GetTheoryProbability(cdt);
+
+                    if (nums.Count == 0)
+                    {
+                        nums.Add(info);
+                    }
+                    else
+                    {
+                        bool hasInsert = false;
+                        for( int j = 0; j < nums.Count; ++j )
+                        {
+                            if(sum.statisticUnitMap[cdt].appearProbabilityLong > nums[j].rate)
+                            {
+                                nums.Insert(j, info);
+                                hasInsert = true;
+                                break;
+                            }
+                        }
+                        if(hasInsert == false)
+                        {
+                            nums.Add(info);
+                        }
+                    }
+                }
+            }
         }
     }
 
