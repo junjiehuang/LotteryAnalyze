@@ -27,19 +27,19 @@ namespace LotteryAnalyze.UI
         public TradeWindow()
         {
             InitializeComponent();
-            cbw.Add(checkBoxW0); cbw.Add(checkBoxW1); cbw.Add(checkBoxW2); cbw.Add(checkBoxW3); cbw.Add(checkBoxW5);
+            cbw.Add(checkBoxW0); cbw.Add(checkBoxW1); cbw.Add(checkBoxW2); cbw.Add(checkBoxW3); cbw.Add(checkBoxW4);
             cbw.Add(checkBoxW5); cbw.Add(checkBoxW6); cbw.Add(checkBoxW7); cbw.Add(checkBoxW8); cbw.Add(checkBoxW9);
 
-            cbq.Add(checkBoxQ0); cbq.Add(checkBoxQ1); cbq.Add(checkBoxQ2); cbq.Add(checkBoxQ3); cbq.Add(checkBoxQ5);
+            cbq.Add(checkBoxQ0); cbq.Add(checkBoxQ1); cbq.Add(checkBoxQ2); cbq.Add(checkBoxQ3); cbq.Add(checkBoxQ4);
             cbq.Add(checkBoxQ5); cbq.Add(checkBoxQ6); cbq.Add(checkBoxQ7); cbq.Add(checkBoxQ8); cbq.Add(checkBoxQ9);
 
-            cbb.Add(checkBoxB0); cbb.Add(checkBoxB1); cbb.Add(checkBoxB2); cbb.Add(checkBoxB3); cbb.Add(checkBoxB5);
+            cbb.Add(checkBoxB0); cbb.Add(checkBoxB1); cbb.Add(checkBoxB2); cbb.Add(checkBoxB3); cbb.Add(checkBoxB4);
             cbb.Add(checkBoxB5); cbb.Add(checkBoxB6); cbb.Add(checkBoxB7); cbb.Add(checkBoxB8); cbb.Add(checkBoxB9);
 
-            cbs.Add(checkBoxS0); cbs.Add(checkBoxS1); cbs.Add(checkBoxS2); cbs.Add(checkBoxS3); cbs.Add(checkBoxS5);
+            cbs.Add(checkBoxS0); cbs.Add(checkBoxS1); cbs.Add(checkBoxS2); cbs.Add(checkBoxS3); cbs.Add(checkBoxS4);
             cbs.Add(checkBoxS5); cbs.Add(checkBoxS6); cbs.Add(checkBoxS7); cbs.Add(checkBoxS8); cbs.Add(checkBoxS9);
 
-            cbg.Add(checkBoxG0); cbg.Add(checkBoxG1); cbg.Add(checkBoxG2); cbg.Add(checkBoxG3); cbg.Add(checkBoxG5);
+            cbg.Add(checkBoxG0); cbg.Add(checkBoxG1); cbg.Add(checkBoxG2); cbg.Add(checkBoxG3); cbg.Add(checkBoxG4);
             cbg.Add(checkBoxG5); cbg.Add(checkBoxG6); cbg.Add(checkBoxG7); cbg.Add(checkBoxG8); cbg.Add(checkBoxG9);
         }
 
@@ -95,12 +95,23 @@ namespace LotteryAnalyze.UI
             }
         }
 
+        string GetListInfoString(List<SByte> lst)
+        {
+            string info = "";
+            for (int i = 0; i < lst.Count; ++i)
+            {
+                info += lst[i] + ", ";
+            }
+            return info;
+        }
+
         private void buttonSubmit_Click(object sender, EventArgs e)
         {
+            string buyInfo = "";
             string info = "确定购买？";
             string caption = "提示";
-            DialogResult dr = MessageBox.Show(info,caption,MessageBoxButtons.OKCancel);
-            if(dr == DialogResult.OK)
+            //DialogResult dr = MessageBox.Show(info,caption,MessageBoxButtons.OKCancel);
+            //if(dr == DialogResult.OK)
             {
                 DataItem lastItem = DataManager.GetInst().GetLatestItem();
                 int tradeCount = 1;
@@ -110,40 +121,57 @@ namespace LotteryAnalyze.UI
                 bSels.Clear(); CheckSelectNum(ref cbb, ref bSels);
                 sSels.Clear(); CheckSelectNum(ref cbs, ref sSels);
                 gSels.Clear(); CheckSelectNum(ref cbg, ref gSels);
-                bool hasSelNum = wSels.Count > 0 || qSels.Count > 0 || bSels.Count > 0 || sSels.Count > 0 || gSels.Count > 0;
-                if(tradeCount > 0 && hasSelNum)
+                if (wSels.Count > 0)
+                    buyInfo += "万位 ： " + GetListInfoString(wSels) + "\n";
+                if (qSels.Count > 0)
+                    buyInfo += "千位 ： " + GetListInfoString(qSels) + "\n";
+                if (bSels.Count > 0)
+                    buyInfo += "百位 ： " + GetListInfoString(bSels) + "\n";
+                if (sSels.Count > 0)
+                    buyInfo += "十位 ： " + GetListInfoString(sSels) + "\n";
+                if (gSels.Count > 0)
+                    buyInfo += "个位 ： " + GetListInfoString(gSels) + "\n";
+                buyInfo += "数量 ： " + tradeCount + "\n" + info;
+
+                DialogResult dr = MessageBox.Show(buyInfo, caption, MessageBoxButtons.OKCancel);
+                if (dr == DialogResult.OK)
                 {
-                    TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
-                    trade.lastDateItem = lastItem;
-                    if (wSels.Count > 0)
+
+                    bool hasSelNum = wSels.Count > 0 || qSels.Count > 0 || bSels.Count > 0 || sSels.Count > 0 || gSels.Count > 0;
+                    if (tradeCount > 0 && hasSelNum)
                     {
-                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
-                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 0, ref nci);
-                        trade.AddSelNum(0, ref wSels, tradeCount, ref nci);
-                    }
-                    if (qSels.Count > 0)
-                    {
-                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
-                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 1, ref nci);
-                        trade.AddSelNum(1, ref qSels, tradeCount, ref nci);
-                    }
-                    if (bSels.Count > 0)
-                    {
-                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
-                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 2, ref nci);
-                        trade.AddSelNum(2, ref bSels, tradeCount, ref nci);
-                    }
-                    if (sSels.Count > 0)
-                    {
-                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
-                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 3, ref nci);
-                        trade.AddSelNum(3, ref sSels, tradeCount, ref nci);
-                    }
-                    if (gSels.Count > 0)
-                    {
-                        List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
-                        TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 4, ref nci);
-                        trade.AddSelNum(4, ref gSels, tradeCount, ref nci);
+                        TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
+                        trade.lastDateItem = lastItem;
+                        if (wSels.Count > 0)
+                        {
+                            List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                            TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 0, ref nci);
+                            trade.AddSelNum(0, ref wSels, tradeCount, ref nci);
+                        }
+                        if (qSels.Count > 0)
+                        {
+                            List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                            TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 1, ref nci);
+                            trade.AddSelNum(1, ref qSels, tradeCount, ref nci);
+                        }
+                        if (bSels.Count > 0)
+                        {
+                            List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                            TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 2, ref nci);
+                            trade.AddSelNum(2, ref bSels, tradeCount, ref nci);
+                        }
+                        if (sSels.Count > 0)
+                        {
+                            List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                            TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 3, ref nci);
+                            trade.AddSelNum(3, ref sSels, tradeCount, ref nci);
+                        }
+                        if (gSels.Count > 0)
+                        {
+                            List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
+                            TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 4, ref nci);
+                            trade.AddSelNum(4, ref gSels, tradeCount, ref nci);
+                        }
                     }
                 }
             }

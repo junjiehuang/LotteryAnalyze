@@ -476,8 +476,8 @@ namespace LotteryAnalyze
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
-
                 FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+                /*
                 for (int i = 0; i < maxProbilityNums.Count; ++i)
                 {
                     if (maxProbilityNums[i].largerThanTheoryProbability)
@@ -485,6 +485,7 @@ namespace LotteryAnalyze
                     //if (tn.tradeNumbers.Count == 5)
                     //    break;
                 }
+                */
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
             }
