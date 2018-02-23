@@ -493,6 +493,90 @@ namespace LotteryAnalyze
 
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
         {
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
+            AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            bool isPath0OK = false;
+            bool isPath1OK = false;
+            bool isPath2OK = false;
+            if( apm5.GetData(CollectDataType.ePath0, false).avgKValue > apm10.GetData(CollectDataType.ePath0, false).avgKValue &&
+                apm10.GetData(CollectDataType.ePath0, false).avgKValue > bpm.GetData(CollectDataType.ePath0, false).midValue)
+                isPath0OK = true;
+            if (apm5.GetData(CollectDataType.ePath1, false).avgKValue > apm10.GetData(CollectDataType.ePath1, false).avgKValue &&
+                apm10.GetData(CollectDataType.ePath1, false).avgKValue > bpm.GetData(CollectDataType.ePath1, false).midValue)
+                isPath1OK = true;
+            if (apm5.GetData(CollectDataType.ePath2, false).avgKValue > apm10.GetData(CollectDataType.ePath2, false).avgKValue &&
+                apm10.GetData(CollectDataType.ePath2, false).avgKValue > bpm.GetData(CollectDataType.ePath2, false).midValue)
+                isPath2OK = true;
+
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
+            StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
+            StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
+            if (!isPath0OK && !isPath1OK && !isPath2OK)
+                return;
+            else if(isPath0OK && !isPath1OK && !isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                bestPath = 0;
+            }
+            else if (!isPath0OK && isPath1OK && !isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                bestPath = 1;
+            }
+            else if (!isPath0OK && !isPath1OK && isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                bestPath = 2;
+            }
+            else if (isPath0OK && isPath1OK && !isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+                    bestPath = 0;
+                else
+                    bestPath = 1;
+            }
+            else if (!isPath0OK && isPath1OK && isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                if (su1.appearProbabilityShort > su2.appearProbabilityShort)
+                    bestPath = 1;
+                else
+                    bestPath = 2;
+            }
+            else if (isPath0OK && !isPath1OK && isPath2OK)
+            {
+                bestNumIndex = numIndex;
+                if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                    bestPath = 0;
+                else
+                    bestPath = 2;
+            }
+            else
+            {
+                bestNumIndex = numIndex;
+                if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                {
+                    if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+                        bestPath = 0;
+                    else
+                        bestPath = 1;
+                }
+                else
+                {
+                    if (su2.appearProbabilityShort > su1.appearProbabilityShort)
+                        bestPath = 2;
+                    else
+                        bestPath = 1;
+                }
+            }
+
+            /*
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
@@ -549,6 +633,8 @@ namespace LotteryAnalyze
                 bestNumIndex = numIndex;
                 maxV = maxSU.appearProbabilityShort;
             }
+            */
+
             /*
             KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
             BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[item.idGlobal];

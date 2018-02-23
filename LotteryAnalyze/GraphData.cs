@@ -114,6 +114,13 @@ namespace LotteryAnalyze
         {
             dataDict.Clear();
         }
+
+        public bool IsFitDataItem(DataItem item)
+        {
+            if (startItem == endItem && startItem == item)
+                return true;
+            return false;
+        }
     }
 
     // 均线计算方式
@@ -142,6 +149,7 @@ namespace LotteryAnalyze
     {
         public AvgDataContainer parent;
         public int index = -1;
+        public KDataDict kdd = null;
         public Dictionary<CollectDataType, AvgPoint> apMap = new Dictionary<CollectDataType, AvgPoint>();
         
         public AvgPointMap()
@@ -202,11 +210,12 @@ namespace LotteryAnalyze
                     break;
             }
         }
-        AvgPointMap CreateAvgPointMap()
+        AvgPointMap CreateAvgPointMap(KDataDict kdd)
         {
             AvgPointMap apm = new AvgPointMap();
             apm.index = avgPointMapLst.Count;
             apm.parent = this;
+            apm.kdd = kdd;
             avgPointMapLst.Add(apm);
             return apm;
         }
@@ -215,7 +224,7 @@ namespace LotteryAnalyze
             avgPointMapLst.Clear();
             for ( int i = 0; i < srcData.Count; ++i )
             {
-                AvgPointMap apm = CreateAvgPointMap();
+                AvgPointMap apm = CreateAvgPointMap(srcData[i]);
 
                 int startIndex = i - cycle + 1;
                 if (startIndex < 0)
@@ -229,8 +238,6 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        //ap.avgHit += kd.HitValue;
-                        //ap.avgMiss += kd.MissValue;
                         ap.avgKValue += kd.KValue;
                     }
                 }
@@ -238,8 +245,6 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    //ap.avgHit /= totalSub;
-                    //ap.avgMiss /= totalSub;
                     ap.avgKValue /= totalSub;
                 }
             }
@@ -249,7 +254,7 @@ namespace LotteryAnalyze
             avgPointMapLst.Clear();
             for (int i = 0; i < srcData.Count; ++i)
             {
-                AvgPointMap apm = CreateAvgPointMap();
+                AvgPointMap apm = CreateAvgPointMap(srcData[i]);
 
                 int startIndex = i - cycle + 1;
                 if (startIndex < 0)
@@ -294,7 +299,7 @@ namespace LotteryAnalyze
             avgPointMapLst.Clear();
             for (int i = 0; i < srcData.Count; ++i)
             {
-                AvgPointMap apm = CreateAvgPointMap();
+                AvgPointMap apm = CreateAvgPointMap(srcData[i]);
 
                 int startIndex = i - cycle + 1;
                 if (startIndex < 0)
@@ -331,7 +336,7 @@ namespace LotteryAnalyze
             avgPointMapLst.Clear();
             for (int i = 0; i < srcData.Count; ++i)
             {
-                AvgPointMap apm = CreateAvgPointMap();
+                AvgPointMap apm = CreateAvgPointMap(srcData[i]);
 
                 int startIndex = i - cycle + 1;
                 if (startIndex < 0)
@@ -369,7 +374,7 @@ namespace LotteryAnalyze
             avgPointMapLst.Clear();
             for (int i = 0; i < srcData.Count; ++i)
             {
-                AvgPointMap apm = CreateAvgPointMap();
+                AvgPointMap apm = CreateAvgPointMap(srcData[i]);
 
                 KDataDict kdd = srcData[i];
                 AvgPointMap prevApm = null;
@@ -413,6 +418,7 @@ namespace LotteryAnalyze
     {
         public BollinDataContainer parent;
         public int index = -1;
+        public KDataDict kdd = null;
         public Dictionary<CollectDataType, BollinPoint> bpMap = new Dictionary<CollectDataType, BollinPoint>();
 
         public BollinPointMap()
@@ -444,11 +450,12 @@ namespace LotteryAnalyze
         public static bool ENABLE = true;
         public List<BollinPointMap> bollinMapLst = new List<BollinPointMap>();
 
-        BollinPointMap CreateBollinPointMap()
+        BollinPointMap CreateBollinPointMap(KDataDict kdd)
         {
             BollinPointMap bpm = new BollinPointMap();
             bpm.index = bollinMapLst.Count;
             bpm.parent = this;
+            bpm.kdd = kdd;
             bollinMapLst.Add(bpm);
             return bpm;
         }
@@ -465,7 +472,7 @@ namespace LotteryAnalyze
                 KDataDict kdd = srcData[i];
                 AvgPointMap apm = avgContainer.avgPointMapLst[i];
 
-                BollinPointMap bpm = CreateBollinPointMap();
+                BollinPointMap bpm = CreateBollinPointMap(srcData[i]);
                 for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
@@ -654,6 +661,43 @@ namespace LotteryAnalyze
         public string GetNumberIndexName()
         {
             return C_TAGS[numberIndex];
+        }
+
+        public KDataDict GetKDataDict(DataItem item)
+        {
+            if(item.idGlobal < dataLst.Count)
+            {
+                KDataDict kdd = dataLst[item.idGlobal];
+                if (kdd.endItem == kdd.startItem && kdd.endItem == item)
+                    return kdd;
+            }
+            return null;
+        }
+
+        public AvgPointMap GetAvgPointMap(int avgIndex, KDataDict kdd)
+        {
+            if(avgDataContMap.ContainsKey(avgIndex))
+            {
+                AvgDataContainer adc = avgDataContMap[avgIndex];
+                if(adc.avgPointMapLst.Count > kdd.index)
+                {
+                    AvgPointMap apm = adc.avgPointMapLst[kdd.index];
+                    if (apm.kdd == kdd)
+                        return apm;
+                }
+            }
+            return null;
+        }
+
+        public BollinPointMap GetBollinPointMap(KDataDict kdd)
+        {
+            if (bollinDataLst.bollinMapLst.Count > kdd.index)
+            {
+                BollinPointMap bpm = bollinDataLst.bollinMapLst[kdd.index];
+                if (bpm.kdd == kdd)
+                    return bpm;
+            }
+            return null;
         }
     }
 
