@@ -511,7 +511,24 @@ namespace LotteryAnalyze
             if (apm5.GetData(CollectDataType.ePath2, false).avgKValue > apm10.GetData(CollectDataType.ePath2, false).avgKValue &&
                 apm10.GetData(CollectDataType.ePath2, false).avgKValue > bpm.GetData(CollectDataType.ePath2, false).midValue)
                 isPath2OK = true;
-
+            bool isPath0GoUp = false;
+            bool isPath1GoUp = false;
+            bool isPath2GoUp = false;
+            int loop = 5;
+            DataItem startItem = item;
+            while (loop > 0 && startItem != null)
+            {
+                startItem = startItem.parent.GetPrevItem(startItem);
+                --loop;
+            }
+            if(loop == 0 && startItem != null)
+            {
+                KDataDict kddStart = kddc.GetKDataDict(startItem);
+                isPath0GoUp = kddStart.GetData(CollectDataType.ePath0, false).KValue < kdd.GetData(CollectDataType.ePath0, false).KValue;
+                isPath1GoUp = kddStart.GetData(CollectDataType.ePath1, false).KValue < kdd.GetData(CollectDataType.ePath1, false).KValue;
+                isPath2GoUp = kddStart.GetData(CollectDataType.ePath2, false).KValue < kdd.GetData(CollectDataType.ePath2, false).KValue;
+            }
+            
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
@@ -520,59 +537,98 @@ namespace LotteryAnalyze
                 return;
             else if(isPath0OK && !isPath1OK && !isPath2OK)
             {
-                bestNumIndex = numIndex;
-                bestPath = 0;
+                if (isPath0GoUp)
+                {
+                    bestNumIndex = numIndex;
+                    bestPath = 0;
+                }
             }
             else if (!isPath0OK && isPath1OK && !isPath2OK)
             {
-                bestNumIndex = numIndex;
-                bestPath = 1;
+                if (isPath1GoUp)
+                {
+                    bestNumIndex = numIndex;
+                    bestPath = 1;
+                }
             }
             else if (!isPath0OK && !isPath1OK && isPath2OK)
             {
-                bestNumIndex = numIndex;
-                bestPath = 2;
+                if (isPath2GoUp)
+                {
+                    bestNumIndex = numIndex;
+                    bestPath = 2;
+                }
             }
             else if (isPath0OK && isPath1OK && !isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+                if (su0.appearProbabilityShort > su1.appearProbabilityShort && isPath0GoUp)
                     bestPath = 0;
-                else
+                else if(su0.appearProbabilityShort < su1.appearProbabilityShort && isPath1GoUp)
                     bestPath = 1;
             }
             else if (!isPath0OK && isPath1OK && isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su1.appearProbabilityShort > su2.appearProbabilityShort)
+                if (su1.appearProbabilityShort > su2.appearProbabilityShort && isPath1GoUp)
                     bestPath = 1;
-                else
+                else if(su1.appearProbabilityShort < su2.appearProbabilityShort && isPath2GoUp)
                     bestPath = 2;
             }
             else if (isPath0OK && !isPath1OK && isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                if (su0.appearProbabilityShort > su2.appearProbabilityShort && isPath0GoUp)
                     bestPath = 0;
-                else
+                else if(su0.appearProbabilityShort < su2.appearProbabilityShort && isPath2GoUp)
                     bestPath = 2;
             }
             else
             {
                 bestNumIndex = numIndex;
-                if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                if (isPath0GoUp && !isPath1GoUp && !isPath2GoUp)
+                    bestPath = 0;
+                else if (!isPath0GoUp && isPath1GoUp && !isPath2GoUp)
+                    bestPath = 1;
+                else if (!isPath0GoUp && !isPath1GoUp && isPath2GoUp)
+                    bestPath = 2;
+                else if (isPath0GoUp && isPath1GoUp && !isPath2GoUp)
                 {
                     if (su0.appearProbabilityShort > su1.appearProbabilityShort)
                         bestPath = 0;
                     else
                         bestPath = 1;
                 }
+                else if (!isPath0GoUp && isPath1GoUp && isPath2GoUp)
+                {
+                    if (su1.appearProbabilityShort > su2.appearProbabilityShort)
+                        bestPath = 1;
+                    else
+                        bestPath = 2;
+                }
+                else if (isPath0GoUp && !isPath1GoUp && isPath2GoUp)
+                {
+                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                        bestPath = 0;
+                    else
+                        bestPath = 2;
+                }
                 else
                 {
-                    if (su2.appearProbabilityShort > su1.appearProbabilityShort)
-                        bestPath = 2;
+                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                    {
+                        if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+                            bestPath = 0;
+                        else
+                            bestPath = 1;
+                    }
                     else
-                        bestPath = 1;
+                    {
+                        if (su2.appearProbabilityShort > su1.appearProbabilityShort)
+                            bestPath = 2;
+                        else
+                            bestPath = 1;
+                    }
                 }
             }
 

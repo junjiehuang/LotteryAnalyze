@@ -1037,7 +1037,7 @@ namespace LotteryAnalyze
             for(int i = startIndex; i < endIndex; ++i)
             {
                 TradeDataBase tdb = tdm.historyTradeDatas[i];
-                float cx = (i + 1) * gridScaleW + halfGridW;
+                float cx = i * gridScaleW + halfGridW;
                 float px = cx - gridScaleW;
                 float py = tdb.moneyBeforeTrade * gridScaleH;
                 float cy = tdb.moneyAtferTrade * gridScaleH;
@@ -1051,7 +1051,7 @@ namespace LotteryAnalyze
                 g.DrawRectangle(pen, cx - halfSize, cy - halfSize, fullSize, fullSize);
                 g.DrawLine(pen, px, py, cx, cy);
 
-                if(mouseRelPos.X >= px && mouseRelPos.X <= cx && selIndex == -1)
+                if(mouseRelPos.X >= cx - halfGridW && mouseRelPos.X <= cx + halfGridW && selIndex == -1)
                 {
                     selIndex = i;
                     g.DrawLine(grayDotLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
@@ -1109,7 +1109,7 @@ namespace LotteryAnalyze
             TradeDataManager tdm = TradeDataManager.Instance;
             selectTradeIndex = -1;
             Point standMousePos = CanvasToStand(mouseRelPos);
-            int mouseHoverID = (int)(standMousePos.X / gridScaleW) - 1;
+            int mouseHoverID = (int)((standMousePos.X - gridScaleW * 0.5f) / gridScaleW);
             if (mouseHoverID >= tdm.historyTradeDatas.Count)
                 mouseHoverID = -1;
             selectTradeIndex = mouseHoverID;

@@ -665,7 +665,7 @@ namespace LotteryAnalyze
 
         public KDataDict GetKDataDict(DataItem item)
         {
-            if(item.idGlobal < dataLst.Count)
+            if(item != null && item.idGlobal < dataLst.Count)
             {
                 KDataDict kdd = dataLst[item.idGlobal];
                 if (kdd.endItem == kdd.startItem && kdd.endItem == item)
@@ -676,7 +676,7 @@ namespace LotteryAnalyze
 
         public AvgPointMap GetAvgPointMap(int avgIndex, KDataDict kdd)
         {
-            if(avgDataContMap.ContainsKey(avgIndex))
+            if(kdd != null && avgDataContMap.ContainsKey(avgIndex))
             {
                 AvgDataContainer adc = avgDataContMap[avgIndex];
                 if(adc.avgPointMapLst.Count > kdd.index)
@@ -691,7 +691,7 @@ namespace LotteryAnalyze
 
         public BollinPointMap GetBollinPointMap(KDataDict kdd)
         {
-            if (bollinDataLst.bollinMapLst.Count > kdd.index)
+            if (kdd != null && bollinDataLst.bollinMapLst.Count > kdd.index)
             {
                 BollinPointMap bpm = bollinDataLst.bollinMapLst[kdd.index];
                 if (bpm.kdd == kdd)
