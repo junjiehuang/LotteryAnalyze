@@ -491,6 +491,74 @@ namespace LotteryAnalyze
             }
         }
 
+        bool isContinuousMiss(DataItem item, int numIndex, int pathId, ref int value)
+        {
+            bool hasMiss = true;
+            value = 1;
+            int count = 3;
+            DataItem curItem = item;
+            while(curItem != null && count > 0)
+            {
+                if (curItem.path012OfEachSingle[numIndex] == pathId)
+                {
+                    hasMiss = false;
+                    value *= 2;
+                }
+                --count;
+                curItem = curItem.parent.GetPrevItem(curItem);
+            }
+            if (hasMiss)
+                value = 0;
+            return hasMiss;
+        }
+
+        void Check(StatisticUnit suA, StatisticUnit suB, int pathValueA, int pathValueB, int indexA, int indexB, ref int curBestV, ref int curBestPath, ref StatisticUnit curBeshSU)
+        {
+            if (pathValueA > pathValueB)
+            {
+                curBestPath = indexA;
+                curBestV = pathValueA;
+                curBeshSU = suA;
+            }
+            else if (pathValueA < pathValueB)
+            {
+                curBestPath = indexB;
+                curBestV = pathValueB;
+                curBeshSU = suB;
+            }
+            else
+            {
+                if (suA.appearProbabilityShort > suB.appearProbabilityShort)
+                {
+                    curBestPath = indexA;
+                    curBestV = pathValueA;
+                    curBeshSU = suA;
+                }
+                else if (suA.appearProbabilityShort < suB.appearProbabilityShort)
+                {
+                    curBestPath = indexB;
+                    curBestV = pathValueB;
+                    curBeshSU = suB;
+                }
+                else
+                {
+                    if (suA.appearProbabilityLong > suB.appearProbabilityLong)
+                    {
+                        curBestPath = indexA;
+                        curBestV = pathValueA;
+                        curBeshSU = suA;
+                    }
+                    else if (suA.appearProbabilityLong < suB.appearProbabilityLong)
+                    {
+                        curBestPath = indexB;
+                        curBestV = pathValueB;
+                        curBeshSU = suB;
+                    }
+                }
+            }
+
+        }
+
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
         {
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -499,17 +567,46 @@ namespace LotteryAnalyze
             AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
             AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            int path0Value = 1, path1Value = 1, path2Value = 1;
+            float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
+            float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
+            float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
+            float path0Avg10 = apm10.GetData(CollectDataType.ePath0, false).avgKValue;
+            float path1Avg10 = apm10.GetData(CollectDataType.ePath1, false).avgKValue;
+            float path2Avg10 = apm10.GetData(CollectDataType.ePath2, false).avgKValue;
+            float path0Bpm = bpm.GetData(CollectDataType.ePath0, false).midValue;
+            float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
+            float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             bool isPath0OK = false;
             bool isPath1OK = false;
             bool isPath2OK = false;
-            if( apm5.GetData(CollectDataType.ePath0, false).avgKValue > apm10.GetData(CollectDataType.ePath0, false).avgKValue &&
-                apm10.GetData(CollectDataType.ePath0, false).avgKValue > bpm.GetData(CollectDataType.ePath0, false).midValue)
+            int missValue0 = 1, missValue1 = 1, missValue2 = 1;
+            bool isPath0ContinueMiss = isContinuousMiss(item, numIndex, 0, ref missValue0);
+            bool isPath1ContinueMiss = isContinuousMiss(item, numIndex, 1, ref missValue1);
+            bool isPath2ContinueMiss = isContinuousMiss(item, numIndex, 2, ref missValue2);
+            path0Value *= missValue0;
+            path1Value *= missValue1;
+            path2Value *= missValue2;
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
+            StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
+            StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
+            StatisticUnit curBestSU = null;
+            /*
+            if (
+                path0Avg5 > path0Bpm &&
+                path0Avg10 > path0Bpm &&
+                !isPath0ContinueMiss)
                 isPath0OK = true;
-            if (apm5.GetData(CollectDataType.ePath1, false).avgKValue > apm10.GetData(CollectDataType.ePath1, false).avgKValue &&
-                apm10.GetData(CollectDataType.ePath1, false).avgKValue > bpm.GetData(CollectDataType.ePath1, false).midValue)
+            if (
+                path1Avg5 > path1Bpm &&
+                path1Avg10 > path1Bpm &&
+                !isPath1ContinueMiss)
                 isPath1OK = true;
-            if (apm5.GetData(CollectDataType.ePath2, false).avgKValue > apm10.GetData(CollectDataType.ePath2, false).avgKValue &&
-                apm10.GetData(CollectDataType.ePath2, false).avgKValue > bpm.GetData(CollectDataType.ePath2, false).midValue)
+            if (
+                path2Avg5 > path2Bpm &&
+                path2Avg10 > path2Bpm &&
+                !isPath2ContinueMiss)
                 isPath2OK = true;
             bool isPath0GoUp = false;
             bool isPath1GoUp = false;
@@ -528,11 +625,68 @@ namespace LotteryAnalyze
                 isPath1GoUp = kddStart.GetData(CollectDataType.ePath1, false).KValue < kdd.GetData(CollectDataType.ePath1, false).KValue;
                 isPath2GoUp = kddStart.GetData(CollectDataType.ePath2, false).KValue < kdd.GetData(CollectDataType.ePath2, false).KValue;
             }
-            
-            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-            StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
-            StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
-            StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
+            */
+            if (path0Avg5 > path0Bpm) path0Value *= 2;
+            if (path0Avg10 > path0Bpm) path0Value *= 2;
+            if (path0Avg5 > path0Avg10) path0Value *= 2;
+            if (path1Avg5 > path1Bpm) path1Value *= 2;
+            if (path1Avg10 > path1Bpm) path1Value *= 2;
+            if (path1Avg5 > path1Avg10) path1Value *= 2;
+            if (path2Avg5 > path2Bpm) path2Value *= 2;
+            if (path2Avg10 > path2Bpm) path2Value *= 2;
+            if (path2Avg5 > path2Avg10) path2Value *= 2;
+            int curBestV = 0;
+            int curBestPath = -1;
+            if(path0Value > path1Value)
+                Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+            else if(path0Value < path1Value)
+                Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+            else
+            { 
+                if(su0.appearProbabilityShort > su1.appearProbabilityShort)
+                    Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                else if(su0.appearProbabilityShort < su1.appearProbabilityShort)
+                    Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                else
+                {
+                    if (su0.appearProbabilityLong > su1.appearProbabilityLong)
+                        Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                    else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
+                        Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                }
+            }
+            if(curBestPath != -1 && curBestV > 0)
+            {
+                if(curBestV > maxV)
+                {
+                    bestPath = curBestPath;
+                    bestNumIndex = numIndex;
+                    maxV = curBestV;
+                }
+                else if(curBestV == maxV)
+                {
+                    StatisticUnitMap sumBest = item.statisticInfo.allStatisticInfo[bestNumIndex];
+                    CollectDataType curCDT = (CollectDataType)(1 << curBestPath);
+                    StatisticUnit suBest = sum.statisticUnitMap[curCDT];
+                    if(suBest.appearProbabilityShort < curBestSU.appearProbabilityShort)
+                    {
+                        bestPath = curBestPath;
+                        bestNumIndex = numIndex;
+                        maxV = curBestV;
+                    }
+                    else if(suBest.appearProbabilityShort == curBestSU.appearProbabilityShort)
+                    {
+                        if (suBest.appearProbabilityLong < curBestSU.appearProbabilityLong)
+                        {
+                            bestPath = curBestPath;
+                            bestNumIndex = numIndex;
+                            maxV = curBestV;
+                        }
+                    }
+                }
+            }
+
+            /*
             if (!isPath0OK && !isPath1OK && !isPath2OK)
                 return;
             else if(isPath0OK && !isPath1OK && !isPath2OK)
@@ -562,26 +716,68 @@ namespace LotteryAnalyze
             else if (isPath0OK && isPath1OK && !isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su0.appearProbabilityShort > su1.appearProbabilityShort && isPath0GoUp)
+                if (isPath0GoUp && !isPath1GoUp)
                     bestPath = 0;
-                else if(su0.appearProbabilityShort < su1.appearProbabilityShort && isPath1GoUp)
+                else if (!isPath0GoUp && isPath1GoUp)
                     bestPath = 1;
+                else if (isPath0GoUp && isPath1GoUp)
+                {
+                    if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+                        bestPath = 0;
+                    else if (su0.appearProbabilityShort < su1.appearProbabilityShort)
+                        bestPath = 1;
+                    else
+                    {
+                        if (su0.appearProbabilityLong > su1.appearProbabilityLong)
+                            bestPath = 0;
+                        else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
+                            bestPath = 1;
+                    }
+                }
             }
             else if (!isPath0OK && isPath1OK && isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su1.appearProbabilityShort > su2.appearProbabilityShort && isPath1GoUp)
+                if (isPath1GoUp && !isPath2GoUp)
                     bestPath = 1;
-                else if(su1.appearProbabilityShort < su2.appearProbabilityShort && isPath2GoUp)
+                else if (!isPath1GoUp && isPath2GoUp)
                     bestPath = 2;
+                else if (isPath1GoUp && isPath2GoUp)
+                {
+                    if (su1.appearProbabilityShort > su2.appearProbabilityShort)
+                        bestPath = 1;
+                    else if (su1.appearProbabilityShort < su2.appearProbabilityShort)
+                        bestPath = 2;
+                    else
+                    {
+                        if (su1.appearProbabilityLong > su2.appearProbabilityLong)
+                            bestPath = 1;
+                        else if (su1.appearProbabilityLong < su2.appearProbabilityLong)
+                            bestPath = 2;
+                    }
+                }
             }
             else if (isPath0OK && !isPath1OK && isPath2OK)
             {
                 bestNumIndex = numIndex;
-                if (su0.appearProbabilityShort > su2.appearProbabilityShort && isPath0GoUp)
+                if (isPath0GoUp && !isPath2GoUp)
                     bestPath = 0;
-                else if(su0.appearProbabilityShort < su2.appearProbabilityShort && isPath2GoUp)
+                else if (!isPath0GoUp && isPath2GoUp)
                     bestPath = 2;
+                else if (isPath1GoUp && isPath2GoUp)
+                {
+                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
+                        bestPath = 0;
+                    else if (su0.appearProbabilityShort < su2.appearProbabilityShort)
+                        bestPath = 2;
+                    else
+                    {
+                        if (su0.appearProbabilityLong > su2.appearProbabilityLong)
+                            bestPath = 0;
+                        else if (su0.appearProbabilityLong < su2.appearProbabilityLong)
+                            bestPath = 2;
+                    }
+                }
             }
             else
             {
@@ -631,6 +827,7 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            */
 
             /*
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];

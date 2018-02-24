@@ -657,6 +657,14 @@ namespace LotteryAnalyze.UI
                 TradeDataManager.Instance.simSelNumIndex = -1;
         }
 
+        private void comboBoxTradeNumIndex_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTradeSpecNumIndex.Checked)
+                TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
+            else
+                TradeDataManager.Instance.simSelNumIndex = -1;
+        }
+
         private void clearAllTradeDatasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TradeDataManager.Instance.ClearAllTradeDatas();
@@ -674,6 +682,7 @@ namespace LotteryAnalyze.UI
         {
             GlobalSimTradeWindow.Open();
         }
+
 
     }
 }

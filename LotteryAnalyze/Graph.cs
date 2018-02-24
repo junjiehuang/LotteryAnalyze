@@ -1109,7 +1109,7 @@ namespace LotteryAnalyze
             TradeDataManager tdm = TradeDataManager.Instance;
             selectTradeIndex = -1;
             Point standMousePos = CanvasToStand(mouseRelPos);
-            int mouseHoverID = (int)((standMousePos.X - gridScaleW * 0.5f) / gridScaleW);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
             if (mouseHoverID >= tdm.historyTradeDatas.Count)
                 mouseHoverID = -1;
             selectTradeIndex = mouseHoverID;

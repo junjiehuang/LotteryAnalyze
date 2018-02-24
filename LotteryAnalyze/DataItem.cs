@@ -371,7 +371,7 @@ namespace LotteryAnalyze
     // 记录某期开奖号的所有统计信息
     public class LotteryStatisticInfo
     {
-        public const int LONG_COUNT = 50;
+        public const int LONG_COUNT = 30;
         public const int SHOR_COUNT = 10;
         public const int FAST_COUNT = 5;
         public int validShortCount = 0;
