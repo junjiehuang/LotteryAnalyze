@@ -40,6 +40,9 @@
             this.textBoxCmd = new System.Windows.Forms.TextBox();
             this.progressBarCurrent = new System.Windows.Forms.ProgressBar();
             this.progressBarTotal = new System.Windows.Forms.ProgressBar();
+            this.checkBoxSpecNumIndex = new System.Windows.Forms.CheckBox();
+            this.comboBoxSpecNumIndex = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -92,7 +95,7 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(15, 91);
+            this.buttonStart.Location = new System.Drawing.Point(15, 114);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
             this.buttonStart.TabIndex = 6;
@@ -102,7 +105,7 @@
             // 
             // buttonPauseResume
             // 
-            this.buttonPauseResume.Location = new System.Drawing.Point(107, 91);
+            this.buttonPauseResume.Location = new System.Drawing.Point(107, 114);
             this.buttonPauseResume.Name = "buttonPauseResume";
             this.buttonPauseResume.Size = new System.Drawing.Size(75, 23);
             this.buttonPauseResume.TabIndex = 7;
@@ -112,7 +115,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(198, 91);
+            this.buttonStop.Location = new System.Drawing.Point(198, 114);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 8;
@@ -125,10 +128,10 @@
             this.textBoxCmd.AcceptsReturn = true;
             this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCmd.Location = new System.Drawing.Point(15, 118);
+            this.textBoxCmd.Location = new System.Drawing.Point(15, 142);
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(541, 154);
+            this.textBoxCmd.Size = new System.Drawing.Size(541, 130);
             this.textBoxCmd.TabIndex = 10;
             // 
             // progressBarCurrent
@@ -149,11 +152,43 @@
             this.progressBarTotal.Size = new System.Drawing.Size(541, 23);
             this.progressBarTotal.TabIndex = 12;
             // 
+            // checkBoxSpecNumIndex
+            // 
+            this.checkBoxSpecNumIndex.AutoSize = true;
+            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(15, 90);
+            this.checkBoxSpecNumIndex.Name = "checkBoxSpecNumIndex";
+            this.checkBoxSpecNumIndex.Size = new System.Drawing.Size(108, 16);
+            this.checkBoxSpecNumIndex.TabIndex = 13;
+            this.checkBoxSpecNumIndex.Text = "是否指定数字位";
+            this.checkBoxSpecNumIndex.UseVisualStyleBackColor = true;
+            this.checkBoxSpecNumIndex.CheckedChanged += new System.EventHandler(this.checkBoxSpecNumIndex_CheckedChanged);
+            // 
+            // comboBoxSpecNumIndex
+            // 
+            this.comboBoxSpecNumIndex.FormattingEnabled = true;
+            this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(234, 88);
+            this.comboBoxSpecNumIndex.Name = "comboBoxSpecNumIndex";
+            this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(121, 20);
+            this.comboBoxSpecNumIndex.TabIndex = 14;
+            this.comboBoxSpecNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpecNumIndex_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(175, 91);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "数字位：";
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(561, 338);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.comboBoxSpecNumIndex);
+            this.Controls.Add(this.checkBoxSpecNumIndex);
             this.Controls.Add(this.progressBarTotal);
             this.Controls.Add(this.progressBarCurrent);
             this.Controls.Add(this.textBoxCmd);
@@ -188,5 +223,8 @@
         private System.Windows.Forms.TextBox textBoxCmd;
         private System.Windows.Forms.ProgressBar progressBarCurrent;
         private System.Windows.Forms.ProgressBar progressBarTotal;
+        private System.Windows.Forms.CheckBox checkBoxSpecNumIndex;
+        private System.Windows.Forms.ComboBox comboBoxSpecNumIndex;
+        private System.Windows.Forms.Label label4;
     }
 }

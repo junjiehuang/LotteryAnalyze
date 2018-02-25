@@ -22,6 +22,10 @@ namespace LotteryAnalyze.UI
             textBoxStartMoney.Text = BatchTradeSimulator.Instance.startMoney.ToString();
             textBoxTradeCountLst.Text = TradeDataManager.Instance.GetTradeCountInfoStr();
 
+            comboBoxSpecNumIndex.DataSource = KDataDictContainer.C_TAGS;
+            comboBoxSpecNumIndex.SelectedIndex = TradeDataManager.Instance.simSelNumIndex;
+            checkBoxSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
+
             updateTimer = new Timer();
             updateTimer.Interval = 500;
             updateTimer.Tick += UpdateTimer_Tick;
@@ -67,9 +71,9 @@ namespace LotteryAnalyze.UI
                 string info = "";
                 info += ("[当前进度 - ");
                 info += (progressBarCurrent.Value);
-                info += ("] [总进度 - ");
+                info += ("%] [总进度 - ");
                 info += (progressBarTotal.Value);
-                info += ("]\r\n---------------------\r\n");
+                info += ("%]\r\n---------------------\r\n");
                 if (fItem != null && lItem != null && cItem != null)
                 {
                     info += ("[首期 - ");
@@ -80,13 +84,13 @@ namespace LotteryAnalyze.UI
                     info += (cItem.idTag);
                     info += ("]\r\n---------------------\r\n");
                 }
-                info += ("[当前金额 - ");
+                info += ("[当前金额 - （");
                 info += (BatchTradeSimulator.Instance.currentMoney);
-                info += ("] [最高金额 - ");
+                info += ("）] [最高金额 - （");
                 info += (BatchTradeSimulator.Instance.maxMoney);
-                info += ("] [最低金额 - ");
+                info += ("）] [最低金额 - （");
                 info += (BatchTradeSimulator.Instance.minMoney);
-                info += ("]\r\n---------------------\r\n");
+                info += ("）]\r\n---------------------\r\n");
                 info += ("[总次数 - ");
                 info += (BatchTradeSimulator.Instance.totalCount);
                 info += ("] [对次数 - ");
@@ -154,6 +158,22 @@ namespace LotteryAnalyze.UI
         {
             BatchTradeSimulator.Instance.Stop();
             sInst = null;
+        }
+
+        private void checkBoxSpecNumIndex_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxSpecNumIndex.Checked)
+                TradeDataManager.Instance.simSelNumIndex = comboBoxSpecNumIndex.SelectedIndex;
+            else
+                TradeDataManager.Instance.simSelNumIndex = -1;
+        }
+
+        private void comboBoxSpecNumIndex_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (checkBoxSpecNumIndex.Checked)
+                TradeDataManager.Instance.simSelNumIndex = comboBoxSpecNumIndex.SelectedIndex;
+            else
+                TradeDataManager.Instance.simSelNumIndex = -1;
         }
     }
 }
