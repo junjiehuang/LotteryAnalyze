@@ -142,7 +142,7 @@ namespace LotteryAnalyze
                     int index = NumberCmpInfo.FindIndex(nums, selNums[i]);
                     if (index != -1)
                     {
-                        tn.tradeNumbers.Add(nums[i]);
+                        tn.tradeNumbers.Add(nums[index]);
                     }
                 }
             }
