@@ -16,6 +16,7 @@ namespace LotteryAnalyze.UI
         GraphManager graphMgr = new GraphManager();
         int numberIndex = 0;        
         int curCDTIndex = 0;
+        CollectDataType curCDT = CollectDataType.eNone;
         Point upPanelMousePosLastDrag = new Point();
         Point upPanelMousePosOnMove = new Point();
         Point upPanelMousePosOnBtnDown = new Point();
@@ -54,6 +55,7 @@ namespace LotteryAnalyze.UI
             comboBoxCollectionDataType.SelectedIndex = curCDTIndex;
             comboBoxNumIndex.SelectedIndex = numberIndex;
             textBoxCycleLength.Text = GraphDataManager.KGDC.CycleLength.ToString();
+            curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
 
             comboBoxBarCollectType.DataSource = BarGraphDataContianer.S_StatisticsType_STRS;
             comboBoxCollectRange.DataSource = BarGraphDataContianer.S_StatisticsRange_STRS;
@@ -239,7 +241,7 @@ namespace LotteryAnalyze.UI
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
                 {
                     if(graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone)
-                        graphMgr.kvalueGraph.SelectAuxLine(e.Location);
+                        graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
                 }
             }
         }
@@ -285,18 +287,18 @@ namespace LotteryAnalyze.UI
                     {
                         case AuxLineType.eNone:
                             {
-                                graphMgr.kvalueGraph.SelectAuxLine(e.Location);
+                                graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
                             }
                             break;
                         case AuxLineType.eHorzLine:
                             {
-                                graphMgr.kvalueGraph.AddHorzLine(e.Location);
+                                graphMgr.kvalueGraph.AddHorzLine(e.Location, numberIndex, curCDT);
                                 graphMgr.kvalueGraph.mouseHitPts.Clear();
                             }
                             break;
                         case AuxLineType.eVertLine:
                             {
-                                graphMgr.kvalueGraph.AddVertLine(e.Location);
+                                graphMgr.kvalueGraph.AddVertLine(e.Location, numberIndex, curCDT);
                                 graphMgr.kvalueGraph.mouseHitPts.Clear();
                             }
                             break;
@@ -307,7 +309,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddSingleLine(
                                         graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1]);
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
                             }
@@ -320,7 +322,7 @@ namespace LotteryAnalyze.UI
                                     graphMgr.kvalueGraph.AddChannelLine(
                                         graphMgr.kvalueGraph.mouseHitPts[0],
                                         graphMgr.kvalueGraph.mouseHitPts[1],
-                                        graphMgr.kvalueGraph.mouseHitPts[2]);
+                                        graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
                             }
@@ -332,7 +334,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddGoldSegLine(
                                         graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1]);
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
                             }
@@ -419,6 +421,7 @@ namespace LotteryAnalyze.UI
         {
             graphMgr.kvalueGraph.autoAllign = true;
             curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
+            curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
             this.Invalidate(true);//触发Paint事件
         }
 

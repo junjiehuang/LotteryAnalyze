@@ -90,6 +90,8 @@ namespace LotteryAnalyze
     // 辅助线基类
     class AuxiliaryLine
     {
+        public int numIndex = -1;
+        public CollectDataType cdt = CollectDataType.eNone;
         public AuxLineType lineType = AuxLineType.eNone;
         public List<Point> keyPoints = new List<Point>();
         public virtual Pen GetPen() { return null; }
@@ -327,7 +329,7 @@ namespace LotteryAnalyze
                 // 画辅助线
                 if(enableAuxiliaryLine)
                 {
-                    DrawAuxLineGraph(g, winW, winH, mouseRelPos);
+                    DrawAuxLineGraph(g, winW, winH, mouseRelPos, numIndex, cdt);
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
@@ -382,7 +384,7 @@ namespace LotteryAnalyze
             }
         }
 
-        public void SelectAuxLine(Point mouseRelPos)
+        public void SelectAuxLine(Point mouseRelPos, int numIndex, CollectDataType cdt)
         {
             selAuxLine = null;
             selAuxLinePointIndex = -1;
@@ -390,19 +392,22 @@ namespace LotteryAnalyze
             for( int i = 0; i < auxiliaryLineList.Count; ++i )
             {
                 AuxiliaryLine al = auxiliaryLineList[i];
-                for(int j = 0; j < al.keyPoints.Count; ++j)
+                if (al.cdt == cdt && al.numIndex == numIndex)
                 {
-                    Point pt = al.keyPoints[j];
-                    if (pt.X - rcHalfSize > standMousePos.X ||
-                        pt.X + rcHalfSize < standMousePos.X ||
-                        pt.Y - rcHalfSize > standMousePos.Y ||
-                        pt.Y + rcHalfSize < standMousePos.Y)
-                        continue;
-                    else
+                    for (int j = 0; j < al.keyPoints.Count; ++j)
                     {
-                        selAuxLine = al;
-                        selAuxLinePointIndex = j;
-                        return;
+                        Point pt = al.keyPoints[j];
+                        if (pt.X - rcHalfSize > standMousePos.X ||
+                            pt.X + rcHalfSize < standMousePos.X ||
+                            pt.Y - rcHalfSize > standMousePos.Y ||
+                            pt.Y + rcHalfSize < standMousePos.Y)
+                            continue;
+                        else
+                        {
+                            selAuxLine = al;
+                            selAuxLinePointIndex = j;
+                            return;
+                        }
                     }
                 }
             }
@@ -420,36 +425,46 @@ namespace LotteryAnalyze
                 selAuxLinePointIndex = -1;
             }
         }
-        public void AddHorzLine( Point pt )
+        public void AddHorzLine( Point pt, int numIndex, CollectDataType cdt)
         {
             HorzLine line = new HorzLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
             line.keyPoints.Add( CanvasToStand(pt) );
             auxiliaryLineList.Add(line);
         }
-        public void AddVertLine(Point pt)
+        public void AddVertLine(Point pt, int numIndex, CollectDataType cdt)
         {
             VertLine line = new VertLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(pt));
             auxiliaryLineList.Add(line);
         }
-        public void AddSingleLine(Point p1, Point p2)
+        public void AddSingleLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
         {
             SingleLine line = new SingleLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
             auxiliaryLineList.Add(line);
         }
-        public void AddChannelLine(Point line0P1, Point line0P2, Point line1P)
+        public void AddChannelLine(Point line0P1, Point line0P2, Point line1P, int numIndex, CollectDataType cdt)
         {
             ChannelLine line = new ChannelLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(line0P1));
             line.keyPoints.Add(CanvasToStand(line0P2));
             line.keyPoints.Add(CanvasToStand(line1P));
             auxiliaryLineList.Add(line);
         }
-        public void AddGoldSegLine(Point p1, Point P2)
+        public void AddGoldSegLine(Point p1, Point P2, int numIndex, CollectDataType cdt)
         {
             GoldSegmentedLine line = new GoldSegmentedLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(P2));
             auxiliaryLineList.Add(line);
@@ -654,14 +669,15 @@ namespace LotteryAnalyze
             PushRcPts(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
         }
 
-        void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos)
+        void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt)
         {
             float rcHalfSize = 3;
             float rcSize = rcHalfSize * 2;
             for ( int i = 0; i < auxiliaryLineList.Count; ++i )
             {
                 AuxiliaryLine al = auxiliaryLineList[i];
-                DrawAuxLine(g, winW, winH, al.keyPoints, al.lineType);
+                if(al.cdt == cdt && al.numIndex == numIndex)
+                    DrawAuxLine(g, winW, winH, al.keyPoints, al.lineType);
             }
 
             if(mouseHitPts.Count > 0 && auxOperationIndex > AuxLineType.eNone)
