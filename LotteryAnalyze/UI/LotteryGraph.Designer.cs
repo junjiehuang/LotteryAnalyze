@@ -51,6 +51,7 @@
             this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
             this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -104,9 +105,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxKRuler = new System.Windows.Forms.CheckBox();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -180,7 +182,8 @@
             this.tradeToolStripMenuItem,
             this.clearAllTradeDatasToolStripMenuItem,
             this.toolStripSeparator2,
-            this.globalSimTradeToolStripMenuItem});
+            this.globalSimTradeToolStripMenuItem,
+            this.tradeCalculaterToolStripMenuItem});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "交易";
@@ -302,7 +305,7 @@
             this.cancelAddAuxLineToolStripMenuItem,
             this.modifyAuxLineColorToolStripMenuItem});
             this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
-            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 114);
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 92);
             // 
             // delSelAuxLineToolStripMenuItem
             // 
@@ -324,6 +327,13 @@
             this.cancelAddAuxLineToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.cancelAddAuxLineToolStripMenuItem.Text = "取消当前辅助线";
             this.cancelAddAuxLineToolStripMenuItem.Click += new System.EventHandler(this.cancelAddAuxLineToolStripMenuItem_Click);
+            // 
+            // modifyAuxLineColorToolStripMenuItem
+            // 
+            this.modifyAuxLineColorToolStripMenuItem.Name = "modifyAuxLineColorToolStripMenuItem";
+            this.modifyAuxLineColorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
+            this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
             // 
             // textBoxGridScaleH
             // 
@@ -376,6 +386,7 @@
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.checkBoxKRuler);
             this.tabPageKGraph.Controls.Add(this.trackBarKData);
             this.tabPageKGraph.Controls.Add(this.checkBoxShowAuxLines);
             this.tabPageKGraph.Controls.Add(this.comboBoxOperations);
@@ -400,9 +411,10 @@
             // 
             this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarKData.Location = new System.Drawing.Point(3, 266);
+            this.trackBarKData.AutoSize = false;
+            this.trackBarKData.Location = new System.Drawing.Point(5, 242);
             this.trackBarKData.Name = "trackBarKData";
-            this.trackBarKData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarKData.Size = new System.Drawing.Size(174, 36);
             this.trackBarKData.TabIndex = 16;
             this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
@@ -412,7 +424,7 @@
             this.checkBoxShowAuxLines.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxShowAuxLines.AutoSize = true;
-            this.checkBoxShowAuxLines.Location = new System.Drawing.Point(5, 98);
+            this.checkBoxShowAuxLines.Location = new System.Drawing.Point(5, 95);
             this.checkBoxShowAuxLines.Name = "checkBoxShowAuxLines";
             this.checkBoxShowAuxLines.Size = new System.Drawing.Size(60, 16);
             this.checkBoxShowAuxLines.TabIndex = 15;
@@ -447,7 +459,7 @@
             // checkBoxShowAvgLines
             // 
             this.checkBoxShowAvgLines.AutoSize = true;
-            this.checkBoxShowAvgLines.Location = new System.Drawing.Point(5, 165);
+            this.checkBoxShowAvgLines.Location = new System.Drawing.Point(5, 139);
             this.checkBoxShowAvgLines.Name = "checkBoxShowAvgLines";
             this.checkBoxShowAvgLines.Size = new System.Drawing.Size(72, 16);
             this.checkBoxShowAvgLines.TabIndex = 12;
@@ -460,7 +472,7 @@
             this.checkBoxMACD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxMACD.AutoSize = true;
-            this.checkBoxMACD.Location = new System.Drawing.Point(5, 143);
+            this.checkBoxMACD.Location = new System.Drawing.Point(105, 117);
             this.checkBoxMACD.Name = "checkBoxMACD";
             this.checkBoxMACD.Size = new System.Drawing.Size(72, 16);
             this.checkBoxMACD.TabIndex = 10;
@@ -473,7 +485,7 @@
             this.checkBoxBollinBand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxBollinBand.AutoSize = true;
-            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 120);
+            this.checkBoxBollinBand.Location = new System.Drawing.Point(5, 117);
             this.checkBoxBollinBand.Name = "checkBoxBollinBand";
             this.checkBoxBollinBand.Size = new System.Drawing.Size(72, 16);
             this.checkBoxBollinBand.TabIndex = 9;
@@ -521,7 +533,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg10);
             this.groupBoxAvgSettings.Controls.Add(this.buttonAvg5);
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
-            this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 180);
+            this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 153);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
             this.groupBoxAvgSettings.Size = new System.Drawing.Size(174, 83);
             this.groupBoxAvgSettings.TabIndex = 6;
@@ -927,6 +939,19 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // checkBoxKRuler
+            // 
+            this.checkBoxKRuler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKRuler.AutoSize = true;
+            this.checkBoxKRuler.Location = new System.Drawing.Point(105, 95);
+            this.checkBoxKRuler.Name = "checkBoxKRuler";
+            this.checkBoxKRuler.Size = new System.Drawing.Size(66, 16);
+            this.checkBoxKRuler.TabIndex = 17;
+            this.checkBoxKRuler.Text = "K线标尺";
+            this.checkBoxKRuler.UseVisualStyleBackColor = true;
+            this.checkBoxKRuler.CheckedChanged += new System.EventHandler(this.checkBoxKRuler_CheckedChanged);
+            // 
             // panelUp
             // 
             this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -954,12 +979,12 @@
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
             // 
-            // modifyAuxLineColorToolStripMenuItem
+            // tradeCalculaterToolStripMenuItem
             // 
-            this.modifyAuxLineColorToolStripMenuItem.Name = "modifyAuxLineColorToolStripMenuItem";
-            this.modifyAuxLineColorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
-            this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
+            this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
+            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
+            this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
@@ -1080,5 +1105,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyAuxLineColorToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxKRuler;
+        private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
     }
 }

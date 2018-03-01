@@ -71,6 +71,7 @@ namespace LotteryAnalyze.UI
             groupBoxAvgSettings.Enabled = graphMgr.kvalueGraph.enableAvgLines;
             checkBoxBollinBand.Checked = graphMgr.kvalueGraph.enableBollinBand;
             checkBoxMACD.Checked = graphMgr.kvalueGraph.enableMACD;
+            checkBoxKRuler.Checked = graphMgr.kvalueGraph.enableKRuler;
 
             SetUIGridWH();
             RefreshUI();
@@ -703,6 +704,11 @@ namespace LotteryAnalyze.UI
                 TradeDataManager.Instance.simSelNumIndex = -1;
         }
 
+        private void checkBoxKRuler_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.kvalueGraph.enableKRuler = checkBoxKRuler.Checked;
+        }
+
         private void comboBoxTradeNumIndex_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (checkBoxTradeSpecNumIndex.Checked)
@@ -725,9 +731,13 @@ namespace LotteryAnalyze.UI
             GlobalSimTradeWindow.Open();
         }
 
+        private void tradeCalculaterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TradeCalculater tradeCalc = new TradeCalculater();
+            tradeCalc.Show();
+        }
+
         #endregion
-
-
 
 
     }

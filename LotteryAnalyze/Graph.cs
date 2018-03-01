@@ -273,6 +273,7 @@ namespace LotteryAnalyze
         public bool enableAvgLines = true;
         public bool enableBollinBand = true;
         public bool enableMACD = true;
+        public bool enableKRuler = true;
 
         public AuxLineType auxOperationIndex = AuxLineType.eNone;
 
@@ -300,6 +301,9 @@ namespace LotteryAnalyze
         Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         Pen yellowLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 1);
+
+        Pen redDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Red, 1);
+        Pen cyanDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Cyan, 1);
 
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
@@ -383,6 +387,11 @@ namespace LotteryAnalyze
                         if (data == null)
                             continue;
                         DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos);
+                    }
+
+                    if(enableKRuler)
+                    {
+                        DrawKRuler(g, numIndex, cdt, winW, winH, mouseRelPos, kddc, missRelHeight);
                     }
 
                     // 画均线图
@@ -1036,6 +1045,47 @@ namespace LotteryAnalyze
                         g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
+            }
+        }
+
+        void DrawKRuler(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos, KDataDictContainer kddc, float missRelHeight)
+        {
+            float downRCH = gridScaleH * missRelHeight;
+            float strDist = 1.5f * gridScaleW;
+            KDataDict lastKDD = kddc.dataLst[kddc.dataLst.Count - 1];
+            KData data = lastKDD.GetData(cdt, false);
+            float standX = (data.index + 1) * gridScaleW;
+            float standY = (data.KValue) * gridScaleH;
+            standX = StandToCanvas(standX, true);
+            standY = StandToCanvas(standY, false);
+            if (standX > winW)
+                return;
+            bool isUpOK = false;
+            bool isDownOK = false;
+            int i = 0;
+
+            //for( int i = 0; i < 20; ++i )
+            while( isUpOK == false || isDownOK == false )
+            {
+                float X = standX + i * gridScaleW;
+                float upY = standY - (i + 1) * gridScaleH;
+                float downY = standY + i * downRCH;
+
+                if (isUpOK == false)
+                {
+                    g.DrawRectangle(redDotPen, X, upY, gridScaleW, gridScaleH);
+                    g.DrawString(i.ToString(), auxFont, redBrush, X + strDist, upY);
+                    if (X > winW || upY < 0)
+                        isUpOK = true;
+                }
+                if (isDownOK == false)
+                {
+                    g.DrawRectangle(cyanDotPen, X, downY, gridScaleW, downRCH);
+                    g.DrawString(i.ToString(), auxFont, cyanBrush, X + strDist, downY);
+                    if (X > winW || downY > winH)
+                        isDownOK = true;
+                }
+                ++i;
             }
         }
     }
