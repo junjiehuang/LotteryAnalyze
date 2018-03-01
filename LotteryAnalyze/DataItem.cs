@@ -840,6 +840,17 @@ namespace LotteryAnalyze
                 }
             }
         }
+
+        public OneDayDatas GetFirstOneDayDatas()
+        {
+            if(indexs.Count > 0)
+            {
+                int firstOddID = indexs[0];
+                return allDatas[firstOddID];
+            }
+            return null;
+        }
+
         /// <summary>
         /// 获取上一日的开奖数据列表
         /// </summary>

@@ -441,16 +441,30 @@ namespace LotteryAnalyze
             win.Show();
         }
 
+        int GetFileIndex( int dateID )
+        {
+            for(int i = listViewFileList.Items.Count-1; i >= 0; --i)
+            {
+                int tag = (int)listViewFileList.Items[i].Tag;
+                if (tag == dateID)
+                    return i;
+            }
+            return -1;
+        }
+
         void RefreshLatestData()
         {
             //Process p = Process.Start("AutoFetchDailyData.exe");
             //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
 
+            // 更新当天的数据
             int currentFetchCount = AutoUpdateUtil.AutoFetchTodayData();
+            // 如果数据没变化，直接返回
             if (currentFetchCount == lastFetchCount)
                 return;
             lastFetchCount = currentFetchCount;
             
+            // 如果文件列表是空的，读取数据文件列表
             if (listViewFileList.Items.Count == 0)
             {
                 DirectoryInfo di = new DirectoryInfo("..\\data");
@@ -459,12 +473,13 @@ namespace LotteryAnalyze
             }
 
             DataManager dataMgr = DataManager.GetInst();
-            //dataMgr.ClearAllDatas();
 
+            // 检查今日的数据是否已经加载过
             DateTime curDate = DateTime.Now;
             string dateTag = AutoUpdateUtil.combineDateString(curDate.Year, curDate.Month, curDate.Day);
             string filePath = AutoUpdateUtil.combineFileName(curDate.Year, curDate.Month, curDate.Day);
             ListViewItem[] res = listViewFileList.Items.Find(dateTag, true);
+            // 是新的数据文件，就加入到文件列表中
             if(res.Length == 0)
             {
                 int id = int.Parse(dateTag);
@@ -478,11 +493,15 @@ namespace LotteryAnalyze
             }
 
             int newAddItemIndex = -1, tmpAddItemIndex = -1;
-            OneDayDatas newAddODD = null, tmpAddODD = null;
+            OneDayDatas newAddODD = null, tmpAddODD = null, firstODD = dataMgr.GetFirstOneDayDatas();
 
             int lastItemID = listViewFileList.Items.Count - 1;
-            if (lastItemID > 0) --lastItemID;
-            while (lastItemID != listViewFileList.Items.Count)
+            if (lastItemID > 0)
+                --lastItemID;
+            if (firstODD != null)
+                lastItemID = GetFileIndex(firstODD.dateID);
+
+            while (lastItemID != listViewFileList.Items.Count && lastItemID >= 0)
             {
                 ListViewItem item = listViewFileList.Items[lastItemID];
                 item.Focused = true;

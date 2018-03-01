@@ -22,6 +22,7 @@ namespace LotteryAnalyze.UI
         Point upPanelMousePosOnBtnDown = new Point();
         Point downPanelMousePosOnMove = new Point();
         bool hasNewDataUpdate = false;
+        bool hasMouseMoveOnUpPanel = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
         Pen curUpdatePen;
@@ -194,21 +195,32 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
+            hasMouseMoveOnUpPanel = true;
             upPanelMousePosOnMove = e.Location;
             bool needUpdate = false;
             if (graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
                 needUpdate = true;
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
             {
+                float dx = e.Location.X - upPanelMousePosLastDrag.X;
+                float dy = e.Location.Y - upPanelMousePosLastDrag.Y;
+
                 if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
                     if (graphMgr.kvalueGraph.selAuxLine == null)
                     {
-                        float dx = e.Location.X - upPanelMousePosLastDrag.X;
-                        float dy = e.Location.Y - upPanelMousePosLastDrag.Y;
                         upPanelMousePosLastDrag = e.Location;
                         graphMgr.MoveGraph(dx, dy);
                         needUpdate = true;
+
+                        int startIndex = 0, maxIndex = 0;
+                        graphMgr.kvalueGraph.GetViewItemIndexInfo(ref startIndex, ref maxIndex);
+                        if (startIndex > trackBarKData.Maximum)
+                            trackBarKData.Value = trackBarKData.Maximum;
+                        else if (startIndex < trackBarKData.Minimum)
+                            trackBarKData.Value = trackBarKData.Minimum;
+                        else
+                            trackBarKData.Value = startIndex;
                     }
                     else
                     {
@@ -217,11 +229,18 @@ namespace LotteryAnalyze.UI
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
-                    float dx = e.Location.X - upPanelMousePosLastDrag.X;
-                    float dy = e.Location.Y - upPanelMousePosLastDrag.Y;
                     upPanelMousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
+
+                    int startIndex = 0, maxIndex = 0;
+                    graphMgr.tradeGraph.GetViewItemIndexInfo(ref startIndex, ref maxIndex);
+                    if (startIndex > trackBarTradeData.Maximum)
+                        trackBarTradeData.Value = trackBarTradeData.Maximum;
+                    else if (startIndex < trackBarTradeData.Minimum)
+                        trackBarTradeData.Value = trackBarTradeData.Minimum;
+                    else
+                        trackBarTradeData.Value = startIndex;
                 }
             }
             if (needUpdate)
@@ -230,6 +249,7 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseDown(object sender, MouseEventArgs e)
         {
+            hasMouseMoveOnUpPanel = false;
             if (hasNewDataUpdate)
                 hasNewDataUpdate = false;
             upPanelMousePosLastDrag = e.Location;
@@ -240,10 +260,11 @@ namespace LotteryAnalyze.UI
                 if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
                 {
-                    if(graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone)
+                    //if(graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone)
                         graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
                 }
             }
+            this.Invalidate(true);//触发Paint事件
         }
 
         private void panelUp_MouseUp(object sender, MouseEventArgs e)
@@ -276,69 +297,73 @@ namespace LotteryAnalyze.UI
 
                         graphMgr.tradeGraph.UnselectTradeData();
                     }
-                    graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+                    graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true);
                     if (kdataID != -1)
                         FormMain.Instance.SelectDataItem(kdataID);
                 }
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
                 {
-                    switch (graphMgr.kvalueGraph.auxOperationIndex)
+                    graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
+                    if (graphMgr.kvalueGraph.selAuxLine == null && hasMouseMoveOnUpPanel == false)
                     {
-                        case AuxLineType.eNone:
-                            {
-                                graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
-                            }
-                            break;
-                        case AuxLineType.eHorzLine:
-                            {
-                                graphMgr.kvalueGraph.AddHorzLine(e.Location, numberIndex, curCDT);
-                                graphMgr.kvalueGraph.mouseHitPts.Clear();
-                            }
-                            break;
-                        case AuxLineType.eVertLine:
-                            {
-                                graphMgr.kvalueGraph.AddVertLine(e.Location, numberIndex, curCDT);
-                                graphMgr.kvalueGraph.mouseHitPts.Clear();
-                            }
-                            break;
-                        case AuxLineType.eSingleLine:
-                            {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                        switch (graphMgr.kvalueGraph.auxOperationIndex)
+                        {
+                            case AuxLineType.eNone:
                                 {
-                                    graphMgr.kvalueGraph.AddSingleLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+
+                                }
+                                break;
+                            case AuxLineType.eHorzLine:
+                                {
+                                    graphMgr.kvalueGraph.AddHorzLine(e.Location, numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
-                            }
-                            break;
-                        case AuxLineType.eChannelLine:
-                            {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
+                                break;
+                            case AuxLineType.eVertLine:
                                 {
-                                    graphMgr.kvalueGraph.AddChannelLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1],
-                                        graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.AddVertLine(e.Location, numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
-                            }
-                            break;
-                        case AuxLineType.eGoldSegmentedLine:
-                            {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                break;
+                            case AuxLineType.eSingleLine:
                                 {
-                                    graphMgr.kvalueGraph.AddGoldSegLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                    {
+                                        graphMgr.kvalueGraph.AddSingleLine(
+                                            graphMgr.kvalueGraph.mouseHitPts[0],
+                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                            case AuxLineType.eChannelLine:
+                                {
+                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
+                                    {
+                                        graphMgr.kvalueGraph.AddChannelLine(
+                                            graphMgr.kvalueGraph.mouseHitPts[0],
+                                            graphMgr.kvalueGraph.mouseHitPts[1],
+                                            graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
+                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    }
+                                }
+                                break;
+                            case AuxLineType.eGoldSegmentedLine:
+                                {
+                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                    {
+                                        graphMgr.kvalueGraph.AddGoldSegLine(
+                                            graphMgr.kvalueGraph.mouseHitPts[0],
+                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    }
+                                }
+                                break;
+                        }
                     }
                 }
             }
@@ -346,6 +371,7 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.mouseHitPts.Clear();
             }
+            this.Invalidate(true);//触发Paint事件
         }
         private void panelDown_MouseMove(object sender, MouseEventArgs e)
         {
@@ -378,14 +404,14 @@ namespace LotteryAnalyze.UI
 
         private void trackBarKData_Scroll(object sender, EventArgs e)
         {
-            graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+            graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
             this.Invalidate(true);//触发Paint事件
         }
 
         private void trackBarTradeData_Scroll(object sender, EventArgs e)
         {
             TradeDataManager tdm = TradeDataManager.Instance;
-            graphMgr.tradeGraph.ScrollToData(trackBarTradeData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height);
+            graphMgr.tradeGraph.ScrollToData(trackBarTradeData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
             this.Invalidate(true);//触发Paint事件
         }
 
@@ -606,6 +632,23 @@ namespace LotteryAnalyze.UI
         {
             graphMgr.kvalueGraph.mouseHitPts.Clear();
         }
+        private void modifyAuxLineColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                if (graphMgr.kvalueGraph.selAuxLine != null)
+                {
+                    ColorDialog dlg = new ColorDialog();
+                    dlg.Color = graphMgr.kvalueGraph.selAuxLine.GetSolidPen().Color;
+
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        Color GetColor = dlg.Color;
+                        graphMgr.kvalueGraph.selAuxLine.SetColor(GetColor);
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -677,14 +720,14 @@ namespace LotteryAnalyze.UI
         {
             TradeDataManager.Instance.startMoney = float.Parse(textBoxStartMoney.Text);
         }
-
-
-        #endregion
-
         private void globalSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GlobalSimTradeWindow.Open();
         }
+
+        #endregion
+
+
 
 
     }

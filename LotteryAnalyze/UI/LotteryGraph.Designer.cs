@@ -106,6 +106,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -298,9 +299,10 @@
             this.contextMenuStripRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.delSelAuxLineToolStripMenuItem,
             this.delAllLinesToolStripMenuItem,
-            this.cancelAddAuxLineToolStripMenuItem});
+            this.cancelAddAuxLineToolStripMenuItem,
+            this.modifyAuxLineColorToolStripMenuItem});
             this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
-            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 70);
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 114);
             // 
             // delSelAuxLineToolStripMenuItem
             // 
@@ -952,6 +954,13 @@
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
             // 
+            // modifyAuxLineColorToolStripMenuItem
+            // 
+            this.modifyAuxLineColorToolStripMenuItem.Name = "modifyAuxLineColorToolStripMenuItem";
+            this.modifyAuxLineColorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
+            this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1070,5 +1079,6 @@
         private System.Windows.Forms.TrackBar trackBarTradeData;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyAuxLineColorToolStripMenuItem;
     }
 }

@@ -22,10 +22,15 @@ namespace LotteryAnalyze
     public enum AuxLineType
     {
         eNone,
+        // 水平线
         eHorzLine,
+        // 垂直线
         eVertLine,
+        // 任意直线
         eSingleLine,
+        // 通道线
         eChannelLine,
+        // 黄金分割线
         eGoldSegmentedLine,
     }
 
@@ -83,7 +88,7 @@ namespace LotteryAnalyze
 
         }
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
-        public virtual void ScrollToData(int index,int winW, int winH) { }
+        public virtual void ScrollToData(int index,int winW, int winH, bool needSelect) { }
     }
 
     #region Aux Lines
@@ -94,69 +99,158 @@ namespace LotteryAnalyze
         public CollectDataType cdt = CollectDataType.eNone;
         public AuxLineType lineType = AuxLineType.eNone;
         public List<Point> keyPoints = new List<Point>();
-        public virtual Pen GetPen() { return null; }
+        protected Pen solidPen = null;
+        protected Pen dotPen = null;
+
+        public virtual Pen GetSolidPen() { return null; }
+        public virtual Pen GetDotPen() { return null; }
+        public virtual void SetColor(Color col) { }
     }
     // 水平线
     class HorzLine : AuxiliaryLine
     {
-        public static Color lineColor = Color.Aqua;
-        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public static Color sOriLineColor = Color.Aqua;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
         public HorzLine()
         {
             lineType = AuxLineType.eHorzLine;
         }
-        public override Pen GetPen() { return solidPen; }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
     }
     // 垂直线
     class VertLine : AuxiliaryLine
     {
-        public static Color lineColor = Color.Azure;
-        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public static Color sOriLineColor = Color.Azure;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
         public VertLine()
         {
             lineType = AuxLineType.eVertLine;
         }
-        public override Pen GetPen() { return solidPen; }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
     }
     // 通道直线
     class SingleLine : AuxiliaryLine
     {
-        public static Color lineColor = Color.Blue;
-        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
+        public static Color sOriLineColor = Color.Blue;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
+
         public SingleLine()
         {
             lineType = AuxLineType.eSingleLine;
         }
-        public override Pen GetPen() { return solidPen; }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
     }
 
     // 通道线
     class ChannelLine : AuxiliaryLine
     {
-        public static Color lineColor = Color.Pink;
-        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
-        public static Pen dotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, lineColor, 1);
+        public static Color sOriLineColor = Color.Pink;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
         public ChannelLine()
         {
             lineType = AuxLineType.eChannelLine;
         }
-        public override Pen GetPen() { return solidPen; }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
     }
     // 黄金分割线
     class GoldSegmentedLine : AuxiliaryLine
     {
-        public static Color lineColor = Color.Yellow;
-        public static Pen solidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, lineColor, 2);
-        public static Pen dotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, lineColor, 1);
+        public static Color sOriLineColor = Color.Yellow;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
         public GoldSegmentedLine()
         {
             lineType = AuxLineType.eGoldSegmentedLine;
         }
-        public override Pen GetPen() { return solidPen; }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
     }
     #endregion
 
@@ -247,6 +341,7 @@ namespace LotteryAnalyze
             canvasOffset.X = 0;
             canvasOffset.Y = 0;
         }
+
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
             BeforeDraw();
@@ -264,7 +359,7 @@ namespace LotteryAnalyze
                 {
                     int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
                     if (startIndex < 0)
-                        startIndex = 1;
+                        startIndex = 0;
                     int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                     if (endIndex > kddc.dataLst.Count)
                         endIndex = kddc.dataLst.Count;
@@ -369,11 +464,22 @@ namespace LotteryAnalyze
             }
             EndDraw(g);
         }
-        public override void ScrollToData(int index, int winW, int winH)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect)
         {
-            selectKDataIndex = index;
+            if (needSelect)
+                selectKDataIndex = index;
+            else
+                selectKDataIndex = -1;
             canvasOffset.X = index * gridScaleW;
             autoAllign = true;
+        }
+
+        public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
+        {
+            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            maxIndex = GraphDataManager.KGDC.DataLength();
         }
 
         public void UpdateSelectAuxLinePoint(Point mouseRelPos)
@@ -677,7 +783,7 @@ namespace LotteryAnalyze
             {
                 AuxiliaryLine al = auxiliaryLineList[i];
                 if(al.cdt == cdt && al.numIndex == numIndex)
-                    DrawAuxLine(g, winW, winH, al.keyPoints, al.lineType);
+                    DrawAuxLine(g, winW, winH, al);
             }
 
             if(mouseHitPts.Count > 0 && auxOperationIndex > AuxLineType.eNone)
@@ -688,7 +794,7 @@ namespace LotteryAnalyze
             if(selAuxLine!=null && selAuxLinePointIndex != -1)
             {
                 Point pt = StandToCanvas(selAuxLine.keyPoints[selAuxLinePointIndex]);
-                g.DrawRectangle(selAuxLine.GetPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+                g.DrawRectangle(selAuxLine.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
         }
 
@@ -703,7 +809,7 @@ namespace LotteryAnalyze
                         sy = mouseHitPts[0].Y;
                         if (sx == mouseRelPos.X)
                         {
-                            g.DrawLine(SingleLine.solidPen, sx, 0, sx, winH);
+                            g.DrawLine(SingleLine.sOriSolidPen, sx, 0, sx, winH);
                         }
                         else
                         {
@@ -712,9 +818,9 @@ namespace LotteryAnalyze
                             float k = (ey - sy) / (ex - sx);
                             float fyl = sy - sx * k;
                             float fyr = sy + (winW - sx) * k;
-                            g.DrawLine(SingleLine.solidPen, 0, fyl, winW, fyr);
+                            g.DrawLine(SingleLine.sOriSolidPen, 0, fyl, winW, fyr);
                         }
-                        g.DrawRectangle(SingleLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(SingleLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                     }
                     break;
                 case AuxLineType.eChannelLine:
@@ -722,53 +828,53 @@ namespace LotteryAnalyze
                         float sx, sy, ex, ey;
                         sx = mouseHitPts[0].X;
                         sy = mouseHitPts[0].Y;
-                        g.DrawRectangle(ChannelLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(ChannelLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                         if (mouseHitPts.Count == 1)
                         {
                             ex = mouseRelPos.X;
                             ey = mouseRelPos.Y;
                             if (sx == ex)
                             {
-                                g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
+                                g.DrawLine(ChannelLine.sOriSolidPen, sx, 0, sx, winH);
                             }
                             else
                             {
                                 float k = (ey - sy) / (ex - sx);
                                 float fyl = sy - sx * k;
                                 float fyr = sy + (winW - sx) * k;
-                                g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
+                                g.DrawLine(ChannelLine.sOriSolidPen, 0, fyl, winW, fyr);
                             }
                         }
                         else if(mouseHitPts.Count == 2)
                         {
                             ex = mouseHitPts[1].X;
                             ey = mouseHitPts[1].Y;
-                            g.DrawRectangle(ChannelLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                            g.DrawRectangle(ChannelLine.sOriSolidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                             if (sx == ex)
                             {
-                                g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
+                                g.DrawLine(ChannelLine.sOriSolidPen, sx, 0, sx, winH);
                             }
                             else
                             {
                                 float k = (ey - sy) / (ex - sx);
                                 float fyl = sy - sx * k;
                                 float fyr = sy + (winW - sx) * k;
-                                g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
+                                g.DrawLine(ChannelLine.sOriSolidPen, 0, fyl, winW, fyr);
                             }
                             float mx = mouseRelPos.X;
                             float my = mouseRelPos.Y;
                             if (sx == ex)
                             {
-                                g.DrawLine(ChannelLine.solidPen, mx, 0, mx, winH);
+                                g.DrawLine(ChannelLine.sOriSolidPen, mx, 0, mx, winH);
                             }
                             else
                             {
                                 float k = (ey - sy) / (ex - sx);
                                 float oyl = my - mx * k;
                                 float oyr = my + (winW - mx) * k;
-                                g.DrawLine(ChannelLine.solidPen, 0, oyl, winW, oyr);
+                                g.DrawLine(ChannelLine.sOriSolidPen, 0, oyl, winW, oyr);
                             }
-                            g.DrawLine(ChannelLine.dotPen, sx, sy, mx, my);
+                            g.DrawLine(ChannelLine.sOriDotPen, sx, sy, mx, my);
                         }
                     }
                     break;
@@ -778,37 +884,51 @@ namespace LotteryAnalyze
                         float sy = mouseHitPts[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
-                        float y382 = (ey - sy) * 0.382f + sy;
-                        float y618 = (ey - sy) * 0.618f + sy;
-                        float y1382 = (ey - sy) * 1.382f + sy;
-                        float y1618 = (ey - sy) * 1.618f + sy;
-                        float y2 = (ey - sy) * 2.0f + sy;
-                        float y2618 = (ey - sy) * 2.618f + sy;
-                        g.DrawLine(GoldSegmentedLine.solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
-                        g.DrawLine(GoldSegmentedLine.solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, sx, sy, ex, ey);
-                        g.DrawRectangle(GoldSegmentedLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+
+                        //float y382 = (ey - sy) * 0.382f + sy;
+                        //float y618 = (ey - sy) * 0.618f + sy;
+                        //float y1382 = (ey - sy) * 1.382f + sy;
+                        //float y1618 = (ey - sy) * 1.618f + sy;
+                        //float y2 = (ey - sy) * 2.0f + sy;
+                        //float y2618 = (ey - sy) * 2.618f + sy;
+                        for(int i = 0; i < C_GOLDEN_VALUE.Length; ++i)
+                        {
+                            float v = C_GOLDEN_VALUE[i];
+                            float yv = (ey - sy) * v + sy;
+                            g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, yv, winW, yv); g.DrawString(v.ToString(), auxFont, greenBrush, 0, yv);
+                        }
+                        g.DrawLine(GoldSegmentedLine.sOriSolidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
+                        g.DrawLine(GoldSegmentedLine.sOriSolidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
+
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
+                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
+                        g.DrawLine(GoldSegmentedLine.sOriDotPen, sx, sy, ex, ey);
+                        g.DrawRectangle(GoldSegmentedLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                     }
                     break;
             }
         }
 
-        void DrawAuxLine(Graphics g, int winW, int winH, List<Point> pts, AuxLineType lineType)
+        static readonly float[] C_GOLDEN_VALUE = new float[]  { 0.382f, 0.618f, 1.382f, 1.618f, 2f, 2.382f, 2.618f, 4, 4.382f, 4.618f, 8, };
+
+        void DrawAuxLine(Graphics g, int winW, int winH, AuxiliaryLine line)//, List<Point> pts, AuxLineType lineType)
         {
-            switch (lineType)
+            List<Point> pts = line.keyPoints;
+            Pen solidPen = line.GetSolidPen();
+            Pen dotPen = line.GetDotPen();
+
+            switch (line.lineType)
             {
                 case AuxLineType.eHorzLine:
                     {
                         float x = StandToCanvas(pts[0].X, true);
                         float y = StandToCanvas(pts[0].Y, false);
-                        g.DrawLine(HorzLine.solidPen, 0, y, winW, y);
-                        g.DrawRectangle(HorzLine.solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
+                        g.DrawLine(solidPen, 0, y, winW, y);
+                        g.DrawRectangle(solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
                     }
                     break;
 
@@ -816,8 +936,8 @@ namespace LotteryAnalyze
                     {
                         float x = StandToCanvas(pts[0].X, true);
                         float y = StandToCanvas(pts[0].Y, false);
-                        g.DrawLine(VertLine.solidPen, x, 0, x, winH);
-                        g.DrawRectangle(VertLine.solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
+                        g.DrawLine(solidPen, x, 0, x, winH);
+                        g.DrawRectangle(solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
                     }
                     break;
 
@@ -830,7 +950,7 @@ namespace LotteryAnalyze
                             sy = StandToCanvas(pts[0].Y, false);
                             ex = sx;
                             ey = StandToCanvas(pts[1].Y, false);
-                            g.DrawLine(SingleLine.solidPen, sx, 0, sx, winH);
+                            g.DrawLine(solidPen, sx, 0, sx, winH);
                         }
                         else
                         {
@@ -841,10 +961,10 @@ namespace LotteryAnalyze
                             float k = (ey - sy) / (ex - sx);
                             float fyl = sy - sx * k;
                             float fyr = sy + (winW - sx) * k;
-                            g.DrawLine(SingleLine.solidPen, 0, fyl, winW, fyr);
+                            g.DrawLine(solidPen, 0, fyl, winW, fyr);
                         }
-                        g.DrawRectangle(SingleLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
-                        g.DrawRectangle(SingleLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
 
@@ -859,8 +979,8 @@ namespace LotteryAnalyze
                             ey = StandToCanvas(pts[1].Y, false);
                             ox = StandToCanvas(pts[2].X, true);
                             oy = StandToCanvas(pts[2].Y, false);
-                            g.DrawLine(ChannelLine.solidPen, sx, 0, sx, winH);
-                            g.DrawLine(ChannelLine.solidPen, ox, 0, ox, winH);
+                            g.DrawLine(solidPen, sx, 0, sx, winH);
+                            g.DrawLine(solidPen, ox, 0, ox, winH);
                         }
                         else
                         {
@@ -875,13 +995,13 @@ namespace LotteryAnalyze
                             float fyr = sy + (winW - sx) * k;
                             float oyl = oy - ox * k;
                             float oyr = oy + (winW - ox) * k;
-                            g.DrawLine(ChannelLine.solidPen, 0, fyl, winW, fyr);
-                            g.DrawLine(ChannelLine.solidPen, 0, oyl, winW, oyr);
+                            g.DrawLine(solidPen, 0, fyl, winW, fyr);
+                            g.DrawLine(solidPen, 0, oyl, winW, oyr);
                         }
-                        g.DrawLine(ChannelLine.dotPen, sx, sy, ox, oy);
-                        g.DrawRectangle(ChannelLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
-                        g.DrawRectangle(ChannelLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
-                        g.DrawRectangle(ChannelLine.solidPen, ox - rcHalfSize, oy - rcHalfSize, rcSize, rcSize);
+                        g.DrawLine(dotPen, sx, sy, ox, oy);
+                        g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, ox - rcHalfSize, oy - rcHalfSize, rcSize, rcSize);
                     }
                     break;
 
@@ -891,23 +1011,29 @@ namespace LotteryAnalyze
                         float sy = StandToCanvas(pts[0].Y, false);
                         float ex = StandToCanvas(pts[1].X, true);
                         float ey = StandToCanvas(pts[1].Y, false);
-                        float y382 = (ey - sy) * 0.382f + sy;
-                        float y618 = (ey - sy) * 0.618f + sy;
-                        float y1382 = (ey - sy) * 1.382f + sy;
-                        float y1618 = (ey - sy) * 1.618f + sy;
-                        float y2 = (ey - sy) * 2.0f + sy;
-                        float y2618 = (ey - sy) * 2.618f + sy;
-                        g.DrawLine(GoldSegmentedLine.solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
-                        g.DrawLine(GoldSegmentedLine.solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
-                        g.DrawLine(GoldSegmentedLine.dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
-                        g.DrawLine(GoldSegmentedLine.dotPen, sx, sy, ex, ey);
-                        g.DrawRectangle(GoldSegmentedLine.solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
-                        g.DrawRectangle(GoldSegmentedLine.solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                        for( int i = 0; i < C_GOLDEN_VALUE.Length; ++i )
+                        {
+                            float v = C_GOLDEN_VALUE[i];
+                            float yv = (ey - sy) * v + sy;
+                            g.DrawLine(dotPen, 0, yv, winW, yv); g.DrawString(v.ToString(), auxFont, greenBrush, 0, yv);
+                        }
+                        //float y382 = (ey - sy) * 0.382f + sy;
+                        //float y618 = (ey - sy) * 0.618f + sy;
+                        //float y1382 = (ey - sy) * 1.382f + sy;
+                        //float y1618 = (ey - sy) * 1.618f + sy;
+                        //float y2 = (ey - sy) * 2.0f + sy;
+                        //float y2618 = (ey - sy) * 2.618f + sy;
+                        g.DrawLine(solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
+                        g.DrawLine(solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
+                        //g.DrawLine(dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
+                        //g.DrawLine(dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
+                        //g.DrawLine(dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
+                        //g.DrawLine(dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
+                        //g.DrawLine(dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
+                        //g.DrawLine(dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
+                        g.DrawLine(dotPen, sx, sy, ex, ey);
+                        g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
             }
@@ -1113,9 +1239,21 @@ namespace LotteryAnalyze
             }
         }
 
-        public override void ScrollToData(int index, int winW, int winH)
+        public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
         {
-            selectTradeIndex = index;
+            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+
+            maxIndex = TradeDataManager.Instance.historyTradeDatas.Count;
+        }
+
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect)
+        {
+            if (needSelect)
+                selectTradeIndex = index;
+            else
+                selectTradeIndex = -1;
             canvasOffset.X = (selectTradeIndex + 1) * gridScaleW;
             autoAllign = true;
         }
