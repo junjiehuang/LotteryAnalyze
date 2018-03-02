@@ -733,8 +733,7 @@ namespace LotteryAnalyze.UI
 
         private void tradeCalculaterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TradeCalculater tradeCalc = new TradeCalculater();
-            tradeCalc.Show();
+            LotteryAnalyze.UI.TradeCalculater.Open();
         }
 
         #endregion

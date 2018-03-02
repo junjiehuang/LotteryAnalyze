@@ -321,7 +321,7 @@ namespace LotteryAnalyze
         public GraphKCurve()
         {
             selDataFont = new Font(FontFamily.GenericSerif, 14);
-            auxFont = new Font(FontFamily.GenericMonospace, 12);
+            auxFont = new Font(FontFamily.GenericMonospace, 10);
         }
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)

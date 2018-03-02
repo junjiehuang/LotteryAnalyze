@@ -535,5 +535,10 @@ namespace LotteryAnalyze
         {
             UI.GlobalSimTradeWindow.Open();
         }
+
+        private void tradeCalculaterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LotteryAnalyze.UI.TradeCalculater.Open();
+        }
     }
 }

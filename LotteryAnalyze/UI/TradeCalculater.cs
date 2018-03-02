@@ -14,10 +14,18 @@ namespace LotteryAnalyze.UI
         float reward = 9.8f;
         float cost = 1;
         int numCount = 4;
+        static TradeCalculater sInst;
 
-
-        public TradeCalculater()
+        public static void Open()
         {
+            if(sInst == null)
+                sInst = new TradeCalculater();
+            sInst.Show();
+        }
+
+        TradeCalculater()
+        {
+            sInst = this;
             InitializeComponent();
 
             textBoxCost.Text = cost.ToString();
@@ -52,6 +60,11 @@ namespace LotteryAnalyze.UI
                 ++validIndex;
             }
             textBoxResult.Text = info;
+        }
+
+        private void TradeCalculater_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            sInst = null;
         }
     }
 }

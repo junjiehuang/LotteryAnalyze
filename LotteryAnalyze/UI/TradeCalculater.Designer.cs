@@ -157,6 +157,7 @@
             this.Controls.Add(this.label1);
             this.Name = "TradeCalculater";
             this.Text = "TradeCalculater";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TradeCalculater_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

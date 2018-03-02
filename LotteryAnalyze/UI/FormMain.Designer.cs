@@ -74,6 +74,8 @@
             this.clearSimPoolDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.openGraphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewColSelector = new System.Windows.Forms.DataGridView();
             this.ColumnId = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -108,8 +110,7 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -369,9 +370,10 @@
             this.toolStripSeparator2,
             this.openGraphToolStripMenuItem,
             this.toolStripSeparator4,
-            this.globalSimTradeToolStripMenuItem});
+            this.globalSimTradeToolStripMenuItem,
+            this.tradeCalculaterToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(197, 248);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(197, 270);
             // 
             // getLatestDataToolStripMenuItem
             // 
@@ -443,6 +445,18 @@
             this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.openGraphToolStripMenuItem.Text = "打开走势图";
             this.openGraphToolStripMenuItem.Click += new System.EventHandler(this.openGraphToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(193, 6);
+            // 
+            // globalSimTradeToolStripMenuItem
+            // 
+            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
+            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
             // 
             // splitContainer5
             // 
@@ -905,17 +919,12 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // toolStripSeparator4
+            // tradeCalculaterToolStripMenuItem
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(193, 6);
-            // 
-            // globalSimTradeToolStripMenuItem
-            // 
-            this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
-            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
-            this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
+            this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
+            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
+            this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -1031,6 +1040,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
     }
 }
 
