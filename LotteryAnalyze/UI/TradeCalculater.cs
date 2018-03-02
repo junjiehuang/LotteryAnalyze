@@ -39,14 +39,17 @@ namespace LotteryAnalyze.UI
                 return;
             string[] slus = textBoxTradeSlu.Text.Split(',');
             string info = "";
+            int validIndex = 1;
             for( int i = 0; i < slus.Length; ++i )
             {
+                if (string.IsNullOrEmpty(slus[i]))
+                    continue;
                 int slu = int.Parse(slus[i]);
                 totalCost += slu * numCount * cost;
                 totalReward = slu * reward;
                 profit = totalReward - totalCost;
-                int index = i + 1;
-                info += "[" + index + "]\t(成本: " + totalCost.ToString("f2") + ")\t(奖金: " + totalReward.ToString("f2") + ")\t(获利: " + profit.ToString("f2") + ")\r\n";
+                info += "[" + validIndex + "] "+ slus[i] + "\t(成本: " + totalCost.ToString("f2") + ")\t(奖金: " + totalReward.ToString("f2") + ")\t(获利: " + profit.ToString("f2") + ")\r\n";
+                ++validIndex;
             }
             textBoxResult.Text = info;
         }
