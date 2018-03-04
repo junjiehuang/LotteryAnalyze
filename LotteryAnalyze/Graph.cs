@@ -32,6 +32,8 @@ namespace LotteryAnalyze
         eChannelLine,
         // 黄金分割线
         eGoldSegmentedLine,
+        // 测试圆
+        eCircleLine,
     }
 
     // 图表基类
@@ -193,7 +195,6 @@ namespace LotteryAnalyze
             GetDotPen().Color = col;
         }
     }
-
     // 通道线
     class ChannelLine : AuxiliaryLine
     {
@@ -252,6 +253,44 @@ namespace LotteryAnalyze
             GetDotPen().Color = col;
         }
     }
+    class CircleLine : AuxiliaryLine
+    {
+        public float x, y, size;
+        public static Color sOriLineColor = Color.White;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
+        public CircleLine()
+        {
+            lineType = AuxLineType.eCircleLine;
+        }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+                solidPen = sOriSolidPen.Clone() as Pen;
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+                dotPen = sOriDotPen.Clone() as Pen;
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
+        public void CalcRect()
+        {
+            float dy = keyPoints[1].Y - keyPoints[0].Y;
+            float dx = keyPoints[1].X - keyPoints[0].X;
+            float radius = (float)Math.Sqrt(dy * dy + dx * dx);
+            x = keyPoints[0].X - radius;
+            y = keyPoints[0].Y + radius;
+            size = 2 * radius;
+        }
+
+    }
     #endregion
 
     // K线图
@@ -267,6 +306,7 @@ namespace LotteryAnalyze
             "画直线",
             "画通道线",
             "画黄金分割线",
+            "画圆",
         };
 
         public bool enableAuxiliaryLine = true;
@@ -286,6 +326,7 @@ namespace LotteryAnalyze
 
         Font selDataFont;
         Font auxFont;
+        Font rulerFont;
         PointF prevPt = new PointF();
         bool findPrevPt = false;
 
@@ -320,8 +361,9 @@ namespace LotteryAnalyze
 
         public GraphKCurve()
         {
-            selDataFont = new Font(FontFamily.GenericSerif, 14);
+            selDataFont = new Font(FontFamily.GenericSerif, 12);
             auxFont = new Font(FontFamily.GenericMonospace, 10);
+            rulerFont = new Font(FontFamily.GenericMonospace, 9);
         }
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -496,6 +538,10 @@ namespace LotteryAnalyze
             if(selAuxLine != null && selAuxLinePointIndex >= 0 && selAuxLinePointIndex < selAuxLine.keyPoints.Count)
             {
                 selAuxLine.keyPoints[selAuxLinePointIndex] = CanvasToStand(mouseRelPos);
+                if(selAuxLine.lineType == AuxLineType.eCircleLine)
+                {
+                    (selAuxLine as CircleLine).CalcRect();
+                }
             }
         }
 
@@ -582,6 +628,16 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(P2));
+            auxiliaryLineList.Add(line);
+        }
+        public void AddCircleLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        {
+            CircleLine line = new CircleLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
+            line.keyPoints.Add(CanvasToStand(p1));
+            line.keyPoints.Add(CanvasToStand(p2));
+            line.CalcRect();
             auxiliaryLineList.Add(line);
         }
 
@@ -690,7 +746,7 @@ namespace LotteryAnalyze
                 g.DrawLine(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 //PushLinePts(grayDotLinePen, standX, 0, standX, winH);
                 //PushLinePts(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
-                g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 0, 0);
+                g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
             }
 
             if(data.index == selectKDataIndex)
@@ -893,13 +949,6 @@ namespace LotteryAnalyze
                         float sy = mouseHitPts[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
-
-                        //float y382 = (ey - sy) * 0.382f + sy;
-                        //float y618 = (ey - sy) * 0.618f + sy;
-                        //float y1382 = (ey - sy) * 1.382f + sy;
-                        //float y1618 = (ey - sy) * 1.618f + sy;
-                        //float y2 = (ey - sy) * 2.0f + sy;
-                        //float y2618 = (ey - sy) * 2.618f + sy;
                         for(int i = 0; i < C_GOLDEN_VALUE.Length; ++i)
                         {
                             float v = C_GOLDEN_VALUE[i];
@@ -908,15 +957,22 @@ namespace LotteryAnalyze
                         }
                         g.DrawLine(GoldSegmentedLine.sOriSolidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
                         g.DrawLine(GoldSegmentedLine.sOriSolidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
-
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
-                        //g.DrawLine(GoldSegmentedLine.sOriDotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
                         g.DrawLine(GoldSegmentedLine.sOriDotPen, sx, sy, ex, ey);
                         g.DrawRectangle(GoldSegmentedLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eCircleLine:
+                    {
+                        float cx = mouseHitPts[0].X;
+                        float cy = mouseHitPts[0].Y;
+                        float ex = mouseRelPos.X;
+                        float ey = mouseRelPos.Y;
+                        float dx = cx - ex;
+                        float dy = cy - ey;
+                        float radius = (float)Math.Sqrt(dx * dx + dy * dy);
+                        float size = 2 * radius;
+                        g.DrawEllipse(CircleLine.sOriDotPen, cx - radius, cy - radius, size, size);
+                        g.DrawRectangle(GoldSegmentedLine.sOriSolidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
                     }
                     break;
             }
@@ -1026,21 +1082,25 @@ namespace LotteryAnalyze
                             float yv = (ey - sy) * v + sy;
                             g.DrawLine(dotPen, 0, yv, winW, yv); g.DrawString(v.ToString(), auxFont, greenBrush, 0, yv);
                         }
-                        //float y382 = (ey - sy) * 0.382f + sy;
-                        //float y618 = (ey - sy) * 0.618f + sy;
-                        //float y1382 = (ey - sy) * 1.382f + sy;
-                        //float y1618 = (ey - sy) * 1.618f + sy;
-                        //float y2 = (ey - sy) * 2.0f + sy;
-                        //float y2618 = (ey - sy) * 2.618f + sy;
                         g.DrawLine(solidPen, 0, sy, winW, sy); g.DrawString("0", auxFont, greenBrush, 0, sy);
                         g.DrawLine(solidPen, 0, ey, winW, ey); g.DrawString("1", auxFont, greenBrush, 0, ey);
-                        //g.DrawLine(dotPen, 0, y382, winW, y382); g.DrawString("0.382", auxFont, greenBrush, 0, y382);
-                        //g.DrawLine(dotPen, 0, y618, winW, y618); g.DrawString("0.618", auxFont, greenBrush, 0, y618);
-                        //g.DrawLine(dotPen, 0, y1382, winW, y1382); g.DrawString("1.382", auxFont, greenBrush, 0, y1382);
-                        //g.DrawLine(dotPen, 0, y1618, winW, y1618); g.DrawString("1.618", auxFont, greenBrush, 0, y1618);
-                        //g.DrawLine(dotPen, 0, y2, winW, y2); g.DrawString("2", auxFont, greenBrush, 0, y2);
-                        //g.DrawLine(dotPen, 0, y2618, winW, y2618); g.DrawString("2.618", auxFont, greenBrush, 0, y2618);
                         g.DrawLine(dotPen, sx, sy, ex, ey);
+                        g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eCircleLine:
+                    {
+                        CircleLine cl = line as CircleLine;
+                        float x = StandToCanvas(cl.x, true);
+                        float y = StandToCanvas(cl.y, false);
+                        g.DrawEllipse(dotPen, x, y, cl.size, cl.size);
+
+                        float sx = StandToCanvas(pts[0].X, true);
+                        float sy = StandToCanvas(pts[0].Y, false);
+                        float ex = StandToCanvas(pts[1].X, true);
+                        float ey = StandToCanvas(pts[1].Y, false);
+                        g.DrawLine(solidPen, sx, sy, ex, ey);
                         g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                         g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
@@ -1070,18 +1130,19 @@ namespace LotteryAnalyze
                 float X = standX + i * gridScaleW;
                 float upY = standY - (i + 1) * gridScaleH;
                 float downY = standY + i * downRCH;
+                int stepID = i + 1;
 
                 if (isUpOK == false)
                 {
                     g.DrawRectangle(redDotPen, X, upY, gridScaleW, gridScaleH);
-                    g.DrawString(i.ToString(), auxFont, redBrush, X + strDist, upY);
+                    g.DrawString(stepID.ToString(), rulerFont, redBrush, X + strDist, upY+5);
                     if (X > winW || upY < 0)
                         isUpOK = true;
                 }
                 if (isDownOK == false)
                 {
                     g.DrawRectangle(cyanDotPen, X, downY, gridScaleW, downRCH);
-                    g.DrawString(i.ToString(), auxFont, cyanBrush, X + strDist, downY);
+                    g.DrawString(stepID.ToString(), rulerFont, cyanBrush, X + strDist, downY-5);
                     if (X > winW || downY > winH)
                         isDownOK = true;
                 }

@@ -812,9 +812,12 @@ namespace LotteryAnalyze
             if (data == null)
             {
                 LoadData(key);
-                newODD = allDatas[key];
-                newIndex = 0;
-                return true;
+                if (allDatas.ContainsKey(key))
+                {
+                    newODD = allDatas[key];
+                    newIndex = 0;
+                    return true;
+                }
             }
             else
             {

@@ -364,6 +364,18 @@ namespace LotteryAnalyze.UI
                                     }
                                 }
                                 break;
+                            case AuxLineType.eCircleLine:
+                                {
+                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                    {
+                                        graphMgr.kvalueGraph.AddCircleLine(
+                                            graphMgr.kvalueGraph.mouseHitPts[0],
+                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    }
+                                }
+                                break;
                         }
                     }
                 }
