@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -169,6 +170,7 @@ namespace LotteryAnalyze.UI
 
         void DrawUpCanvas(Graphics g)
         {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
@@ -182,6 +184,7 @@ namespace LotteryAnalyze.UI
 
         void DrawDownCanvas(Graphics g)
         {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Black);
 
             CollectDataType cdt = GraphDataManager.S_CDT_LIST[curCDTIndex];
@@ -370,6 +373,18 @@ namespace LotteryAnalyze.UI
                                     if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
                                     {
                                         graphMgr.kvalueGraph.AddCircleLine(
+                                            graphMgr.kvalueGraph.mouseHitPts[0],
+                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                    }
+                                }
+                                break;
+                            case AuxLineType.eArrowLine:
+                                {
+                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
+                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                    {
+                                        graphMgr.kvalueGraph.AddArrowLine(
                                             graphMgr.kvalueGraph.mouseHitPts[0],
                                             graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                         graphMgr.kvalueGraph.mouseHitPts.Clear();

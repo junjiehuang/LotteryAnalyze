@@ -34,6 +34,8 @@ namespace LotteryAnalyze
         eGoldSegmentedLine,
         // 测试圆
         eCircleLine,
+        // 箭头线
+        eArrowLine,
     }
 
     // 图表基类
@@ -253,6 +255,7 @@ namespace LotteryAnalyze
             GetDotPen().Color = col;
         }
     }
+    // 测试圆线
     class CircleLine : AuxiliaryLine
     {
         public float x, y, size;
@@ -291,6 +294,43 @@ namespace LotteryAnalyze
         }
 
     }
+    // 箭头
+    class ArrowLine : AuxiliaryLine
+    {
+        public const int C_LINE_WIDTH = 5;
+        public static Color sOriLineColor = Color.GreenYellow;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
+        public ArrowLine()
+        {
+            lineType = AuxLineType.eArrowLine;
+        }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+            {
+                solidPen = sOriSolidPen.Clone() as Pen;
+                solidPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                solidPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
+            }
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+            {
+                dotPen = sOriDotPen.Clone() as Pen;
+                dotPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                dotPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
+            }
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
+    }
     #endregion
 
     // K线图
@@ -307,6 +347,7 @@ namespace LotteryAnalyze
             "画通道线",
             "画黄金分割线",
             "画圆",
+            "画箭头线",
         };
 
         public bool enableAuxiliaryLine = true;
@@ -638,6 +679,15 @@ namespace LotteryAnalyze
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
             line.CalcRect();
+            auxiliaryLineList.Add(line);
+        }
+        public void AddArrowLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        {
+            ArrowLine line = new ArrowLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
+            line.keyPoints.Add(CanvasToStand(p1));
+            line.keyPoints.Add(CanvasToStand(p2));
             auxiliaryLineList.Add(line);
         }
 
@@ -972,7 +1022,20 @@ namespace LotteryAnalyze
                         float radius = (float)Math.Sqrt(dx * dx + dy * dy);
                         float size = 2 * radius;
                         g.DrawEllipse(CircleLine.sOriDotPen, cx - radius, cy - radius, size, size);
-                        g.DrawRectangle(GoldSegmentedLine.sOriSolidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
+                        g.DrawRectangle(CircleLine.sOriSolidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eArrowLine:
+                    {
+                        float cx = mouseHitPts[0].X;
+                        float cy = mouseHitPts[0].Y;
+                        float ex = mouseRelPos.X;
+                        float ey = mouseRelPos.Y;
+                        ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;
+                        g.DrawLine(ArrowLine.sOriSolidPen, cx, cy, ex, ey);
+                        ArrowLine.sOriSolidPen.Width = 1;
+                        //g.DrawRectangle(ArrowLine.sOriSolidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
+                        //g.DrawRectangle(ArrowLine.sOriSolidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
             }
@@ -1103,6 +1166,18 @@ namespace LotteryAnalyze
                         g.DrawLine(solidPen, sx, sy, ex, ey);
                         g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                         g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eArrowLine:
+                    {
+                        float cx = StandToCanvas(pts[0].X, true);
+                        float cy = StandToCanvas(pts[0].Y, false);
+                        float ex = StandToCanvas(pts[1].X, true);
+                        float ey = StandToCanvas(pts[1].Y, false);
+                        solidPen.Width = ArrowLine.C_LINE_WIDTH;
+                        g.DrawLine(solidPen, cx, cy, ex, ey);
+                        //g.DrawRectangle(solidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
+                        //g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
             }
