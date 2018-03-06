@@ -45,6 +45,7 @@
             this.clearAllTradeDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -58,6 +59,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.checkBoxKRuler = new System.Windows.Forms.CheckBox();
             this.trackBarKData = new System.Windows.Forms.TrackBar();
             this.checkBoxShowAuxLines = new System.Windows.Forms.CheckBox();
             this.comboBoxOperations = new System.Windows.Forms.ComboBox();
@@ -105,10 +107,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.checkBoxKRuler = new System.Windows.Forms.CheckBox();
+            this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
+            this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
+            this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -254,6 +257,13 @@
             this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
             this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
             // 
+            // tradeCalculaterToolStripMenuItem
+            // 
+            this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
+            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
+            this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -266,6 +276,9 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.buttonClearFavoriteCharts);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonAddFavoriteChart);
+            this.splitContainer1.Panel2.Controls.Add(this.listBoxFavoriteCharts);
             this.splitContainer1.Panel2.Controls.Add(this.textBoxGridScaleH);
             this.splitContainer1.Panel2.Controls.Add(this.textBoxGridScaleW);
             this.splitContainer1.Panel2.Controls.Add(this.label9);
@@ -275,8 +288,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(696, 481);
-            this.splitContainer1.SplitterDistance = 495;
+            this.splitContainer1.Size = new System.Drawing.Size(696, 523);
+            this.splitContainer1.SplitterDistance = 485;
             this.splitContainer1.TabIndex = 1;
             // 
             // splitContainer2
@@ -293,8 +306,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panelDown);
-            this.splitContainer2.Size = new System.Drawing.Size(495, 481);
-            this.splitContainer2.SplitterDistance = 294;
+            this.splitContainer2.Size = new System.Drawing.Size(485, 523);
+            this.splitContainer2.SplitterDistance = 319;
             this.splitContainer2.TabIndex = 0;
             // 
             // contextMenuStripRightClick
@@ -363,7 +376,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 122);
+            this.label4.Location = new System.Drawing.Point(5, 197);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 7;
@@ -377,10 +390,10 @@
             this.tabControlView.Controls.Add(this.tabPageKGraph);
             this.tabControlView.Controls.Add(this.tabPageBarGraph);
             this.tabControlView.Controls.Add(this.tabPageTrade);
-            this.tabControlView.Location = new System.Drawing.Point(6, 138);
+            this.tabControlView.Location = new System.Drawing.Point(6, 212);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(188, 340);
+            this.tabControlView.Size = new System.Drawing.Size(198, 308);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
@@ -402,10 +415,23 @@
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(180, 314);
+            this.tabPageKGraph.Size = new System.Drawing.Size(190, 282);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxKRuler
+            // 
+            this.checkBoxKRuler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKRuler.AutoSize = true;
+            this.checkBoxKRuler.Location = new System.Drawing.Point(105, 95);
+            this.checkBoxKRuler.Name = "checkBoxKRuler";
+            this.checkBoxKRuler.Size = new System.Drawing.Size(66, 16);
+            this.checkBoxKRuler.TabIndex = 17;
+            this.checkBoxKRuler.Text = "K线标尺";
+            this.checkBoxKRuler.UseVisualStyleBackColor = true;
+            this.checkBoxKRuler.CheckedChanged += new System.EventHandler(this.checkBoxKRuler_CheckedChanged);
             // 
             // trackBarKData
             // 
@@ -414,7 +440,7 @@
             this.trackBarKData.AutoSize = false;
             this.trackBarKData.Location = new System.Drawing.Point(5, 242);
             this.trackBarKData.Name = "trackBarKData";
-            this.trackBarKData.Size = new System.Drawing.Size(174, 36);
+            this.trackBarKData.Size = new System.Drawing.Size(184, 36);
             this.trackBarKData.TabIndex = 16;
             this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
@@ -443,7 +469,7 @@
             "2路"});
             this.comboBoxOperations.Location = new System.Drawing.Point(65, 66);
             this.comboBoxOperations.Name = "comboBoxOperations";
-            this.comboBoxOperations.Size = new System.Drawing.Size(112, 20);
+            this.comboBoxOperations.Size = new System.Drawing.Size(122, 20);
             this.comboBoxOperations.TabIndex = 14;
             this.comboBoxOperations.SelectedIndexChanged += new System.EventHandler(this.comboBoxOperations_SelectedIndexChanged);
             // 
@@ -504,7 +530,7 @@
             "2路"});
             this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(65, 37);
             this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
-            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(112, 20);
+            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(122, 20);
             this.comboBoxAvgAlgorithm.TabIndex = 8;
             this.comboBoxAvgAlgorithm.SelectedIndexChanged += new System.EventHandler(this.comboBoxAvgAlgorithm_SelectedIndexChanged);
             // 
@@ -535,7 +561,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
             this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 153);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
-            this.groupBoxAvgSettings.Size = new System.Drawing.Size(174, 83);
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(184, 83);
             this.groupBoxAvgSettings.TabIndex = 6;
             this.groupBoxAvgSettings.TabStop = false;
             // 
@@ -675,7 +701,7 @@
             this.textBoxCycleLength.Enabled = false;
             this.textBoxCycleLength.Location = new System.Drawing.Point(65, 9);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(112, 21);
+            this.textBoxCycleLength.Size = new System.Drawing.Size(122, 21);
             this.textBoxCycleLength.TabIndex = 5;
             this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
@@ -690,7 +716,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(180, 314);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(190, 282);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -701,7 +727,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
             this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
-            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(152, 21);
+            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(162, 21);
             this.textBoxCustomCollectRange.TabIndex = 5;
             this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
             // 
@@ -721,7 +747,7 @@
             this.comboBoxCollectRange.FormattingEnabled = true;
             this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
             this.comboBoxCollectRange.Name = "comboBoxCollectRange";
-            this.comboBoxCollectRange.Size = new System.Drawing.Size(152, 20);
+            this.comboBoxCollectRange.Size = new System.Drawing.Size(162, 20);
             this.comboBoxCollectRange.TabIndex = 3;
             this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
             // 
@@ -741,7 +767,7 @@
             this.comboBoxBarCollectType.FormattingEnabled = true;
             this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
             this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
-            this.comboBoxBarCollectType.Size = new System.Drawing.Size(152, 20);
+            this.comboBoxBarCollectType.Size = new System.Drawing.Size(162, 20);
             this.comboBoxBarCollectType.TabIndex = 1;
             this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
             // 
@@ -769,7 +795,7 @@
             this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
-            this.tabPageTrade.Size = new System.Drawing.Size(180, 314);
+            this.tabPageTrade.Size = new System.Drawing.Size(190, 282);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
@@ -780,7 +806,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
             this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(174, 45);
+            this.trackBarTradeData.Size = new System.Drawing.Size(184, 45);
             this.trackBarTradeData.TabIndex = 10;
             this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
@@ -791,7 +817,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(98, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(108, 21);
             this.textBoxStartMoney.TabIndex = 9;
             this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
             // 
@@ -811,7 +837,7 @@
             this.comboBoxTradeNumIndex.FormattingEnabled = true;
             this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 110);
             this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
-            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(98, 20);
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(108, 20);
             this.comboBoxTradeNumIndex.TabIndex = 7;
             this.comboBoxTradeNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeNumIndex_SelectedIndexChanged);
             // 
@@ -841,7 +867,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCommitTradeCount.Location = new System.Drawing.Point(3, 58);
             this.buttonCommitTradeCount.Name = "buttonCommitTradeCount";
-            this.buttonCommitTradeCount.Size = new System.Drawing.Size(174, 23);
+            this.buttonCommitTradeCount.Size = new System.Drawing.Size(184, 23);
             this.buttonCommitTradeCount.TabIndex = 4;
             this.buttonCommitTradeCount.Text = "提交投注设定";
             this.buttonCommitTradeCount.UseVisualStyleBackColor = true;
@@ -853,7 +879,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
             this.textBoxDefaultCount.Name = "textBoxDefaultCount";
-            this.textBoxDefaultCount.Size = new System.Drawing.Size(98, 21);
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(108, 21);
             this.textBoxDefaultCount.TabIndex = 3;
             // 
             // label12
@@ -871,7 +897,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
             this.textBoxMultiCount.Name = "textBoxMultiCount";
-            this.textBoxMultiCount.Size = new System.Drawing.Size(98, 21);
+            this.textBoxMultiCount.Size = new System.Drawing.Size(108, 21);
             this.textBoxMultiCount.TabIndex = 1;
             // 
             // label11
@@ -892,16 +918,16 @@
             "0路",
             "1路",
             "2路"});
-            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(6, 90);
+            this.comboBoxCollectionDataType.Location = new System.Drawing.Point(87, 59);
             this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
-            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(188, 20);
+            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(117, 20);
             this.comboBoxCollectionDataType.TabIndex = 3;
             this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 74);
+            this.label2.Location = new System.Drawing.Point(5, 62);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 2;
@@ -924,9 +950,9 @@
             "百位",
             "十位",
             "个位"});
-            this.comboBoxNumIndex.Location = new System.Drawing.Point(6, 47);
+            this.comboBoxNumIndex.Location = new System.Drawing.Point(87, 29);
             this.comboBoxNumIndex.Name = "comboBoxNumIndex";
-            this.comboBoxNumIndex.Size = new System.Drawing.Size(188, 20);
+            this.comboBoxNumIndex.Size = new System.Drawing.Size(117, 20);
             this.comboBoxNumIndex.TabIndex = 1;
             this.comboBoxNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxNumIndex_SelectedIndexChanged);
             // 
@@ -939,18 +965,41 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // checkBoxKRuler
+            // listBoxFavoriteCharts
             // 
-            this.checkBoxKRuler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.listBoxFavoriteCharts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxKRuler.AutoSize = true;
-            this.checkBoxKRuler.Location = new System.Drawing.Point(105, 95);
-            this.checkBoxKRuler.Name = "checkBoxKRuler";
-            this.checkBoxKRuler.Size = new System.Drawing.Size(66, 16);
-            this.checkBoxKRuler.TabIndex = 17;
-            this.checkBoxKRuler.Text = "K线标尺";
-            this.checkBoxKRuler.UseVisualStyleBackColor = true;
-            this.checkBoxKRuler.CheckedChanged += new System.EventHandler(this.checkBoxKRuler_CheckedChanged);
+            this.listBoxFavoriteCharts.FormattingEnabled = true;
+            this.listBoxFavoriteCharts.ItemHeight = 12;
+            this.listBoxFavoriteCharts.Location = new System.Drawing.Point(87, 86);
+            this.listBoxFavoriteCharts.Name = "listBoxFavoriteCharts";
+            this.listBoxFavoriteCharts.Size = new System.Drawing.Size(117, 100);
+            this.listBoxFavoriteCharts.TabIndex = 11;
+            this.listBoxFavoriteCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxFavoriteCharts_SelectedIndexChanged);
+            // 
+            // buttonAddFavoriteChart
+            // 
+            this.buttonAddFavoriteChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddFavoriteChart.Location = new System.Drawing.Point(7, 86);
+            this.buttonAddFavoriteChart.Name = "buttonAddFavoriteChart";
+            this.buttonAddFavoriteChart.Size = new System.Drawing.Size(75, 23);
+            this.buttonAddFavoriteChart.TabIndex = 12;
+            this.buttonAddFavoriteChart.Text = "添加";
+            this.buttonAddFavoriteChart.UseVisualStyleBackColor = true;
+            this.buttonAddFavoriteChart.Click += new System.EventHandler(this.buttonAddFavoriteChart_Click);
+            // 
+            // buttonClearFavoriteCharts
+            // 
+            this.buttonClearFavoriteCharts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 115);
+            this.buttonClearFavoriteCharts.Name = "buttonClearFavoriteCharts";
+            this.buttonClearFavoriteCharts.Size = new System.Drawing.Size(75, 23);
+            this.buttonClearFavoriteCharts.TabIndex = 13;
+            this.buttonClearFavoriteCharts.Text = "清空";
+            this.buttonClearFavoriteCharts.UseVisualStyleBackColor = true;
+            this.buttonClearFavoriteCharts.Click += new System.EventHandler(this.buttonClearFavoriteCharts_Click);
             // 
             // panelUp
             // 
@@ -960,7 +1009,7 @@
             this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
             this.panelUp.Location = new System.Drawing.Point(3, 4);
             this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(489, 287);
+            this.panelUp.Size = new System.Drawing.Size(479, 312);
             this.panelUp.TabIndex = 0;
             this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
             this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
@@ -974,23 +1023,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelDown.Location = new System.Drawing.Point(3, 3);
             this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(489, 177);
+            this.panelDown.Size = new System.Drawing.Size(479, 194);
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
-            // 
-            // tradeCalculaterToolStripMenuItem
-            // 
-            this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
-            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
-            this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(696, 506);
+            this.ClientSize = new System.Drawing.Size(696, 548);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripGraph);
             this.DoubleBuffered = true;
@@ -1107,5 +1149,8 @@
         private System.Windows.Forms.ToolStripMenuItem modifyAuxLineColorToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxKRuler;
         private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
+        private System.Windows.Forms.ListBox listBoxFavoriteCharts;
+        private System.Windows.Forms.Button buttonClearFavoriteCharts;
+        private System.Windows.Forms.Button buttonAddFavoriteChart;
     }
 }

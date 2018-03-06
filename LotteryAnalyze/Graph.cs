@@ -37,64 +37,7 @@ namespace LotteryAnalyze
         // 箭头线
         eArrowLine,
     }
-
-    // 图表基类
-    class GraphBase
-    {
-        public float gridScaleH = 20;
-        public float gridScaleW = 5;
-        public PointF canvasOffset = new PointF(0, 0);
-
-        public float CanvasToStand(float v, bool isX)
-        {
-            if (isX)
-                return (v + canvasOffset.X);
-            else
-                return (canvasOffset.Y) - v;
-        }
-        public float StandToCanvas(float v, bool isX)
-        {
-            if (isX)
-                return v - canvasOffset.X;
-            else
-                return canvasOffset.Y - v;
-        }
-        public Point CanvasToStand(Point pt)
-        {
-            Point res = new Point();
-            res.X = (int)CanvasToStand((float)pt.X, true);
-            res.Y = (int)CanvasToStand((float)pt.Y, false);
-            return res;
-        }
-        public Point StandToCanvas(Point pt)
-        {
-            Point res = new Point();
-            res.X = (int)StandToCanvas((float)pt.X, true);
-            res.Y = (int)StandToCanvas((float)pt.Y, false);
-            return res;
-        }
-
-
-        public virtual bool NeedRefreshCanvasOnMouseMove(Point mousePos)
-        {
-            return false;
-        }
-        public virtual void MoveGraph(float dx, float dy)
-        {
-
-        }
-        public virtual void ResetGraphPosition()
-        {
-
-        }
-        public virtual void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
-        {
-
-        }
-        public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
-        public virtual void ScrollToData(int index,int winW, int winH, bool needSelect) { }
-    }
-
+    
     #region Aux Lines
     // 辅助线基类
     class AuxiliaryLine
@@ -332,6 +275,65 @@ namespace LotteryAnalyze
         }
     }
     #endregion
+
+    #region Graphs
+
+    // 图表基类
+    class GraphBase
+    {
+        public float gridScaleH = 20;
+        public float gridScaleW = 5;
+        public PointF canvasOffset = new PointF(0, 0);
+
+        public float CanvasToStand(float v, bool isX)
+        {
+            if (isX)
+                return (v + canvasOffset.X);
+            else
+                return (canvasOffset.Y) - v;
+        }
+        public float StandToCanvas(float v, bool isX)
+        {
+            if (isX)
+                return v - canvasOffset.X;
+            else
+                return canvasOffset.Y - v;
+        }
+        public Point CanvasToStand(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)CanvasToStand((float)pt.X, true);
+            res.Y = (int)CanvasToStand((float)pt.Y, false);
+            return res;
+        }
+        public Point StandToCanvas(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)StandToCanvas((float)pt.X, true);
+            res.Y = (int)StandToCanvas((float)pt.Y, false);
+            return res;
+        }
+
+
+        public virtual bool NeedRefreshCanvasOnMouseMove(Point mousePos)
+        {
+            return false;
+        }
+        public virtual void MoveGraph(float dx, float dy)
+        {
+
+        }
+        public virtual void ResetGraphPosition()
+        {
+
+        }
+        public virtual void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+
+        }
+        public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
+        public virtual void ScrollToData(int index, int winW, int winH, bool needSelect) { }
+    }
 
     // K线图
     class GraphKCurve : GraphBase
@@ -1286,6 +1288,7 @@ namespace LotteryAnalyze
         }
     }
 
+    // 交易图
     class GraphTrade : GraphBase
     {
         public bool autoAllign = false;
@@ -1461,16 +1464,25 @@ namespace LotteryAnalyze
         }
     }
 
+    #endregion
+
     // 图表管理器
     class GraphManager
     {
+        public class FavoriteChart
+        {
+            public int numIndex;
+            public CollectDataType cdt;
+            public string tag;
+        }
+
+        List<FavoriteChart> favoriteCharts = new List<FavoriteChart>();
         Dictionary<GraphType, GraphBase> sGraphMap = new Dictionary<GraphType, GraphBase>();
         GraphBase curGraph = null;
         GraphType curGraphType = GraphType.eNone;
         public GraphBar barGraph;
         public GraphKCurve kvalueGraph;
         public GraphTrade tradeGraph;
-
 
         public GraphManager()
         {
@@ -1519,6 +1531,40 @@ namespace LotteryAnalyze
         {
             if (curGraph != null)
                 curGraph.DrawDownGraph(g, numIndex, cdt, winW, winH, mouseRelPos);
+        }
+
+        public FavoriteChart AddFavoriteChart(int numIndex, CollectDataType cdt)
+        {
+            if(FindFavoriteChart(numIndex, cdt) == null)
+            {
+                FavoriteChart fc = new FavoriteChart();
+                fc.numIndex = numIndex;
+                fc.cdt = cdt;
+                int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                fc.tag = TradeDataBase.NUM_TAGS[numIndex] + "_" + GraphDataManager.S_CDT_TAG_LIST[cdtID];
+                favoriteCharts.Add(fc);
+                return fc;
+            }
+            return null;
+        }
+        public FavoriteChart FindFavoriteChart(int numIndex, CollectDataType cdt)
+        {
+            for (int i = 0; i < favoriteCharts.Count; ++i)
+            {
+                if (favoriteCharts[i].numIndex == numIndex && favoriteCharts[i].cdt == cdt)
+                    return favoriteCharts[i];
+            }
+            return null;
+        }
+        public FavoriteChart GetFavoriteChart(int index)
+        {
+            if (index >= 0 && index < favoriteCharts.Count)
+                return favoriteCharts[index];
+            return null;
+        }
+        public void ClearFavoriteCharts()
+        {
+            favoriteCharts.Clear();
         }
     }
 

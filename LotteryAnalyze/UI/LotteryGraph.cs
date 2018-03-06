@@ -763,8 +763,40 @@ namespace LotteryAnalyze.UI
             LotteryAnalyze.UI.TradeCalculater.Open();
         }
 
+
         #endregion
 
+        private void listBoxFavoriteCharts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(listBoxFavoriteCharts.SelectedIndex >= 0)
+            {
+                GraphManager.FavoriteChart fc = graphMgr.GetFavoriteChart(listBoxFavoriteCharts.SelectedIndex);
+                if(fc != null)
+                {
+                    graphMgr.kvalueGraph.autoAllign = true;
+                    comboBoxCollectionDataType.SelectedIndex = GraphDataManager.S_CDT_LIST.IndexOf(fc.cdt);
+                    comboBoxNumIndex.SelectedIndex = fc.numIndex;
+                    curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
+                    curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
+                    numberIndex = fc.numIndex;
+                    this.Invalidate(true);//触发Paint事件
+                }
+            }
+        }
 
+        private void buttonAddFavoriteChart_Click(object sender, EventArgs e)
+        {
+            GraphManager.FavoriteChart fc = graphMgr.AddFavoriteChart(numberIndex, curCDT);
+            if (fc != null)
+            {
+                listBoxFavoriteCharts.Items.Add(fc.tag);
+            }
+        }
+
+        private void buttonClearFavoriteCharts_Click(object sender, EventArgs e)
+        {
+            listBoxFavoriteCharts.Items.Clear();
+            graphMgr.ClearFavoriteCharts();
+        }
     }
 }
