@@ -140,8 +140,6 @@ namespace LotteryAnalyze
 
     class AvgPoint
     {
-        //public float avgHit = 0;
-        //public float avgMiss = 0;
         public float avgKValue = 0;
     }
 
@@ -270,17 +268,9 @@ namespace LotteryAnalyze
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
                         if (isLastDay)
-                        {
-                            //ap.avgHit += kd.HitValue * 2;
-                            //ap.avgMiss += kd.MissValue * 2;
                             ap.avgKValue += kd.KValue * 2;
-                        }
                         else
-                        {
-                            //ap.avgHit += kd.HitValue;
-                            //ap.avgMiss += kd.MissValue;
                             ap.avgKValue += kd.KValue;
-                        }
                     }
                     totalSub += isLastDay ? 2 : 1;
                 }
@@ -288,8 +278,6 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    //ap.avgHit /= totalSub;
-                    //ap.avgMiss /= totalSub;
                     ap.avgKValue /= totalSub;
                 }
             }
@@ -314,8 +302,6 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        //ap.avgHit += kd.HitValue * loop;
-                        //ap.avgMiss += kd.MissValue * loop;
                         ap.avgKValue += kd.KValue * loop;
                     }
                     totalSub += loop;
@@ -325,8 +311,6 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    //ap.avgHit /= totalSub;
-                    //ap.avgMiss /= totalSub;
                     ap.avgKValue /= totalSub;
                 }
             }
@@ -352,8 +336,6 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                         AvgPoint ap = apm.apMap[cdt];
                         KData kd = kdd.dataDict[cdt];
-                        //ap.avgHit += kd.HitValue * sqrLoop;
-                        //ap.avgMiss += kd.MissValue * sqrLoop;
                         ap.avgKValue += kd.KValue * sqrLoop;
                     }
                     totalSub += sqrLoop;
@@ -363,8 +345,6 @@ namespace LotteryAnalyze
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
-                    //ap.avgHit /= totalSub;
-                    //ap.avgMiss /= totalSub;
                     ap.avgKValue /= totalSub;
                 }
             }
@@ -388,14 +368,10 @@ namespace LotteryAnalyze
                     KData kd = kdd.dataDict[cdt];
                     if (prevApm == null)
                     {
-                        //ap.avgHit = kd.HitValue;
-                        //ap.avgMiss = kd.MissValue;
                         ap.avgKValue = kd.KValue;
                     }
                     else
                     {
-                        //ap.avgHit = (kd.HitValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgHit) / (cycle + 1);
-                        //ap.avgMiss = (kd.MissValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgMiss) / (cycle + 1);
                         ap.avgKValue = (kd.KValue * 2 + (cycle - 1) * prevApm.apMap[cdt].avgKValue) / (cycle + 1);
                     }
                 }
@@ -405,8 +381,8 @@ namespace LotteryAnalyze
 
     class BollinPoint
     {
-        // 标准差
-        public float standardDeviation = 0;
+        //// 标准差
+        //public float standardDeviation = 0;
         // 上轨值
         public float upValue = 0;
         // 中轨值
@@ -495,7 +471,7 @@ namespace LotteryAnalyze
 
                     BollinPoint bp = bpm.GetData(cdt, true);
                     const float scale = 2;
-                    bp.standardDeviation = SD;
+                    //bp.standardDeviation = SD;
                     bp.midValue = MA;
                     bp.upValue = MA + scale * SD;
                     bp.downValue = MA - scale * SD;

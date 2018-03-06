@@ -168,13 +168,14 @@ namespace LotteryAnalyze
 
         KillNumberStrategyManager()
         {
+#if ENABLE_GROUP_COLLECT
             funcList.Add("杀上2期非重邻号", new KillNumberByLast2ReverseRepeatRelateNum());
             funcList.Add("杀上期非重邻号", new KillNumberByLastReverseRepeatRelateNum());
             funcList.Add("和值杀号", new KillNumberByAndValue());
             funcList.Add("杀上期合值", new KillNumberByLastRearValue());
-            //funcList.Add("跨度杀号", new KillNumberByCrossValue());
             funcList.Add("杀上期出的号", new KillNumberByReverseSelect());
             funcList.Add("杀期号个位", new KillNumberByDateValue());
+#endif
         }
 
         static KillNumberStrategyManager sInst = null;
@@ -197,10 +198,10 @@ namespace LotteryAnalyze
         }
     }
 
-    #endregion
+#endregion
 
-    #region stratage class
-
+#region stratage class
+#if ENABLE_GROUP_COLLECT
     public class KillNumberByDateValue : KillNumberStrategy
     {
         static string sDesc = "把当期序号的个位数杀掉。";
@@ -275,19 +276,7 @@ namespace LotteryAnalyze
                 killList.Add(prevItem.rearValue);
         }
     }
-
-    //public class KillNumberByCrossValue : KillNumberStrategy
-    //{
-    //    public static string GetTypeName()
-    //    {
-    //        return typeof(KillNumberByCrossValue).ToString();
-    //    }
-    //    public override void KillNumber(DataItem item, ref List<int> killList)
-    //    {
-
-    //    }
-    //}
-
+    
     public class KillNumberByReverseSelect : KillNumberStrategy
     {
         static string sDesc = "把上期出的各位数字杀掉。";
@@ -406,6 +395,6 @@ namespace LotteryAnalyze
             KillNum(ref killList, bai);
         }
     }
-
-    #endregion
+#endif
+#endregion
 }

@@ -257,6 +257,7 @@ namespace LotteryAnalyze
             return 0;
         }
 
+#if ENABLE_GROUP_COLLECT
         public static TestResultType SimBuyG6On5G3Out(DataItem item, int ratio)
         {
             item.simData.killType = KillType.eKTNone;
@@ -511,6 +512,8 @@ namespace LotteryAnalyze
             item.simData.profit = DataManager.GetInst().curProfit;
             return item.simData.predictResult;
         }
+#endif
+
 
         public static bool CollectPath012Info(List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo, OneDayDatas newAddOdd = null, int newAddIndex = -1)
         {
@@ -535,104 +538,47 @@ namespace LotteryAnalyze
                 curItem = curODD.datas[0];
             if(newAddIndex != -1 && newAddIndex < curODD.datas.Count)
                 curItem = curODD.datas[newAddIndex];
-            curODD.CollectOneDayLotteryInfo();
+            //curODD.CollectOneDayLotteryInfo();
 
             while(curItem != null)
             {
                 if(curItem.parent != curODD)
                 {
                     curODD = curItem.parent;
-                    curODD.CollectOneDayLotteryInfo();
+                    //curODD.CollectOneDayLotteryInfo();
                 }
                 CollectPath012Info(curItem, maxMissingInfo);
 
                 curItem = curItem.parent.GetNextItem(curItem);
             }
-
-            //for (int i = 0; i < count; ++i)
-            //{
-            //    int oneDayID = DataManager.GetInst().indexs[i];
-            //    OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
-            //    odd.CollectShortPath012Info();
-
-            //    for (int j = 0; j < odd.datas.Count; ++j)
-            //    {
-            //        DataItem item = odd.datas[j];
-            //        item.CollectShortPath012Info();
-
-            //        DataItem prevItem = item.parent.GetPrevItem(item);
-            //        if (prevItem != null)
-            //        {
-            //            for (int k = 0; k < 5; ++k)
-            //            {
-            //                for (int t = 0; t < 3; ++t)
-            //                {
-            //                    if (prevItem.path012OfEachSingle[k] == t)
-            //                        item.simData.path012MissingInfo[k][t] = 0;
-            //                    else
-            //                        item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
-
-            //                    if (prevItem.path012OfEachSingle[k] == t)
-            //                        item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
-            //                    else
-            //                        item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
-
-            //                    if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
-            //                    {
-            //                        maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
-            //                        maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
-            //                    }
-            //                }
-            //                int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
-            //                if(totalCount > 0)
-            //                {
-            //                    item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
-            //                    item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
-            //                    item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             return true;
         }
         static void CollectPath012Info(DataItem item, List<SinglePath012MaxMissingCollector.MissingInfo> maxMissingInfo)
         {
             item.statisticInfo.Collect();
-            /*
-            DataItem prevItem = item.parent.GetPrevItem(item);
-            if (prevItem != null)
+
+            if (maxMissingInfo != null)
             {
-                for (int k = 0; k < 5; ++k)
+                for (int i = 0; i < 5; ++i)
                 {
-                    for (int t = 0; t < 3; ++t)
+                    StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[i];
+                    if (sum.statisticUnitMap[CollectDataType.ePath0].missCount > maxMissingInfo[i].maxPath012MissingData[0])
                     {
-                        if (prevItem.path012OfEachSingle[k] == t)
-                            item.simData.path012MissingInfo[k][t] = 0;
-                        else
-                            item.simData.path012MissingInfo[k][t] = prevItem.simData.path012MissingInfo[k][t] + 1;
-
-                        if (prevItem.path012OfEachSingle[k] == t)
-                            item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t] + 1;
-                        else
-                            item.simData.path012CountInfoLong[k][t] = prevItem.simData.path012CountInfoLong[k][t];
-
-                        if (maxMissingInfo != null && item.simData.path012MissingInfo[k][t] > maxMissingInfo[k].maxPath012MissingData[t])
-                        {
-                            maxMissingInfo[k].maxPath012MissingData[t] = item.simData.path012MissingInfo[k][t];
-                            maxMissingInfo[k].maxPath012MissingID[t] = item.idGlobal;
-                        }
+                        maxMissingInfo[i].maxPath012MissingData[0] = sum.statisticUnitMap[CollectDataType.ePath0].missCount;
+                        maxMissingInfo[i].maxPath012MissingID[0] = item.idGlobal;
                     }
-                    int totalCount = item.simData.path012CountInfoLong[k][0] + item.simData.path012CountInfoLong[k][1] + item.simData.path012CountInfoLong[k][2];
-                    if (totalCount > 0)
+                    if (sum.statisticUnitMap[CollectDataType.ePath1].missCount > maxMissingInfo[i].maxPath012MissingData[1])
                     {
-                        item.simData.path012ProbabilityLong[k][0] = item.simData.path012CountInfoLong[k][0] * 100 / totalCount;
-                        item.simData.path012ProbabilityLong[k][1] = item.simData.path012CountInfoLong[k][1] * 100 / totalCount;
-                        item.simData.path012ProbabilityLong[k][2] = item.simData.path012CountInfoLong[k][2] * 100 / totalCount;
+                        maxMissingInfo[i].maxPath012MissingData[1] = sum.statisticUnitMap[CollectDataType.ePath1].missCount;
+                        maxMissingInfo[i].maxPath012MissingID[1] = item.idGlobal;
+                    }
+                    if (sum.statisticUnitMap[CollectDataType.ePath2].missCount > maxMissingInfo[i].maxPath012MissingData[2])
+                    {
+                        maxMissingInfo[i].maxPath012MissingData[2] = sum.statisticUnitMap[CollectDataType.ePath2].missCount;
+                        maxMissingInfo[i].maxPath012MissingID[2] = item.idGlobal;
                     }
                 }
             }
-            */
         }
     }
 

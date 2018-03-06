@@ -84,8 +84,10 @@ namespace LotteryAnalyze
             sColumns.Add(new ColumnGlobalID());
             sColumns.Add(new ColumnIDTag());
             sColumns.Add(new ColumnNumber());
+#if ENABLE_GROUP_COLLECT
             sColumns.Add(new ColumnSimulateGroup3BuyLottery());
             sColumns.Add(new ColumnSimulateGroup2BuyLottery());
+#endif
             sColumns.Add(new ColumnSimulateSingleBuyLottery());
         }
 
@@ -134,9 +136,9 @@ namespace LotteryAnalyze
         }
     }
 
-    #endregion
+#endregion
 
-    #region common data column
+#region common data column
 
     public class ColumnGlobalID : ColumnBase
     {
@@ -212,9 +214,10 @@ namespace LotteryAnalyze
             col.Width = 60;
         }
     }
-    #endregion
+#endregion
 
-    #region group 3 column
+#region group 3 column
+#if ENABLE_GROUP_COLLECT
     public class ColumnAndValue : ColumnBase
     {
         public ColumnAndValue()
@@ -425,10 +428,11 @@ namespace LotteryAnalyze
             DataGridViewColumn col = view.Columns[columnID];
         }
     }
-    #endregion
+#endif
+#endregion
 
-    #region group 2 column
-
+#region group 2 column
+#if ENABLE_GROUP_COLLECT
     public class ColumnTenOdd : ColumnBase
     {
         public ColumnTenOdd()
@@ -673,9 +677,10 @@ namespace LotteryAnalyze
         public override string GetColumnName() { return "个位"; }
     }
 
-    #endregion
+#endif
+#endregion
 
-    #region single column
+#region single column
 
     public class ColumnSinglePath0 : ColumnBase
     {
@@ -1007,10 +1012,11 @@ namespace LotteryAnalyze
     }
 
 
-    #endregion
+#endregion
 
-    #region simulate step info
+#region simulate step info
 
+#if ENABLE_GROUP_COLLECT
     public class ColumnKillResultTrue : ColumnBase
     {
         public ColumnKillResultTrue()
@@ -1143,9 +1149,11 @@ namespace LotteryAnalyze
             //col.Width = 60;
         }
     }
+#endif
 
-    #endregion
+#endregion
 
+#if ENABLE_GROUP_COLLECT
     public class ColumnSimulateGroup3BuyLottery : ColumnSet
     {
         public ColumnSimulateGroup3BuyLottery()
@@ -1185,7 +1193,7 @@ namespace LotteryAnalyze
         }
         public override string GetColumnName() { return "模拟组二方案"; }
     }
-
+#endif
 
     public class ColumnSimulateSingleBuyLottery : ColumnSet
     {
@@ -1219,12 +1227,13 @@ namespace LotteryAnalyze
             subColumns.Add(new ColumnSinglePath012CountShort());
             subColumns.Add(new ColumnSinglePath012ProbabilityShort());
             subColumns.Add(new ColumnSinglePath012ProbabilityShortNormalize());
-
+#if ENABLE_GROUP_COLLECT
             subColumns.Add(new ColumnKillResultTrue());
             subColumns.Add(new ColumnKillResultFalse());
             subColumns.Add(new ColumnSimCost());
             subColumns.Add(new ColumnSimReward());
             subColumns.Add(new ColumnSimProfit());
+#endif
         }
         public override string GetColumnName() { return "模拟单选方案"; }
     }

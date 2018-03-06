@@ -29,6 +29,7 @@ namespace LotteryAnalyze
         public virtual void OutPutToTreeView(TreeNode parentNode) { throw new Exception("should override OutPutToTreeView() function!"); }
     }
 
+#if ENABLE_GROUP_COLLECT
     // 往期和值统计
     public class AndValueCollector : CollectorBase
     {
@@ -338,6 +339,7 @@ namespace LotteryAnalyze
             }
         }
     }
+#endif
 
     // 针对每个位的出号按012路统计最大遗漏值
     public class SinglePath012MaxMissingCollector : CollectorBase
@@ -412,9 +414,11 @@ namespace LotteryAnalyze
 
         static StatisticsCollector()
         {
+#if ENABLE_GROUP_COLLECT
             sCollectorList.Add(new AndValueCollector());
             sCollectorList.Add(new Group3AfterLongGroup6Collector());
             sCollectorList.Add(new GroupTypeCollector());
+#endif
             sCollectorList.Add(new SinglePath012MaxMissingCollector());
         }
 

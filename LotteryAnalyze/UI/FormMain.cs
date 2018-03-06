@@ -55,12 +55,13 @@ namespace LotteryAnalyze
                 DataGridViewRow row = dataGridViewColSelector.Rows[rid];
                 row.Tag = col;
             }
-
+#if ENABLE_GROUP_COLLECT
             comboBoxKillGroup.SelectedIndex = 2;
             SimulationGroup3.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
             textBoxFirmRatio.Text = SimulationGroup3.firmRatio.ToString();
             textBoxMaxRatio.Text = SimulationGroup3.maxRatio.ToString();
             textBoxPath012ShortCount.Text = ColumnSimulateSingleBuyLottery.S_SHORT_COUNT.ToString();
+#endif
             DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
         }
 
@@ -195,6 +196,7 @@ namespace LotteryAnalyze
         }
         public void RefreshResultPanel()
         {
+#if ENABLE_GROUP_COLLECT
             DataManager mgr = DataManager.GetInst();
             StringBuilder sb = new StringBuilder();
             sb.Append("准确率 : " + (float)mgr.simData.rightCount / (float)mgr.simData.predictCount * 100 + "%\n");
@@ -207,6 +209,7 @@ namespace LotteryAnalyze
                 sb.Append("连错期数\t: " + wi.round + "\n\n");
             }
             richTextBoxResult.Text = sb.ToString();
+#endif
         }
         private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -291,17 +294,23 @@ namespace LotteryAnalyze
 
         private void checkBoxDoubleRatio_Click(object sender, EventArgs e)
         {
+#if ENABLE_GROUP_COLLECT
             SimulationGroup3.enableDoubleRatioIfFailed = checkBoxDoubleRatio.Checked;
+#endif
         }
 
         private void textBoxFirmRatio_TextChanged(object sender, EventArgs e)
         {
+#if ENABLE_GROUP_COLLECT
             SimulationGroup3.firmRatio = int.Parse(textBoxFirmRatio.Text);
+#endif
         }
 
         private void textBoxMaxRatio_TextChanged(object sender, EventArgs e)
         {
+#if ENABLE_GROUP_COLLECT
             SimulationGroup3.maxRatio = int.Parse(textBoxMaxRatio.Text);
+#endif
         }
 
         private void dataGridViewCollectorOption_CellEndEdit(object sender, DataGridViewCellEventArgs e)
