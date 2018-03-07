@@ -281,6 +281,7 @@ namespace LotteryAnalyze
     // 图表基类
     class GraphBase
     {
+        public GraphManager parent = null;
         public float gridScaleH = 20;
         public float gridScaleW = 5;
         public PointF canvasOffset = new PointF(0, 0);
@@ -452,6 +453,11 @@ namespace LotteryAnalyze
                     int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                     if (endIndex > kddc.dataLst.Count)
                         endIndex = kddc.dataLst.Count;
+                    if(parent.endShowDateItemIndex != -1)
+                    {
+                        if (endIndex > parent.endShowDateItemIndex+1)
+                            endIndex = parent.endShowDateItemIndex+1;
+                    }
 
                     // 自动对齐
                     if (autoAllign)
@@ -495,6 +501,12 @@ namespace LotteryAnalyze
                                 endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                                 if (endIndex > adc.avgPointMapLst.Count)
                                     endIndex = adc.avgPointMapLst.Count;
+                                if (parent.endShowDateItemIndex != -1)
+                                {
+                                    if (endIndex > parent.endShowDateItemIndex + 1)
+                                        endIndex = parent.endShowDateItemIndex + 1;
+                                }
+
                                 for (int i = startIndex; i < endIndex; ++i)
                                 {
                                     DrawAvgLineGraph(g, adc.avgPointMapLst[i], winW, winH, cdt, adc.avgLineSetting.pen);
@@ -508,7 +520,13 @@ namespace LotteryAnalyze
                     {
                         lastValue = 0;
                         findPrevPt = false;
-                        for (int i = 0; i < kddc.bollinDataLst.bollinMapLst.Count; ++i)
+                        endIndex = kddc.bollinDataLst.bollinMapLst.Count;
+                        if (parent.endShowDateItemIndex != -1)
+                        {
+                            if (endIndex > parent.endShowDateItemIndex + 1)
+                                endIndex = parent.endShowDateItemIndex + 1;
+                        }
+                        for (int i = 0; i < endIndex; ++i)
                         {
                             DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                         }
@@ -544,6 +562,11 @@ namespace LotteryAnalyze
                 int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                 if (endIndex > kddc.macdDataLst.macdMapLst.Count)
                     endIndex = kddc.macdDataLst.macdMapLst.Count;
+                if (parent.endShowDateItemIndex != -1)
+                {
+                    if (endIndex > parent.endShowDateItemIndex + 1)
+                        endIndex = parent.endShowDateItemIndex + 1;
+                }
                 for ( int i = startIndex; i < endIndex; ++i )
                 {
                     DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt);
@@ -1189,7 +1212,10 @@ namespace LotteryAnalyze
         {
             float downRCH = gridScaleH * missRelHeight;
             float strDist = 1.5f * gridScaleW;
-            KDataDict lastKDD = kddc.dataLst[kddc.dataLst.Count - 1];
+            int endIndex = kddc.dataLst.Count - 1;
+            if (parent.endShowDateItemIndex != -1 && parent.endShowDateItemIndex < kddc.dataLst.Count)
+                endIndex = parent.endShowDateItemIndex;
+            KDataDict lastKDD = kddc.dataLst[endIndex];
             KData data = lastKDD.GetData(cdt, false);
             float standX = (data.index + 1) * gridScaleW;
             float standY = (data.KValue) * gridScaleH;
@@ -1483,15 +1509,24 @@ namespace LotteryAnalyze
         public GraphBar barGraph;
         public GraphKCurve kvalueGraph;
         public GraphTrade tradeGraph;
+        public int endShowDateItemIndex = -1;
 
         public GraphManager()
         {
-            barGraph = new GraphBar();
-            kvalueGraph = new GraphKCurve();
-            tradeGraph = new GraphTrade();
+            barGraph = new GraphBar(); barGraph.parent = this;
+            kvalueGraph = new GraphKCurve(); kvalueGraph.parent = this;
+            tradeGraph = new GraphTrade(); tradeGraph.parent = this;
             sGraphMap.Add(GraphType.eKCurveGraph, kvalueGraph);
             sGraphMap.Add(GraphType.eBarGraph, barGraph);
             sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
+
+            TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
+        }
+
+        public void OnTradeCompleted()
+        {
+            if (endShowDateItemIndex != -1)
+                endShowDateItemIndex++;
         }
 
         public GraphType CurrentGraphType

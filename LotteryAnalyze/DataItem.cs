@@ -662,6 +662,8 @@ namespace LotteryAnalyze
         public Dictionary<int, OneDayDatas> allDatas = new Dictionary<int, OneDayDatas>();
         public List<int> indexs = new List<int>();
         public Dictionary<int, string> mFileMetaInfo = new Dictionary<int, string>();
+        public Dictionary<int, DataItem> allItemMap = new Dictionary<int, DataItem>();
+
 #if ENABLE_GROUP_COLLECT
         public SimData simData;
 #endif
@@ -744,6 +746,7 @@ namespace LotteryAnalyze
         }
         public void SetDataItemsGlobalID()
         {
+            allItemMap.Clear();
             int curID = 0;
             foreach (int key in allDatas.Keys)
             {
@@ -752,8 +755,16 @@ namespace LotteryAnalyze
                 {
                     DataItem di = data.datas[i];
                     di.idGlobal = curID++;
+                    allItemMap.Add(di.idGlobal, di);
                 }
             }
+        }
+
+        public DataItem FindDataItem(int globalID)
+        {
+            if (allItemMap.ContainsKey(globalID))
+                return allItemMap[globalID];
+            return null;
         }
 
         public OneDayDatas GetFirstOneDayDatas()

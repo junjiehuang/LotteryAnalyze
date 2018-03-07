@@ -112,6 +112,8 @@
             this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.textBoxStartDataItem = new System.Windows.Forms.TextBox();
+            this.btnSetAsStartTrade = new System.Windows.Forms.Button();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -376,7 +378,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(5, 197);
+            this.label4.Location = new System.Drawing.Point(5, 190);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 7;
@@ -390,10 +392,10 @@
             this.tabControlView.Controls.Add(this.tabPageKGraph);
             this.tabControlView.Controls.Add(this.tabPageBarGraph);
             this.tabControlView.Controls.Add(this.tabPageTrade);
-            this.tabControlView.Location = new System.Drawing.Point(6, 212);
+            this.tabControlView.Location = new System.Drawing.Point(2, 205);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(198, 308);
+            this.tabControlView.Size = new System.Drawing.Size(202, 315);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
@@ -782,6 +784,8 @@
             // 
             // tabPageTrade
             // 
+            this.tabPageTrade.Controls.Add(this.btnSetAsStartTrade);
+            this.tabPageTrade.Controls.Add(this.textBoxStartDataItem);
             this.tabPageTrade.Controls.Add(this.trackBarTradeData);
             this.tabPageTrade.Controls.Add(this.textBoxStartMoney);
             this.tabPageTrade.Controls.Add(this.label14);
@@ -795,7 +799,7 @@
             this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
-            this.tabPageTrade.Size = new System.Drawing.Size(190, 282);
+            this.tabPageTrade.Size = new System.Drawing.Size(194, 289);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
@@ -806,7 +810,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
             this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(184, 45);
+            this.trackBarTradeData.Size = new System.Drawing.Size(188, 45);
             this.trackBarTradeData.TabIndex = 10;
             this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
@@ -817,7 +821,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(108, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(112, 21);
             this.textBoxStartMoney.TabIndex = 9;
             this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
             // 
@@ -837,7 +841,7 @@
             this.comboBoxTradeNumIndex.FormattingEnabled = true;
             this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 110);
             this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
-            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(108, 20);
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(112, 20);
             this.comboBoxTradeNumIndex.TabIndex = 7;
             this.comboBoxTradeNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeNumIndex_SelectedIndexChanged);
             // 
@@ -867,7 +871,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCommitTradeCount.Location = new System.Drawing.Point(3, 58);
             this.buttonCommitTradeCount.Name = "buttonCommitTradeCount";
-            this.buttonCommitTradeCount.Size = new System.Drawing.Size(184, 23);
+            this.buttonCommitTradeCount.Size = new System.Drawing.Size(188, 23);
             this.buttonCommitTradeCount.TabIndex = 4;
             this.buttonCommitTradeCount.Text = "提交投注设定";
             this.buttonCommitTradeCount.UseVisualStyleBackColor = true;
@@ -879,7 +883,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
             this.textBoxDefaultCount.Name = "textBoxDefaultCount";
-            this.textBoxDefaultCount.Size = new System.Drawing.Size(108, 21);
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(112, 21);
             this.textBoxDefaultCount.TabIndex = 3;
             // 
             // label12
@@ -897,7 +901,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
             this.textBoxMultiCount.Name = "textBoxMultiCount";
-            this.textBoxMultiCount.Size = new System.Drawing.Size(108, 21);
+            this.textBoxMultiCount.Size = new System.Drawing.Size(112, 21);
             this.textBoxMultiCount.TabIndex = 1;
             // 
             // label11
@@ -979,8 +983,6 @@
             // 
             // buttonAddFavoriteChart
             // 
-            this.buttonAddFavoriteChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAddFavoriteChart.Location = new System.Drawing.Point(7, 86);
             this.buttonAddFavoriteChart.Name = "buttonAddFavoriteChart";
             this.buttonAddFavoriteChart.Size = new System.Drawing.Size(75, 23);
@@ -991,8 +993,6 @@
             // 
             // buttonClearFavoriteCharts
             // 
-            this.buttonClearFavoriteCharts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 115);
             this.buttonClearFavoriteCharts.Name = "buttonClearFavoriteCharts";
             this.buttonClearFavoriteCharts.Size = new System.Drawing.Size(75, 23);
@@ -1027,6 +1027,25 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
+            // 
+            // textBoxStartDataItem
+            // 
+            this.textBoxStartDataItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 221);
+            this.textBoxStartDataItem.Name = "textBoxStartDataItem";
+            this.textBoxStartDataItem.Size = new System.Drawing.Size(111, 21);
+            this.textBoxStartDataItem.TabIndex = 11;
+            // 
+            // btnSetAsStartTrade
+            // 
+            this.btnSetAsStartTrade.Location = new System.Drawing.Point(1, 220);
+            this.btnSetAsStartTrade.Name = "btnSetAsStartTrade";
+            this.btnSetAsStartTrade.Size = new System.Drawing.Size(75, 23);
+            this.btnSetAsStartTrade.TabIndex = 12;
+            this.btnSetAsStartTrade.Text = "设为起始期";
+            this.btnSetAsStartTrade.UseVisualStyleBackColor = true;
+            this.btnSetAsStartTrade.Click += new System.EventHandler(this.btnSetAsStartTrade_Click);
             // 
             // LotteryGraph
             // 
@@ -1152,5 +1171,7 @@
         private System.Windows.Forms.ListBox listBoxFavoriteCharts;
         private System.Windows.Forms.Button buttonClearFavoriteCharts;
         private System.Windows.Forms.Button buttonAddFavoriteChart;
+        private System.Windows.Forms.Button btnSetAsStartTrade;
+        private System.Windows.Forms.TextBox textBoxStartDataItem;
     }
 }

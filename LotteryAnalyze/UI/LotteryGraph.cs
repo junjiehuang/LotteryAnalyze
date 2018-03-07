@@ -95,6 +95,7 @@ namespace LotteryAnalyze.UI
             textBoxMultiCount.Text = TradeDataManager.Instance.GetTradeCountInfoStr();
             textBoxStartMoney.Text = TradeDataManager.Instance.startMoney.ToString();
 
+            textBoxStartDataItem.Text = graphMgr.endShowDateItemIndex.ToString();
         }
 
         void SetUIGridWH()
@@ -684,7 +685,7 @@ namespace LotteryAnalyze.UI
 
         private void tradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TradeWindow win = new TradeWindow();
+            TradeWindow win = new TradeWindow(graphMgr);
             win.Show();
         }
 
@@ -797,6 +798,11 @@ namespace LotteryAnalyze.UI
         {
             listBoxFavoriteCharts.Items.Clear();
             graphMgr.ClearFavoriteCharts();
+        }
+
+        private void btnSetAsStartTrade_Click(object sender, EventArgs e)
+        {
+            graphMgr.endShowDateItemIndex = int.Parse(textBoxStartDataItem.Text);
         }
     }
 }

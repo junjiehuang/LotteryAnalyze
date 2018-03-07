@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LotteryAnalyze;
 
 namespace LotteryAnalyze.UI
 {
@@ -23,9 +24,12 @@ namespace LotteryAnalyze.UI
         List<SByte> sSels = new List<SByte>();
         List<SByte> gSels = new List<SByte>();
 
+        GraphManager graphMgr = null;
 
-        public TradeWindow()
+
+        public TradeWindow(object _graphMgr)
         {
+            graphMgr = _graphMgr as GraphManager;
             InitializeComponent();
             cbw.Add(checkBoxW0); cbw.Add(checkBoxW1); cbw.Add(checkBoxW2); cbw.Add(checkBoxW3); cbw.Add(checkBoxW4);
             cbw.Add(checkBoxW5); cbw.Add(checkBoxW6); cbw.Add(checkBoxW7); cbw.Add(checkBoxW8); cbw.Add(checkBoxW9);
@@ -114,6 +118,9 @@ namespace LotteryAnalyze.UI
             //if(dr == DialogResult.OK)
             {
                 DataItem lastItem = DataManager.GetInst().GetLatestItem();
+                if (graphMgr.endShowDateItemIndex >= 0)
+                    lastItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDateItemIndex);
+                
                 int tradeCount = 1;
                 int.TryParse(textBoxLotteryCount.Text, out tradeCount);
                 wSels.Clear(); CheckSelectNum(ref cbw, ref wSels);

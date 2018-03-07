@@ -125,8 +125,10 @@ namespace LotteryAnalyze
 
         void RefreshDataView()
         {
-            int curID = 0;
+            //int curID = 0;
             DataManager dataMgr = DataManager.GetInst();
+            dataMgr.SetDataItemsGlobalID();
+
             dataGridViewLotteryDatas.Rows.Clear();
             foreach( int key in dataMgr.allDatas.Keys )
             {
@@ -134,7 +136,7 @@ namespace LotteryAnalyze
                 for (int i = 0; i < data.datas.Count; ++i)
                 {
                     DataItem di = data.datas[i];
-                    di.idGlobal = curID++;
+                    //di.idGlobal = curID++;
                     //string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
                     //string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
                     //string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";

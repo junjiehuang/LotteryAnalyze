@@ -248,6 +248,8 @@ namespace LotteryAnalyze
             set { stopAtTheLatestItem = value; }
         }
         List<NumberCmpInfo> maxProbilityNums = new List<NumberCmpInfo>();
+        public delegate void OnTradeComleted();
+        public OnTradeComleted tradeCompletedCallBack;
 
         TradeDataManager()
         {
@@ -314,6 +316,8 @@ namespace LotteryAnalyze
                             minValue = waitingTradeDatas[i].moneyAtferTrade;
                         historyTradeDatas.Add(waitingTradeDatas[i]);
                         waitingTradeDatas.RemoveAt(i);
+                        if (tradeCompletedCallBack != null)
+                            tradeCompletedCallBack();
                     }
                 }
             }
