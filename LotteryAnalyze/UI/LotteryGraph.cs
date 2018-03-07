@@ -96,6 +96,8 @@ namespace LotteryAnalyze.UI
             textBoxStartMoney.Text = TradeDataManager.Instance.startMoney.ToString();
 
             textBoxStartDataItem.Text = graphMgr.endShowDateItemIndex.ToString();
+
+            TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
         }
 
         void SetUIGridWH()
@@ -803,6 +805,13 @@ namespace LotteryAnalyze.UI
         private void btnSetAsStartTrade_Click(object sender, EventArgs e)
         {
             graphMgr.endShowDateItemIndex = int.Parse(textBoxStartDataItem.Text);
+        }
+
+        private void OnTradeCompleted()
+        {
+            this.BringToFront();
+            graphMgr.OnTradeCompleted();
+            this.Invalidate();
         }
     }
 }

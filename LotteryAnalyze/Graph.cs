@@ -1520,7 +1520,6 @@ namespace LotteryAnalyze
             sGraphMap.Add(GraphType.eBarGraph, barGraph);
             sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
 
-            TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
         }
 
         public void OnTradeCompleted()

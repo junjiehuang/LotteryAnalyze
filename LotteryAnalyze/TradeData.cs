@@ -259,6 +259,7 @@ namespace LotteryAnalyze
             tradeCountList.Add(4);
             tradeCountList.Add(8);
             tradeCountList.Add(16);
+            ClearAllTradeDatas();
         }
         public static TradeDataManager Instance
         {
