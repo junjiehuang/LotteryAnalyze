@@ -703,14 +703,15 @@ namespace LotteryAnalyze
         }
         public void LoadData(int key)
         {
-            OneDayDatas data = null;
-            string fullPath = mFileMetaInfo[key];
-            if (Util.ReadFile(key, fullPath, ref data))
+            if (allDatas.ContainsKey(key) == false)
             {
-                allDatas.Add(key, data);
-                if (indexs.IndexOf(key) == -1)
+                OneDayDatas data = null;
+                string fullPath = mFileMetaInfo[key];
+                if (Util.ReadFile(key, fullPath, ref data))
                 {
-                    indexs.Add(key);
+                    allDatas.Add(key, data);
+                    if (indexs.IndexOf(key) == -1)
+                        indexs.Add(key);
                     indexs.Sort();
                 }
             }
@@ -748,8 +749,10 @@ namespace LotteryAnalyze
         {
             allItemMap.Clear();
             int curID = 0;
-            foreach (int key in allDatas.Keys)
+            //foreach (int key in allDatas.Keys)
+            for( int id = 0; id < indexs.Count; ++id )
             {
+                int key = indexs[id];
                 OneDayDatas data = allDatas[key];
                 for (int i = 0; i < data.datas.Count; ++i)
                 {

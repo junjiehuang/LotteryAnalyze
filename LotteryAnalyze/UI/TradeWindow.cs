@@ -143,9 +143,8 @@ namespace LotteryAnalyze.UI
                 DialogResult dr = MessageBox.Show(buyInfo, caption, MessageBoxButtons.OKCancel);
                 if (dr == DialogResult.OK)
                 {
-
                     bool hasSelNum = wSels.Count > 0 || qSels.Count > 0 || bSels.Count > 0 || sSels.Count > 0 || gSels.Count > 0;
-                    if (tradeCount > 0 && hasSelNum)
+                    if (tradeCount >= 0 && hasSelNum)
                     {
                         TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
                         trade.lastDateItem = lastItem;

@@ -125,23 +125,17 @@ namespace LotteryAnalyze
 
         void RefreshDataView()
         {
-            //int curID = 0;
             DataManager dataMgr = DataManager.GetInst();
             dataMgr.SetDataItemsGlobalID();
 
             dataGridViewLotteryDatas.Rows.Clear();
-            foreach( int key in dataMgr.allDatas.Keys )
+            for( int id = 0; id < dataMgr.indexs.Count; ++id )
             {
+                int key = dataMgr.indexs[id];
                 OneDayDatas data = dataMgr.allDatas[key];
                 for (int i = 0; i < data.datas.Count; ++i)
                 {
                     DataItem di = data.datas[i];
-                    //di.idGlobal = curID++;
-                    //string g6 = di.groupType == GroupType.eGT6 ? "组6" : "";
-                    //string g3 = di.groupType == GroupType.eGT3 ? "组3" : "";
-                    //string g1 = di.groupType == GroupType.eGT1 ? "豹子" : "";
-                    //object[] objs = new object[] { di.idTag, di.lotteryNumber, di.andValue, di.rearValue, di.crossValue, g6, g3, g1, };
-                    //dataGridViewLotteryDatas.Rows.Add(objs);
                     DataGridViewColumnManager.AddRow(di, dataGridViewLotteryDatas);
                 }
             }
@@ -262,7 +256,7 @@ namespace LotteryAnalyze
         private void addToSimulatePoolToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DataManager dataMgr = DataManager.GetInst();
-            dataMgr.ClearAllDatas();
+            //dataMgr.ClearAllDatas();
             for (int i = 0; i < listViewFileList.SelectedItems.Count; ++i)
             {
                 ListViewItem item = listViewFileList.SelectedItems[i];
