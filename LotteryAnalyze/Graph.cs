@@ -1329,9 +1329,12 @@ namespace LotteryAnalyze
         Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
         Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Pen moneyLvLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+
         Font tipsFont = new Font(FontFamily.GenericMonospace, 12);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         int selectTradeIndex = -1;
+        static float[] TRADE_LVS = new float[] { 0, 0.5f, 1.0f, 1.5f, 2.0f, };
 
         public GraphTrade()
         {
@@ -1361,6 +1364,7 @@ namespace LotteryAnalyze
             float halfGridW = gridScaleW * 0.5f;
 
             TradeDataManager tdm = TradeDataManager.Instance;
+            /*
             if(tdm.historyTradeDatas.Count == 0)
             {
                 float y = tdm.currentMoney * gridScaleH;
@@ -1372,6 +1376,32 @@ namespace LotteryAnalyze
                 relY = StandToCanvas(y, false);
                 g.DrawRectangle(whiteLinePen, halfGridW - halfSize, halfWinH - halfSize, fullSize, fullSize);
                 g.DrawLine(whiteLinePen, halfGridW, halfWinH, winW, halfWinH);
+                return;
+            }
+            */
+            for(int i = 0; i < TRADE_LVS.Length; ++i)
+            {
+                float lv = TRADE_LVS[i];
+                float money = tdm.startMoney * lv;
+                float y = money * gridScaleH;
+                float relY = StandToCanvas(y, false);
+                if (lv <= 0)
+                    moneyLvLinePen.Color = Color.Gray;
+                else if (lv >= 1)
+                    moneyLvLinePen.Color = Color.Red;
+                else
+                    moneyLvLinePen.Color = Color.Cyan;
+                g.DrawLine(moneyLvLinePen, 0, relY, winW, relY);
+                g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
+            }
+            if (tdm.historyTradeDatas.Count == 0)
+            {
+                float y = tdm.startMoney * gridScaleH;
+                float relY = StandToCanvas(y, false);
+                if (relY < 0 || relY > winH)
+                {
+                    canvasOffset.Y = y + winH * 0.5f;
+                }
                 return;
             }
 

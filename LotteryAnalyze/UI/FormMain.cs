@@ -432,14 +432,13 @@ namespace LotteryAnalyze
                 updateTimer.Enabled = true;
                 updateTimer.Start();
             }
-            lastUpdateTime = DateTime.Now.Ticks;
-            RefreshLatestData();
+            RefreshLatestData(true);
             MessageBox.Show("更新数据完成！");
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            RefreshLatestData();
+            RefreshLatestData(false);
         }
 
         private void collectDatasToolStripMenuItem_Click(object sender, EventArgs e)
@@ -459,10 +458,17 @@ namespace LotteryAnalyze
             return -1;
         }
 
-        void RefreshLatestData()
+        void RefreshLatestData(bool forceUpdate)
         {
             //Process p = Process.Start("AutoFetchDailyData.exe");
             //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+            if(forceUpdate == false)
+            {
+                int minute = DateTime.Now.Minute;
+                int minGap = minute % 5;
+                if (minGap > 2 || minGap < 1)
+                    return;
+            }
 
             // 更新当天的数据
             int currentFetchCount = AutoUpdateUtil.AutoFetchTodayData();
