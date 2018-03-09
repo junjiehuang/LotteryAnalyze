@@ -453,10 +453,10 @@ namespace LotteryAnalyze
                     int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                     if (endIndex > kddc.dataLst.Count)
                         endIndex = kddc.dataLst.Count;
-                    if(parent.endShowDateItemIndex != -1)
+                    if(parent.endShowDataItemIndex != -1)
                     {
-                        if (endIndex > parent.endShowDateItemIndex+1)
-                            endIndex = parent.endShowDateItemIndex+1;
+                        if (endIndex > parent.endShowDataItemIndex+1)
+                            endIndex = parent.endShowDataItemIndex+1;
                     }
 
                     // 自动对齐
@@ -501,10 +501,10 @@ namespace LotteryAnalyze
                                 endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                                 if (endIndex > adc.avgPointMapLst.Count)
                                     endIndex = adc.avgPointMapLst.Count;
-                                if (parent.endShowDateItemIndex != -1)
+                                if (parent.endShowDataItemIndex != -1)
                                 {
-                                    if (endIndex > parent.endShowDateItemIndex + 1)
-                                        endIndex = parent.endShowDateItemIndex + 1;
+                                    if (endIndex > parent.endShowDataItemIndex + 1)
+                                        endIndex = parent.endShowDataItemIndex + 1;
                                 }
 
                                 for (int i = startIndex; i < endIndex; ++i)
@@ -521,10 +521,10 @@ namespace LotteryAnalyze
                         lastValue = 0;
                         findPrevPt = false;
                         endIndex = kddc.bollinDataLst.bollinMapLst.Count;
-                        if (parent.endShowDateItemIndex != -1)
+                        if (parent.endShowDataItemIndex != -1)
                         {
-                            if (endIndex > parent.endShowDateItemIndex + 1)
-                                endIndex = parent.endShowDateItemIndex + 1;
+                            if (endIndex > parent.endShowDataItemIndex + 1)
+                                endIndex = parent.endShowDataItemIndex + 1;
                         }
                         for (int i = 0; i < endIndex; ++i)
                         {
@@ -562,10 +562,10 @@ namespace LotteryAnalyze
                 int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
                 if (endIndex > kddc.macdDataLst.macdMapLst.Count)
                     endIndex = kddc.macdDataLst.macdMapLst.Count;
-                if (parent.endShowDateItemIndex != -1)
+                if (parent.endShowDataItemIndex != -1)
                 {
-                    if (endIndex > parent.endShowDateItemIndex + 1)
-                        endIndex = parent.endShowDateItemIndex + 1;
+                    if (endIndex > parent.endShowDataItemIndex + 1)
+                        endIndex = parent.endShowDataItemIndex + 1;
                 }
                 for ( int i = startIndex; i < endIndex; ++i )
                 {
@@ -588,6 +588,12 @@ namespace LotteryAnalyze
             else
                 selectKDataIndex = -1;
             canvasOffset.X = index * gridScaleW;
+            autoAllign = true;
+        }
+
+        public void UnSelectData()
+        {
+            selectKDataIndex = -1;
             autoAllign = true;
         }
 
@@ -1213,8 +1219,8 @@ namespace LotteryAnalyze
             float downRCH = gridScaleH * missRelHeight;
             float strDist = 1.5f * gridScaleW;
             int endIndex = kddc.dataLst.Count - 1;
-            if (parent.endShowDateItemIndex != -1 && parent.endShowDateItemIndex < kddc.dataLst.Count)
-                endIndex = parent.endShowDateItemIndex;
+            if (parent.endShowDataItemIndex != -1 && parent.endShowDataItemIndex < kddc.dataLst.Count)
+                endIndex = parent.endShowDataItemIndex;
             KDataDict lastKDD = kddc.dataLst[endIndex];
             KData data = lastKDD.GetData(cdt, false);
             float standX = (data.index + 1) * gridScaleW;
@@ -1509,7 +1515,7 @@ namespace LotteryAnalyze
         public GraphBar barGraph;
         public GraphKCurve kvalueGraph;
         public GraphTrade tradeGraph;
-        public int endShowDateItemIndex = -1;
+        public int endShowDataItemIndex = -1;
 
         public GraphManager()
         {
@@ -1524,8 +1530,8 @@ namespace LotteryAnalyze
 
         public void OnTradeCompleted()
         {
-            if (endShowDateItemIndex != -1)
-                endShowDateItemIndex++;
+            if (endShowDataItemIndex != -1)
+                endShowDataItemIndex++;
         }
 
         public GraphType CurrentGraphType

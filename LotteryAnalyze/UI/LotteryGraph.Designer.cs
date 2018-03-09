@@ -53,6 +53,9 @@
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
+            this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
+            this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
             this.textBoxGridScaleW = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -92,6 +95,8 @@
             this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPageTrade = new System.Windows.Forms.TabPage();
+            this.btnSetAsStartTrade = new System.Windows.Forms.Button();
+            this.textBoxStartDataItem = new System.Windows.Forms.TextBox();
             this.trackBarTradeData = new System.Windows.Forms.TrackBar();
             this.textBoxStartMoney = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -107,13 +112,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
-            this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
-            this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
             this.panelUp = new LotteryAnalyze.UI.ExtPanel();
+            this.buttonExpand = new System.Windows.Forms.Button();
             this.panelDown = new LotteryAnalyze.UI.ExtPanel();
-            this.textBoxStartDataItem = new System.Windows.Forms.TextBox();
-            this.btnSetAsStartTrade = new System.Windows.Forms.Button();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -131,6 +132,7 @@
             this.tabPageBarGraph.SuspendLayout();
             this.tabPageTrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
+            this.panelUp.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -350,6 +352,38 @@
             this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
             this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
             // 
+            // buttonClearFavoriteCharts
+            // 
+            this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 115);
+            this.buttonClearFavoriteCharts.Name = "buttonClearFavoriteCharts";
+            this.buttonClearFavoriteCharts.Size = new System.Drawing.Size(75, 23);
+            this.buttonClearFavoriteCharts.TabIndex = 13;
+            this.buttonClearFavoriteCharts.Text = "清空";
+            this.buttonClearFavoriteCharts.UseVisualStyleBackColor = true;
+            this.buttonClearFavoriteCharts.Click += new System.EventHandler(this.buttonClearFavoriteCharts_Click);
+            // 
+            // buttonAddFavoriteChart
+            // 
+            this.buttonAddFavoriteChart.Location = new System.Drawing.Point(7, 86);
+            this.buttonAddFavoriteChart.Name = "buttonAddFavoriteChart";
+            this.buttonAddFavoriteChart.Size = new System.Drawing.Size(75, 23);
+            this.buttonAddFavoriteChart.TabIndex = 12;
+            this.buttonAddFavoriteChart.Text = "添加";
+            this.buttonAddFavoriteChart.UseVisualStyleBackColor = true;
+            this.buttonAddFavoriteChart.Click += new System.EventHandler(this.buttonAddFavoriteChart_Click);
+            // 
+            // listBoxFavoriteCharts
+            // 
+            this.listBoxFavoriteCharts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxFavoriteCharts.FormattingEnabled = true;
+            this.listBoxFavoriteCharts.ItemHeight = 12;
+            this.listBoxFavoriteCharts.Location = new System.Drawing.Point(87, 86);
+            this.listBoxFavoriteCharts.Name = "listBoxFavoriteCharts";
+            this.listBoxFavoriteCharts.Size = new System.Drawing.Size(117, 100);
+            this.listBoxFavoriteCharts.TabIndex = 11;
+            this.listBoxFavoriteCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxFavoriteCharts_SelectedIndexChanged);
+            // 
             // textBoxGridScaleH
             // 
             this.textBoxGridScaleH.Location = new System.Drawing.Point(121, 4);
@@ -417,7 +451,7 @@
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(190, 282);
+            this.tabPageKGraph.Size = new System.Drawing.Size(194, 289);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
@@ -718,7 +752,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(190, 282);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(194, 289);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -803,6 +837,25 @@
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
+            // 
+            // btnSetAsStartTrade
+            // 
+            this.btnSetAsStartTrade.Location = new System.Drawing.Point(1, 220);
+            this.btnSetAsStartTrade.Name = "btnSetAsStartTrade";
+            this.btnSetAsStartTrade.Size = new System.Drawing.Size(75, 23);
+            this.btnSetAsStartTrade.TabIndex = 12;
+            this.btnSetAsStartTrade.Text = "设为起始期";
+            this.btnSetAsStartTrade.UseVisualStyleBackColor = true;
+            this.btnSetAsStartTrade.Click += new System.EventHandler(this.btnSetAsStartTrade_Click);
+            // 
+            // textBoxStartDataItem
+            // 
+            this.textBoxStartDataItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 221);
+            this.textBoxStartDataItem.Name = "textBoxStartDataItem";
+            this.textBoxStartDataItem.Size = new System.Drawing.Size(111, 21);
+            this.textBoxStartDataItem.TabIndex = 11;
             // 
             // trackBarTradeData
             // 
@@ -969,44 +1022,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // listBoxFavoriteCharts
-            // 
-            this.listBoxFavoriteCharts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxFavoriteCharts.FormattingEnabled = true;
-            this.listBoxFavoriteCharts.ItemHeight = 12;
-            this.listBoxFavoriteCharts.Location = new System.Drawing.Point(87, 86);
-            this.listBoxFavoriteCharts.Name = "listBoxFavoriteCharts";
-            this.listBoxFavoriteCharts.Size = new System.Drawing.Size(117, 100);
-            this.listBoxFavoriteCharts.TabIndex = 11;
-            this.listBoxFavoriteCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxFavoriteCharts_SelectedIndexChanged);
-            // 
-            // buttonAddFavoriteChart
-            // 
-            this.buttonAddFavoriteChart.Location = new System.Drawing.Point(7, 86);
-            this.buttonAddFavoriteChart.Name = "buttonAddFavoriteChart";
-            this.buttonAddFavoriteChart.Size = new System.Drawing.Size(75, 23);
-            this.buttonAddFavoriteChart.TabIndex = 12;
-            this.buttonAddFavoriteChart.Text = "添加";
-            this.buttonAddFavoriteChart.UseVisualStyleBackColor = true;
-            this.buttonAddFavoriteChart.Click += new System.EventHandler(this.buttonAddFavoriteChart_Click);
-            // 
-            // buttonClearFavoriteCharts
-            // 
-            this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 115);
-            this.buttonClearFavoriteCharts.Name = "buttonClearFavoriteCharts";
-            this.buttonClearFavoriteCharts.Size = new System.Drawing.Size(75, 23);
-            this.buttonClearFavoriteCharts.TabIndex = 13;
-            this.buttonClearFavoriteCharts.Text = "清空";
-            this.buttonClearFavoriteCharts.UseVisualStyleBackColor = true;
-            this.buttonClearFavoriteCharts.Click += new System.EventHandler(this.buttonClearFavoriteCharts_Click);
-            // 
             // panelUp
             // 
             this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
+            this.panelUp.Controls.Add(this.buttonExpand);
             this.panelUp.Location = new System.Drawing.Point(3, 4);
             this.panelUp.Name = "panelUp";
             this.panelUp.Size = new System.Drawing.Size(479, 312);
@@ -1015,6 +1037,17 @@
             this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
             this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            // 
+            // buttonExpand
+            // 
+            this.buttonExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExpand.Location = new System.Drawing.Point(469, 0);
+            this.buttonExpand.Name = "buttonExpand";
+            this.buttonExpand.Size = new System.Drawing.Size(10, 312);
+            this.buttonExpand.TabIndex = 0;
+            this.buttonExpand.UseVisualStyleBackColor = true;
+            this.buttonExpand.Click += new System.EventHandler(this.buttonExpand_Click);
             // 
             // panelDown
             // 
@@ -1027,25 +1060,6 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
-            // 
-            // textBoxStartDataItem
-            // 
-            this.textBoxStartDataItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 221);
-            this.textBoxStartDataItem.Name = "textBoxStartDataItem";
-            this.textBoxStartDataItem.Size = new System.Drawing.Size(111, 21);
-            this.textBoxStartDataItem.TabIndex = 11;
-            // 
-            // btnSetAsStartTrade
-            // 
-            this.btnSetAsStartTrade.Location = new System.Drawing.Point(1, 220);
-            this.btnSetAsStartTrade.Name = "btnSetAsStartTrade";
-            this.btnSetAsStartTrade.Size = new System.Drawing.Size(75, 23);
-            this.btnSetAsStartTrade.TabIndex = 12;
-            this.btnSetAsStartTrade.Text = "设为起始期";
-            this.btnSetAsStartTrade.UseVisualStyleBackColor = true;
-            this.btnSetAsStartTrade.Click += new System.EventHandler(this.btnSetAsStartTrade_Click);
             // 
             // LotteryGraph
             // 
@@ -1081,6 +1095,7 @@
             this.tabPageTrade.ResumeLayout(false);
             this.tabPageTrade.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
+            this.panelUp.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1173,5 +1188,6 @@
         private System.Windows.Forms.Button buttonAddFavoriteChart;
         private System.Windows.Forms.Button btnSetAsStartTrade;
         private System.Windows.Forms.TextBox textBoxStartDataItem;
+        private System.Windows.Forms.Button buttonExpand;
     }
 }

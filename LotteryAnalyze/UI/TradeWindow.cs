@@ -118,8 +118,8 @@ namespace LotteryAnalyze.UI
             //if(dr == DialogResult.OK)
             {
                 DataItem lastItem = DataManager.GetInst().GetLatestItem();
-                if (graphMgr.endShowDateItemIndex >= 0)
-                    lastItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDateItemIndex);
+                if (graphMgr.endShowDataItemIndex >= 0)
+                    lastItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
                 
                 int tradeCount = 1;
                 int.TryParse(textBoxLotteryCount.Text, out tradeCount);

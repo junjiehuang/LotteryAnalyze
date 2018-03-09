@@ -545,5 +545,13 @@ namespace LotteryAnalyze
         {
             LotteryAnalyze.UI.TradeCalculater.Open();
         }
+
+        private void importFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = "../data";
+            DirectoryInfo di = new DirectoryInfo(path);
+            LoopSearchFolder(di);
+            RefreshFileList();
+        }
     }
 }

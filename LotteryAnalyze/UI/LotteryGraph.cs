@@ -29,7 +29,6 @@ namespace LotteryAnalyze.UI
         Pen curUpdatePen;
         System.Windows.Forms.Timer updateTimer;
 
-
         #region ctor and common
 
         public static void Open(bool forceCreateNewOne)
@@ -95,7 +94,7 @@ namespace LotteryAnalyze.UI
             textBoxMultiCount.Text = TradeDataManager.Instance.GetTradeCountInfoStr();
             textBoxStartMoney.Text = TradeDataManager.Instance.startMoney.ToString();
 
-            textBoxStartDataItem.Text = graphMgr.endShowDateItemIndex.ToString();
+            textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
         }
@@ -274,6 +273,12 @@ namespace LotteryAnalyze.UI
             this.Invalidate(true);//触发Paint事件
         }
 
+        private void CollectBarGraphData(DataItem item)
+        {
+            GraphDataManager.BGDC.CurrentSelectItem = item;
+            GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+        }
+
         private void panelUp_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -287,26 +292,27 @@ namespace LotteryAnalyze.UI
                         if (selID != -1)
                         {
                             kdataID = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem.idGlobal;
-
-                            GraphDataManager.BGDC.CurrentSelectItem = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem;
-                            GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                            CollectBarGraphData(TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem);
                         }
                         else
                         {
-                            GraphDataManager.BGDC.CurrentSelectItem = null;
-                            GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                            CollectBarGraphData(null);
                         }
                     }
                     else
                     {
-                        GraphDataManager.BGDC.CurrentSelectItem = null;
-                        GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-
+                        CollectBarGraphData(null);
                         graphMgr.tradeGraph.UnselectTradeData();
                     }
-                    graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true);
                     if (kdataID != -1)
+                    {
+                        graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true);
                         FormMain.Instance.SelectDataItem(kdataID);
+                    }
+                    else
+                    {
+                        graphMgr.kvalueGraph.UnSelectData();
+                    }
                 }
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
@@ -804,14 +810,23 @@ namespace LotteryAnalyze.UI
 
         private void btnSetAsStartTrade_Click(object sender, EventArgs e)
         {
-            graphMgr.endShowDateItemIndex = int.Parse(textBoxStartDataItem.Text);
+            graphMgr.endShowDataItemIndex = int.Parse(textBoxStartDataItem.Text);
         }
 
         private void OnTradeCompleted()
         {
             this.BringToFront();
             graphMgr.OnTradeCompleted();
-            this.Invalidate();
+            this.Invalidate(true);
+
+            DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
+            CollectBarGraphData(curItem);
+        }
+
+        private void buttonExpand_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
+            this.Invalidate(true);
         }
     }
 }
