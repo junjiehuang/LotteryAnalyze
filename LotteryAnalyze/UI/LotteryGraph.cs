@@ -817,6 +817,7 @@ namespace LotteryAnalyze.UI
         {
             this.BringToFront();
             graphMgr.OnTradeCompleted();
+            graphMgr.tradeGraph.autoAllign = true;
             this.Invalidate(true);
 
             DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);

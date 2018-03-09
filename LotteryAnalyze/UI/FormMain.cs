@@ -20,6 +20,7 @@ namespace LotteryAnalyze
         }
         System.Windows.Forms.Timer updateTimer;
         int lastFetchCount = -1;
+        long lastUpdateTime = 0;
 
         public FormMain()
         {
@@ -422,8 +423,7 @@ namespace LotteryAnalyze
         }
 
         private void getLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RefreshLatestData();
+        {            
             if (updateTimer == null)
             {
                 updateTimer = new System.Windows.Forms.Timer();
@@ -432,6 +432,8 @@ namespace LotteryAnalyze
                 updateTimer.Enabled = true;
                 updateTimer.Start();
             }
+            lastUpdateTime = DateTime.Now.Ticks;
+            RefreshLatestData();
             MessageBox.Show("更新数据完成！");
         }
 

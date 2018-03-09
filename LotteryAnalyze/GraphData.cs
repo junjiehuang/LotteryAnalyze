@@ -45,7 +45,7 @@ namespace LotteryAnalyze
         public float MissValue;
         public float KValue;
 
-        string info = null;
+        //string info = null;
 
         public int index
         {
@@ -59,7 +59,8 @@ namespace LotteryAnalyze
 
         public string GetInfo()
         {
-            if (info == null)
+            //if (info == null)
+            string info = "";
             {
                 int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
                 if (parent.startItem == parent.endItem)

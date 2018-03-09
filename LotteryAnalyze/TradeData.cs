@@ -109,10 +109,14 @@ namespace LotteryAnalyze
         public float cost = 0;
         public float moneyBeforeTrade = 0;
         public float moneyAtferTrade = 0;
-        protected string tips = "";
+        //protected string tips = "";
         public bool isAutoTrade = false;
 
-        public virtual string GetTips() { return tips; }
+        public virtual string GetTips()
+        {
+            return "";
+            //return tips;
+        }
         public virtual void Update() { }
     }
 
@@ -184,6 +188,7 @@ namespace LotteryAnalyze
 
         public override string GetTips()
         {
+            string tips = "";
             // 已开奖
             if(tips.Length == 0 && targetLotteryItem != null)
             {
