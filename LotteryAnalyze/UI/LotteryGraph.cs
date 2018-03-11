@@ -97,6 +97,8 @@ namespace LotteryAnalyze.UI
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
+            buttonHorzExpand.Hide();
+            buttonVertExpand.Hide();
         }
 
         void SetUIGridWH()
@@ -201,6 +203,17 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.Location.X > panelUp.ClientSize.Width - buttonHorzExpand.ClientSize.Width && buttonHorzExpand.Visible == false)
+                buttonHorzExpand.Visible = true;
+            else if (buttonHorzExpand.Visible)
+                buttonHorzExpand.Visible = false;
+
+            if (e.Location.Y > panelUp.ClientSize.Height - buttonVertExpand.ClientSize.Height && buttonVertExpand.Visible == false)
+                buttonVertExpand.Visible = true;
+            else if (buttonVertExpand.Visible)
+                buttonVertExpand.Visible = false;
+
+
             hasMouseMoveOnUpPanel = true;
             upPanelMousePosOnMove = e.Location;
             bool needUpdate = false;
@@ -815,7 +828,7 @@ namespace LotteryAnalyze.UI
 
         private void OnTradeCompleted()
         {
-            this.BringToFront();
+            //this.BringToFront();
             graphMgr.OnTradeCompleted();
             graphMgr.tradeGraph.autoAllign = true;
             this.Invalidate(true);
@@ -825,9 +838,15 @@ namespace LotteryAnalyze.UI
             CollectBarGraphData(curItem);
         }
 
-        private void buttonExpand_Click(object sender, EventArgs e)
+        private void buttonHorzExpand_Click(object sender, EventArgs e)
         {
             splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
+            this.Invalidate(true);
+        }
+
+        private void buttonVertExpand_Click(object sender, EventArgs e)
+        {
+            splitContainer2.Panel2Collapsed = !splitContainer2.Panel2Collapsed;
             this.Invalidate(true);
         }
     }

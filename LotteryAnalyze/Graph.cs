@@ -540,6 +540,7 @@ namespace LotteryAnalyze
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+                g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
             }
             EndDraw(g);
         }
