@@ -773,7 +773,8 @@ namespace LotteryAnalyze.UI
 
         private void textBoxStartMoney_TextChanged(object sender, EventArgs e)
         {
-            TradeDataManager.Instance.startMoney = float.Parse(textBoxStartMoney.Text);
+            float v = float.Parse(textBoxStartMoney.Text);
+            TradeDataManager.Instance.SetStartMoney(v);
         }
         private void globalSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
         {

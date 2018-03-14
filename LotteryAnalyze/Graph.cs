@@ -1395,6 +1395,10 @@ namespace LotteryAnalyze
                 g.DrawLine(moneyLvLinePen, 0, relY, winW, relY);
                 g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
             }
+            float curMouseY = CanvasToStand(mouseRelPos.Y, false);
+            curMouseY /= gridScaleH;
+            g.DrawString(curMouseY.ToString("f0"), tipsFont, whiteBrush, winW - 65, mouseRelPos.Y);
+
             if (tdm.historyTradeDatas.Count == 0)
             {
                 float y = tdm.startMoney * gridScaleH;

@@ -357,6 +357,14 @@ namespace LotteryAnalyze
             eFromLatest,
             eFromSpec,
         }
+        public void SetStartMoney(float _startMoney)
+        {
+            startMoney = _startMoney;
+            if(historyTradeDatas.Count == 0 && waitingTradeDatas.Count == 0)
+            {
+                minValue = maxValue = currentMoney = startMoney;
+            }
+        }
         public void StartAutoTradeJob(StartTradeType srt, string idTag)
         {
             ClearAllTradeDatas();
