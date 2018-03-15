@@ -1443,7 +1443,7 @@ namespace LotteryAnalyze
                 px = StandToCanvas(px, true);
                 cy = StandToCanvas(cy, false);
                 py = StandToCanvas(py, false);
-                Pen pen = (tdb.cost == 0 ? whiteLinePen : (tdb.reward > 0 ? redLinePen : cyanLinePen));
+                Pen pen = (tdb.cost == 0 ? whiteLinePen : (tdb.reward > tdb.cost ? redLinePen : cyanLinePen));
                 if(i == 0)
                     g.DrawRectangle(whiteLinePen, px - halfSize, py - halfSize, fullSize, fullSize);
                 g.DrawRectangle(pen, cx - halfSize, cy - halfSize, fullSize, fullSize);

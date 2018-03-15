@@ -29,17 +29,19 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxW0 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW1 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW2 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW3 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW4 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW5 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW6 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW7 = new System.Windows.Forms.CheckBox();
-            this.checkBoxW8 = new System.Windows.Forms.CheckBox();
+            this.buttonWClear = new System.Windows.Forms.Button();
             this.checkBoxW9 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW8 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW7 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW6 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW5 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW4 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW3 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW2 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxW0 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonQClear = new System.Windows.Forms.Button();
             this.checkBoxQ9 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ8 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ7 = new System.Windows.Forms.CheckBox();
@@ -51,6 +53,7 @@
             this.checkBoxQ1 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ0 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.buttonBClear = new System.Windows.Forms.Button();
             this.checkBoxB9 = new System.Windows.Forms.CheckBox();
             this.checkBoxB8 = new System.Windows.Forms.CheckBox();
             this.checkBoxB7 = new System.Windows.Forms.CheckBox();
@@ -62,6 +65,7 @@
             this.checkBoxB1 = new System.Windows.Forms.CheckBox();
             this.checkBoxB0 = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.buttonSClear = new System.Windows.Forms.Button();
             this.checkBoxS9 = new System.Windows.Forms.CheckBox();
             this.checkBoxS8 = new System.Windows.Forms.CheckBox();
             this.checkBoxS7 = new System.Windows.Forms.CheckBox();
@@ -73,6 +77,7 @@
             this.checkBoxS1 = new System.Windows.Forms.CheckBox();
             this.checkBoxS0 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.buttonGClear = new System.Windows.Forms.Button();
             this.checkBoxG9 = new System.Windows.Forms.CheckBox();
             this.checkBoxG8 = new System.Windows.Forms.CheckBox();
             this.checkBoxG7 = new System.Windows.Forms.CheckBox();
@@ -83,14 +88,12 @@
             this.checkBoxG2 = new System.Windows.Forms.CheckBox();
             this.checkBoxG1 = new System.Windows.Forms.CheckBox();
             this.checkBoxG0 = new System.Windows.Forms.CheckBox();
-            this.buttonWClear = new System.Windows.Forms.Button();
-            this.buttonQClear = new System.Windows.Forms.Button();
-            this.buttonBClear = new System.Windows.Forms.Button();
-            this.buttonSClear = new System.Windows.Forms.Button();
-            this.buttonGClear = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxLotteryCount = new System.Windows.Forms.TextBox();
+            this.textBoxLotteryCountW = new System.Windows.Forms.TextBox();
             this.buttonSubmit = new System.Windows.Forms.Button();
+            this.textBoxLotteryCountQ = new System.Windows.Forms.TextBox();
+            this.textBoxLotteryCountB = new System.Windows.Forms.TextBox();
+            this.textBoxLotteryCountS = new System.Windows.Forms.TextBox();
+            this.textBoxLotteryCountG = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -101,6 +104,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.buttonWClear);
+            this.groupBox1.Controls.Add(this.textBoxLotteryCountW);
             this.groupBox1.Controls.Add(this.checkBoxW9);
             this.groupBox1.Controls.Add(this.checkBoxW8);
             this.groupBox1.Controls.Add(this.checkBoxW7);
@@ -113,118 +117,20 @@
             this.groupBox1.Controls.Add(this.checkBoxW0);
             this.groupBox1.Location = new System.Drawing.Point(2, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(429, 55);
+            this.groupBox1.Size = new System.Drawing.Size(525, 55);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "万位：";
             // 
-            // checkBoxW0
+            // buttonWClear
             // 
-            this.checkBoxW0.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW0.AutoEllipsis = true;
-            this.checkBoxW0.Location = new System.Drawing.Point(7, 21);
-            this.checkBoxW0.Name = "checkBoxW0";
-            this.checkBoxW0.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW0.TabIndex = 0;
-            this.checkBoxW0.Text = "0";
-            this.checkBoxW0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW0.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW1
-            // 
-            this.checkBoxW1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW1.AutoEllipsis = true;
-            this.checkBoxW1.Location = new System.Drawing.Point(43, 21);
-            this.checkBoxW1.Name = "checkBoxW1";
-            this.checkBoxW1.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW1.TabIndex = 1;
-            this.checkBoxW1.Text = "1";
-            this.checkBoxW1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW1.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW2
-            // 
-            this.checkBoxW2.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW2.AutoEllipsis = true;
-            this.checkBoxW2.Location = new System.Drawing.Point(79, 21);
-            this.checkBoxW2.Name = "checkBoxW2";
-            this.checkBoxW2.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW2.TabIndex = 2;
-            this.checkBoxW2.Text = "2";
-            this.checkBoxW2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW2.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW3
-            // 
-            this.checkBoxW3.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW3.AutoEllipsis = true;
-            this.checkBoxW3.Location = new System.Drawing.Point(115, 21);
-            this.checkBoxW3.Name = "checkBoxW3";
-            this.checkBoxW3.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW3.TabIndex = 3;
-            this.checkBoxW3.Text = "3";
-            this.checkBoxW3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW3.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW4
-            // 
-            this.checkBoxW4.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW4.AutoEllipsis = true;
-            this.checkBoxW4.Location = new System.Drawing.Point(151, 21);
-            this.checkBoxW4.Name = "checkBoxW4";
-            this.checkBoxW4.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW4.TabIndex = 4;
-            this.checkBoxW4.Text = "4";
-            this.checkBoxW4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW4.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW5
-            // 
-            this.checkBoxW5.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW5.AutoEllipsis = true;
-            this.checkBoxW5.Location = new System.Drawing.Point(187, 21);
-            this.checkBoxW5.Name = "checkBoxW5";
-            this.checkBoxW5.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW5.TabIndex = 5;
-            this.checkBoxW5.Text = "5";
-            this.checkBoxW5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW5.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW6
-            // 
-            this.checkBoxW6.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW6.AutoEllipsis = true;
-            this.checkBoxW6.Location = new System.Drawing.Point(223, 21);
-            this.checkBoxW6.Name = "checkBoxW6";
-            this.checkBoxW6.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW6.TabIndex = 6;
-            this.checkBoxW6.Text = "6";
-            this.checkBoxW6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW6.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW7
-            // 
-            this.checkBoxW7.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW7.AutoEllipsis = true;
-            this.checkBoxW7.Location = new System.Drawing.Point(259, 21);
-            this.checkBoxW7.Name = "checkBoxW7";
-            this.checkBoxW7.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW7.TabIndex = 7;
-            this.checkBoxW7.Text = "7";
-            this.checkBoxW7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW7.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxW8
-            // 
-            this.checkBoxW8.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxW8.AutoEllipsis = true;
-            this.checkBoxW8.Location = new System.Drawing.Point(295, 21);
-            this.checkBoxW8.Name = "checkBoxW8";
-            this.checkBoxW8.Size = new System.Drawing.Size(30, 30);
-            this.checkBoxW8.TabIndex = 8;
-            this.checkBoxW8.Text = "8";
-            this.checkBoxW8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxW8.UseVisualStyleBackColor = true;
+            this.buttonWClear.Location = new System.Drawing.Point(471, 19);
+            this.buttonWClear.Name = "buttonWClear";
+            this.buttonWClear.Size = new System.Drawing.Size(48, 30);
+            this.buttonWClear.TabIndex = 10;
+            this.buttonWClear.Text = "清空";
+            this.buttonWClear.UseVisualStyleBackColor = true;
+            this.buttonWClear.Click += new System.EventHandler(this.buttonWClear_Click);
             // 
             // checkBoxW9
             // 
@@ -238,8 +144,117 @@
             this.checkBoxW9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxW9.UseVisualStyleBackColor = true;
             // 
+            // checkBoxW8
+            // 
+            this.checkBoxW8.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW8.AutoEllipsis = true;
+            this.checkBoxW8.Location = new System.Drawing.Point(295, 21);
+            this.checkBoxW8.Name = "checkBoxW8";
+            this.checkBoxW8.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW8.TabIndex = 8;
+            this.checkBoxW8.Text = "8";
+            this.checkBoxW8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW8.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW7
+            // 
+            this.checkBoxW7.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW7.AutoEllipsis = true;
+            this.checkBoxW7.Location = new System.Drawing.Point(259, 21);
+            this.checkBoxW7.Name = "checkBoxW7";
+            this.checkBoxW7.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW7.TabIndex = 7;
+            this.checkBoxW7.Text = "7";
+            this.checkBoxW7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW7.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW6
+            // 
+            this.checkBoxW6.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW6.AutoEllipsis = true;
+            this.checkBoxW6.Location = new System.Drawing.Point(223, 21);
+            this.checkBoxW6.Name = "checkBoxW6";
+            this.checkBoxW6.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW6.TabIndex = 6;
+            this.checkBoxW6.Text = "6";
+            this.checkBoxW6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW6.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW5
+            // 
+            this.checkBoxW5.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW5.AutoEllipsis = true;
+            this.checkBoxW5.Location = new System.Drawing.Point(187, 21);
+            this.checkBoxW5.Name = "checkBoxW5";
+            this.checkBoxW5.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW5.TabIndex = 5;
+            this.checkBoxW5.Text = "5";
+            this.checkBoxW5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW5.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW4
+            // 
+            this.checkBoxW4.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW4.AutoEllipsis = true;
+            this.checkBoxW4.Location = new System.Drawing.Point(151, 21);
+            this.checkBoxW4.Name = "checkBoxW4";
+            this.checkBoxW4.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW4.TabIndex = 4;
+            this.checkBoxW4.Text = "4";
+            this.checkBoxW4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW4.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW3
+            // 
+            this.checkBoxW3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW3.AutoEllipsis = true;
+            this.checkBoxW3.Location = new System.Drawing.Point(115, 21);
+            this.checkBoxW3.Name = "checkBoxW3";
+            this.checkBoxW3.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW3.TabIndex = 3;
+            this.checkBoxW3.Text = "3";
+            this.checkBoxW3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW3.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW2
+            // 
+            this.checkBoxW2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW2.AutoEllipsis = true;
+            this.checkBoxW2.Location = new System.Drawing.Point(79, 21);
+            this.checkBoxW2.Name = "checkBoxW2";
+            this.checkBoxW2.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW2.TabIndex = 2;
+            this.checkBoxW2.Text = "2";
+            this.checkBoxW2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW2.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW1
+            // 
+            this.checkBoxW1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW1.AutoEllipsis = true;
+            this.checkBoxW1.Location = new System.Drawing.Point(43, 21);
+            this.checkBoxW1.Name = "checkBoxW1";
+            this.checkBoxW1.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW1.TabIndex = 1;
+            this.checkBoxW1.Text = "1";
+            this.checkBoxW1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW1.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxW0
+            // 
+            this.checkBoxW0.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxW0.AutoEllipsis = true;
+            this.checkBoxW0.Location = new System.Drawing.Point(7, 21);
+            this.checkBoxW0.Name = "checkBoxW0";
+            this.checkBoxW0.Size = new System.Drawing.Size(30, 30);
+            this.checkBoxW0.TabIndex = 0;
+            this.checkBoxW0.Text = "0";
+            this.checkBoxW0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxW0.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.textBoxLotteryCountQ);
             this.groupBox2.Controls.Add(this.buttonQClear);
             this.groupBox2.Controls.Add(this.checkBoxQ9);
             this.groupBox2.Controls.Add(this.checkBoxQ8);
@@ -253,10 +268,20 @@
             this.groupBox2.Controls.Add(this.checkBoxQ0);
             this.groupBox2.Location = new System.Drawing.Point(2, 70);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(429, 55);
+            this.groupBox2.Size = new System.Drawing.Size(525, 55);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "千位：";
+            // 
+            // buttonQClear
+            // 
+            this.buttonQClear.Location = new System.Drawing.Point(471, 19);
+            this.buttonQClear.Name = "buttonQClear";
+            this.buttonQClear.Size = new System.Drawing.Size(48, 30);
+            this.buttonQClear.TabIndex = 11;
+            this.buttonQClear.Text = "清空";
+            this.buttonQClear.UseVisualStyleBackColor = true;
+            this.buttonQClear.Click += new System.EventHandler(this.buttonQClear_Click);
             // 
             // checkBoxQ9
             // 
@@ -380,6 +405,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.textBoxLotteryCountB);
             this.groupBox3.Controls.Add(this.buttonBClear);
             this.groupBox3.Controls.Add(this.checkBoxB9);
             this.groupBox3.Controls.Add(this.checkBoxB8);
@@ -393,10 +419,20 @@
             this.groupBox3.Controls.Add(this.checkBoxB0);
             this.groupBox3.Location = new System.Drawing.Point(2, 127);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(429, 55);
+            this.groupBox3.Size = new System.Drawing.Size(525, 55);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "百位：";
+            // 
+            // buttonBClear
+            // 
+            this.buttonBClear.Location = new System.Drawing.Point(471, 19);
+            this.buttonBClear.Name = "buttonBClear";
+            this.buttonBClear.Size = new System.Drawing.Size(48, 30);
+            this.buttonBClear.TabIndex = 12;
+            this.buttonBClear.Text = "清空";
+            this.buttonBClear.UseVisualStyleBackColor = true;
+            this.buttonBClear.Click += new System.EventHandler(this.buttonBClear_Click);
             // 
             // checkBoxB9
             // 
@@ -520,6 +556,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.textBoxLotteryCountS);
             this.groupBox4.Controls.Add(this.buttonSClear);
             this.groupBox4.Controls.Add(this.checkBoxS9);
             this.groupBox4.Controls.Add(this.checkBoxS8);
@@ -533,10 +570,20 @@
             this.groupBox4.Controls.Add(this.checkBoxS0);
             this.groupBox4.Location = new System.Drawing.Point(2, 184);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(429, 55);
+            this.groupBox4.Size = new System.Drawing.Size(525, 55);
             this.groupBox4.TabIndex = 10;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "十位：";
+            // 
+            // buttonSClear
+            // 
+            this.buttonSClear.Location = new System.Drawing.Point(471, 19);
+            this.buttonSClear.Name = "buttonSClear";
+            this.buttonSClear.Size = new System.Drawing.Size(48, 30);
+            this.buttonSClear.TabIndex = 13;
+            this.buttonSClear.Text = "清空";
+            this.buttonSClear.UseVisualStyleBackColor = true;
+            this.buttonSClear.Click += new System.EventHandler(this.buttonSClear_Click);
             // 
             // checkBoxS9
             // 
@@ -660,6 +707,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.textBoxLotteryCountG);
             this.groupBox5.Controls.Add(this.buttonGClear);
             this.groupBox5.Controls.Add(this.checkBoxG9);
             this.groupBox5.Controls.Add(this.checkBoxG8);
@@ -673,10 +721,20 @@
             this.groupBox5.Controls.Add(this.checkBoxG0);
             this.groupBox5.Location = new System.Drawing.Point(2, 241);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(429, 55);
+            this.groupBox5.Size = new System.Drawing.Size(525, 55);
             this.groupBox5.TabIndex = 10;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "个位：";
+            // 
+            // buttonGClear
+            // 
+            this.buttonGClear.Location = new System.Drawing.Point(471, 19);
+            this.buttonGClear.Name = "buttonGClear";
+            this.buttonGClear.Size = new System.Drawing.Size(48, 30);
+            this.buttonGClear.TabIndex = 14;
+            this.buttonGClear.Text = "清空";
+            this.buttonGClear.UseVisualStyleBackColor = true;
+            this.buttonGClear.Click += new System.EventHandler(this.buttonGClear_Click);
             // 
             // checkBoxG9
             // 
@@ -798,76 +856,17 @@
             this.checkBoxG0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxG0.UseVisualStyleBackColor = true;
             // 
-            // buttonWClear
+            // textBoxLotteryCountW
             // 
-            this.buttonWClear.Location = new System.Drawing.Point(381, 21);
-            this.buttonWClear.Name = "buttonWClear";
-            this.buttonWClear.Size = new System.Drawing.Size(48, 30);
-            this.buttonWClear.TabIndex = 10;
-            this.buttonWClear.Text = "清空";
-            this.buttonWClear.UseVisualStyleBackColor = true;
-            this.buttonWClear.Click += new System.EventHandler(this.buttonWClear_Click);
-            // 
-            // buttonQClear
-            // 
-            this.buttonQClear.Location = new System.Drawing.Point(381, 21);
-            this.buttonQClear.Name = "buttonQClear";
-            this.buttonQClear.Size = new System.Drawing.Size(48, 30);
-            this.buttonQClear.TabIndex = 11;
-            this.buttonQClear.Text = "清空";
-            this.buttonQClear.UseVisualStyleBackColor = true;
-            this.buttonQClear.Click += new System.EventHandler(this.buttonQClear_Click);
-            // 
-            // buttonBClear
-            // 
-            this.buttonBClear.Location = new System.Drawing.Point(381, 21);
-            this.buttonBClear.Name = "buttonBClear";
-            this.buttonBClear.Size = new System.Drawing.Size(48, 30);
-            this.buttonBClear.TabIndex = 12;
-            this.buttonBClear.Text = "清空";
-            this.buttonBClear.UseVisualStyleBackColor = true;
-            this.buttonBClear.Click += new System.EventHandler(this.buttonBClear_Click);
-            // 
-            // buttonSClear
-            // 
-            this.buttonSClear.Location = new System.Drawing.Point(381, 21);
-            this.buttonSClear.Name = "buttonSClear";
-            this.buttonSClear.Size = new System.Drawing.Size(48, 30);
-            this.buttonSClear.TabIndex = 13;
-            this.buttonSClear.Text = "清空";
-            this.buttonSClear.UseVisualStyleBackColor = true;
-            this.buttonSClear.Click += new System.EventHandler(this.buttonSClear_Click);
-            // 
-            // buttonGClear
-            // 
-            this.buttonGClear.Location = new System.Drawing.Point(381, 21);
-            this.buttonGClear.Name = "buttonGClear";
-            this.buttonGClear.Size = new System.Drawing.Size(48, 30);
-            this.buttonGClear.TabIndex = 14;
-            this.buttonGClear.Text = "清空";
-            this.buttonGClear.UseVisualStyleBackColor = true;
-            this.buttonGClear.Click += new System.EventHandler(this.buttonGClear_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 311);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "笔数：";
-            // 
-            // textBoxLotteryCount
-            // 
-            this.textBoxLotteryCount.Location = new System.Drawing.Point(54, 308);
-            this.textBoxLotteryCount.Name = "textBoxLotteryCount";
-            this.textBoxLotteryCount.Size = new System.Drawing.Size(100, 21);
-            this.textBoxLotteryCount.TabIndex = 12;
-            this.textBoxLotteryCount.Text = "1";
+            this.textBoxLotteryCountW.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountW.Name = "textBoxLotteryCountW";
+            this.textBoxLotteryCountW.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountW.TabIndex = 12;
+            this.textBoxLotteryCountW.Text = "1";
             // 
             // buttonSubmit
             // 
-            this.buttonSubmit.Location = new System.Drawing.Point(180, 307);
+            this.buttonSubmit.Location = new System.Drawing.Point(9, 314);
             this.buttonSubmit.Name = "buttonSubmit";
             this.buttonSubmit.Size = new System.Drawing.Size(75, 23);
             this.buttonSubmit.TabIndex = 13;
@@ -875,14 +874,44 @@
             this.buttonSubmit.UseVisualStyleBackColor = true;
             this.buttonSubmit.Click += new System.EventHandler(this.buttonSubmit_Click);
             // 
+            // textBoxLotteryCountQ
+            // 
+            this.textBoxLotteryCountQ.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountQ.Name = "textBoxLotteryCountQ";
+            this.textBoxLotteryCountQ.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountQ.TabIndex = 13;
+            this.textBoxLotteryCountQ.Text = "1";
+            // 
+            // textBoxLotteryCountB
+            // 
+            this.textBoxLotteryCountB.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountB.Name = "textBoxLotteryCountB";
+            this.textBoxLotteryCountB.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountB.TabIndex = 14;
+            this.textBoxLotteryCountB.Text = "1";
+            // 
+            // textBoxLotteryCountS
+            // 
+            this.textBoxLotteryCountS.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountS.Name = "textBoxLotteryCountS";
+            this.textBoxLotteryCountS.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountS.TabIndex = 15;
+            this.textBoxLotteryCountS.Text = "1";
+            // 
+            // textBoxLotteryCountG
+            // 
+            this.textBoxLotteryCountG.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountG.Name = "textBoxLotteryCountG";
+            this.textBoxLotteryCountG.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountG.TabIndex = 16;
+            this.textBoxLotteryCountG.Text = "1";
+            // 
             // TradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(436, 367);
+            this.ClientSize = new System.Drawing.Size(530, 349);
             this.Controls.Add(this.buttonSubmit);
-            this.Controls.Add(this.textBoxLotteryCount);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -891,12 +920,16 @@
             this.Name = "TradeWindow";
             this.Text = "TradeWindow";
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -962,8 +995,11 @@
         private System.Windows.Forms.Button buttonBClear;
         private System.Windows.Forms.Button buttonSClear;
         private System.Windows.Forms.Button buttonGClear;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxLotteryCount;
+        private System.Windows.Forms.TextBox textBoxLotteryCountW;
         private System.Windows.Forms.Button buttonSubmit;
+        private System.Windows.Forms.TextBox textBoxLotteryCountQ;
+        private System.Windows.Forms.TextBox textBoxLotteryCountB;
+        private System.Windows.Forms.TextBox textBoxLotteryCountS;
+        private System.Windows.Forms.TextBox textBoxLotteryCountG;
     }
 }

@@ -53,6 +53,7 @@ namespace LotteryAnalyze.UI
             {
                 cbw[i].Checked = false;
             }
+            textBoxLotteryCountW.Text = "0";
         }
 
         private void buttonQClear_Click(object sender, EventArgs e)
@@ -61,6 +62,7 @@ namespace LotteryAnalyze.UI
             {
                 cbq[i].Checked = false;
             }
+            textBoxLotteryCountQ.Text = "0";
         }
 
         private void buttonBClear_Click(object sender, EventArgs e)
@@ -69,6 +71,7 @@ namespace LotteryAnalyze.UI
             {
                 cbb[i].Checked = false;
             }
+            textBoxLotteryCountB.Text = "0";
         }
 
         private void buttonSClear_Click(object sender, EventArgs e)
@@ -77,6 +80,7 @@ namespace LotteryAnalyze.UI
             {
                 cbs[i].Checked = false;
             }
+            textBoxLotteryCountS.Text = "0";
         }
 
         private void buttonGClear_Click(object sender, EventArgs e)
@@ -85,6 +89,7 @@ namespace LotteryAnalyze.UI
             {
                 cbg[i].Checked = false;
             }
+            textBoxLotteryCountG.Text = "0";
         }
 
         void CheckSelectNum(ref List<CheckBox> cbLst, ref List<SByte> numLst)
@@ -121,30 +126,35 @@ namespace LotteryAnalyze.UI
                 if (graphMgr.endShowDataItemIndex >= 0)
                     lastItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
                 
-                int tradeCount = 1;
-                int.TryParse(textBoxLotteryCount.Text, out tradeCount);
+                int tradeCountW = 0, tradeCountQ = 0, tradeCountB = 0, tradeCountS = 0, tradeCountG = 0;
+                int.TryParse(textBoxLotteryCountW.Text, out tradeCountW);
+                int.TryParse(textBoxLotteryCountQ.Text, out tradeCountQ);
+                int.TryParse(textBoxLotteryCountB.Text, out tradeCountB);
+                int.TryParse(textBoxLotteryCountS.Text, out tradeCountS);
+                int.TryParse(textBoxLotteryCountG.Text, out tradeCountG);
                 wSels.Clear(); CheckSelectNum(ref cbw, ref wSels);
                 qSels.Clear(); CheckSelectNum(ref cbq, ref qSels);
                 bSels.Clear(); CheckSelectNum(ref cbb, ref bSels);
                 sSels.Clear(); CheckSelectNum(ref cbs, ref sSels);
                 gSels.Clear(); CheckSelectNum(ref cbg, ref gSels);
-                if (wSels.Count > 0)
-                    buyInfo += "万位 ： " + GetListInfoString(wSels) + "\n";
-                if (qSels.Count > 0)
-                    buyInfo += "千位 ： " + GetListInfoString(qSels) + "\n";
-                if (bSels.Count > 0)
-                    buyInfo += "百位 ： " + GetListInfoString(bSels) + "\n";
-                if (sSels.Count > 0)
-                    buyInfo += "十位 ： " + GetListInfoString(sSels) + "\n";
-                if (gSels.Count > 0)
-                    buyInfo += "个位 ： " + GetListInfoString(gSels) + "\n";
-                buyInfo += "数量 ： " + tradeCount + "\n" + info;
+                if (wSels.Count > 0 && tradeCountW > 0)
+                    buyInfo += "万位 ： " + GetListInfoString(wSels) + "\t" + tradeCountW + "注\n";
+                if (qSels.Count > 0 && tradeCountQ > 0)
+                    buyInfo += "千位 ： " + GetListInfoString(qSels) + "\t" + tradeCountQ + "注\n";
+                if (bSels.Count > 0 && tradeCountB > 0)
+                    buyInfo += "百位 ： " + GetListInfoString(bSels) + "\t" + tradeCountB + "注\n";
+                if (sSels.Count > 0 && tradeCountS > 0)
+                    buyInfo += "十位 ： " + GetListInfoString(sSels) + "\t" + tradeCountS + "注\n";
+                if (gSels.Count > 0 && tradeCountG > 0)
+                    buyInfo += "个位 ： " + GetListInfoString(gSels) + "\t" + tradeCountG + "注\n";
+                //buyInfo += "数量 ： " + tradeCount + "\n" + info;
 
                 DialogResult dr = MessageBox.Show(buyInfo, caption, MessageBoxButtons.OKCancel);
                 if (dr == DialogResult.OK)
                 {
                     bool hasSelNum = wSels.Count > 0 || qSels.Count > 0 || bSels.Count > 0 || sSels.Count > 0 || gSels.Count > 0;
-                    if (tradeCount >= 0 && hasSelNum)
+                    bool hasTradeCount = tradeCountW > 0 || tradeCountQ > 0 || tradeCountB > 0 || tradeCountS > 0 || tradeCountG > 0;
+                    if (hasTradeCount && hasSelNum)
                     {
                         TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
                         trade.lastDateItem = lastItem;
@@ -152,31 +162,31 @@ namespace LotteryAnalyze.UI
                         {
                             List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
                             TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 0, ref nci);
-                            trade.AddSelNum(0, ref wSels, tradeCount, ref nci);
+                            trade.AddSelNum(0, ref wSels, tradeCountW, ref nci);
                         }
                         if (qSels.Count > 0)
                         {
                             List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
                             TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 1, ref nci);
-                            trade.AddSelNum(1, ref qSels, tradeCount, ref nci);
+                            trade.AddSelNum(1, ref qSels, tradeCountQ, ref nci);
                         }
                         if (bSels.Count > 0)
                         {
                             List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
                             TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 2, ref nci);
-                            trade.AddSelNum(2, ref bSels, tradeCount, ref nci);
+                            trade.AddSelNum(2, ref bSels, tradeCountB, ref nci);
                         }
                         if (sSels.Count > 0)
                         {
                             List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
                             TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 3, ref nci);
-                            trade.AddSelNum(3, ref sSels, tradeCount, ref nci);
+                            trade.AddSelNum(3, ref sSels, tradeCountS, ref nci);
                         }
                         if (gSels.Count > 0)
                         {
                             List<NumberCmpInfo> nci = new List<NumberCmpInfo>();
                             TradeDataManager.FindOverTheoryProbabilityNums(lastItem, 4, ref nci);
-                            trade.AddSelNum(4, ref gSels, tradeCount, ref nci);
+                            trade.AddSelNum(4, ref gSels, tradeCountG, ref nci);
                         }
                     }
                 }
