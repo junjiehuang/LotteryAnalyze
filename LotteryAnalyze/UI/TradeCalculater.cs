@@ -16,6 +16,11 @@ namespace LotteryAnalyze.UI
         int numCount = 4;
         static TradeCalculater sInst;
 
+        public static TradeCalculater Instance
+        {
+            get { return sInst; }
+        }
+
         public static void Open()
         {
             if(sInst == null)

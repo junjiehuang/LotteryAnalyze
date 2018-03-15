@@ -148,13 +148,15 @@ namespace LotteryAnalyze.UI
                 if (gSels.Count > 0 && tradeCountG > 0)
                     buyInfo += "个位 ： " + GetListInfoString(gSels) + "\t" + tradeCountG + "注\n";
                 //buyInfo += "数量 ： " + tradeCount + "\n" + info;
+                if (string.IsNullOrEmpty(buyInfo))
+                    buyInfo += "此次交易不执行！";
 
                 DialogResult dr = MessageBox.Show(buyInfo, caption, MessageBoxButtons.OKCancel);
                 if (dr == DialogResult.OK)
                 {
                     bool hasSelNum = wSels.Count > 0 || qSels.Count > 0 || bSels.Count > 0 || sSels.Count > 0 || gSels.Count > 0;
                     bool hasTradeCount = tradeCountW > 0 || tradeCountQ > 0 || tradeCountB > 0 || tradeCountS > 0 || tradeCountG > 0;
-                    if (hasTradeCount && hasSelNum)
+                    //if (hasTradeCount && hasSelNum)
                     {
                         TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
                         trade.lastDateItem = lastItem;
@@ -191,6 +193,21 @@ namespace LotteryAnalyze.UI
                     }
                 }
             }
+        }
+        
+        void AllignWindows()
+        {
+            if(TradeCalculater.Instance != null && TradeCalculater.Instance.Visible)
+            {
+                Point pt = this.Location;
+                pt.X += this.Size.Width;
+                TradeCalculater.Instance.Location = pt;
+            }
+        }
+
+        private void TradeWindow_Move(object sender, EventArgs e)
+        {
+            AllignWindows();
         }
     }
 }
