@@ -30,6 +30,8 @@ namespace LotteryAnalyze.UI
             updateTimer.Interval = 500;
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Start();
+
+            FormMain.AddWindow(this);
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -156,6 +158,8 @@ namespace LotteryAnalyze.UI
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            FormMain.RemoveWindow(this);
+
             BatchTradeSimulator.Instance.Stop();
             sInst = null;
         }

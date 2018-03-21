@@ -38,6 +38,8 @@ namespace LotteryAnalyze.UI
             textBoxReward.Text = reward.ToString();
             textBoxTradeSlu.Text = "";
             textBoxResult.Text = "";
+
+            FormMain.AddWindow(this);
         }
 
         private void buttonStartCalc_Click(object sender, EventArgs e)
@@ -69,6 +71,7 @@ namespace LotteryAnalyze.UI
 
         private void TradeCalculater_FormClosed(object sender, FormClosedEventArgs e)
         {
+            FormMain.RemoveWindow(this);
             sInst = null;
         }
     }

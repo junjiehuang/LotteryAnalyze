@@ -37,6 +37,8 @@ namespace LotteryAnalyze.UI
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Enabled = true;
             updateTimer.Start();
+
+            FormMain.AddWindow(this);
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -117,6 +119,7 @@ namespace LotteryAnalyze.UI
 
         private void CollectDataWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            FormMain.RemoveWindow(this);
             if (updateTimer != null)
             {
                 updateTimer.Stop();

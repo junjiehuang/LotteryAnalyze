@@ -99,6 +99,8 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
             buttonHorzExpand.Hide();
             buttonVertExpand.Hide();
+
+            FormMain.AddWindow(this);
         }
 
         void SetUIGridWH()
@@ -470,6 +472,7 @@ namespace LotteryAnalyze.UI
         #region control callbacks
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
         {
+            FormMain.RemoveWindow(this);
             instLst.Remove(this);
         }
 

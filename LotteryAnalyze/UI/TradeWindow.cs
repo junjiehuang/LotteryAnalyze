@@ -45,6 +45,8 @@ namespace LotteryAnalyze.UI
 
             cbg.Add(checkBoxG0); cbg.Add(checkBoxG1); cbg.Add(checkBoxG2); cbg.Add(checkBoxG3); cbg.Add(checkBoxG4);
             cbg.Add(checkBoxG5); cbg.Add(checkBoxG6); cbg.Add(checkBoxG7); cbg.Add(checkBoxG8); cbg.Add(checkBoxG9);
+
+            FormMain.AddWindow(this);
         }
 
         private void buttonWClear_Click(object sender, EventArgs e)
@@ -208,6 +210,11 @@ namespace LotteryAnalyze.UI
         private void TradeWindow_Move(object sender, EventArgs e)
         {
             AllignWindows();
+        }
+
+        private void TradeWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            FormMain.RemoveWindow(this);
         }
     }
 }

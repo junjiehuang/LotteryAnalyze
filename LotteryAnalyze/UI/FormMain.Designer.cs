@@ -66,6 +66,7 @@
             this.getLatestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collectDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.importFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +78,8 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.setWndAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewColSelector = new System.Windows.Forms.DataGridView();
             this.ColumnId = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -111,7 +114,7 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.importFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBoxAlpha = new System.Windows.Forms.ToolStripTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -373,9 +376,11 @@
             this.openGraphToolStripMenuItem,
             this.toolStripSeparator4,
             this.globalSimTradeToolStripMenuItem,
-            this.tradeCalculaterToolStripMenuItem});
+            this.tradeCalculaterToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.setWndAlphaToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(197, 292);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(197, 320);
             // 
             // getLatestDataToolStripMenuItem
             // 
@@ -395,6 +400,13 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
+            // 
+            // importFilesToolStripMenuItem
+            // 
+            this.importFilesToolStripMenuItem.Name = "importFilesToolStripMenuItem";
+            this.importFilesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.importFilesToolStripMenuItem.Text = "导入数据";
+            this.importFilesToolStripMenuItem.Click += new System.EventHandler(this.importFilesToolStripMenuItem_Click);
             // 
             // addFilesToolStripMenuItem
             // 
@@ -466,6 +478,19 @@
             this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
             this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(193, 6);
+            // 
+            // setWndAlphaToolStripMenuItem
+            // 
+            this.setWndAlphaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripTextBoxAlpha});
+            this.setWndAlphaToolStripMenuItem.Name = "setWndAlphaToolStripMenuItem";
+            this.setWndAlphaToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.setWndAlphaToolStripMenuItem.Text = "设置透明度";
             // 
             // splitContainer5
             // 
@@ -928,12 +953,12 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // importFilesToolStripMenuItem
+            // toolStripTextBoxAlpha
             // 
-            this.importFilesToolStripMenuItem.Name = "importFilesToolStripMenuItem";
-            this.importFilesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.importFilesToolStripMenuItem.Text = "导入数据";
-            this.importFilesToolStripMenuItem.Click += new System.EventHandler(this.importFilesToolStripMenuItem_Click);
+            this.toolStripTextBoxAlpha.Name = "toolStripTextBoxAlpha";
+            this.toolStripTextBoxAlpha.Size = new System.Drawing.Size(100, 23);
+            this.toolStripTextBoxAlpha.Text = "1";
+            this.toolStripTextBoxAlpha.Click += new System.EventHandler(this.toolStripTextBoxAlpha_Click);
             // 
             // FormMain
             // 
@@ -942,7 +967,7 @@
             this.ClientSize = new System.Drawing.Size(756, 394);
             this.Controls.Add(this.tabControlLottery);
             this.Name = "FormMain";
-            this.Text = "Form1";
+            this.Text = "FormMain";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1051,6 +1076,9 @@
         private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem setWndAlphaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBoxAlpha;
     }
 }
 

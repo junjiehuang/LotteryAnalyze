@@ -30,6 +30,7 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonWClear = new System.Windows.Forms.Button();
+            this.textBoxLotteryCountW = new System.Windows.Forms.TextBox();
             this.checkBoxW9 = new System.Windows.Forms.CheckBox();
             this.checkBoxW8 = new System.Windows.Forms.CheckBox();
             this.checkBoxW7 = new System.Windows.Forms.CheckBox();
@@ -41,6 +42,7 @@
             this.checkBoxW1 = new System.Windows.Forms.CheckBox();
             this.checkBoxW0 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxLotteryCountQ = new System.Windows.Forms.TextBox();
             this.buttonQClear = new System.Windows.Forms.Button();
             this.checkBoxQ9 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ8 = new System.Windows.Forms.CheckBox();
@@ -53,6 +55,7 @@
             this.checkBoxQ1 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ0 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBoxLotteryCountB = new System.Windows.Forms.TextBox();
             this.buttonBClear = new System.Windows.Forms.Button();
             this.checkBoxB9 = new System.Windows.Forms.CheckBox();
             this.checkBoxB8 = new System.Windows.Forms.CheckBox();
@@ -65,6 +68,7 @@
             this.checkBoxB1 = new System.Windows.Forms.CheckBox();
             this.checkBoxB0 = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.textBoxLotteryCountS = new System.Windows.Forms.TextBox();
             this.buttonSClear = new System.Windows.Forms.Button();
             this.checkBoxS9 = new System.Windows.Forms.CheckBox();
             this.checkBoxS8 = new System.Windows.Forms.CheckBox();
@@ -77,6 +81,7 @@
             this.checkBoxS1 = new System.Windows.Forms.CheckBox();
             this.checkBoxS0 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.textBoxLotteryCountG = new System.Windows.Forms.TextBox();
             this.buttonGClear = new System.Windows.Forms.Button();
             this.checkBoxG9 = new System.Windows.Forms.CheckBox();
             this.checkBoxG8 = new System.Windows.Forms.CheckBox();
@@ -88,12 +93,7 @@
             this.checkBoxG2 = new System.Windows.Forms.CheckBox();
             this.checkBoxG1 = new System.Windows.Forms.CheckBox();
             this.checkBoxG0 = new System.Windows.Forms.CheckBox();
-            this.textBoxLotteryCountW = new System.Windows.Forms.TextBox();
             this.buttonSubmit = new System.Windows.Forms.Button();
-            this.textBoxLotteryCountQ = new System.Windows.Forms.TextBox();
-            this.textBoxLotteryCountB = new System.Windows.Forms.TextBox();
-            this.textBoxLotteryCountS = new System.Windows.Forms.TextBox();
-            this.textBoxLotteryCountG = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -131,6 +131,14 @@
             this.buttonWClear.Text = "清空";
             this.buttonWClear.UseVisualStyleBackColor = true;
             this.buttonWClear.Click += new System.EventHandler(this.buttonWClear_Click);
+            // 
+            // textBoxLotteryCountW
+            // 
+            this.textBoxLotteryCountW.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountW.Name = "textBoxLotteryCountW";
+            this.textBoxLotteryCountW.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountW.TabIndex = 12;
+            this.textBoxLotteryCountW.Text = "1";
             // 
             // checkBoxW9
             // 
@@ -272,6 +280,14 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "千位：";
+            // 
+            // textBoxLotteryCountQ
+            // 
+            this.textBoxLotteryCountQ.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountQ.Name = "textBoxLotteryCountQ";
+            this.textBoxLotteryCountQ.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountQ.TabIndex = 13;
+            this.textBoxLotteryCountQ.Text = "1";
             // 
             // buttonQClear
             // 
@@ -424,6 +440,14 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "百位：";
             // 
+            // textBoxLotteryCountB
+            // 
+            this.textBoxLotteryCountB.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountB.Name = "textBoxLotteryCountB";
+            this.textBoxLotteryCountB.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountB.TabIndex = 14;
+            this.textBoxLotteryCountB.Text = "1";
+            // 
             // buttonBClear
             // 
             this.buttonBClear.Location = new System.Drawing.Point(471, 19);
@@ -574,6 +598,14 @@
             this.groupBox4.TabIndex = 10;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "十位：";
+            // 
+            // textBoxLotteryCountS
+            // 
+            this.textBoxLotteryCountS.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountS.Name = "textBoxLotteryCountS";
+            this.textBoxLotteryCountS.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountS.TabIndex = 15;
+            this.textBoxLotteryCountS.Text = "1";
             // 
             // buttonSClear
             // 
@@ -726,6 +758,14 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "个位：";
             // 
+            // textBoxLotteryCountG
+            // 
+            this.textBoxLotteryCountG.Location = new System.Drawing.Point(399, 25);
+            this.textBoxLotteryCountG.Name = "textBoxLotteryCountG";
+            this.textBoxLotteryCountG.Size = new System.Drawing.Size(66, 21);
+            this.textBoxLotteryCountG.TabIndex = 16;
+            this.textBoxLotteryCountG.Text = "1";
+            // 
             // buttonGClear
             // 
             this.buttonGClear.Location = new System.Drawing.Point(471, 19);
@@ -856,14 +896,6 @@
             this.checkBoxG0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxG0.UseVisualStyleBackColor = true;
             // 
-            // textBoxLotteryCountW
-            // 
-            this.textBoxLotteryCountW.Location = new System.Drawing.Point(399, 25);
-            this.textBoxLotteryCountW.Name = "textBoxLotteryCountW";
-            this.textBoxLotteryCountW.Size = new System.Drawing.Size(66, 21);
-            this.textBoxLotteryCountW.TabIndex = 12;
-            this.textBoxLotteryCountW.Text = "1";
-            // 
             // buttonSubmit
             // 
             this.buttonSubmit.Location = new System.Drawing.Point(9, 314);
@@ -873,38 +905,6 @@
             this.buttonSubmit.Text = "提交";
             this.buttonSubmit.UseVisualStyleBackColor = true;
             this.buttonSubmit.Click += new System.EventHandler(this.buttonSubmit_Click);
-            // 
-            // textBoxLotteryCountQ
-            // 
-            this.textBoxLotteryCountQ.Location = new System.Drawing.Point(399, 25);
-            this.textBoxLotteryCountQ.Name = "textBoxLotteryCountQ";
-            this.textBoxLotteryCountQ.Size = new System.Drawing.Size(66, 21);
-            this.textBoxLotteryCountQ.TabIndex = 13;
-            this.textBoxLotteryCountQ.Text = "1";
-            // 
-            // textBoxLotteryCountB
-            // 
-            this.textBoxLotteryCountB.Location = new System.Drawing.Point(399, 25);
-            this.textBoxLotteryCountB.Name = "textBoxLotteryCountB";
-            this.textBoxLotteryCountB.Size = new System.Drawing.Size(66, 21);
-            this.textBoxLotteryCountB.TabIndex = 14;
-            this.textBoxLotteryCountB.Text = "1";
-            // 
-            // textBoxLotteryCountS
-            // 
-            this.textBoxLotteryCountS.Location = new System.Drawing.Point(399, 25);
-            this.textBoxLotteryCountS.Name = "textBoxLotteryCountS";
-            this.textBoxLotteryCountS.Size = new System.Drawing.Size(66, 21);
-            this.textBoxLotteryCountS.TabIndex = 15;
-            this.textBoxLotteryCountS.Text = "1";
-            // 
-            // textBoxLotteryCountG
-            // 
-            this.textBoxLotteryCountG.Location = new System.Drawing.Point(399, 25);
-            this.textBoxLotteryCountG.Name = "textBoxLotteryCountG";
-            this.textBoxLotteryCountG.Size = new System.Drawing.Size(66, 21);
-            this.textBoxLotteryCountG.TabIndex = 16;
-            this.textBoxLotteryCountG.Text = "1";
             // 
             // TradeWindow
             // 
@@ -921,6 +921,7 @@
             this.Name = "TradeWindow";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "TradeWindow";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TradeWindow_FormClosed);
             this.Move += new System.EventHandler(this.TradeWindow_Move);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

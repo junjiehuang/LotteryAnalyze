@@ -13,6 +13,26 @@ namespace LotteryAnalyze
 {
     public partial class FormMain : Form
     {
+        public static float OPACITY = 1;
+        static List<Form> AllWindows = new List<Form>();
+        public static void AddWindow(Form wnd)
+        {
+            if (AllWindows.Contains(wnd) == false)
+                AllWindows.Add(wnd);
+            wnd.Opacity = OPACITY;
+        }
+        public static void RemoveWindow(Form wnd)
+        {
+            AllWindows.Remove(wnd);
+        }
+        public static void ApplyOpacityToAllWindows()
+        {
+            for( int i = 0; i < AllWindows.Count; ++i )
+            {
+                AllWindows[i].Opacity = OPACITY;
+            }
+        }
+
         static FormMain sInst;
         public static FormMain Instance
         {
@@ -64,6 +84,7 @@ namespace LotteryAnalyze
             textBoxPath012ShortCount.Text = ColumnSimulateSingleBuyLottery.S_SHORT_COUNT.ToString();
 #endif
             DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
+            AddWindow(this);
         }
 
         public KillType GetCurSelectedKillType()
@@ -537,6 +558,7 @@ namespace LotteryAnalyze
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
+            RemoveWindow(this);
             if (updateTimer != null)
             {
                 updateTimer.Stop();
@@ -560,6 +582,12 @@ namespace LotteryAnalyze
             DirectoryInfo di = new DirectoryInfo(path);
             LoopSearchFolder(di);
             RefreshFileList();
+        }
+
+        private void toolStripTextBoxAlpha_Click(object sender, EventArgs e)
+        {
+            OPACITY = float.Parse(toolStripTextBoxAlpha.Text);
+            ApplyOpacityToAllWindows();
         }
     }
 }

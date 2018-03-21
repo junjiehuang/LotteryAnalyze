@@ -8,6 +8,7 @@ using System.IO;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace LotteryAnalyze
@@ -582,7 +583,6 @@ namespace LotteryAnalyze
         }
     }
 
-
     public class AutoUpdateUtil
     {
         public delegate void OnCollecting(string info);
@@ -793,6 +793,72 @@ namespace LotteryAnalyze
             sw.Close();
             fs.Close();
             return validCount;
+        }
+    }
+
+
+    // 枚举窗体
+    public static class WindowsEnumerator
+    {
+        private delegate bool EnumWindowsProc(IntPtr windowHandle, IntPtr lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool EnumWindows(EnumWindowsProc callback, IntPtr lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool EnumChildWindows(IntPtr hWndStart, EnumWindowsProc callback, IntPtr lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowTextLength(IntPtr hWnd);
+        private static List<IntPtr> handles = new List<IntPtr>();
+        private static string targetName;
+        public static List<IntPtr> GetWindowHandles(string target)
+        {
+            targetName = target;
+            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
+            return handles;
+        }
+        private static bool EnumWindowsCallback(IntPtr HWND, IntPtr includeChildren)
+        {
+            StringBuilder name = new StringBuilder(GetWindowTextLength(HWND) + 1);
+            GetWindowText(HWND, name, name.Capacity);
+            if (name.ToString() == targetName)
+                handles.Add(HWND);
+            EnumChildWindows(HWND, EnumWindowsCallback, IntPtr.Zero);
+            return true;
+        }
+    }
+
+    public class WindowUtil
+    {
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        // hWnd是句柄，factor是透明度0~255
+        public static bool MakeWindowTransparent(IntPtr hWnd, byte factor)
+        {
+            const int GWL_EXSTYLE = (-20);
+            const uint WS_EX_LAYERED = 0x00080000;
+            int Cur_STYLE = GetWindowLong(hWnd, GWL_EXSTYLE);
+            SetWindowLong(hWnd, GWL_EXSTYLE, (uint)(Cur_STYLE | WS_EX_LAYERED));
+            const uint LWA_COLORKEY = 1;
+            const uint LWA_ALPHA = 2;
+            const uint WHITE = 0xffffff;
+            return SetLayeredWindowAttributes(hWnd, WHITE, factor, LWA_COLORKEY | LWA_ALPHA);
+        }
+
+        // 所有标题为Form1的都调整（不包括自己，因为此时自己还没有显示，
+        // 当初始化完毕后连自己都会调整）
+        // 其实这个WindowsEnumerator只是枚举窗口句柄
+        // 如果只要某个特定窗口，获取他的窗体句柄就好了
+        // MakeWindowTransparent(句柄, 透明度);
+        public static void MakeWindowTransparent(string windowName, byte alpha)
+        {
+            foreach (var item in WindowsEnumerator.GetWindowHandles(windowName))
+                MakeWindowTransparent(item, alpha); // 0~255 128是50%透明度
         }
     }
 }
