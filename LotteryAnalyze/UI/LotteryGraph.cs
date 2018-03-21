@@ -835,6 +835,18 @@ namespace LotteryAnalyze.UI
             //this.BringToFront();
             graphMgr.OnTradeCompleted();
             graphMgr.tradeGraph.autoAllign = true;
+            if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+            {
+                int index = TradeDataManager.Instance.historyTradeDatas.Count;
+                int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                if (index * graphMgr.tradeGraph.gridScaleW > checkW)
+                    index -= (int)(checkW / graphMgr.tradeGraph.gridScaleW);
+                graphMgr.tradeGraph.ScrollToData(
+                    index,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    false);
+            }
             this.Invalidate(true);
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
 

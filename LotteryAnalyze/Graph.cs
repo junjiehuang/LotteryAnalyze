@@ -1468,6 +1468,11 @@ namespace LotteryAnalyze
                     g.DrawLine(whiteLinePen, cx - halfGridW, 0, cx - halfGridW, winH);
                     g.DrawLine(whiteLinePen, cx + halfGridW, 0, cx + halfGridW, winH);
                 }
+
+                if(i == TradeDataManager.Instance.historyTradeDatas.Count - 1)
+                {
+                    g.DrawLine(whiteLinePen, cx, cy, winW, cy);
+                }
             }
         }
         public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
@@ -1510,7 +1515,7 @@ namespace LotteryAnalyze
                 selectTradeIndex = index;
             else
                 selectTradeIndex = -1;
-            canvasOffset.X = (selectTradeIndex + 1) * gridScaleW;
+            canvasOffset.X = (index + 1) * gridScaleW;
             autoAllign = true;
         }
 

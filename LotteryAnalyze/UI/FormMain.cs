@@ -429,7 +429,8 @@ namespace LotteryAnalyze
             dataGridViewLotteryDatas.Rows.Clear();
             progressBar1.Value = progressBar1.Minimum;
             richTextBoxResult.Text = "";
-
+            TradeDataManager.Instance.ClearAllTradeDatas();
+            GraphDataManager.Instance.Clear();
         }
 
         private void textBoxPath012ShortCount_TextChanged(object sender, EventArgs e)

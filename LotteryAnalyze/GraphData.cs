@@ -733,6 +733,11 @@ namespace LotteryAnalyze
         int macdEMAShortCycle = 10;
         int macdEMALongCycle = 20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
+
+        public void Clear()
+        {
+            allKDatas.Clear();
+        }
         public int CycleLength
         {
             get { return cycleLength; }
@@ -1096,6 +1101,11 @@ namespace LotteryAnalyze
                 allDatas.Add(new DataUnitLst());
             }
         }
+
+        public void Clear()
+        {
+            allDatas.Clear();
+        }
         void Init()
         {
             for (int c = 0; c < 5; ++c)
@@ -1275,6 +1285,12 @@ namespace LotteryAnalyze
         {
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 S_GRAPH_DATA_CONTS[gt].CollectGraphData();
+        }
+
+        public void Clear()
+        {
+            KGDC.Clear();
+            BGDC.Clear();
         }
     }
 
