@@ -1334,6 +1334,7 @@ namespace LotteryAnalyze
 
         Font tipsFont = new Font(FontFamily.GenericMonospace, 12);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
+        SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
         int selectTradeIndex = -1;
         static float[] TRADE_LVS = new float[] { 0, 0.5f, 1.0f, 1.5f, 2.0f, };
 
@@ -1479,7 +1480,10 @@ namespace LotteryAnalyze
                 if(i == TradeDataManager.Instance.historyTradeDatas.Count - 1)
                 {
                     g.DrawLine(whiteLinePen, cx, cy, winW, cy);
-                    if(isMouseAtRight)
+                    //if(isMouseAtRight)
+                    if(tdb.moneyAtferTrade <= 0)
+                        g.DrawString(tdb.moneyAtferTrade.ToString("f0"), tipsFont, cyanBrush, winW - 130, cy);
+                    else
                         g.DrawString(tdb.moneyAtferTrade.ToString("f0"), tipsFont, whiteBrush, winW - 130, cy);
                 }
             }
