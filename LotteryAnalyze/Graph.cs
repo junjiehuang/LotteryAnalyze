@@ -1380,20 +1380,27 @@ namespace LotteryAnalyze
                 return;
             }
             */
-            for(int i = 0; i < TRADE_LVS.Length; ++i)
+
+            bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
+            for (int i = 0; i < TRADE_LVS.Length; ++i)
             {
                 float lv = TRADE_LVS[i];
                 float money = tdm.startMoney * lv;
                 float y = money * gridScaleH;
                 float relY = StandToCanvas(y, false);
-                if (lv <= 0)
+                if (lv < 0)
                     moneyLvLinePen.Color = Color.Gray;
-                else if (lv >= 1)
+                else if( lv == 0)
                     moneyLvLinePen.Color = Color.Red;
+                else if (lv == 1)
+                    moneyLvLinePen.Color = Color.Orange;
+                else if (lv > 1)
+                    moneyLvLinePen.Color = Color.White;
                 else
                     moneyLvLinePen.Color = Color.Cyan;
                 g.DrawLine(moneyLvLinePen, 0, relY, winW, relY);
-                g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
+                if(isMouseAtRight)
+                    g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
             }
             float curMouseY = CanvasToStand(mouseRelPos.Y, false);
             curMouseY /= gridScaleH;
@@ -1472,6 +1479,8 @@ namespace LotteryAnalyze
                 if(i == TradeDataManager.Instance.historyTradeDatas.Count - 1)
                 {
                     g.DrawLine(whiteLinePen, cx, cy, winW, cy);
+                    if(isMouseAtRight)
+                        g.DrawString(tdb.moneyAtferTrade.ToString("f0"), tipsFont, whiteBrush, winW - 130, cy);
                 }
             }
         }
