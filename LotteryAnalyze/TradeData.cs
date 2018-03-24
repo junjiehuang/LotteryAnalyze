@@ -118,6 +118,7 @@ namespace LotteryAnalyze
             //return tips;
         }
         public virtual void Update() { }
+        public virtual void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex) { }
     }
 
     class TradeDataOneStar : TradeDataBase
@@ -220,6 +221,20 @@ namespace LotteryAnalyze
                 return info;
             }
             return tips;
+        }
+
+        public override void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex)
+        {
+            numIndex = -1;
+            pathIndex = -1;
+            foreach ( int key in tradeInfo.Keys )
+            {
+                if(tradeInfo[key].tradeCount > 0 && tradeInfo[key].tradeNumbers.Count > 0)
+                {
+                    numIndex = key;
+                    pathIndex = tradeInfo[key].tradeNumbers[0].number % 3;
+                }
+            }
         }
     }
 
@@ -509,6 +524,15 @@ namespace LotteryAnalyze
             }
         }
 
+
+        /// <summary>
+        /// 判断numIndex位是否连续n期没有出pathId路的数字
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="numIndex"></param>
+        /// <param name="pathId"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         bool isContinuousMiss(DataItem item, int numIndex, int pathId, ref int value)
         {
             bool hasMiss = true;
@@ -530,6 +554,19 @@ namespace LotteryAnalyze
             return hasMiss;
         }
 
+
+        /// <summary>
+        /// 比较同一个数字位的012路的任意两路，哪一路在下一期出现的概率更高一些
+        /// </summary>
+        /// <param name="suA"></param>
+        /// <param name="suB"></param>
+        /// <param name="pathValueA"></param>
+        /// <param name="pathValueB"></param>
+        /// <param name="indexA"></param>
+        /// <param name="indexB"></param>
+        /// <param name="curBestV"></param>
+        /// <param name="curBestPath"></param>
+        /// <param name="curBeshSU"></param>
         void Check(StatisticUnit suA, StatisticUnit suB, int pathValueA, int pathValueB, int indexA, int indexB, ref int curBestV, ref int curBestPath, ref StatisticUnit curBeshSU)
         {
             if (pathValueA > pathValueB)
@@ -976,6 +1013,9 @@ namespace LotteryAnalyze
         }
     }
 
+    /// <summary>
+    /// 批量模拟交易
+    /// </summary>
     class BatchTradeSimulator
     {
         enum SimState

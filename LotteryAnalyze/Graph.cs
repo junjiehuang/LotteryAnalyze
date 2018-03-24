@@ -333,7 +333,7 @@ namespace LotteryAnalyze
 
         }
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
-        public virtual void ScrollToData(int index, int winW, int winH, bool needSelect) { }
+        public virtual void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0) { }
     }
 
     // K线图
@@ -463,6 +463,8 @@ namespace LotteryAnalyze
                     if (autoAllign)
                     {
                         float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
+                        if(selectKDataIndex >= 0)
+                            endY = kddc.dataLst[selectKDataIndex].dataDict[cdt].KValue * gridScaleH;
                         float relEY = StandToCanvas(endY, false);
                         bool isEYOut = relEY < 0 || relEY > winH;
                         if (isEYOut)
@@ -582,13 +584,13 @@ namespace LotteryAnalyze
             }
             EndDraw(g);
         }
-        public override void ScrollToData(int index, int winW, int winH, bool needSelect)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
         {
             if (needSelect)
                 selectKDataIndex = index;
             else
                 selectKDataIndex = -1;
-            canvasOffset.X = index * gridScaleW;
+            canvasOffset.X = index * gridScaleW + xOffset;
             autoAllign = true;
         }
 
@@ -1522,13 +1524,13 @@ namespace LotteryAnalyze
             maxIndex = TradeDataManager.Instance.historyTradeDatas.Count;
         }
 
-        public override void ScrollToData(int index, int winW, int winH, bool needSelect)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
         {
             if (needSelect)
                 selectTradeIndex = index;
             else
                 selectTradeIndex = -1;
-            canvasOffset.X = (index + 1) * gridScaleW;
+            canvasOffset.X = index * gridScaleW + xOffset;// (index + 1) * gridScaleW + xOffset;
             autoAllign = true;
         }
 

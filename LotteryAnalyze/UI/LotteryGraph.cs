@@ -169,6 +169,13 @@ namespace LotteryAnalyze.UI
                 instLst[i].Invalidate(true);//触发Paint事件
             }
         }
+        public static void NotifyAllGraphsStartSimTrade()
+        {
+            for (int i = 0; i < instLst.Count; ++i)
+            {
+                instLst[i].graphMgr.endShowDataItemIndex = 0;
+            }
+        }
 
         #endregion
 
@@ -300,14 +307,16 @@ namespace LotteryAnalyze.UI
             {
                 if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
+                    TradeDataBase selectTD = null;
                     int kdataID = -1;
                     if (e.X == upPanelMousePosOnBtnDown.X && e.Y == upPanelMousePosOnBtnDown.Y)
                     {
                         int selID = graphMgr.tradeGraph.SelectTradeData(e.Location);
                         if (selID != -1)
                         {
-                            kdataID = TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem.idGlobal;
-                            CollectBarGraphData(TradeDataManager.Instance.historyTradeDatas[selID].targetLotteryItem);
+                            selectTD = TradeDataManager.Instance.historyTradeDatas[selID];
+                            kdataID = selectTD.targetLotteryItem.idGlobal;
+                            CollectBarGraphData(selectTD.targetLotteryItem);
                         }
                         else
                         {
@@ -321,8 +330,27 @@ namespace LotteryAnalyze.UI
                     }
                     if (kdataID != -1)
                     {
-                        graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true);
+                        // 滚动到屏幕中间
+                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                        int xOffset = 0;
+                        if (kdataID * graphMgr.kvalueGraph.gridScaleW > checkW)
+                            xOffset = -checkW;
+                        else
+                            xOffset = -(int)(kdataID * graphMgr.kvalueGraph.gridScaleW);
+
+                        graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
                         FormMain.Instance.SelectDataItem(kdataID);
+
+                        // 在K线图中，切换到交易选中的那个数字位以及012路对应的视图
+                        int numID = -1, pathID = -1;
+                        selectTD.GetTradeNumIndexAndPathIndex(ref numID, ref pathID);
+                        if (numID != -1 && pathID != -1)
+                        {
+                            graphMgr.kvalueGraph.autoAllign = true;
+                            numberIndex = comboBoxNumIndex.SelectedIndex = numID;
+                            curCDTIndex = comboBoxCollectionDataType.SelectedIndex = pathID + GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+                            curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
+                        }
                     }
                     else
                     {
@@ -715,6 +743,7 @@ namespace LotteryAnalyze.UI
 
         private void tradeSimFromFirstToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            graphMgr.endShowDataItemIndex = 0;
             TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, null);
             graphMgr.kvalueGraph.autoAllign = true;
             graphMgr.tradeGraph.autoAllign = true;
@@ -739,6 +768,7 @@ namespace LotteryAnalyze.UI
 
         private void stopSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            graphMgr.endShowDataItemIndex = -1;
             TradeDataManager.Instance.StopAutoTradeJob();
         }
 
@@ -834,20 +864,55 @@ namespace LotteryAnalyze.UI
         {
             //this.BringToFront();
             graphMgr.OnTradeCompleted();
-            graphMgr.tradeGraph.autoAllign = true;
-            if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+            int index = TradeDataManager.Instance.historyTradeDatas.Count;
+            int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+            if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
-                int index = TradeDataManager.Instance.historyTradeDatas.Count;
-                int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                graphMgr.tradeGraph.autoAllign = true;
+                //if (index * graphMgr.tradeGraph.gridScaleW > checkW)
+                //    index -= (int)(checkW / graphMgr.tradeGraph.gridScaleW);
+                //else
+                //    index = 0;
+                //graphMgr.tradeGraph.ScrollToData(
+                //    index,
+                //    this.panelUp.ClientSize.Width,
+                //    this.panelUp.ClientSize.Height,
+                //    false);
+                int xOffSet = 0;
                 if (index * graphMgr.tradeGraph.gridScaleW > checkW)
-                    index -= (int)(checkW / graphMgr.tradeGraph.gridScaleW);
+                    xOffSet = -checkW;
                 else
-                    index = 0;
+                    xOffSet = -(int)(index * graphMgr.tradeGraph.gridScaleW);
                 graphMgr.tradeGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
                     this.panelUp.ClientSize.Height,
-                    false);
+                    true, xOffSet);
+            }
+            else if(graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                graphMgr.kvalueGraph.autoAllign = true;
+                TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
+                index = latestTradedItem.targetLotteryItem.idGlobal;
+                //if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
+                //    index -= (int)(checkW / graphMgr.kvalueGraph.gridScaleW);
+                //else
+                //    index = 0;
+                //graphMgr.kvalueGraph.ScrollToData(
+                //    index,
+                //    this.panelUp.ClientSize.Width,
+                //    this.panelUp.ClientSize.Height,
+                //    true);
+                int xOffSet = 0;
+                if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
+                    xOffSet = -checkW;
+                else
+                    xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleW);
+                graphMgr.kvalueGraph.ScrollToData(
+                    index,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    true, xOffSet);
             }
             trackBarTradeData.Value = trackBarTradeData.Maximum;
             this.Invalidate(true);

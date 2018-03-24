@@ -138,6 +138,7 @@ namespace LotteryAnalyze.UI
             BatchTradeSimulator.Instance.batch = int.Parse(textBoxDayCountPerBatch.Text);
             BatchTradeSimulator.Instance.startMoney = float.Parse(textBoxStartMoney.Text);
             TradeDataManager.Instance.SetTradeCountInfo(textBoxTradeCountLst.Text);
+            LotteryGraph.NotifyAllGraphsStartSimTrade();
 
             textBoxCmd.ReadOnly = true;
             buttonPauseResume.Text = "暂停";

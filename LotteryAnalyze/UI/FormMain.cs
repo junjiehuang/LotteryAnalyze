@@ -604,5 +604,15 @@ namespace LotteryAnalyze
             GlobalSimTradeWindow.SetSimStartDateAndEndDate(startDate, endDate);
             LotteryGraph.Open(false);
         }
+
+        private void toolStripTextBoxAlpha_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(toolStripTextBoxAlpha.Text))
+                return;
+            if (float.TryParse(toolStripTextBoxAlpha.Text, out OPACITY))
+            {
+                ApplyOpacityToAllWindows();
+            }
+        }
     }
 }
