@@ -1038,7 +1038,7 @@ namespace LotteryAnalyze
             return v;
         }
 
-        public void Start()
+        public void Start(ref int startDateID, ref int endDateID)
         {
             TradeDataManager.Instance.startMoney = startMoney;
             TradeDataManager.Instance.StopAtTheLatestItem = true;
@@ -1049,11 +1049,20 @@ namespace LotteryAnalyze
             DataManager dm = DataManager.GetInst();
             foreach( int id in dm.mFileMetaInfo.Keys )
             {
+                if (startDateID != -1 && id < startDateID)
+                    continue;
+                if (endDateID != -1 && id > endDateID)
+                    continue;
                 fileIDLst.Add(id);
             }
             fileIDLst.Sort();
             state = SimState.ePrepareData;
             lastIndex = -1;
+            if (fileIDLst.Count > 0)
+            {
+                startDateID = fileIDLst[0];
+                endDateID = fileIDLst[fileIDLst.Count - 1];
+            }
         }
 
         public void Update()

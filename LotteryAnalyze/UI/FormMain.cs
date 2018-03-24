@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using LotteryAnalyze.UI;
 
 namespace LotteryAnalyze
 {
@@ -589,6 +590,19 @@ namespace LotteryAnalyze
         {
             OPACITY = float.Parse(toolStripTextBoxAlpha.Text);
             ApplyOpacityToAllWindows();
+        }
+
+        private void simTradeSelectDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int startDate = -1, endDate = -1;
+            if(listViewFileList.SelectedItems.Count > 0)
+            {
+                startDate = (int)listViewFileList.SelectedItems[0].Tag;
+                endDate = (int)listViewFileList.SelectedItems[listViewFileList.SelectedItems.Count-1].Tag;
+            }
+            BatchTradeSimulator.Instance.Stop();
+            GlobalSimTradeWindow.SetSimStartDateAndEndDate(startDate, endDate);
+            LotteryGraph.Open(false);
         }
     }
 }

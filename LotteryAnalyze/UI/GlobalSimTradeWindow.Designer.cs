@@ -43,6 +43,10 @@
             this.checkBoxSpecNumIndex = new System.Windows.Forms.CheckBox();
             this.comboBoxSpecNumIndex = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxStartDate = new System.Windows.Forms.TextBox();
+            this.textBoxEndDate = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -95,7 +99,7 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(15, 114);
+            this.buttonStart.Location = new System.Drawing.Point(15, 142);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
             this.buttonStart.TabIndex = 6;
@@ -105,7 +109,7 @@
             // 
             // buttonPauseResume
             // 
-            this.buttonPauseResume.Location = new System.Drawing.Point(107, 114);
+            this.buttonPauseResume.Location = new System.Drawing.Point(107, 142);
             this.buttonPauseResume.Name = "buttonPauseResume";
             this.buttonPauseResume.Size = new System.Drawing.Size(75, 23);
             this.buttonPauseResume.TabIndex = 7;
@@ -115,7 +119,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(198, 114);
+            this.buttonStop.Location = new System.Drawing.Point(198, 142);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 8;
@@ -128,17 +132,17 @@
             this.textBoxCmd.AcceptsReturn = true;
             this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCmd.Location = new System.Drawing.Point(15, 142);
+            this.textBoxCmd.Location = new System.Drawing.Point(15, 169);
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(541, 130);
+            this.textBoxCmd.Size = new System.Drawing.Size(541, 162);
             this.textBoxCmd.TabIndex = 10;
             // 
             // progressBarCurrent
             // 
             this.progressBarCurrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarCurrent.Location = new System.Drawing.Point(15, 278);
+            this.progressBarCurrent.Location = new System.Drawing.Point(15, 337);
             this.progressBarCurrent.Name = "progressBarCurrent";
             this.progressBarCurrent.Size = new System.Drawing.Size(541, 23);
             this.progressBarCurrent.TabIndex = 11;
@@ -147,7 +151,7 @@
             // 
             this.progressBarTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarTotal.Location = new System.Drawing.Point(15, 308);
+            this.progressBarTotal.Location = new System.Drawing.Point(15, 367);
             this.progressBarTotal.Name = "progressBarTotal";
             this.progressBarTotal.Size = new System.Drawing.Size(541, 23);
             this.progressBarTotal.TabIndex = 12;
@@ -181,11 +185,49 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "数字位：";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "起始日期：";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(270, 115);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 12);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "结束日期：";
+            // 
+            // textBoxStartDate
+            // 
+            this.textBoxStartDate.Location = new System.Drawing.Point(84, 113);
+            this.textBoxStartDate.Name = "textBoxStartDate";
+            this.textBoxStartDate.ReadOnly = true;
+            this.textBoxStartDate.Size = new System.Drawing.Size(152, 21);
+            this.textBoxStartDate.TabIndex = 18;
+            // 
+            // textBoxEndDate
+            // 
+            this.textBoxEndDate.Location = new System.Drawing.Point(341, 112);
+            this.textBoxEndDate.Name = "textBoxEndDate";
+            this.textBoxEndDate.ReadOnly = true;
+            this.textBoxEndDate.Size = new System.Drawing.Size(152, 21);
+            this.textBoxEndDate.TabIndex = 19;
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 338);
+            this.ClientSize = new System.Drawing.Size(561, 394);
+            this.Controls.Add(this.textBoxEndDate);
+            this.Controls.Add(this.textBoxStartDate);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.comboBoxSpecNumIndex);
             this.Controls.Add(this.checkBoxSpecNumIndex);
@@ -226,5 +268,9 @@
         private System.Windows.Forms.CheckBox checkBoxSpecNumIndex;
         private System.Windows.Forms.ComboBox comboBoxSpecNumIndex;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textBoxStartDate;
+        private System.Windows.Forms.TextBox textBoxEndDate;
     }
 }

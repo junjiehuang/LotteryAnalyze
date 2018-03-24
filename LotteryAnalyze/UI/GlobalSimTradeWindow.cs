@@ -13,6 +13,8 @@ namespace LotteryAnalyze.UI
     {
         static GlobalSimTradeWindow sInst;
         System.Windows.Forms.Timer updateTimer;
+        int startDate = -1;
+        int endDate = -1;
 
         public GlobalSimTradeWindow()
         {
@@ -117,6 +119,20 @@ namespace LotteryAnalyze.UI
             sInst.Show();
         }
 
+        public static void SetSimStartDateAndEndDate(int _startDate, int _endDate)
+        {
+            if (sInst == null)
+                Open();
+
+            if(sInst != null)
+            {
+                sInst.startDate = _startDate;
+                sInst.endDate = _endDate;
+                sInst.textBoxStartDate.Text = _startDate.ToString();
+                sInst.textBoxEndDate.Text = _endDate.ToString();
+            }
+        }
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
             BatchTradeSimulator.Instance.batch = int.Parse(textBoxDayCountPerBatch.Text);
@@ -125,13 +141,16 @@ namespace LotteryAnalyze.UI
 
             textBoxCmd.ReadOnly = true;
             buttonPauseResume.Text = "暂停";
-            BatchTradeSimulator.Instance.Start();
+            BatchTradeSimulator.Instance.Start(ref startDate, ref endDate);
             textBoxDayCountPerBatch.Enabled = false;
             textBoxStartMoney.Enabled = false;
             textBoxTradeCountLst.Enabled = false;
 
             progressBarCurrent.Value = 0;
             progressBarTotal.Value = 0;
+
+            textBoxStartDate.Text = startDate.ToString();
+            textBoxEndDate.Text = endDate.ToString();
         }
 
         private void buttonPauseResume_Click(object sender, EventArgs e)

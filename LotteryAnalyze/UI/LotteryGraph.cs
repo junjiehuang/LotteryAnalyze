@@ -841,12 +841,15 @@ namespace LotteryAnalyze.UI
                 int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
                 if (index * graphMgr.tradeGraph.gridScaleW > checkW)
                     index -= (int)(checkW / graphMgr.tradeGraph.gridScaleW);
+                else
+                    index = 0;
                 graphMgr.tradeGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
                     this.panelUp.ClientSize.Height,
                     false);
             }
+            trackBarTradeData.Value = trackBarTradeData.Maximum;
             this.Invalidate(true);
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
 
