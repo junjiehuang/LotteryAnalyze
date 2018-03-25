@@ -271,6 +271,8 @@ namespace LotteryAnalyze
         public delegate void OnTradeComleted();
         public OnTradeComleted tradeCompletedCallBack;
 
+        public AutoAnalyzeTool autoAnalyzeTool = new AutoAnalyzeTool();
+
         TradeDataManager()
         {
             minValue = maxValue = currentMoney;
@@ -476,6 +478,8 @@ namespace LotteryAnalyze
         */
         void PredictAndTrade(DataItem item)
         {
+            autoAnalyzeTool.Analyze(item.idGlobal);
+
             float maxV = -10;
             int bestNumIndex = -1;
             int bestPath = -1;
@@ -1012,6 +1016,7 @@ namespace LotteryAnalyze
             }
         }
     }
+    
 
     /// <summary>
     /// 批量模拟交易
@@ -1055,6 +1060,7 @@ namespace LotteryAnalyze
         public int tradeRightCount;
         public int tradeWrongCount;
         public int untradeCount;
+
 
         public int GetMainProgress()
         {

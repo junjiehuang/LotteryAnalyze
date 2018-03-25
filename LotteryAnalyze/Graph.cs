@@ -945,6 +945,53 @@ namespace LotteryAnalyze
                 Point pt = StandToCanvas(selAuxLine.keyPoints[selAuxLinePointIndex]);
                 g.DrawRectangle(selAuxLine.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
+
+            DrawAutoAuxTools(g, winW, winH, numIndex, cdt);
+        }
+
+        void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
+        {
+            if (TradeDataManager.Instance.autoAnalyzeTool == null)
+                return;
+            AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+            if (sali.upLineData.valid)
+                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
+            if (sali.downLineData.valid)
+                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePen);
+        }
+
+        void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen)
+        {
+            float bx = lineData.dataSharp.index * gridScaleW, sx;
+            float by = lineData.dataSharp.KValue * gridScaleH, sy;
+            bx = StandToCanvas(bx, true);
+            by = StandToCanvas(by, false);
+            g.DrawRectangle(pen, bx - rcHalfSize, by - rcHalfSize, rcSize, rcSize);
+
+            if (lineData.dataPrevSharp != null)
+            {
+                sx = lineData.dataPrevSharp.index * gridScaleW;
+                sy = lineData.dataPrevSharp.KValue * gridScaleH;
+                sx = StandToCanvas(sx, true);
+                sy = StandToCanvas(sy, false);
+                float k = (by - sy) / (bx - sx);
+                float fyl = sy - sx * k;
+                float fyr = sy + (winW - sx) * k;
+                g.DrawLine(pen, 0, fyl, winW, fyr);
+                g.DrawRectangle(pen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+            }
+            if (lineData.dataNextSharp != null)
+            {
+                sx = lineData.dataNextSharp.index * gridScaleW;
+                sy = lineData.dataNextSharp.KValue * gridScaleH;
+                sx = StandToCanvas(sx, true);
+                sy = StandToCanvas(sy, false);
+                float k = (by - sy) / (bx - sx);
+                float fyl = sy - sx * k;
+                float fyr = sy + (winW - sx) * k;
+                g.DrawLine(pen, 0, fyl, winW, fyr);
+                g.DrawRectangle(pen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+            }
         }
 
         void DrawPreviewAuxLine(Graphics g, int winW, int winH, Point mouseRelPos)
@@ -1219,11 +1266,22 @@ namespace LotteryAnalyze
 
         void DrawKRuler(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos, KDataDictContainer kddc, float missRelHeight)
         {
-            float downRCH = gridScaleH * missRelHeight;
-            float strDist = 1.5f * gridScaleW;
             int endIndex = kddc.dataLst.Count - 1;
             if (parent.endShowDataItemIndex != -1 && parent.endShowDataItemIndex < kddc.dataLst.Count)
                 endIndex = parent.endShowDataItemIndex;
+
+            if (TradeDataManager.Instance.autoAnalyzeTool != null)
+            {
+                int startID = endIndex - AutoAnalyzeTool.C_ANALYZE_LOOP_COUNT;
+                if (startID < 0)
+                    startID = 0;
+                float x = StandToCanvas( startID * gridScaleW, true );
+                g.DrawLine(whiteLinePen, x, 0, x, winH);
+            }
+
+            float downRCH = gridScaleH * missRelHeight;
+            float strDist = 1.5f * gridScaleW;
+
             KDataDict lastKDD = kddc.dataLst[endIndex];
             KData data = lastKDD.GetData(cdt, false);
             float standX = (data.index + 1) * gridScaleW;

@@ -36,7 +36,7 @@ namespace LotteryAnalyze
         eMax = 0xFFFFFFF,
     }
 
-    class KData
+    public class KData
     {
         public CollectDataType cdt;
         public KDataDict parent;
@@ -88,9 +88,16 @@ namespace LotteryAnalyze
             }
             return null;
         }
+
+        public KData GetNextKData()
+        {
+            if(index < parent.parent.dataLst.Count - 1)
+                return parent.parent.dataLst[index + 1].dataDict[cdt];
+            return null;
+        }
     }
 
-    class KDataDict
+    public class KDataDict
     {
         public int index;
         public Dictionary<CollectDataType, KData> dataDict = new Dictionary<CollectDataType, KData>();
@@ -139,12 +146,12 @@ namespace LotteryAnalyze
         eEMA,
     }
 
-    class AvgPoint
+    public class AvgPoint
     {
         public float avgKValue = 0;
     }
 
-    class AvgPointMap
+    public class AvgPointMap
     {
         public AvgDataContainer parent;
         public int index = -1;
@@ -176,7 +183,7 @@ namespace LotteryAnalyze
         }
     }
 
-    class AvgDataContainer
+    public class AvgDataContainer
     {
         public KGraphDataContainer.AvgLineSetting avgLineSetting = null;
         public bool enable = false;
@@ -380,7 +387,7 @@ namespace LotteryAnalyze
         }
     }
 
-    class BollinPoint
+    public class BollinPoint
     {
         //// 标准差
         //public float standardDeviation = 0;
@@ -391,7 +398,7 @@ namespace LotteryAnalyze
         // 下轨值
         public float downValue = 0;
     }
-    class BollinPointMap
+    public class BollinPointMap
     {
         public BollinDataContainer parent;
         public int index = -1;
@@ -422,7 +429,7 @@ namespace LotteryAnalyze
             return null;
         }
     }
-    class BollinDataContainer
+    public class BollinDataContainer
     {
         public static bool ENABLE = true;
         public List<BollinPointMap> bollinMapLst = new List<BollinPointMap>();
@@ -482,18 +489,18 @@ namespace LotteryAnalyze
     }
 
 
-    class MACDLimitValue
+    public class MACDLimitValue
     {
         public float MaxValue = 0;
         public float MinValue = 0;
     }
-    class MACDPoint
+    public class MACDPoint
     {
         public float DIF = 0;
         public float DEA = 0;
         public float BAR = 0;
     }
-    class MACDPointMap
+    public class MACDPointMap
     {
         public MACDDataContianer parent;
         public int index = -1;
@@ -521,7 +528,7 @@ namespace LotteryAnalyze
             return null;
         }
     }
-    class MACDDataContianer
+    public class MACDDataContianer
     {
         public static bool ENABLE = true;
         public List<MACDPointMap> macdMapLst = new List<MACDPointMap>();
@@ -593,7 +600,7 @@ namespace LotteryAnalyze
     }
 
 
-    class KDataDictContainer
+    public class KDataDictContainer
     {
         public static string[] C_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
 
@@ -679,7 +686,7 @@ namespace LotteryAnalyze
     }
 
     // 图表数据容器基类
-    class GraphDataContainerBase
+    public class GraphDataContainerBase
     {
         public virtual int DataLength() { return 0; }
         public virtual bool HasData() { return false; }
@@ -687,7 +694,7 @@ namespace LotteryAnalyze
     }
 
     // K线图数据容器
-    class KGraphDataContainer : GraphDataContainerBase
+    public class KGraphDataContainer : GraphDataContainerBase
     {
         #region Avg line setting
         public class AvgLineSetting
@@ -1030,7 +1037,7 @@ namespace LotteryAnalyze
     }
 
     // 柱状图数据容器
-    class BarGraphDataContianer : GraphDataContainerBase
+    public class BarGraphDataContianer : GraphDataContainerBase
     {
         // 统计类型
         public enum StatisticsType
@@ -1200,7 +1207,7 @@ namespace LotteryAnalyze
     }
 
     // 图表数据管理器
-    class GraphDataManager
+    public class GraphDataManager
     {
         public static List<CollectDataType> S_CDT_LIST = new List<CollectDataType>();
         public static List<string> S_CDT_TAG_LIST = new List<string>();
@@ -1291,6 +1298,237 @@ namespace LotteryAnalyze
         {
             KGDC.Clear();
             BGDC.Clear();
+        }
+    }
+
+    public class AutoAnalyzeTool
+    {
+        public static int C_ANALYZE_LOOP_COUNT = 50;
+        public class AuxLineData
+        {
+            public bool valid = false;
+            public KData dataSharp = null;
+            public KData dataPrevSharp = null;
+            public KData dataNextSharp = null;
+
+            public List<KData> candictDatas = new List<KData>();
+
+            public void Reset()
+            {
+                valid = false;
+                dataSharp = null;
+                dataPrevSharp = null;
+                dataNextSharp = null;
+                candictDatas.Clear();
+            }
+            public void CheckValid()
+            {
+                if (dataSharp != null && (dataPrevSharp != null || dataNextSharp != null))
+                    valid = true;
+                else
+                    valid = false;
+            }
+            public void CalcSecondPoint(bool bGetSmallSecPt)
+            {
+                if (dataSharp == null || candictDatas.Count == 0)
+                    return;
+                float prevKV = 0, nextKV = 0;
+
+                if (bGetSmallSecPt)
+                {
+                    for( int i = 0; i < candictDatas.Count; ++i )
+                    {
+                        KData testD = candictDatas[i];
+                        if (testD == dataSharp || testD == null)
+                            continue;
+                        float k = (dataSharp.KValue - testD.KValue) / (dataSharp.index - testD.index);
+                        if (testD.index < dataSharp.index)
+                        {
+                            if(k < prevKV || dataPrevSharp == null)
+                            {
+                                prevKV = k;
+                                dataPrevSharp = testD;
+                            }
+                        }
+                        else
+                        {
+                            if (k > nextKV || dataNextSharp == null)
+                            {
+                                nextKV = k;
+                                dataNextSharp = testD;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < candictDatas.Count; ++i)
+                    {
+                        KData testD = candictDatas[i];
+                        if (testD == dataSharp || testD == null)
+                            continue;
+                        float k = (dataSharp.KValue - testD.KValue) / (dataSharp.index - testD.index);
+                        if (testD.index < dataSharp.index)
+                        {
+                            if (k > prevKV || dataPrevSharp == null)
+                            {
+                                prevKV = k;
+                                dataPrevSharp = testD;
+                            }
+                        }
+                        else
+                        {
+                            if (k < nextKV || dataNextSharp == null)
+                            {
+                                nextKV = k;
+                                dataNextSharp = testD;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public class SingleAuxLineInfo
+        {
+            public AuxLineData upLineData = new AuxLineData();
+            public AuxLineData downLineData = new AuxLineData();
+
+            public void Reset()
+            {
+                upLineData.Reset();
+                downLineData.Reset();
+            }
+
+            public void CheckData(KData kd, int endKDIndex)
+            {
+                if (kd.index == endKDIndex)
+                    return;
+                KData nxtData = kd.GetNextKData();
+                //KData prvData = kd.GetPrevKData();
+
+                // 当前上升
+                if (kd.HitValue > kd.MissValue)
+                {
+                    // 下一个是下降
+                    if (nxtData != null && nxtData.HitValue < nxtData.MissValue)
+                    {
+                        if (upLineData.dataSharp == null)
+                        {
+                            upLineData.dataSharp = kd;
+                        }
+                        else if (kd.KValue > upLineData.dataSharp.KValue)
+                        {
+                            upLineData.candictDatas.Add(upLineData.dataSharp);
+                            upLineData.dataSharp = kd;
+                        }
+                    }
+                }
+                // 当前是下降
+                else if(kd.HitValue < kd.MissValue)
+                {
+                    // 下一个是上升
+                    if (nxtData != null && nxtData.HitValue > nxtData.MissValue)
+                    {
+                        if (downLineData.dataSharp == null)
+                        {
+                            downLineData.dataSharp = kd;
+                        }
+                        else if (kd.KValue < downLineData.dataSharp.KValue)
+                        {
+                            downLineData.candictDatas.Add(downLineData.dataSharp);
+                            downLineData.dataSharp = kd;
+                        }
+                    }
+                }
+            }
+            public void CheckValid()
+            {
+                upLineData.CalcSecondPoint(true);
+                downLineData.CalcSecondPoint(false);
+                upLineData.CheckValid();
+                downLineData.CheckValid();
+            }
+        }
+
+        List<Dictionary<CollectDataType, SingleAuxLineInfo>> allAuxInfo = new List<Dictionary<CollectDataType, SingleAuxLineInfo>>();
+
+        public SingleAuxLineInfo GetSingleAuxLineInfo(int numID, CollectDataType cdt)
+        {
+            return allAuxInfo[numID][cdt];
+        }
+
+        public AutoAnalyzeTool()
+        {
+            allAuxInfo.Clear();
+            for ( int i = 0; i < 5; ++i )
+            {
+                Dictionary<CollectDataType, SingleAuxLineInfo> dict = new Dictionary<CollectDataType, SingleAuxLineInfo>();
+                for( int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j )
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                    dict.Add(cdt, new SingleAuxLineInfo());
+                }
+                allAuxInfo.Add(dict);
+            }
+        }
+
+        void Reset()
+        {
+            for (int i = 0; i < allAuxInfo.Count; ++i)
+            {
+                Dictionary<CollectDataType, SingleAuxLineInfo> dict = allAuxInfo[i];
+                foreach(SingleAuxLineInfo sali in dict.Values)
+                {
+                    sali.Reset();
+                }
+            }
+        }
+
+        void FinalCheckValid()
+        {
+            for (int i = 0; i < allAuxInfo.Count; ++i)
+            {
+                Dictionary<CollectDataType, SingleAuxLineInfo> dict = allAuxInfo[i];
+                foreach (SingleAuxLineInfo sali in dict.Values)
+                {
+                    sali.CheckValid();
+                }
+            }
+        }
+
+        void ProcessCheck(int curKDataIndex, int loopCount)
+        {
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                int loop = loopCount;
+                int kdID = curKDataIndex;
+                while (kdID >= 0 && loop >= 0)
+                {
+                    KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                    KDataDict kdd = kddc.dataLst[kdID];
+
+                    foreach (CollectDataType cdt in kdd.dataDict.Keys)
+                    {
+                        KData kd = kdd.GetData(cdt, false);
+                        SingleAuxLineInfo sali = GetSingleAuxLineInfo(numID, cdt);
+                        sali.CheckData(kd, curKDataIndex);
+                    }
+
+                    --kdID;
+                    --loop;
+                }
+            }
+        }
+
+        public void Analyze(int curKDataIndex)
+        {
+            int loopCount = C_ANALYZE_LOOP_COUNT;
+            if (curKDataIndex < 2)
+                return;
+            Reset();
+            ProcessCheck(curKDataIndex, loopCount);
+            FinalCheckValid();
         }
     }
 
