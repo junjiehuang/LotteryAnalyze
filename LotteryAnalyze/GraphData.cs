@@ -1404,41 +1404,58 @@ namespace LotteryAnalyze
             {
                 if (kd.index == endKDIndex)
                     return;
+                // 取得下一个K值
                 KData nxtData = kd.GetNextKData();
                 //KData prvData = kd.GetPrevKData();
 
-                // 当前上升
+                // 当前K值上升
                 if (kd.HitValue > kd.MissValue)
                 {
-                    // 下一个是下降
+                    // 下一个K值是下降，表明当前K值可能是一个波峰
                     if (nxtData != null && nxtData.HitValue < nxtData.MissValue)
                     {
+                        // 当前没有波峰
                         if (upLineData.dataSharp == null)
                         {
+                            // 记录该K值为波峰
                             upLineData.dataSharp = kd;
                         }
+                        // 如果当前K值高于波峰的K值
                         else if (kd.KValue > upLineData.dataSharp.KValue)
                         {
+                            // 把当前的波峰K值放到候选列表中
                             upLineData.candictDatas.Add(upLineData.dataSharp);
+                            // 设置当前K值为波峰
                             upLineData.dataSharp = kd;
                         }
+                        // 把当前的K值放到候选列表中
+                        else
+                            upLineData.candictDatas.Add(kd);
                     }
                 }
-                // 当前是下降
+                // 当前K值下降
                 else if(kd.HitValue < kd.MissValue)
                 {
-                    // 下一个是上升
+                    // 下一个K值上升，表明当前K值可能是一个波谷
                     if (nxtData != null && nxtData.HitValue > nxtData.MissValue)
                     {
+                        // 当前没有波谷
                         if (downLineData.dataSharp == null)
                         {
+                            // 记录该K值为波谷
                             downLineData.dataSharp = kd;
                         }
+                        // 如果当前K值低于波谷的K值
                         else if (kd.KValue < downLineData.dataSharp.KValue)
                         {
+                            // 把当前的波谷K值放到候选列表中
                             downLineData.candictDatas.Add(downLineData.dataSharp);
+                            // 设置当前K值为波谷
                             downLineData.dataSharp = kd;
                         }
+                        // 把当前的K值放到候选列表中
+                        else
+                            downLineData.candictDatas.Add(kd);
                     }
                 }
             }
@@ -1499,15 +1516,18 @@ namespace LotteryAnalyze
 
         void ProcessCheck(int curKDataIndex, int loopCount)
         {
+            // 遍历每个数字位
             for (int numID = 0; numID < 5; ++numID)
             {
                 int loop = loopCount;
                 int kdID = curKDataIndex;
+                // 往前回溯loopCount个K值
                 while (kdID >= 0 && loop >= 0)
                 {
+                    // 取K值映射表
                     KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
                     KDataDict kdd = kddc.dataLst[kdID];
-
+                    // 遍历每类数据的K值
                     foreach (CollectDataType cdt in kdd.dataDict.Keys)
                     {
                         KData kd = kdd.GetData(cdt, false);

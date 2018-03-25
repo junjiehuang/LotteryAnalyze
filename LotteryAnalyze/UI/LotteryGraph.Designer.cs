@@ -39,6 +39,7 @@
             this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pauseSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resumeSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.simTradeOneStepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -185,6 +186,7 @@
             this.tradeSimFromLatestToolStripMenuItem,
             this.pauseSimTradeToolStripMenuItem,
             this.resumeSimTradeToolStripMenuItem,
+            this.simTradeOneStepToolStripMenuItem,
             this.stopSimTradeToolStripMenuItem,
             this.toolStripSeparator1,
             this.tradeToolStripMenuItem,
@@ -199,73 +201,88 @@
             // tradeSimFromFirstToolStripMenuItem
             // 
             this.tradeSimFromFirstToolStripMenuItem.Name = "tradeSimFromFirstToolStripMenuItem";
-            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeSimFromFirstToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.tradeSimFromFirstToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.tradeSimFromFirstToolStripMenuItem.Text = "从第一期开始模拟";
             this.tradeSimFromFirstToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromFirstToolStripMenuItem_Click);
             // 
             // tradeSimFromLatestToolStripMenuItem
             // 
             this.tradeSimFromLatestToolStripMenuItem.Name = "tradeSimFromLatestToolStripMenuItem";
-            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeSimFromLatestToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+            this.tradeSimFromLatestToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.tradeSimFromLatestToolStripMenuItem.Text = "从最后期开始模拟";
             this.tradeSimFromLatestToolStripMenuItem.Click += new System.EventHandler(this.tradeSimFromLatestToolStripMenuItem_Click);
             // 
             // pauseSimTradeToolStripMenuItem
             // 
             this.pauseSimTradeToolStripMenuItem.Name = "pauseSimTradeToolStripMenuItem";
-            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.pauseSimTradeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.pauseSimTradeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.pauseSimTradeToolStripMenuItem.Text = "暂停模拟";
             this.pauseSimTradeToolStripMenuItem.Click += new System.EventHandler(this.pauseSimTradeToolStripMenuItem_Click);
             // 
             // resumeSimTradeToolStripMenuItem
             // 
             this.resumeSimTradeToolStripMenuItem.Name = "resumeSimTradeToolStripMenuItem";
-            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.resumeSimTradeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.resumeSimTradeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.resumeSimTradeToolStripMenuItem.Text = "恢复模拟";
             this.resumeSimTradeToolStripMenuItem.Click += new System.EventHandler(this.resumeSimTradeToolStripMenuItem_Click);
+            // 
+            // simTradeOneStepToolStripMenuItem
+            // 
+            this.simTradeOneStepToolStripMenuItem.Name = "simTradeOneStepToolStripMenuItem";
+            this.simTradeOneStepToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.simTradeOneStepToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.simTradeOneStepToolStripMenuItem.Text = "模拟交易一次";
+            this.simTradeOneStepToolStripMenuItem.Click += new System.EventHandler(this.simTradeOneStepToolStripMenuItem_Click);
             // 
             // stopSimTradeToolStripMenuItem
             // 
             this.stopSimTradeToolStripMenuItem.Name = "stopSimTradeToolStripMenuItem";
-            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.stopSimTradeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.stopSimTradeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.stopSimTradeToolStripMenuItem.Text = "停止模拟";
             this.stopSimTradeToolStripMenuItem.Click += new System.EventHandler(this.stopSimTradeToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(238, 6);
             // 
             // tradeToolStripMenuItem
             // 
             this.tradeToolStripMenuItem.Name = "tradeToolStripMenuItem";
-            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.tradeToolStripMenuItem.Text = "下单";
             this.tradeToolStripMenuItem.Click += new System.EventHandler(this.tradeToolStripMenuItem_Click);
             // 
             // clearAllTradeDatasToolStripMenuItem
             // 
             this.clearAllTradeDatasToolStripMenuItem.Name = "clearAllTradeDatasToolStripMenuItem";
-            this.clearAllTradeDatasToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.clearAllTradeDatasToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.A)));
+            this.clearAllTradeDatasToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.clearAllTradeDatasToolStripMenuItem.Text = "清空所有交易数据";
             this.clearAllTradeDatasToolStripMenuItem.Click += new System.EventHandler(this.clearAllTradeDatasToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(193, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(238, 6);
             // 
             // globalSimTradeToolStripMenuItem
             // 
             this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
-            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
             this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
             // 
             // tradeCalculaterToolStripMenuItem
             // 
             this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
-            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
             this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
             // 
@@ -753,7 +770,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(234, 289);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(178, 289);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -834,7 +851,7 @@
             this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
-            this.tabPageTrade.Size = new System.Drawing.Size(234, 289);
+            this.tabPageTrade.Size = new System.Drawing.Size(178, 289);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
@@ -1039,6 +1056,7 @@
             this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
             this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
             this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            this.panelUp.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             // 
             // buttonVertExpand
             // 
@@ -1087,9 +1105,11 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStripGraph);
             this.DoubleBuffered = true;
+            this.KeyPreview = true;
             this.Name = "LotteryGraph";
             this.Text = "LotteryGraph";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LotteryGraph_FormClosed);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             this.menuStripGraph.ResumeLayout(false);
             this.menuStripGraph.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1208,5 +1228,6 @@
         private System.Windows.Forms.TextBox textBoxStartDataItem;
         private System.Windows.Forms.Button buttonHorzExpand;
         private System.Windows.Forms.Button buttonVertExpand;
+        private System.Windows.Forms.ToolStripMenuItem simTradeOneStepToolStripMenuItem;
     }
 }

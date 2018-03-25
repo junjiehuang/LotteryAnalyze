@@ -39,7 +39,17 @@ namespace LotteryAnalyze.UI
                 graphInst.Show();
             }
         }
-        
+
+        static LotteryGraph()
+        {
+            BatchTradeSimulator.onPrepareDataItems += OnPrepareDataItems;
+        }
+
+        static void OnPrepareDataItems(DataItem startTradeItem)
+        {
+            NotifyAllGraphsStartSimTrade(startTradeItem.idGlobal);
+        }
+
         public LotteryGraph()
         {
             instLst.Add(this);
@@ -100,6 +110,7 @@ namespace LotteryAnalyze.UI
             buttonHorzExpand.Hide();
             buttonVertExpand.Hide();
 
+            this.KeyPreview = true;
             FormMain.AddWindow(this);
         }
 
@@ -169,11 +180,11 @@ namespace LotteryAnalyze.UI
                 instLst[i].Invalidate(true);//触发Paint事件
             }
         }
-        public static void NotifyAllGraphsStartSimTrade()
+        public static void NotifyAllGraphsStartSimTrade(int startIndex = 0)
         {
             for (int i = 0; i < instLst.Count; ++i)
             {
-                instLst[i].graphMgr.endShowDataItemIndex = 0;
+                instLst[i].graphMgr.endShowDataItemIndex = startIndex;
             }
         }
 
@@ -932,6 +943,32 @@ namespace LotteryAnalyze.UI
         {
             splitContainer2.Panel2Collapsed = !splitContainer2.Panel2Collapsed;
             this.Invalidate(true);
+        }
+
+        private void simTradeOneStepToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(TradeDataManager.Instance.IsCompleted() == false)
+            {
+                TradeDataManager.Instance.PauseAutoTradeJob();
+                TradeDataManager.Instance.SimTradeOneStep();
+            }
+        }
+
+        private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if(e.Control)
+            {
+                if (e.KeyCode == Keys.F)
+                    TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, null);
+                else if (e.KeyCode == Keys.P)
+                    TradeDataManager.Instance.PauseAutoTradeJob();
+                else if (e.KeyCode == Keys.R)
+                    TradeDataManager.Instance.ResumeAutoTradeJob();
+                else if (e.KeyCode == Keys.C)
+                    TradeDataManager.Instance.StopAutoTradeJob();
+                else if (e.KeyCode == Keys.O)
+                    TradeDataManager.Instance.SimTradeOneStep();
+            }
         }
     }
 }
