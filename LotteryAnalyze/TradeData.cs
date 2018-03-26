@@ -8,20 +8,31 @@ namespace LotteryAnalyze
     public enum TradeType
     {
         eNone,
+        // 1星
         eOneStar,
+        // 十位个位2星
         eTenSingleTwoStar,
+        // 百位十位2星
         eHundredTenTwoStar,
+        // 千位百位2星
         eThousandHundredTwoStar,
+        // 万位千位2星
         eTenThousandHundredTwoStar,
+        // 百十个位3星
         eHundredTenSingleThreeStar,
+        // 千百十位3星
         eThousandHundredTenThreeStart,
+        // 万千百位3星
         eTenThousandThousandHundredThreeStart,
+        // 5星
         eFiveStar,
     }
 
     public enum TradeStatus
     {
+        // 等待状态
         eWaiting,
+        // 交易完成状态
         eDone,
     }
 
@@ -96,6 +107,7 @@ namespace LotteryAnalyze
         }
     }
 
+    // 基本交易数据
     class TradeDataBase
     {
         public static string[] NUM_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
@@ -121,6 +133,7 @@ namespace LotteryAnalyze
         public virtual void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex) { }
     }
 
+    // 一星交易数据
     class TradeDataOneStar : TradeDataBase
     {
         public static float SingleTradeCost = 1;
@@ -238,9 +251,19 @@ namespace LotteryAnalyze
         }
     }
 
-
+    // 交易数据管理器
     class TradeDataManager
     {
+        // 交易策略
+        public enum TradeStrategy
+        {
+            // 选择最优的某个数值位的某个012路
+            eSingleBestPath,
+            // 只要哪个数字位的最优012路满足就进行交易
+            eMultiNumPath,
+        }
+
+        public TradeStrategy curTradeStrategy = TradeStrategy.eSingleBestPath;
         static TradeDataManager sInst = null;
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
         public List<TradeDataBase> waitingTradeDatas = new List<TradeDataBase>();
@@ -435,7 +458,8 @@ namespace LotteryAnalyze
             rightCount = 0;
             wrongCount = 0;
             untradeCount = 0;
-    }
+        }
+
         void UpdateAutoTrade()
         {
             if (hasCompleted)
@@ -467,38 +491,34 @@ namespace LotteryAnalyze
             else
                 curTestTradeItem = curTestTradeItem.parent.GetNextItem(curTestTradeItem);
         }
-        /*
-        public void SimTrade()
-        {
-            DataItem curItem = DataManager.GetInst().GetFirstItem();
 
-            if (simTradeFromFirstEveryTime)
-            {
-                waitingTradeDatas.Clear();
-                historyTradeDatas.Clear();
-            }
-            else
-            {
-                DataItem latestItem = DataManager.GetInst().GetLatestItem();
-                if (latestItem == curTestTradeItem)
-                    return;
-                if (curTestTradeItem != null)
-                    curItem = curTestTradeItem;
-            }
-
-            while(curItem != null)
-            {
-                PredictAndTrade(curItem);
-                if (curItem != null)
-                    curTestTradeItem = curItem;
-                curItem = curItem.parent.GetNextItem(curItem);
-            }
-        }
-        */
+        /// <summary>
+        /// 针对当前的DataItem进行预测研判，并决定交易细节
+        /// </summary>
+        /// <param name="item"></param>
         void PredictAndTrade(DataItem item)
         {
+            // 自动计算辅助线
             autoAnalyzeTool.Analyze(item.idGlobal);
 
+            TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
+            trade.lastDateItem = item;
+            trade.isAutoTrade = true;
+            trade.tradeInfo.Clear();
+
+            switch (curTradeStrategy)
+            {
+                case TradeStrategy.eSingleBestPath:
+                    OnlyTradeBestPath(item, trade);
+                    break;
+                case TradeStrategy.eMultiNumPath:
+                    TradeMultiPath(item, trade);
+                    break;
+            }
+        }
+
+        void OnlyTradeBestPath(DataItem item, TradeDataOneStar trade)
+        {
             float maxV = -10;
             int bestNumIndex = -1;
             int bestPath = -1;
@@ -513,9 +533,7 @@ namespace LotteryAnalyze
             {
                 JudgeNumberPath(item, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath);
             }
-            TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
-            trade.lastDateItem = item;
-            trade.isAutoTrade = true;
+
             int tradeCount = defaultTradeCount;
             if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
             {
@@ -528,7 +546,7 @@ namespace LotteryAnalyze
             }
             else
                 tradeCount = 0;
-            if (bestNumIndex >=0 && bestPath >= 0)
+            if (bestNumIndex >= 0 && bestPath >= 0)
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
@@ -545,6 +563,11 @@ namespace LotteryAnalyze
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
             }
+        }
+
+        void TradeMultiPath(DataItem item, TradeDataOneStar trade)
+        {
+
         }
 
 
@@ -642,8 +665,11 @@ namespace LotteryAnalyze
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
+            // 5期均线
             AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
+            // 10期均线
             AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
+            // 布林带数据
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             int path0Value = 1, path1Value = 1, path2Value = 1;
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
@@ -670,40 +696,7 @@ namespace LotteryAnalyze
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
             StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
             StatisticUnit curBestSU = null;
-            /*
-            if (
-                path0Avg5 > path0Bpm &&
-                path0Avg10 > path0Bpm &&
-                !isPath0ContinueMiss)
-                isPath0OK = true;
-            if (
-                path1Avg5 > path1Bpm &&
-                path1Avg10 > path1Bpm &&
-                !isPath1ContinueMiss)
-                isPath1OK = true;
-            if (
-                path2Avg5 > path2Bpm &&
-                path2Avg10 > path2Bpm &&
-                !isPath2ContinueMiss)
-                isPath2OK = true;
-            bool isPath0GoUp = false;
-            bool isPath1GoUp = false;
-            bool isPath2GoUp = false;
-            int loop = 5;
-            DataItem startItem = item;
-            while (loop > 0 && startItem != null)
-            {
-                startItem = startItem.parent.GetPrevItem(startItem);
-                --loop;
-            }
-            if(loop == 0 && startItem != null)
-            {
-                KDataDict kddStart = kddc.GetKDataDict(startItem);
-                isPath0GoUp = kddStart.GetData(CollectDataType.ePath0, false).KValue < kdd.GetData(CollectDataType.ePath0, false).KValue;
-                isPath1GoUp = kddStart.GetData(CollectDataType.ePath1, false).KValue < kdd.GetData(CollectDataType.ePath1, false).KValue;
-                isPath2GoUp = kddStart.GetData(CollectDataType.ePath2, false).KValue < kdd.GetData(CollectDataType.ePath2, false).KValue;
-            }
-            */
+
             if (path0Avg5 > path0Bpm) path0Value *= 2;
             if (path0Avg10 > path0Bpm) path0Value *= 2;
             if (path0Avg5 > path0Avg10) path0Value *= 2;
@@ -1045,10 +1038,15 @@ namespace LotteryAnalyze
         enum SimState
         {
             eNone,
+            // 准备原始数据和分析数据状态
             ePrepareData,
+            // 模拟交易阶段
             eSimTrade,
+            // 暂停模拟交易
             eSimPause,
+            // 针对当前这批原始数据的交易模拟完成
             eFinishBatch,
+            // 针对所有的原始数据的交易模拟结束
             eFinishAll,
         }
 

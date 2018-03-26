@@ -1304,6 +1304,13 @@ namespace LotteryAnalyze
     public class AutoAnalyzeTool
     {
         public static int C_ANALYZE_LOOP_COUNT = 50;
+
+        public enum CalcType
+        {
+            eUpLine,
+            eDownLine,
+        }
+
         public class AuxLineData
         {
             public bool valid = false;
@@ -1549,6 +1556,61 @@ namespace LotteryAnalyze
             Reset();
             ProcessCheck(curKDataIndex, loopCount);
             FinalCheckValid();
+        }
+
+        // 计算第dataIndex个数据在压力线或者支撑线上的K值
+        public bool CalculateValue(int numIndex, int dataIndex, CollectDataType cdt, CalcType ct, bool prevLine, ref float value)
+        {
+            SingleAuxLineInfo sali = allAuxInfo[numIndex][cdt];
+            if(ct == CalcType.eUpLine)
+            {
+                if (sali.upLineData.valid == false)
+                    return false;
+                float x1 = sali.upLineData.dataSharp.index, y1 = sali.upLineData.dataSharp.KValue, x2, y2;
+                if(prevLine)
+                {
+                    if (sali.upLineData.dataPrevSharp == null)
+                        return false;
+                    x2 = sali.upLineData.dataPrevSharp.index;
+                    y2 = sali.upLineData.dataPrevSharp.KValue;
+                }
+                else
+                {
+                    if (sali.upLineData.dataNextSharp == null)
+                        return false;
+                    x2 = sali.upLineData.dataNextSharp.index;
+                    y2 = sali.upLineData.dataNextSharp.KValue;
+                }
+                float k = (y1 - y2) / (x1 - x2);
+                float b = (x1 * y2 - y1 * x2) / (x1 - x2);
+                value = k * dataIndex + b;
+                return true;
+            }
+            else if(ct == CalcType.eDownLine)
+            {
+                if (sali.downLineData.valid == false)
+                    return false;
+                float x1 = sali.downLineData.dataSharp.index, y1 = sali.downLineData.dataSharp.KValue, x2, y2;
+                if (prevLine)
+                {
+                    if (sali.downLineData.dataPrevSharp == null)
+                        return false;
+                    x2 = sali.downLineData.dataPrevSharp.index;
+                    y2 = sali.downLineData.dataPrevSharp.KValue;
+                }
+                else
+                {
+                    if (sali.downLineData.dataNextSharp == null)
+                        return false;
+                    x2 = sali.downLineData.dataNextSharp.index;
+                    y2 = sali.downLineData.dataNextSharp.KValue;
+                }
+                float k = (y1 - y2) / (x1 - x2);
+                float b = (x1 * y2 - y1 * x2) / (x1 - x2);
+                value = k * dataIndex + b;
+                return true;
+            }
+            return false;
         }
     }
 
