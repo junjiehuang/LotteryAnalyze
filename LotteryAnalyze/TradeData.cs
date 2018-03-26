@@ -613,7 +613,7 @@ namespace LotteryAnalyze
         /// <param name="curBestV"></param>
         /// <param name="curBestPath"></param>
         /// <param name="curBeshSU"></param>
-        void Check(StatisticUnit suA, StatisticUnit suB, int pathValueA, int pathValueB, int indexA, int indexB, ref int curBestV, ref int curBestPath, ref StatisticUnit curBeshSU)
+        void Check(StatisticUnit suA, StatisticUnit suB, float pathValueA, float pathValueB, int indexA, int indexB, ref float curBestV, ref int curBestPath, ref StatisticUnit curBeshSU)
         {
             if (pathValueA > pathValueB)
             {
@@ -671,7 +671,10 @@ namespace LotteryAnalyze
             AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
             // 布林带数据
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
-            int path0Value = 1, path1Value = 1, path2Value = 1;
+            // MACD数据
+            MACDPointMap mpm = kddc.GetMacdPointMap(kdd);
+            MACDPointMap prevMpm = mpm.GetNextMACDPM();
+            float path0Value = 1, path1Value = 1, path2Value = 1;
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
             float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
             float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
@@ -681,6 +684,24 @@ namespace LotteryAnalyze
             float path0Bpm = bpm.GetData(CollectDataType.ePath0, false).midValue;
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
+            MACDPoint mp0 = mpm.GetData(CollectDataType.ePath0, false);
+            MACDPoint mp1 = mpm.GetData(CollectDataType.ePath1, false);
+            MACDPoint mp2 = mpm.GetData(CollectDataType.ePath2, false);
+            if (prevMpm != null)
+            {
+                MACDPoint prevmp0 = prevMpm.GetData(CollectDataType.ePath0, false);
+                MACDPoint prevmp1 = prevMpm.GetData(CollectDataType.ePath1, false);
+                MACDPoint prevmp2 = prevMpm.GetData(CollectDataType.ePath2, false);
+                float difK0 = mp0.DIF - prevmp0.DIF;
+                float deaK0 = mp0.DEA - prevmp0.DEA;
+                float difK1 = mp1.DIF - prevmp1.DIF;
+                float deaK1 = mp1.DEA - prevmp1.DEA;
+                float difK2 = mp2.DIF - prevmp2.DIF;
+                float deaK2 = mp2.DEA - prevmp2.DEA;
+                path0Value *= (mp0.DIF - mp0.DEA);// (float)(Math.Abs(mp0.DIF - mp0.DEA) * Math.Sign(mp0.BAR));
+                path1Value *= (mp1.DIF - mp1.DEA);// (float)(Math.Abs(mp1.DIF - mp1.DEA) * Math.Sign(mp1.BAR));
+                path2Value *= (mp2.DIF - mp2.DEA);// (float)(Math.Abs(mp2.DIF - mp2.DEA) * Math.Sign(mp2.BAR));
+            }
             bool isPath0OK = false;
             bool isPath1OK = false;
             bool isPath2OK = false;
@@ -706,7 +727,7 @@ namespace LotteryAnalyze
             if (path2Avg5 > path2Bpm) path2Value *= 2;
             if (path2Avg10 > path2Bpm) path2Value *= 2;
             if (path2Avg5 > path2Avg10) path2Value *= 2;
-            int curBestV = 0;
+            float curBestV = 0;
             int curBestPath = -1;
             if(path0Value > path1Value)
                 Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);

@@ -527,6 +527,12 @@ namespace LotteryAnalyze
                 return parent.macdMapLst[index - 1];
             return null;
         }
+        public MACDPointMap GetNextMACDPM()
+        {
+            if (index < parent.macdMapLst.Count - 1)
+                return parent.macdMapLst[index + 1];
+            return null;
+        }
     }
     public class MACDDataContianer
     {
@@ -680,6 +686,16 @@ namespace LotteryAnalyze
                 BollinPointMap bpm = bollinDataLst.bollinMapLst[kdd.index];
                 if (bpm.kdd == kdd)
                     return bpm;
+            }
+            return null;
+        }
+
+        public MACDPointMap GetMacdPointMap(KDataDict kdd)
+        {
+            if(kdd != null && macdDataLst.macdMapLst.Count > kdd.index)
+            {
+                MACDPointMap mpm = macdDataLst.macdMapLst[kdd.index];
+                return mpm;
             }
             return null;
         }

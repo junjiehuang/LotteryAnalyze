@@ -49,11 +49,15 @@
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonVertExpand = new System.Windows.Forms.Button();
+            this.buttonHorzExpand = new System.Windows.Forms.Button();
+            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
             this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
             this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
             this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
@@ -113,10 +117,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.buttonVertExpand = new System.Windows.Forms.Button();
-            this.buttonHorzExpand = new System.Windows.Forms.Button();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -126,6 +126,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.panelUp.SuspendLayout();
             this.contextMenuStripRightClick.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
@@ -134,7 +135,6 @@
             this.tabPageBarGraph.SuspendLayout();
             this.tabPageTrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
-            this.panelUp.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -332,6 +332,24 @@
             this.splitContainer2.SplitterDistance = 319;
             this.splitContainer2.TabIndex = 0;
             // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
+            this.panelUp.Controls.Add(this.buttonVertExpand);
+            this.panelUp.Controls.Add(this.buttonHorzExpand);
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(495, 312);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            this.panelUp.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+            // 
             // contextMenuStripRightClick
             // 
             this.contextMenuStripRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -369,6 +387,45 @@
             this.modifyAuxLineColorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
             this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
+            // 
+            // buttonVertExpand
+            // 
+            this.buttonVertExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonVertExpand.Location = new System.Drawing.Point(0, 297);
+            this.buttonVertExpand.Name = "buttonVertExpand";
+            this.buttonVertExpand.Size = new System.Drawing.Size(495, 15);
+            this.buttonVertExpand.TabIndex = 1;
+            this.buttonVertExpand.UseVisualStyleBackColor = true;
+            this.buttonVertExpand.Click += new System.EventHandler(this.buttonVertExpand_Click);
+            // 
+            // buttonHorzExpand
+            // 
+            this.buttonHorzExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonHorzExpand.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonHorzExpand.FlatAppearance.BorderColor = System.Drawing.Color.Fuchsia;
+            this.buttonHorzExpand.FlatAppearance.BorderSize = 0;
+            this.buttonHorzExpand.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Blue;
+            this.buttonHorzExpand.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.buttonHorzExpand.Location = new System.Drawing.Point(480, 0);
+            this.buttonHorzExpand.Name = "buttonHorzExpand";
+            this.buttonHorzExpand.Size = new System.Drawing.Size(15, 312);
+            this.buttonHorzExpand.TabIndex = 0;
+            this.buttonHorzExpand.UseVisualStyleBackColor = false;
+            this.buttonHorzExpand.Click += new System.EventHandler(this.buttonHorzExpand_Click);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(495, 194);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
             // 
             // buttonClearFavoriteCharts
             // 
@@ -872,7 +929,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 221);
             this.textBoxStartDataItem.Name = "textBoxStartDataItem";
-            this.textBoxStartDataItem.Size = new System.Drawing.Size(151, 21);
+            this.textBoxStartDataItem.Size = new System.Drawing.Size(99, 21);
             this.textBoxStartDataItem.TabIndex = 11;
             // 
             // trackBarTradeData
@@ -881,7 +938,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarTradeData.Location = new System.Drawing.Point(3, 169);
             this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(228, 45);
+            this.trackBarTradeData.Size = new System.Drawing.Size(172, 45);
             this.trackBarTradeData.TabIndex = 10;
             this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
@@ -892,7 +949,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(79, 136);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(152, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(99, 21);
             this.textBoxStartMoney.TabIndex = 9;
             this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
             // 
@@ -912,7 +969,7 @@
             this.comboBoxTradeNumIndex.FormattingEnabled = true;
             this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 110);
             this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
-            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(152, 20);
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(99, 20);
             this.comboBoxTradeNumIndex.TabIndex = 7;
             this.comboBoxTradeNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeNumIndex_SelectedIndexChanged);
             // 
@@ -954,7 +1011,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
             this.textBoxDefaultCount.Name = "textBoxDefaultCount";
-            this.textBoxDefaultCount.Size = new System.Drawing.Size(152, 21);
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(99, 21);
             this.textBoxDefaultCount.TabIndex = 3;
             // 
             // label12
@@ -972,7 +1029,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
             this.textBoxMultiCount.Name = "textBoxMultiCount";
-            this.textBoxMultiCount.Size = new System.Drawing.Size(152, 21);
+            this.textBoxMultiCount.Size = new System.Drawing.Size(99, 21);
             this.textBoxMultiCount.TabIndex = 1;
             // 
             // label11
@@ -1040,63 +1097,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
-            this.panelUp.Controls.Add(this.buttonVertExpand);
-            this.panelUp.Controls.Add(this.buttonHorzExpand);
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(495, 312);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
-            this.panelUp.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
-            // 
-            // buttonVertExpand
-            // 
-            this.buttonVertExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonVertExpand.Location = new System.Drawing.Point(0, 297);
-            this.buttonVertExpand.Name = "buttonVertExpand";
-            this.buttonVertExpand.Size = new System.Drawing.Size(495, 15);
-            this.buttonVertExpand.TabIndex = 1;
-            this.buttonVertExpand.UseVisualStyleBackColor = true;
-            this.buttonVertExpand.Click += new System.EventHandler(this.buttonVertExpand_Click);
-            // 
-            // buttonHorzExpand
-            // 
-            this.buttonHorzExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonHorzExpand.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonHorzExpand.FlatAppearance.BorderColor = System.Drawing.Color.Fuchsia;
-            this.buttonHorzExpand.FlatAppearance.BorderSize = 0;
-            this.buttonHorzExpand.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Blue;
-            this.buttonHorzExpand.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonHorzExpand.Location = new System.Drawing.Point(480, 0);
-            this.buttonHorzExpand.Name = "buttonHorzExpand";
-            this.buttonHorzExpand.Size = new System.Drawing.Size(15, 312);
-            this.buttonHorzExpand.TabIndex = 0;
-            this.buttonHorzExpand.UseVisualStyleBackColor = false;
-            this.buttonHorzExpand.Click += new System.EventHandler(this.buttonHorzExpand_Click);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(495, 194);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
-            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1121,6 +1121,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.panelUp.ResumeLayout(false);
             this.contextMenuStripRightClick.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
@@ -1133,7 +1134,6 @@
             this.tabPageTrade.ResumeLayout(false);
             this.tabPageTrade.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
-            this.panelUp.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
