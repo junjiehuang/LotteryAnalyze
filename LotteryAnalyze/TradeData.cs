@@ -806,6 +806,14 @@ namespace LotteryAnalyze
                 return;
             int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
             WaveConfig waveCfg = CheckMACDGoldenCrossAndDeadCross(curMpm, cdt, ref goldenCrossCount, ref deadCrossCount, ref confuseCount);
+            if (waveCfg == WaveConfig.eDeadCrossDown ||
+                waveCfg == WaveConfig.ePureDown ||
+                waveCfg == WaveConfig.eDeadCrossConfuse)
+            {
+                value = 0;
+                return;
+            }
+
             MACDPointMap prevMPM = curMpm.GetPrevMACDPM();
             MACDPoint cur = curMpm.GetData(cdt, false);
             MACDPoint prev = prevMPM.GetData(cdt, false);
@@ -836,26 +844,6 @@ namespace LotteryAnalyze
                     // 如果快线在0轴之下，说明做空的概率更高,值评估值位0，放弃这一路
                     if (cur.DIF < 0)
                         value = 0;
-                    // 快线在0轴之上的时候
-                    else
-                    {
-                        bool isContinueDown = true;
-                        int loop = 3;
-                        MACDPointMap tmpMPM = curMpm;
-                        while( tmpMPM != null && loop > 0 )
-                        {
-                            MACDPoint tmpMP = tmpMPM.GetData(cdt, false);
-                            if (tmpMP.DIF > tmpMP.DEA)
-                            {
-                                isContinueDown = false;
-                                break;
-                            }
-                            --loop;
-                            tmpMPM = tmpMPM.GetPrevMACDPM();
-                        }
-                        if (isContinueDown)
-                            value = 0;
-                    }
                 }
             }
         }
