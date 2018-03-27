@@ -660,6 +660,206 @@ namespace LotteryAnalyze
 
         }
 
+        public enum ValueCmpState
+        {
+            eNone,
+            eDifGreaterDea,
+            eDifEqualDea,
+            eDifLessDea,
+        }
+        public enum WaveConfig
+        {
+            eNone,
+            // 纯上升
+            ePureUp,
+            // 纯下降
+            ePureDown,
+            // 走势不明
+            ePureConfusion,
+            // 金叉后走势不明
+            eGoldenCrossConfuse,
+            // 死叉后走势不明
+            eDeadCrossConfuse,
+            // 金叉后上升
+            eGoldenCrossUp,
+            // 死叉后下降
+            eDeadCrossDown,
+            // 有金叉死叉当前走势不明
+            eGoldenDeadConfusion,
+            // 有金叉死叉当前上升
+            eGoldenDeadConfusionUp,
+            // 有金叉死叉当前下降
+            eGoldenDeadConfusionDown,
+
+        }
+        public ValueCmpState GetValueCmpState(MACDPoint mp)
+        {
+            ValueCmpState res = ValueCmpState.eNone;
+            if (mp.DIF > mp.DEA)
+                res = ValueCmpState.eDifGreaterDea;
+            else if (mp.DIF < mp.DEA)
+                res = ValueCmpState.eDifLessDea;
+            else
+                res = ValueCmpState.eDifEqualDea;
+            return res;
+        }
+
+        WaveConfig CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount)
+        {
+            WaveConfig res = WaveConfig.eNone;
+            const int LOOP_COUNT = 5;
+            goldenCrossCount = 0;
+            deadCrossCount = 0;
+            confuseCount = 0;
+            int loop = LOOP_COUNT;
+            MACDPointMap tmpMPM = curMpm;
+            ValueCmpState lastVCS = ValueCmpState.eNone;
+            ValueCmpState startVCS = ValueCmpState.eNone;
+            float maxDIF = 0;
+            int maxDIFIndex = -1;
+            while ( tmpMPM != null && loop >= 0 )
+            {
+                MACDPoint mp = tmpMPM.GetData(cdt, false);
+                ValueCmpState tmpVCS = GetValueCmpState(mp);
+                if (tmpVCS == ValueCmpState.eDifEqualDea)
+                    ++confuseCount;
+
+                if (lastVCS == ValueCmpState.eNone)
+                {
+                    if(maxDIFIndex == -1)
+                    {
+                        maxDIFIndex = tmpMPM.index;
+                        maxDIF = mp.DIF;
+                    }
+
+
+                    if (startVCS == ValueCmpState.eNone)
+                        startVCS = tmpVCS;
+                    if (tmpVCS != ValueCmpState.eDifEqualDea)
+                        lastVCS = tmpVCS;
+                }
+                else
+                {
+                    if(maxDIF < mp.DIF)
+                    {
+                        maxDIF = mp.DIF;
+                        maxDIFIndex = tmpMPM.index;
+                    }
+
+                    if (lastVCS != tmpVCS)
+                    {
+                        if (tmpVCS == ValueCmpState.eDifGreaterDea)
+                        {
+                            ++deadCrossCount;
+                            lastVCS = tmpVCS;
+                        }
+                        else if (tmpVCS == ValueCmpState.eDifLessDea)
+                        {
+                            ++goldenCrossCount;
+                            lastVCS = tmpVCS;
+                        }
+                    }
+                }
+                --loop;
+                tmpMPM = tmpMPM.GetPrevMACDPM();
+            }
+
+            if(startVCS == ValueCmpState.eDifEqualDea)
+            {
+                if (goldenCrossCount > 0 && deadCrossCount > 0)
+                    res = WaveConfig.eGoldenDeadConfusion;
+                else if (goldenCrossCount > 0 && deadCrossCount == 0)
+                    res = WaveConfig.eGoldenCrossConfuse;
+                else if (goldenCrossCount == 0 && deadCrossCount > 0)
+                    res = WaveConfig.eDeadCrossConfuse;
+                else
+                    res = WaveConfig.ePureConfusion;
+            }
+            else if(startVCS == ValueCmpState.eDifGreaterDea)
+            {
+                if (goldenCrossCount > 0 && deadCrossCount > 0)
+                    res = WaveConfig.eGoldenDeadConfusionUp;
+                else if (goldenCrossCount > 0 && deadCrossCount == 0)
+                    res = WaveConfig.eGoldenCrossUp;
+                else if (goldenCrossCount == 0 && deadCrossCount > 0)
+                    Console.WriteLine("invalid wave config");
+                else
+                    res = WaveConfig.ePureUp;
+            }
+            else if(startVCS == ValueCmpState.eDifLessDea)
+            {
+                if (goldenCrossCount > 0 && deadCrossCount > 0)
+                    res = WaveConfig.eGoldenDeadConfusionDown;
+                else if (goldenCrossCount > 0 && deadCrossCount == 0)
+                    Console.WriteLine("invalid wave config");
+                else if (goldenCrossCount == 0 && deadCrossCount > 0)
+                    res = WaveConfig.eDeadCrossDown;
+                else
+                    res = WaveConfig.ePureDown;
+            }
+            return res;
+        } 
+
+        void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value)
+        {
+            if (curMpm == null || curMpm.index == 0)
+                return;
+            int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
+            WaveConfig waveCfg = CheckMACDGoldenCrossAndDeadCross(curMpm, cdt, ref goldenCrossCount, ref deadCrossCount, ref confuseCount);
+            MACDPointMap prevMPM = curMpm.GetPrevMACDPM();
+            MACDPoint cur = curMpm.GetData(cdt, false);
+            MACDPoint prev = prevMPM.GetData(cdt, false);
+            // 快线斜率
+            float difK = cur.DIF - prev.DIF;
+            // 慢线斜率
+            float deaK = cur.DEA - prev.DEA;
+            // 快线斜率大于慢线斜率
+            if(difK > deaK)
+            {
+                // 如果慢线斜率大于0，表明多的信号比较强烈
+                if (deaK > 0)
+                {
+                    // 如果快线在0轴之上，说明做多的信号更加强烈
+                    if (cur.DIF > 0)
+                        value *= 4;
+                    // 如果快线在0轴之下，说明当时处于多的回调
+                    else
+                        value *= 2;
+                }
+            }
+            // 快线斜率小于慢线斜率
+            else
+            {
+                // 如果慢线斜率小于0，表明空的信号比较强烈
+                if(deaK < 0)
+                {
+                    // 如果快线在0轴之下，说明做空的概率更高,值评估值位0，放弃这一路
+                    if (cur.DIF < 0)
+                        value = 0;
+                    // 快线在0轴之上的时候
+                    else
+                    {
+                        bool isContinueDown = true;
+                        int loop = 3;
+                        MACDPointMap tmpMPM = curMpm;
+                        while( tmpMPM != null && loop > 0 )
+                        {
+                            MACDPoint tmpMP = tmpMPM.GetData(cdt, false);
+                            if (tmpMP.DIF > tmpMP.DEA)
+                            {
+                                isContinueDown = false;
+                                break;
+                            }
+                            --loop;
+                            tmpMPM = tmpMPM.GetPrevMACDPM();
+                        }
+                        if (isContinueDown)
+                            value = 0;
+                    }
+                }
+            }
+        }
+
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
         {
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -673,7 +873,6 @@ namespace LotteryAnalyze
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             // MACD数据
             MACDPointMap mpm = kddc.GetMacdPointMap(kdd);
-            MACDPointMap prevMpm = mpm.GetNextMACDPM();
             float path0Value = 1, path1Value = 1, path2Value = 1;
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
             float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
@@ -684,34 +883,21 @@ namespace LotteryAnalyze
             float path0Bpm = bpm.GetData(CollectDataType.ePath0, false).midValue;
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
-            MACDPoint mp0 = mpm.GetData(CollectDataType.ePath0, false);
-            MACDPoint mp1 = mpm.GetData(CollectDataType.ePath1, false);
-            MACDPoint mp2 = mpm.GetData(CollectDataType.ePath2, false);
-            if (prevMpm != null)
             {
-                MACDPoint prevmp0 = prevMpm.GetData(CollectDataType.ePath0, false);
-                MACDPoint prevmp1 = prevMpm.GetData(CollectDataType.ePath1, false);
-                MACDPoint prevmp2 = prevMpm.GetData(CollectDataType.ePath2, false);
-                float difK0 = mp0.DIF - prevmp0.DIF;
-                float deaK0 = mp0.DEA - prevmp0.DEA;
-                float difK1 = mp1.DIF - prevmp1.DIF;
-                float deaK1 = mp1.DEA - prevmp1.DEA;
-                float difK2 = mp2.DIF - prevmp2.DIF;
-                float deaK2 = mp2.DEA - prevmp2.DEA;
-                path0Value *= (mp0.DIF - mp0.DEA);// (float)(Math.Abs(mp0.DIF - mp0.DEA) * Math.Sign(mp0.BAR));
-                path1Value *= (mp1.DIF - mp1.DEA);// (float)(Math.Abs(mp1.DIF - mp1.DEA) * Math.Sign(mp1.BAR));
-                path2Value *= (mp2.DIF - mp2.DEA);// (float)(Math.Abs(mp2.DIF - mp2.DEA) * Math.Sign(mp2.BAR));
+                CheckMACD(mpm, CollectDataType.ePath0, ref path0Value);
+                CheckMACD(mpm, CollectDataType.ePath1, ref path1Value);
+                CheckMACD(mpm, CollectDataType.ePath2, ref path2Value);
             }
             bool isPath0OK = false;
             bool isPath1OK = false;
             bool isPath2OK = false;
-            int missValue0 = 1, missValue1 = 1, missValue2 = 1;
-            bool isPath0ContinueMiss = isContinuousMiss(item, numIndex, 0, ref missValue0);
-            bool isPath1ContinueMiss = isContinuousMiss(item, numIndex, 1, ref missValue1);
-            bool isPath2ContinueMiss = isContinuousMiss(item, numIndex, 2, ref missValue2);
-            path0Value *= missValue0;
-            path1Value *= missValue1;
-            path2Value *= missValue2;
+            //int missValue0 = 1, missValue1 = 1, missValue2 = 1;
+            //bool isPath0ContinueMiss = isContinuousMiss(item, numIndex, 0, ref missValue0);
+            //bool isPath1ContinueMiss = isContinuousMiss(item, numIndex, 1, ref missValue1);
+            //bool isPath2ContinueMiss = isContinuousMiss(item, numIndex, 2, ref missValue2);
+            //path0Value *= missValue0;
+            //path1Value *= missValue1;
+            //path2Value *= missValue2;
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
