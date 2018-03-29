@@ -690,7 +690,6 @@ namespace LotteryAnalyze
             eGoldenDeadConfusionUp,
             // 有金叉死叉当前下降
             eGoldenDeadConfusionDown,
-
         }
         public ValueCmpState GetValueCmpState(MACDPoint mp)
         {
@@ -797,6 +796,7 @@ namespace LotteryAnalyze
                 else
                     res = WaveConfig.ePureDown;
             }
+            curMpm.GetData(cdt, false).WC = (byte)(res);
             return res;
         } 
 

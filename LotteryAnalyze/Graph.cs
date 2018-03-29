@@ -580,6 +580,10 @@ namespace LotteryAnalyze
                 {
                     g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
                     g.DrawLine(grayDotLinePen, selDataPtX + gridScaleW, 0, selDataPtX + gridScaleW, winH);
+
+                    MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
+                    MACDPoint mp = mpm.GetData(cdt,false);
+                    g.DrawString(((TradeDataManager.WaveConfig)(mp.WC)).ToString(), auxFont, whiteBrush, 5, 5);
                 }
             }
             EndDraw(g);

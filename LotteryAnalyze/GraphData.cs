@@ -68,13 +68,13 @@ namespace LotteryAnalyze
                     info = "[" + parent.startItem.idTag + "-" + parent.startItem.lotteryNumber + "] [" +
                     parent.parent.GetNumberIndexName() + " " +
                     GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
-                    HitValue + " : " + MissValue + "]";
+                    HitValue + " : " + MissValue + "]\n";
                 }
                 else
                 {
                     info = "[" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
                     GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
-                    HitValue + " : " + MissValue + "]";
+                    HitValue + " : " + MissValue + "]\n";
                 }
             }
             return info;
@@ -499,6 +499,7 @@ namespace LotteryAnalyze
         public float DIF = 0;
         public float DEA = 0;
         public float BAR = 0;
+        public byte WC = 0;
     }
     public class MACDPointMap
     {
