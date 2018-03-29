@@ -257,6 +257,8 @@ namespace LotteryAnalyze
     // 交易数据管理器
     class TradeDataManager
     {
+        public const int LOOP_COUNT = 5;
+
         // 交易策略
         public enum TradeStrategy
         {
@@ -709,7 +711,7 @@ namespace LotteryAnalyze
         WaveConfig CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount)
         {
             WaveConfig res = WaveConfig.eNone;
-            const int LOOP_COUNT = 5;
+            
             goldenCrossCount = 0;
             deadCrossCount = 0;
             confuseCount = 0;
@@ -719,9 +721,12 @@ namespace LotteryAnalyze
             ValueCmpState startVCS = ValueCmpState.eNone;
             float maxDIF = 0;
             int maxDIFIndex = -1;
+            float minDIF = 0;
+            int minDIFIndex = -1;
+            MACDPoint mp = null;
             while ( tmpMPM != null && loop >= 0 )
             {
-                MACDPoint mp = tmpMPM.GetData(cdt, false);
+                mp = tmpMPM.GetData(cdt, false);
                 ValueCmpState tmpVCS = GetValueCmpState(mp);
                 if (tmpVCS == ValueCmpState.eDifEqualDea)
                     ++confuseCount;
@@ -733,7 +738,11 @@ namespace LotteryAnalyze
                         maxDIFIndex = tmpMPM.index;
                         maxDIF = mp.DIF;
                     }
-
+                    if(minDIFIndex == -1)
+                    {
+                        minDIFIndex = tmpMPM.index;
+                        minDIF = mp.DIF;
+                    }
 
                     if (startVCS == ValueCmpState.eNone)
                         startVCS = tmpVCS;
@@ -746,6 +755,11 @@ namespace LotteryAnalyze
                     {
                         maxDIF = mp.DIF;
                         maxDIFIndex = tmpMPM.index;
+                    }
+                    if(minDIF > mp.DIF)
+                    {
+                        minDIF = mp.DIF;
+                        minDIFIndex = tmpMPM.index;
                     }
 
                     if (lastVCS != tmpVCS)
@@ -800,7 +814,10 @@ namespace LotteryAnalyze
                     res = WaveConfig.ePureDown;
             }
 #if TRADE_DBG
-            curMpm.GetData(cdt, false).WC = (byte)(res);
+            mp = curMpm.GetData(cdt, false);
+            mp.WC = (byte)(res);
+            mp.MAX_DIF_INDEX = maxDIFIndex;
+            mp.MIN_DIF_INDEX = minDIFIndex;
 #endif
             return res;
         } 

@@ -386,6 +386,7 @@ namespace LotteryAnalyze
         Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         Pen yellowLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 1);
+        Pen greenLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.LightGreen, 1);
 
         Pen redDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Red, 1);
         Pen cyanDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Cyan, 1);
@@ -574,19 +575,46 @@ namespace LotteryAnalyze
                 {
                     DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt);
                 }
+
+                if(preViewDataIndex != -1)
+                {
+//#if TRADE_DBG
+
+                    MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
+                    MACDPoint mp = mpm.GetData(cdt, false);
+                    MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
+                    float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
+                    float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
+                    float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
+
+                    g.DrawString(((TradeDataManager.WaveConfig)(mp.WC)).ToString(), auxFont, whiteBrush, 5, 5);
+                    int leftID = preViewDataIndex - TradeDataManager.LOOP_COUNT;
+                    if (leftID < 0)
+                        leftID = 0;
+                    MACDPointMap mpmL = kddc.macdDataLst.macdMapLst[leftID];
+                    MACDPoint mpL = mpmL.GetData(cdt, false);
+                    float difLX = StandToCanvas(leftID * gridScaleW, true);
+                    float difLY = StandToCanvas(mpL.DIF * _gridScaleH, false);
+
+                    if (mp.MAX_DIF_INDEX >= 0)
+                    {
+                        MACDPointMap mpmMAX = kddc.macdDataLst.macdMapLst[mp.MAX_DIF_INDEX];
+                        MACDPoint mpMAX = mpmMAX.GetData(cdt, false);
+                        float difMAXX = StandToCanvas(mp.MAX_DIF_INDEX * gridScaleW, true);
+                        float difMAXY = StandToCanvas(mpMAX.DIF * _gridScaleH, false);
+
+                        g.DrawLine(greenLinePen, difLX, difLY, difMAXX, difMAXY);
+                        g.DrawLine(greenLinePen, difMAXX, difMAXY, CX, CY);
+                    }
+//#endif
+                }
+
                 canvasOffset.Y = oriYOff;
 
                 if (preViewDataIndex != -1)
                 {
                     g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
                     g.DrawLine(grayDotLinePen, selDataPtX + gridScaleW, 0, selDataPtX + gridScaleW, winH);
-
-                    MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
-                    MACDPoint mp = mpm.GetData(cdt,false);
-#if TRADE_DBG
-                    g.DrawString(((TradeDataManager.WaveConfig)(mp.WC)).ToString(), auxFont, whiteBrush, 5, 5);
-
-#endif
                 }
             }
             EndDraw(g);
