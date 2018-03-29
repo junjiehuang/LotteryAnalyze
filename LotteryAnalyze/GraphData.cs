@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TRADE_DBG
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -499,7 +501,9 @@ namespace LotteryAnalyze
         public float DIF = 0;
         public float DEA = 0;
         public float BAR = 0;
+#if TRADE_DBG
         public byte WC = 0;
+#endif
     }
     public class MACDPointMap
     {
@@ -713,7 +717,7 @@ namespace LotteryAnalyze
     // K线图数据容器
     public class KGraphDataContainer : GraphDataContainerBase
     {
-        #region Avg line setting
+#region Avg line setting
         public class AvgLineSetting
         {
             public string tag;
@@ -749,7 +753,7 @@ namespace LotteryAnalyze
             als.pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
             S_AVG_LINE_SETTINGS.Add(als);
         }
-        #endregion
+#endregion
 
         int dataLength = 0;
         int cycleLength = 1;
@@ -1631,5 +1635,5 @@ namespace LotteryAnalyze
         }
     }
 
-    #endregion
+#endregion
 }

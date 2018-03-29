@@ -583,7 +583,10 @@ namespace LotteryAnalyze
 
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
                     MACDPoint mp = mpm.GetData(cdt,false);
+#if TRADE_DBG
                     g.DrawString(((TradeDataManager.WaveConfig)(mp.WC)).ToString(), auxFont, whiteBrush, 5, 5);
+
+#endif
                 }
             }
             EndDraw(g);
@@ -1613,7 +1616,7 @@ namespace LotteryAnalyze
         }
     }
 
-    #endregion
+#endregion
 
     // 图表管理器
     class GraphManager

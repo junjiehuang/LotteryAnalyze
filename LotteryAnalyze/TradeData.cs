@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define TRADE_DBG
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -796,7 +799,9 @@ namespace LotteryAnalyze
                 else
                     res = WaveConfig.ePureDown;
             }
+#if TRADE_DBG
             curMpm.GetData(cdt, false).WC = (byte)(res);
+#endif
             return res;
         } 
 
