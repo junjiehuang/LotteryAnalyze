@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TRADE_DBG
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -578,8 +580,7 @@ namespace LotteryAnalyze
 
                 if(preViewDataIndex != -1)
                 {
-//#if TRADE_DBG
-
+#if TRADE_DBG
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
                     MACDPoint mp = mpm.GetData(cdt, false);
                     MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
@@ -606,7 +607,7 @@ namespace LotteryAnalyze
                         g.DrawLine(greenLinePen, difLX, difLY, difMAXX, difMAXY);
                         g.DrawLine(greenLinePen, difMAXX, difMAXY, CX, CY);
                     }
-//#endif
+#endif
                 }
 
                 canvasOffset.Y = oriYOff;
