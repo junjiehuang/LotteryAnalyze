@@ -955,9 +955,12 @@ namespace LotteryAnalyze
             float cyBAR = StandToCanvas(standY, false);
             float rcY = StandToCanvas(standY > 0 ? standY : 0, false);
 
-            PushLinePts(yellowLinePen, px, pyDIF, cx, cyDIF);
-            PushLinePts(whiteLinePen, px, pyDEA, cx, cyDEA);
-            PushRcPts(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
+            //PushLinePts(yellowLinePen, px, pyDIF, cx, cyDIF);
+            //PushLinePts(whiteLinePen, px, pyDEA, cx, cyDEA);
+            //PushRcPts(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
+            g.FillRectangle(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
+            g.DrawLine(yellowLinePen, px, pyDIF, cx, cyDIF);
+            g.DrawLine(whiteLinePen, px, pyDEA, cx, cyDEA);
         }
 
         void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt)
