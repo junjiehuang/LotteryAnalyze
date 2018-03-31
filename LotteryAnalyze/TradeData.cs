@@ -695,6 +695,16 @@ namespace LotteryAnalyze
             eGoldenDeadConfusionUp,
             // 有金叉死叉当前下降
             eGoldenDeadConfusionDown,
+
+            //ePureUp,
+            eFirstUpThenSlowDown,
+            eFirstUpThenFastDown,
+            //ePureDown,
+            eFirstDownThenSlowUp,
+            eFirstDownThenFastUp,
+            eFlatShake,
+            eShakeUp,
+            eShakeDown,
         }
         public ValueCmpState GetValueCmpState(MACDPoint mp)
         {
