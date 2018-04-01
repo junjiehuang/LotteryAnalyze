@@ -583,29 +583,35 @@ namespace LotteryAnalyze
 #if TRADE_DBG
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
                     MACDPoint mp = mpm.GetData(cdt, false);
-                    MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
-                    float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
-                    float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
-                    float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
-
-                    g.DrawString(((TradeDataManager.WaveConfig)(mp.WC)).ToString(), auxFont, whiteBrush, 5, 5);
-                    int leftID = preViewDataIndex - TradeDataManager.LOOP_COUNT;
-                    if (leftID < 0)
-                        leftID = 0;
-                    MACDPointMap mpmL = kddc.macdDataLst.macdMapLst[leftID];
-                    MACDPoint mpL = mpmL.GetData(cdt, false);
-                    float difLX = StandToCanvas(leftID * gridScaleW, true);
-                    float difLY = StandToCanvas(mpL.DIF * _gridScaleH, false);
-
-                    if (mp.MAX_DIF_INDEX >= 0)
+                    if (mpm.index >= 1 && mp.LEFT_DIF_INDEX != -1)
                     {
-                        MACDPointMap mpmMAX = kddc.macdDataLst.macdMapLst[mp.MAX_DIF_INDEX];
-                        MACDPoint mpMAX = mpmMAX.GetData(cdt, false);
-                        float difMAXX = StandToCanvas(mp.MAX_DIF_INDEX * gridScaleW, true);
-                        float difMAXY = StandToCanvas(mpMAX.DIF * _gridScaleH, false);
+                        MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
+                        float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
+                        float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
+                        float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
 
-                        g.DrawLine(greenLinePen, difLX, difLY, difMAXX, difMAXY);
-                        g.DrawLine(greenLinePen, difMAXX, difMAXY, CX, CY);
+                        g.DrawString(((TradeDataManager.WaveConfig)(mp.WAVE_CFG)).ToString(), auxFont, whiteBrush, 5, 5);
+                        int leftID = mp.LEFT_DIF_INDEX;
+
+                        List<int> ids = new List<int>();
+                        ids.Add(leftID);
+                        if (mp.MAX_DIF_INDEX >= 0)
+                            ids.Add(mp.MAX_DIF_INDEX);
+                        if (mp.MIN_DIF_INDEX >= 0)
+                            ids.Add(mp.MIN_DIF_INDEX);
+                        ids.Add(mpm.index);
+                        ids.Sort();
+
+                        for (int i = 1; i < ids.Count; ++i)
+                        {
+                            MACDPointMap mpm1 = kddc.macdDataLst.macdMapLst[ids[i]];
+                            MACDPointMap mpm2 = kddc.macdDataLst.macdMapLst[ids[i - 1]];
+                            float x1 = StandToCanvas(mpm1.index * gridScaleW, true);
+                            float x2 = StandToCanvas(mpm2.index * gridScaleW, true);
+                            float y1 = StandToCanvas(mpm1.GetData(cdt, false).DIF * _gridScaleH, false);
+                            float y2 = StandToCanvas(mpm2.GetData(cdt, false).DIF * _gridScaleH, false);
+                            g.DrawLine(greenLinePen, x1, y1, x2, y2);
+                        }
                     }
 #endif
                 }
@@ -985,14 +991,22 @@ namespace LotteryAnalyze
                 g.DrawRectangle(selAuxLine.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
 
-            DrawAutoAuxTools(g, winW, winH, numIndex, cdt);
+            if(preViewDataIndex != -1)
+            {
+                TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
+                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt);
+            }
+            else
+            {
+                DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt);
+            }
         }
 
-        void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
+        void DrawAutoAuxTools(AutoAnalyzeTool autoAnalyzeTool, Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
         {
-            if (TradeDataManager.Instance.autoAnalyzeTool == null)
+            if (autoAnalyzeTool == null)
                 return;
-            AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+            AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
             if (sali.upLineData.valid)
                 DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
             if (sali.downLineData.valid)
@@ -1375,7 +1389,8 @@ namespace LotteryAnalyze
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
             BarGraphDataContianer bgdc = GraphDataManager.BGDC;
-            if (bgdc.HasData() == false || bgdc.totalCollectCount == 0)
+            if (bgdc.HasData() == false || 
+                bgdc.totalCollectCount == 0)
                 return;
 
             float startX = 0;
@@ -1417,6 +1432,46 @@ namespace LotteryAnalyze
                 currentItem = bgdc.CurrentSelectItem;
             string info = "[" + currentItem.idTag + "] [" + currentItem.lotteryNumber + "]";
             g.DrawString(info, tagFont, tagBrush, 5, 5);
+        }
+
+        public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+            BarGraphDataContianer bgdc = GraphDataManager.BGDC;
+            if (bgdc.HasData() == false || 
+                bgdc.totalCollectCount == 0 ||
+                bgdc.curStatisticsType != BarGraphDataContianer.StatisticsType.eAppearCountFrom0To9)
+                return;
+
+            DataItem currentItem = DataManager.GetInst().GetLatestItem();
+            if (bgdc.CurrentSelectItem != null)
+                currentItem = bgdc.CurrentSelectItem;
+            if (currentItem == null)
+                return;
+            List<NumberCmpInfo> nums = new List<NumberCmpInfo>();
+            TradeDataManager.FindAllNumberProbabilities(currentItem, ref nums);
+            nums.Sort(NumberCmpInfo.SortByNumber);
+
+            float startX = 0;
+            float startY = winH * 0.1f;
+            float MaxRcH = winH * 0.8f;
+            float bottom = winH * 0.9f;
+            
+            float gap = (float)winW / 10;
+            Font tagFont = new Font(FontFamily.GenericSerif, 16);
+            for (int i = 0; i < nums.Count; ++i)
+            {
+                Brush brush = greenBrush;
+                float rate = nums[i].rate / 10.0f;
+                if (rate > 0.1f)
+                    brush = redBrush;
+
+                float rcH = MaxRcH * rate;
+                startY = bottom - rcH;
+                g.FillRectangle(brush, startX, startY, gap * 0.9f, rcH);
+                g.DrawString(nums[i].number.ToString(), tagFont, tagBrush, startX, bottom);
+                g.DrawString(nums[i].rate.ToString(), tagFont, tagBrush, startX, startY - 30);
+                startX += gap;
+            }
         }
     }
 

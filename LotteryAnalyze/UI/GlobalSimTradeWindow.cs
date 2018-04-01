@@ -28,6 +28,9 @@ namespace LotteryAnalyze.UI
             comboBoxSpecNumIndex.SelectedIndex = TradeDataManager.Instance.simSelNumIndex;
             checkBoxSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
 
+            comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
+            comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
+
             updateTimer = new Timer();
             updateTimer.Interval = 500;
             updateTimer.Tick += UpdateTimer_Tick;
@@ -198,6 +201,11 @@ namespace LotteryAnalyze.UI
                 TradeDataManager.Instance.simSelNumIndex = comboBoxSpecNumIndex.SelectedIndex;
             else
                 TradeDataManager.Instance.simSelNumIndex = -1;
+        }
+
+        private void comboBoxTradeStrategy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)comboBoxTradeStrategy.SelectedIndex;
         }
     }
 }

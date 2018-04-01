@@ -39,24 +39,49 @@ namespace LotteryAnalyze
         eDone,
     }
 
-    struct NumberCmpInfo
+    class NumberCmpInfo
     {
         public SByte number;
         public float rate;
         public bool largerThanTheoryProbability;
+        public int appearCount;
 
         public string ToString()
         {
             return number + "(" + rate.ToString("f2") + "%) ";
         }
 
-        public static int FindIndex(List<NumberCmpInfo> nums, SByte number)
+        public static int FindIndex(List<NumberCmpInfo> nums, SByte number, bool createIfNotExist)
         {
             for(int i = 0; i < nums.Count; ++i )
             {
                 if (nums[i].number == number)
                     return i;
             }
+            if(createIfNotExist)
+            {
+                NumberCmpInfo info = new NumberCmpInfo();
+                info.appearCount = 0;
+                info.number = number;
+                nums.Add(info);
+                return nums.Count - 1;
+            }
+            return -1;
+        }
+        public static int SortByAppearCount(NumberCmpInfo a, NumberCmpInfo b)
+        {
+            if (a == null || b == null)
+                return 0;
+            if (a.appearCount < b.appearCount)
+                return 1;
+            return -1;
+        }
+        public static int SortByNumber(NumberCmpInfo a, NumberCmpInfo b)
+        {
+            if (a == null || a == null)
+                return 0;
+            if (a.number > b.number)
+                return 1;
             return -1;
         }
     }
@@ -82,14 +107,6 @@ namespace LotteryAnalyze
         }
         public void SelPath012Number(int path, int tradeCount, ref List<NumberCmpInfo> nums)
         {
-            //this.tradeCount = tradeCount;
-            //tradeNumbers.Clear();
-            //if (path == 0)
-            //{ tradeNumbers.Add(0); tradeNumbers.Add(3); tradeNumbers.Add(6); tradeNumbers.Add(9); }
-            //else if (path == 1)
-            //{ tradeNumbers.Add(1); tradeNumbers.Add(4); tradeNumbers.Add(7); }
-            //else if (path == 2)
-            //{ tradeNumbers.Add(2); tradeNumbers.Add(5); tradeNumbers.Add(8); }
             this.tradeCount = tradeCount;
             for( int i = 0; i < nums.Count; ++i )
             {
@@ -107,6 +124,21 @@ namespace LotteryAnalyze
                     return true;
             }
             return false;
+        }
+        public void SetMaxProbabilityNumber(int tradeCount, ref List<NumberCmpInfo> nums)
+        {
+            this.tradeCount = tradeCount;
+            int count = 0;
+            for( int i = 0; i < nums.Count; ++i )
+            {
+                if (nums[i].largerThanTheoryProbability)
+                {
+                    ++count;
+                    tradeNumbers.Add(nums[i]);
+                    if (count == 5)
+                        break;
+                }
+            }
         }
     }
 
@@ -160,7 +192,7 @@ namespace LotteryAnalyze
 
                 for (int i = 0; i < selNums.Count; ++i)
                 {
-                    int index = NumberCmpInfo.FindIndex(nums, selNums[i]);
+                    int index = NumberCmpInfo.FindIndex(nums, selNums[i],false);
                     if (index != -1)
                     {
                         tn.tradeNumbers.Add(nums[index]);
@@ -257,7 +289,7 @@ namespace LotteryAnalyze
     // 交易数据管理器
     class TradeDataManager
     {
-        public const int LOOP_COUNT = 5;
+        public const int LOOP_COUNT = 10;
 
         // 交易策略
         public enum TradeStrategy
@@ -266,7 +298,17 @@ namespace LotteryAnalyze
             eSingleBestPath,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
+            // 选择某个数字位连续N期出号概率最高的几个数
+            eSingleMostPosibilityNums,
+            // 所有数字位都选择连续N期出号概率最高的几个数
+            eMultiMostPosibilityNums,
         }
+        public static string[] STRATEGY_NAMES = {
+            "eSingleBestPath",
+            "eMultiNumPath",
+            "eSingleMostPosibilityNums",
+            "eMultiMostPosibilityNums",
+        };
 
         public TradeStrategy curTradeStrategy = TradeStrategy.eSingleBestPath;
         static TradeDataManager sInst = null;
@@ -301,6 +343,7 @@ namespace LotteryAnalyze
         public OnTradeComleted tradeCompletedCallBack;
 
         public AutoAnalyzeTool autoAnalyzeTool = new AutoAnalyzeTool();
+        public AutoAnalyzeTool curPreviewAnalyzeTool = new AutoAnalyzeTool();
 
         TradeDataManager()
         {
@@ -514,15 +557,21 @@ namespace LotteryAnalyze
             switch (curTradeStrategy)
             {
                 case TradeStrategy.eSingleBestPath:
-                    OnlyTradeBestPath(item, trade);
+                    TradeSingleBestPath(item, trade);
                     break;
                 case TradeStrategy.eMultiNumPath:
-                    TradeMultiPath(item, trade);
+                    TradeMultiNumPath(item, trade);
+                    break;
+                case TradeStrategy.eSingleMostPosibilityNums:
+                    TradeSingleMostPosibilityNums(item, trade);
+                    break;
+                case TradeStrategy.eMultiMostPosibilityNums:
+                    TradeMultiMostPosibilityNums(item, trade);
                     break;
             }
         }
 
-        void OnlyTradeBestPath(DataItem item, TradeDataOneStar trade)
+        void TradeSingleBestPath(DataItem item, TradeDataOneStar trade)
         {
             float maxV = -10;
             int bestNumIndex = -1;
@@ -556,25 +605,90 @@ namespace LotteryAnalyze
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
                 FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
-                /*
-                for (int i = 0; i < maxProbilityNums.Count; ++i)
-                {
-                    if (maxProbilityNums[i].largerThanTheoryProbability)
-                        tn.tradeNumbers.Add(maxProbilityNums[i]);
-                    //if (tn.tradeNumbers.Count == 5)
-                    //    break;
-                }
-                */
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
             }
         }
 
-        void TradeMultiPath(DataItem item, TradeDataOneStar trade)
+        void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
         {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
 
+            for (int i = 0; i < 5; ++i)
+            {
+                float maxV = -10;
+                int bestNumIndex = -1;
+                int bestPath = -1;
+                JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath);
+                if (bestNumIndex >= 0 && bestPath >= 0)
+                {
+                    TradeNumbers tn = new TradeNumbers();
+                    tn.tradeCount = tradeCount;
+                    FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+                    tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
+                    trade.tradeInfo.Add(bestNumIndex, tn);
+                }
+            }
         }
 
+        void TradeSingleMostPosibilityNums(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            int numID = 0;
+            if(simSelNumIndex != -1)
+                numID = simSelNumIndex;
+            FindAllNumberProbabilities(item, ref maxProbilityNums);
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums);
+            trade.tradeInfo.Add(numID, tn);
+        }
+
+        void TradeMultiMostPosibilityNums(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            FindAllNumberProbabilities(item, ref maxProbilityNums);
+            for (int i = 0; i < 5; ++i)
+            {
+                TradeNumbers tn = new TradeNumbers();
+                tn.tradeCount = tradeCount;
+                tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums);
+                trade.tradeInfo.Add(i, tn);
+            }
+        }
 
         /// <summary>
         /// 判断numIndex位是否连续n期没有出pathId路的数字
@@ -675,38 +789,51 @@ namespace LotteryAnalyze
         public enum WaveConfig
         {
             eNone,
-            // 纯上升
-            ePureUp,
-            // 纯下降
-            ePureDown,
-            // 走势不明
-            ePureConfusion,
-            // 金叉后走势不明
-            eGoldenCrossConfuse,
-            // 死叉后走势不明
-            eDeadCrossConfuse,
-            // 金叉后上升
-            eGoldenCrossUp,
-            // 死叉后下降
-            eDeadCrossDown,
-            // 有金叉死叉当前走势不明
-            eGoldenDeadConfusion,
-            // 有金叉死叉当前上升
-            eGoldenDeadConfusionUp,
-            // 有金叉死叉当前下降
-            eGoldenDeadConfusionDown,
 
-            //ePureUp,
+            // 直线上升
+            ePureUp,
+            // 上升后回调下降
             eFirstUpThenSlowDown,
+            // 上升后快速下降
             eFirstUpThenFastDown,
-            //ePureDown,
+            // 直线下降
+            ePureDown,
+            // 下降后回调上升
             eFirstDownThenSlowUp,
+            // 下降后快速上升
             eFirstDownThenFastUp,
+            // 水平震荡
             eFlatShake,
+            // 震荡上升
             eShakeUp,
+            // 震荡下降
             eShakeDown,
         }
-        public ValueCmpState GetValueCmpState(MACDPoint mp)
+        public static float GetWaveConfigValue(WaveConfig cfg)
+        {
+            switch(cfg)
+            {
+                case WaveConfig.eNone:
+                case WaveConfig.ePureDown:
+                case WaveConfig.eShakeDown:
+                case WaveConfig.eFirstUpThenFastDown:
+                    return 0;
+                case WaveConfig.eFirstDownThenSlowUp:
+                case WaveConfig.eFirstUpThenSlowDown:
+                    return 0.5f;
+                case WaveConfig.eFlatShake:
+                    return 1;
+                case WaveConfig.eFirstDownThenFastUp:
+                    return 1.5f;
+                case WaveConfig.eShakeUp:
+                    return 2;
+                case WaveConfig.ePureUp:
+                    return 4;
+            }
+            return 1;
+        }
+
+        public static ValueCmpState GetValueCmpState(MACDPoint mp)
         {
             ValueCmpState res = ValueCmpState.eNone;
             if (mp.DIF > mp.DEA)
@@ -718,7 +845,7 @@ namespace LotteryAnalyze
             return res;
         }
 
-        WaveConfig CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount)
+        public static WaveConfig CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount)
         {
             WaveConfig res = WaveConfig.eNone;
             
@@ -726,14 +853,21 @@ namespace LotteryAnalyze
             deadCrossCount = 0;
             confuseCount = 0;
             int loop = LOOP_COUNT;
-            MACDPointMap tmpMPM = curMpm;
             ValueCmpState lastVCS = ValueCmpState.eNone;
             ValueCmpState startVCS = ValueCmpState.eNone;
             float maxDIF = 0;
             int maxDIFIndex = -1;
             float minDIF = 0;
             int minDIFIndex = -1;
-            MACDPoint mp = null;
+            float leftDIF = 0;
+            int leftIndex = -1;
+            float rightDIF = 0;
+            int rightIndex = -1;
+            MACDPointMap tmpMPM = curMpm;
+            MACDPoint mp = tmpMPM.GetData(cdt, false);
+            rightDIF = mp.DIF;
+            rightIndex = curMpm.index;
+
             while ( tmpMPM != null && loop >= 0 )
             {
                 mp = tmpMPM.GetData(cdt, false);
@@ -761,12 +895,12 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    if(maxDIF < mp.DIF)
+                    if(maxDIF <= mp.DIF)
                     {
                         maxDIF = mp.DIF;
                         maxDIFIndex = tmpMPM.index;
                     }
-                    if(minDIF > mp.DIF)
+                    if(minDIF >= mp.DIF)
                     {
                         minDIF = mp.DIF;
                         minDIFIndex = tmpMPM.index;
@@ -786,48 +920,44 @@ namespace LotteryAnalyze
                         }
                     }
                 }
+
+                leftDIF = mp.DIF;
+                leftIndex = tmpMPM.index;
                 --loop;
                 tmpMPM = tmpMPM.GetPrevMACDPM();
             }
 
-            if(startVCS == ValueCmpState.eDifEqualDea)
+            bool isShake = (goldenCrossCount > 0 && deadCrossCount > 0) || confuseCount > 0;
+            if (Math.Abs(leftDIF - rightDIF) <= 0.0001f)
+                res = WaveConfig.eFlatShake;
+            else if (leftIndex == minDIFIndex && rightIndex == maxDIFIndex)
             {
-                if (goldenCrossCount > 0 && deadCrossCount > 0)
-                    res = WaveConfig.eGoldenDeadConfusion;
-                else if (goldenCrossCount > 0 && deadCrossCount == 0)
-                    res = WaveConfig.eGoldenCrossConfuse;
-                else if (goldenCrossCount == 0 && deadCrossCount > 0)
-                    res = WaveConfig.eDeadCrossConfuse;
-                else
-                    res = WaveConfig.ePureConfusion;
-            }
-            else if(startVCS == ValueCmpState.eDifGreaterDea)
-            {
-                if (goldenCrossCount > 0 && deadCrossCount > 0)
-                    res = WaveConfig.eGoldenDeadConfusionUp;
-                else if (goldenCrossCount > 0 && deadCrossCount == 0)
-                    res = WaveConfig.eGoldenCrossUp;
-                else if (goldenCrossCount == 0 && deadCrossCount > 0)
-                    Console.WriteLine("invalid wave config");
-                else
+                if (!isShake)
                     res = WaveConfig.ePureUp;
-            }
-            else if(startVCS == ValueCmpState.eDifLessDea)
-            {
-                if (goldenCrossCount > 0 && deadCrossCount > 0)
-                    res = WaveConfig.eGoldenDeadConfusionDown;
-                else if (goldenCrossCount > 0 && deadCrossCount == 0)
-                    Console.WriteLine("invalid wave config");
-                else if (goldenCrossCount == 0 && deadCrossCount > 0)
-                    res = WaveConfig.eDeadCrossDown;
                 else
-                    res = WaveConfig.ePureDown;
+                    res = WaveConfig.eShakeUp;
             }
+            else if (leftIndex == minDIFIndex && maxDIFIndex < rightIndex)
+                res = WaveConfig.eFirstUpThenSlowDown;
+            else if (leftIndex < maxDIFIndex && rightIndex == minDIFIndex)
+                res = WaveConfig.eFirstUpThenFastDown;
+            else if (leftIndex == maxDIFIndex && rightIndex == minDIFIndex)
+            {
+                if(!isShake)
+                    res = WaveConfig.ePureDown;
+                else
+                    res = WaveConfig.eShakeDown;
+            }
+            else if (leftIndex == maxDIFIndex && minDIFIndex < rightIndex)
+                res = WaveConfig.eFirstDownThenSlowUp;
+            else if (minDIFIndex > leftIndex && maxDIFIndex == rightIndex)
+                res = WaveConfig.eFirstDownThenFastUp;
 #if TRADE_DBG
             mp = curMpm.GetData(cdt, false);
-            mp.WC = (byte)(res);
+            mp.WAVE_CFG = (byte)(res);
             mp.MAX_DIF_INDEX = maxDIFIndex;
             mp.MIN_DIF_INDEX = minDIFIndex;
+            mp.LEFT_DIF_INDEX = leftIndex;
 #endif
             return res;
         } 
@@ -837,47 +967,16 @@ namespace LotteryAnalyze
             if (curMpm == null || curMpm.index == 0)
                 return;
             int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
-            WaveConfig waveCfg = CheckMACDGoldenCrossAndDeadCross(curMpm, cdt, ref goldenCrossCount, ref deadCrossCount, ref confuseCount);
-            if (waveCfg == WaveConfig.eDeadCrossDown ||
-                waveCfg == WaveConfig.ePureDown ||
-                waveCfg == WaveConfig.eDeadCrossConfuse)
-            {
-                value = 0;
-                return;
-            }
+            WaveConfig waveCfg = CheckMACDGoldenCrossAndDeadCross(
+                curMpm, cdt, 
+                ref goldenCrossCount, ref deadCrossCount, ref confuseCount);
 
-            MACDPointMap prevMPM = curMpm.GetPrevMACDPM();
-            MACDPoint cur = curMpm.GetData(cdt, false);
-            MACDPoint prev = prevMPM.GetData(cdt, false);
-            // 快线斜率
-            float difK = cur.DIF - prev.DIF;
-            // 慢线斜率
-            float deaK = cur.DEA - prev.DEA;
-            // 快线斜率大于慢线斜率
-            if(difK > deaK)
-            {
-                // 如果慢线斜率大于0，表明多的信号比较强烈
-                if (deaK > 0)
-                {
-                    // 如果快线在0轴之上，说明做多的信号更加强烈
-                    if (cur.DIF > 0)
-                        value *= 4;
-                    // 如果快线在0轴之下，说明当时处于多的回调
-                    else
-                        value *= 2;
-                }
-            }
-            // 快线斜率小于慢线斜率
-            else
-            {
-                // 如果慢线斜率小于0，表明空的信号比较强烈
-                if(deaK < 0)
-                {
-                    // 如果快线在0轴之下，说明做空的概率更高,值评估值位0，放弃这一路
-                    if (cur.DIF < 0)
-                        value = 0;
-                }
-            }
+            value = GetWaveConfigValue(waveCfg);
+            MACDPoint mp = curMpm.GetData(cdt, false);
+            if (mp.DIF > 0)
+                value *= 2;
+            if (mp.DIF > mp.BAR && mp.BAR > 0)
+                value *= 2;
         }
 
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
@@ -983,237 +1082,49 @@ namespace LotteryAnalyze
                     }
                 }
             }
-
-            /*
-            if (!isPath0OK && !isPath1OK && !isPath2OK)
-                return;
-            else if(isPath0OK && !isPath1OK && !isPath2OK)
-            {
-                if (isPath0GoUp)
-                {
-                    bestNumIndex = numIndex;
-                    bestPath = 0;
-                }
-            }
-            else if (!isPath0OK && isPath1OK && !isPath2OK)
-            {
-                if (isPath1GoUp)
-                {
-                    bestNumIndex = numIndex;
-                    bestPath = 1;
-                }
-            }
-            else if (!isPath0OK && !isPath1OK && isPath2OK)
-            {
-                if (isPath2GoUp)
-                {
-                    bestNumIndex = numIndex;
-                    bestPath = 2;
-                }
-            }
-            else if (isPath0OK && isPath1OK && !isPath2OK)
-            {
-                bestNumIndex = numIndex;
-                if (isPath0GoUp && !isPath1GoUp)
-                    bestPath = 0;
-                else if (!isPath0GoUp && isPath1GoUp)
-                    bestPath = 1;
-                else if (isPath0GoUp && isPath1GoUp)
-                {
-                    if (su0.appearProbabilityShort > su1.appearProbabilityShort)
-                        bestPath = 0;
-                    else if (su0.appearProbabilityShort < su1.appearProbabilityShort)
-                        bestPath = 1;
-                    else
-                    {
-                        if (su0.appearProbabilityLong > su1.appearProbabilityLong)
-                            bestPath = 0;
-                        else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
-                            bestPath = 1;
-                    }
-                }
-            }
-            else if (!isPath0OK && isPath1OK && isPath2OK)
-            {
-                bestNumIndex = numIndex;
-                if (isPath1GoUp && !isPath2GoUp)
-                    bestPath = 1;
-                else if (!isPath1GoUp && isPath2GoUp)
-                    bestPath = 2;
-                else if (isPath1GoUp && isPath2GoUp)
-                {
-                    if (su1.appearProbabilityShort > su2.appearProbabilityShort)
-                        bestPath = 1;
-                    else if (su1.appearProbabilityShort < su2.appearProbabilityShort)
-                        bestPath = 2;
-                    else
-                    {
-                        if (su1.appearProbabilityLong > su2.appearProbabilityLong)
-                            bestPath = 1;
-                        else if (su1.appearProbabilityLong < su2.appearProbabilityLong)
-                            bestPath = 2;
-                    }
-                }
-            }
-            else if (isPath0OK && !isPath1OK && isPath2OK)
-            {
-                bestNumIndex = numIndex;
-                if (isPath0GoUp && !isPath2GoUp)
-                    bestPath = 0;
-                else if (!isPath0GoUp && isPath2GoUp)
-                    bestPath = 2;
-                else if (isPath1GoUp && isPath2GoUp)
-                {
-                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
-                        bestPath = 0;
-                    else if (su0.appearProbabilityShort < su2.appearProbabilityShort)
-                        bestPath = 2;
-                    else
-                    {
-                        if (su0.appearProbabilityLong > su2.appearProbabilityLong)
-                            bestPath = 0;
-                        else if (su0.appearProbabilityLong < su2.appearProbabilityLong)
-                            bestPath = 2;
-                    }
-                }
-            }
-            else
-            {
-                bestNumIndex = numIndex;
-                if (isPath0GoUp && !isPath1GoUp && !isPath2GoUp)
-                    bestPath = 0;
-                else if (!isPath0GoUp && isPath1GoUp && !isPath2GoUp)
-                    bestPath = 1;
-                else if (!isPath0GoUp && !isPath1GoUp && isPath2GoUp)
-                    bestPath = 2;
-                else if (isPath0GoUp && isPath1GoUp && !isPath2GoUp)
-                {
-                    if (su0.appearProbabilityShort > su1.appearProbabilityShort)
-                        bestPath = 0;
-                    else
-                        bestPath = 1;
-                }
-                else if (!isPath0GoUp && isPath1GoUp && isPath2GoUp)
-                {
-                    if (su1.appearProbabilityShort > su2.appearProbabilityShort)
-                        bestPath = 1;
-                    else
-                        bestPath = 2;
-                }
-                else if (isPath0GoUp && !isPath1GoUp && isPath2GoUp)
-                {
-                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
-                        bestPath = 0;
-                    else
-                        bestPath = 2;
-                }
-                else
-                {
-                    if (su0.appearProbabilityShort > su2.appearProbabilityShort)
-                    {
-                        if (su0.appearProbabilityShort > su1.appearProbabilityShort)
-                            bestPath = 0;
-                        else
-                            bestPath = 1;
-                    }
-                    else
-                    {
-                        if (su2.appearProbabilityShort > su1.appearProbabilityShort)
-                            bestPath = 2;
-                        else
-                            bestPath = 1;
-                    }
-                }
-            }
-            */
-
-            /*
-            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-            StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
-            StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
-            StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
-            float v0 = su0.appearProbabilityLong;// * su0.appearProbabilityShort;
-            float v1 = su1.appearProbabilityLong;// * su1.appearProbabilityShort;
-            float v2 = su2.appearProbabilityLong;// * su2.appearProbabilityShort;
-            float vm, dm;
-            StatisticUnit maxSU;
-            if (v0 > v1)
-            {
-                dm = su0.appearProbabilityDiffWithTheoryShort;
-                vm = v0;
-                maxSU = su0;
-            }
-            else if(v0 < v1)
-            {
-                dm = su1.appearProbabilityDiffWithTheoryShort;
-                vm = v1;
-                maxSU = su1;
-            }
-            else
-            {
-                if(su0.appearProbabilityDiffWithTheoryShort > su1.appearProbabilityDiffWithTheoryShort)
-                {
-                    dm = su0.appearProbabilityDiffWithTheoryShort;
-                    vm = v0;
-                    maxSU = su0;
-                }
-                else
-                {
-                    dm = su1.appearProbabilityDiffWithTheoryShort;
-                    vm = v1;
-                    maxSU = su1;
-                }
-            }
-            if (v2 > vm)
-            {
-                maxSU = su2;
-            }
-            else if(su2.appearProbabilityDiffWithTheoryShort > dm)
-            {
-                maxSU = su2;
-            }
-
-            if (maxSU.appearProbabilityShort > maxV)
-            {
-                if (maxSU.cdt == CollectDataType.ePath0)
-                    bestPath = 0;
-                else if (maxSU.cdt == CollectDataType.ePath1)
-                    bestPath = 1;
-                else
-                    bestPath = 2;
-                bestNumIndex = numIndex;
-                maxV = maxSU.appearProbabilityShort;
-            }
-            */
-
-            /*
-            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
-            BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[item.idGlobal];
-            KDataDict kdd = kddc.dataLst[item.idGlobal];
-            KData kdPath0 = kdd.dataDict[CollectDataType.ePath0];
-            KData kdPath1 = kdd.dataDict[CollectDataType.ePath1];
-            KData kdPath2 = kdd.dataDict[CollectDataType.ePath2];
-            BollinPoint bmPath0 = bpm.bpMap[CollectDataType.ePath0];
-            BollinPoint bmPath1 = bpm.bpMap[CollectDataType.ePath1];
-            BollinPoint bmPath2 = bpm.bpMap[CollectDataType.ePath2];
-            float d0 = (kdPath0.KValue - bmPath0.midValue) / bmPath0.standardDeviation * 0.5f;
-            float d1 = (kdPath1.KValue - bmPath1.midValue) / bmPath1.standardDeviation * 0.5f;
-            float d2 = (kdPath2.KValue - bmPath2.midValue) / bmPath2.standardDeviation * 0.5f;
-            float tmpMaxV = Math.Max(d0, Math.Max(d1, d2));
-            if (tmpMaxV > maxV)
-            {
-                maxV = tmpMaxV;
-                bestNumIndex = numIndex;
-                if (tmpMaxV == d0)
-                    bestPath = 0;
-                else if (tmpMaxV == d1)
-                    bestPath = 1;
-                else
-                    bestPath = 2;
-            }
-            */
         }
 
+        public static NumberCmpInfo GetNumberCmpInfo(ref List<NumberCmpInfo> nums, SByte number, bool createIfNotExist)
+        {
+            for( int i = 0; i < nums.Count; ++i )
+            {
+                if (nums[i].number == number)
+                    return nums[i];
+            }
+            if(createIfNotExist)
+            {
+                NumberCmpInfo info = new NumberCmpInfo();
+                info.number = number;
+                info.appearCount = 0;
+                nums.Add(info);
+                return info;
+            }
+            return null;
+        }
+        public static void FindAllNumberProbabilities(DataItem item, ref List<NumberCmpInfo> nums)
+        {
+            nums.Clear();
+            int realCount = item.idGlobal + 1;
+            if (realCount > LotteryStatisticInfo.LONG_COUNT)
+                realCount = LotteryStatisticInfo.LONG_COUNT;
+            float total = 5 * realCount;
+            for ( int i = 0; i < 5; ++i )
+            {
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[i];
+                int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+                int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+                for (int num = startIndex; num <= endIndex; ++num)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
+                    SByte number = (SByte)(num - startIndex);
+                    NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
+                    info.appearCount += sum.statisticUnitMap[cdt].appearCountLong;
+                    info.rate = info.appearCount * 100 / total;
+                    info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
+                }
+            }
+            nums.Sort(NumberCmpInfo.SortByAppearCount);
+        }
 
         public static void FindOverTheoryProbabilityNums(DataItem item, int numIndex, ref List<NumberCmpInfo> nums)
         {

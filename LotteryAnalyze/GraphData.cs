@@ -502,9 +502,10 @@ namespace LotteryAnalyze
         public float DEA = 0;
         public float BAR = 0;
 #if TRADE_DBG
-        public byte WC = 0;
+        public byte WAVE_CFG = 0;
         public int MAX_DIF_INDEX = -1;
         public int MIN_DIF_INDEX = -1;
+        public int LEFT_DIF_INDEX = -1;
 #endif
     }
     public class MACDPointMap

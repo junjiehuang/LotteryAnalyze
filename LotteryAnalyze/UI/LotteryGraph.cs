@@ -110,6 +110,9 @@ namespace LotteryAnalyze.UI
             buttonHorzExpand.Hide();
             buttonVertExpand.Hide();
 
+            comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
+            comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
+
             this.KeyPreview = true;
             FormMain.AddWindow(this);
         }
@@ -532,6 +535,10 @@ namespace LotteryAnalyze.UI
         {
             graphMgr.kvalueGraph.autoAllign = true;
             numberIndex = comboBoxNumIndex.SelectedIndex;
+            if(graphMgr.CurrentGraphType == GraphType.eBarGraph)
+            {
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            }
             this.Invalidate(true);//触发Paint事件
         }
 
@@ -540,6 +547,10 @@ namespace LotteryAnalyze.UI
             graphMgr.kvalueGraph.autoAllign = true;
             curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
             curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
+            if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
+            {
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            }
             this.Invalidate(true);//触发Paint事件
         }
 
@@ -969,6 +980,11 @@ namespace LotteryAnalyze.UI
                 else if (e.KeyCode == Keys.O)
                     TradeDataManager.Instance.SimTradeOneStep();
             }
+        }
+
+        private void comboBoxTradeStrategy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)comboBoxTradeStrategy.SelectedIndex;
         }
     }
 }

@@ -47,6 +47,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxStartDate = new System.Windows.Forms.TextBox();
             this.textBoxEndDate = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -170,7 +172,7 @@
             // comboBoxSpecNumIndex
             // 
             this.comboBoxSpecNumIndex.FormattingEnabled = true;
-            this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(234, 88);
+            this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(196, 88);
             this.comboBoxSpecNumIndex.Name = "comboBoxSpecNumIndex";
             this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(121, 20);
             this.comboBoxSpecNumIndex.TabIndex = 14;
@@ -179,7 +181,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(175, 91);
+            this.label4.Location = new System.Drawing.Point(137, 91);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 12);
             this.label4.TabIndex = 15;
@@ -219,11 +221,31 @@
             this.textBoxEndDate.Size = new System.Drawing.Size(152, 21);
             this.textBoxEndDate.TabIndex = 19;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(369, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 12);
+            this.label7.TabIndex = 21;
+            this.label7.Text = "交易策略：";
+            // 
+            // comboBoxTradeStrategy
+            // 
+            this.comboBoxTradeStrategy.FormattingEnabled = true;
+            this.comboBoxTradeStrategy.Location = new System.Drawing.Point(435, 88);
+            this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
+            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(121, 20);
+            this.comboBoxTradeStrategy.TabIndex = 20;
+            this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(561, 394);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.comboBoxTradeStrategy);
             this.Controls.Add(this.textBoxEndDate);
             this.Controls.Add(this.textBoxStartDate);
             this.Controls.Add(this.label6);
@@ -272,5 +294,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBoxStartDate;
         private System.Windows.Forms.TextBox textBoxEndDate;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox comboBoxTradeStrategy;
     }
 }
