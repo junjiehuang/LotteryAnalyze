@@ -9,12 +9,22 @@ using System.Windows.Forms;
 
 namespace LotteryAnalyze.UI
 {
+    public enum OperateOnNoMoney
+    {
+        eNone,
+        ePauseTrade,
+        eStopTrade,
+    }
+
     public partial class GlobalSimTradeWindow : Form
     {
+        static string[] OperateOnNoMoneyAR = {"无操作", "暂停交易模拟", "终止交易模拟", };
+
         static GlobalSimTradeWindow sInst;
         System.Windows.Forms.Timer updateTimer;
         int startDate = -1;
         int endDate = -1;
+        bool stopTradeOnNoMoney = true;
 
         public GlobalSimTradeWindow()
         {
@@ -30,6 +40,13 @@ namespace LotteryAnalyze.UI
 
             comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
             comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
+
+            checkBoxForceTradeByMaxNumCount.Checked = TradeDataManager.Instance.forceTradeByMaxNumCount;
+            textBoxMaxNumCount.Text = TradeDataManager.Instance.maxNumCount.ToString();
+
+            //checkBoxStopOnNoMoney.Checked = stopTradeOnNoMoney;
+            comboBoxOnNoMoney.DataSource = OperateOnNoMoneyAR;
+            comboBoxOnNoMoney.SelectedIndex = 1;
 
             updateTimer = new Timer();
             updateTimer.Interval = 500;
@@ -113,6 +130,14 @@ namespace LotteryAnalyze.UI
             }
             else
                 textBoxCmd.Text = "";
+
+            if(TradeDataManager.Instance.currentMoney <= 0)
+            {
+                if (comboBoxOnNoMoney.SelectedIndex == 1)
+                    Pause();
+                else if(comboBoxOnNoMoney.SelectedIndex == 2)
+                    Stop();
+            }
         }
 
         public static void Open()
@@ -161,17 +186,32 @@ namespace LotteryAnalyze.UI
         {
             if (BatchTradeSimulator.Instance.IsPause())
             {
-                BatchTradeSimulator.Instance.Resume();
-                buttonPauseResume.Text = "暂停";
+                Resume();
             }
             else
             {
-                BatchTradeSimulator.Instance.Pause();
-                buttonPauseResume.Text = "恢复";
+                Pause();
             }
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
+        {
+            Stop();
+        }
+
+        void Pause()
+        {
+            BatchTradeSimulator.Instance.Pause();
+            buttonPauseResume.Text = "恢复";
+        }
+
+        void Resume()
+        {
+            BatchTradeSimulator.Instance.Resume();
+            buttonPauseResume.Text = "暂停";
+        }
+
+        void Stop()
         {
             BatchTradeSimulator.Instance.Stop();
             textBoxDayCountPerBatch.Enabled = true;
@@ -206,6 +246,28 @@ namespace LotteryAnalyze.UI
         private void comboBoxTradeStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
             TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)comboBoxTradeStrategy.SelectedIndex;
+        }
+
+        private void checkBoxForceTradeByMaxNumCount_CheckedChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.forceTradeByMaxNumCount = checkBoxForceTradeByMaxNumCount.Checked;
+        }
+
+        private void textBoxMaxNumCount_TextChanged(object sender, EventArgs e)
+        {
+            int value = 0;
+            if (int.TryParse(textBoxMaxNumCount.Text, out value))
+                TradeDataManager.Instance.maxNumCount = value;
+        }
+
+        private void checkBoxStopOnNoMoney_CheckedChanged(object sender, EventArgs e)
+        {
+            //stopTradeOnNoMoney = checkBoxStopOnNoMoney.Checked;
+        }
+
+        private void comboBoxOnNoMoney_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

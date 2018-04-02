@@ -125,17 +125,17 @@ namespace LotteryAnalyze
             }
             return false;
         }
-        public void SetMaxProbabilityNumber(int tradeCount, ref List<NumberCmpInfo> nums)
+        public void SetMaxProbabilityNumber(int tradeCount, ref List<NumberCmpInfo> nums, bool needGetLessProbabilityNum, int maxNumCount)
         {
             this.tradeCount = tradeCount;
             int count = 0;
             for( int i = 0; i < nums.Count; ++i )
             {
-                if (nums[i].largerThanTheoryProbability)
+                if (nums[i].largerThanTheoryProbability || needGetLessProbabilityNum)
                 {
                     ++count;
                     tradeNumbers.Add(nums[i]);
-                    if (count == 5)
+                    if (count == maxNumCount)
                         break;
                 }
             }
@@ -310,6 +310,11 @@ namespace LotteryAnalyze
             "eMultiMostPosibilityNums",
         };
 
+        // 是否强制每次交易都取指定的最大的数字个数
+        public bool forceTradeByMaxNumCount = false;
+        // 单次交易每个数字位投注的个数的最大值
+        public int maxNumCount = 5;
+
         public TradeStrategy curTradeStrategy = TradeStrategy.eSingleBestPath;
         static TradeDataManager sInst = null;
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
@@ -425,7 +430,8 @@ namespace LotteryAnalyze
             tradeCountList.Clear();
             for( int i = 0; i < nums.Length; ++i )
             {
-                tradeCountList.Add(int.Parse(nums[i]));
+                if(string.IsNullOrEmpty(nums[i]) == false)
+                    tradeCountList.Add(int.Parse(nums[i]));
             }
         }
         public string GetTradeCountInfoStr()
@@ -659,10 +665,11 @@ namespace LotteryAnalyze
             int numID = 0;
             if(simSelNumIndex != -1)
                 numID = simSelNumIndex;
+            bool needGetLessProbabilityNum = forceTradeByMaxNumCount || (tradeCountList.Count > 5 && currentTradeCountIndex > 4);
             FindAllNumberProbabilities(item, ref maxProbilityNums);
             TradeNumbers tn = new TradeNumbers();
             tn.tradeCount = tradeCount;
-            tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums);
+            tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums, needGetLessProbabilityNum, maxNumCount);
             trade.tradeInfo.Add(numID, tn);
         }
 
@@ -680,12 +687,13 @@ namespace LotteryAnalyze
             }
             else
                 tradeCount = 0;
+            bool needGetLessProbabilityNum = forceTradeByMaxNumCount || (tradeCountList.Count > 5 && currentTradeCountIndex > 4);
             FindAllNumberProbabilities(item, ref maxProbilityNums);
             for (int i = 0; i < 5; ++i)
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
-                tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums);
+                tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums, needGetLessProbabilityNum, maxNumCount);
                 trade.tradeInfo.Add(i, tn);
             }
         }
