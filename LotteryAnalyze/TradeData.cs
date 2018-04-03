@@ -31,6 +31,17 @@ namespace LotteryAnalyze
         eFiveStar,
     }
 
+    public struct PathCmpInfo
+    {
+        public int pathIndex;
+        public float pathValue;
+        public PathCmpInfo(int id, float v)
+        {
+            pathIndex = id;
+            pathValue = v;
+        }
+    }
+
     public enum TradeStatus
     {
         // 等待状态
@@ -164,6 +175,7 @@ namespace LotteryAnalyze
             return "";
             //return tips;
         }
+        public virtual string GetDbgInfo() { return ""; }
         public virtual void Update() { }
         public virtual void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex) { }
     }
@@ -176,10 +188,37 @@ namespace LotteryAnalyze
 
         public Dictionary<int, TradeNumbers> tradeInfo = new Dictionary<int, TradeNumbers>();
 
+#if TRADE_DBG
+        public List<List<PathCmpInfo>> pathCmpInfos = new List<List<PathCmpInfo>>();
+#endif
 
         public TradeDataOneStar()
         {
+#if TRADE_DBG
+            for(int i = 0; i < 5; ++i)
+            {
+                pathCmpInfos.Add(new List<PathCmpInfo>());
+            }
+#endif
             tradeType = TradeType.eOneStar;
+        }
+
+        public override string GetDbgInfo()
+        {
+#if TRADE_DBG
+            string dbgtxt = "";
+            for(int i = 0; i < pathCmpInfos.Count; ++i)
+            {
+                if(pathCmpInfos[i].Count > 0)
+                {
+                    for(int j = 0; j < pathCmpInfos[i].Count; ++j)
+                    {
+                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue + "]\n";
+                    }
+                }
+            }
+            return dbgtxt;
+#endif
         }
 
         public void AddSelNum(int numIndex, ref List<SByte> selNums, int tradeCount, ref List<NumberCmpInfo> nums)
@@ -296,15 +335,19 @@ namespace LotteryAnalyze
         {
             // 选择最优的某个数值位的某个012路
             eSingleBestPath,
+            // 选择某个数值位的最优的某2个012路
+            eSingleBestTwoPath,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
             // 选择某个数字位连续N期出号概率最高的几个数
             eSingleMostPosibilityNums,
             // 所有数字位都选择连续N期出号概率最高的几个数
             eMultiMostPosibilityNums,
+
         }
         public static string[] STRATEGY_NAMES = {
             "eSingleBestPath",
+            "eSingleBestTwoPath",
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
@@ -565,6 +608,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eSingleBestPath:
                     TradeSingleBestPath(item, trade);
                     break;
+                case TradeStrategy.eSingleBestTwoPath:
+                    TradeSingleBestTwoPath(item, trade);
+                    break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
                     break;
@@ -613,6 +659,40 @@ namespace LotteryAnalyze
                 FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
+            }
+        }
+
+        void TradeSingleBestTwoPath(DataItem item, TradeDataOneStar trade)
+        {
+            int bestNumIndex = 0;
+            if (simSelNumIndex != -1)
+                bestNumIndex = simSelNumIndex;
+            List<PathCmpInfo> res = trade.pathCmpInfos[bestNumIndex];
+            SortNumberPath(item, bestNumIndex, ref res);
+
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(bestNumIndex, tn);
+            FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+
+            for ( int i = 0; i < 2; ++i )
+            {
+                PathCmpInfo pci = res[i];
+                if(pci.pathValue > 0)
+                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
         }
 
@@ -986,9 +1066,26 @@ namespace LotteryAnalyze
             if (mp.DIF > mp.BAR && mp.BAR > 0)
                 value *= 2;
         }
-
-        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
+        
+        void SortNumberPath(DataItem item, int numIndex, ref List<PathCmpInfo> res)
         {
+            res.Clear();
+            float[] pathValues = CalcPathValue(item, numIndex);
+            for( int i = 0; i < pathValues.Length; ++i )
+            {
+                res.Add(new PathCmpInfo(i, pathValues[i]));
+            }
+            res.Sort((x, y) =>
+            {
+                if (x.pathValue > y.pathValue)
+                    return -1;
+                return 1;
+            });
+        }
+
+        float[] CalcPathValue(DataItem item, int numIndex)
+        {
+            float[] res = new float[3] { 1, 1, 1 };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
@@ -1000,7 +1097,7 @@ namespace LotteryAnalyze
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             // MACD数据
             MACDPointMap mpm = kddc.GetMacdPointMap(kdd);
-            float path0Value = 1, path1Value = 1, path2Value = 1;
+            //float path0Value = 1, path1Value = 1, path2Value = 1;
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
             float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
             float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
@@ -1011,53 +1108,48 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
-                CheckMACD(mpm, CollectDataType.ePath0, ref path0Value);
-                CheckMACD(mpm, CollectDataType.ePath1, ref path1Value);
-                CheckMACD(mpm, CollectDataType.ePath2, ref path2Value);
+                CheckMACD(mpm, CollectDataType.ePath0, ref res[0]);
+                CheckMACD(mpm, CollectDataType.ePath1, ref res[1]);
+                CheckMACD(mpm, CollectDataType.ePath2, ref res[2]);
             }
-            bool isPath0OK = false;
-            bool isPath1OK = false;
-            bool isPath2OK = false;
-            //int missValue0 = 1, missValue1 = 1, missValue2 = 1;
-            //bool isPath0ContinueMiss = isContinuousMiss(item, numIndex, 0, ref missValue0);
-            //bool isPath1ContinueMiss = isContinuousMiss(item, numIndex, 1, ref missValue1);
-            //bool isPath2ContinueMiss = isContinuousMiss(item, numIndex, 2, ref missValue2);
-            //path0Value *= missValue0;
-            //path1Value *= missValue1;
-            //path2Value *= missValue2;
+            if (path0Avg5 > path0Bpm) res[0] *= 2;
+            if (path0Avg10 > path0Bpm) res[0] *= 2;
+            if (path0Avg5 > path0Avg10) res[0] *= 2;
+            if (path1Avg5 > path1Bpm) res[1] *= 2;
+            if (path1Avg10 > path1Bpm) res[1] *= 2;
+            if (path1Avg5 > path1Avg10) res[1] *= 2;
+            if (path2Avg5 > path2Bpm) res[2] *= 2;
+            if (path2Avg10 > path2Bpm) res[2] *= 2;
+            if (path2Avg5 > path2Avg10) res[2] *= 2;
+            return res;
+        }
+
+        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
+        {
+            float[] pathValues = CalcPathValue(item, numIndex);
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
             StatisticUnit su2 = sum.statisticUnitMap[CollectDataType.ePath2];
             StatisticUnit curBestSU = null;
-
-            if (path0Avg5 > path0Bpm) path0Value *= 2;
-            if (path0Avg10 > path0Bpm) path0Value *= 2;
-            if (path0Avg5 > path0Avg10) path0Value *= 2;
-            if (path1Avg5 > path1Bpm) path1Value *= 2;
-            if (path1Avg10 > path1Bpm) path1Value *= 2;
-            if (path1Avg5 > path1Avg10) path1Value *= 2;
-            if (path2Avg5 > path2Bpm) path2Value *= 2;
-            if (path2Avg10 > path2Bpm) path2Value *= 2;
-            if (path2Avg5 > path2Avg10) path2Value *= 2;
             float curBestV = 0;
             int curBestPath = -1;
-            if(path0Value > path1Value)
-                Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            else if(path0Value < path1Value)
-                Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+            if(pathValues[0] > pathValues[1])
+                Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+            else if(pathValues[0] < pathValues[1])
+                Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
             else
             { 
                 if(su0.appearProbabilityShort > su1.appearProbabilityShort)
-                    Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                    Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
                 else if(su0.appearProbabilityShort < su1.appearProbabilityShort)
-                    Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                    Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
                 else
                 {
                     if (su0.appearProbabilityLong > su1.appearProbabilityLong)
-                        Check(su0, su2, path0Value, path2Value, 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                        Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
                     else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
-                        Check(su1, su2, path1Value, path2Value, 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                        Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
                 }
             }
             if(curBestPath != -1 && curBestV > 0)

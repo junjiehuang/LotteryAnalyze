@@ -1520,21 +1520,6 @@ namespace LotteryAnalyze
             float halfGridW = gridScaleW * 0.5f;
 
             TradeDataManager tdm = TradeDataManager.Instance;
-            /*
-            if(tdm.historyTradeDatas.Count == 0)
-            {
-                float y = tdm.currentMoney * gridScaleH;
-                float relY = StandToCanvas(y, false);
-                if(relY < 0 || relY > winH)
-                {
-                    canvasOffset.Y = y + winH * 0.5f;
-                }
-                relY = StandToCanvas(y, false);
-                g.DrawRectangle(whiteLinePen, halfGridW - halfSize, halfWinH - halfSize, fullSize, fullSize);
-                g.DrawLine(whiteLinePen, halfGridW, halfWinH, winW, halfWinH);
-                return;
-            }
-            */
 
             bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
             for (int i = 0; i < TRADE_LVS.Length; ++i)
@@ -1621,7 +1606,10 @@ namespace LotteryAnalyze
                         "] [错:" + tdm.wrongCount + 
                         "] [放弃:" + tdm.untradeCount + 
                         "]\n[最高:" + tdm.maxValue + 
-                        "] [最低:" + tdm.minValue + "]";
+                        "] [最低:" + tdm.minValue + "]\n";
+#if TRADE_DBG
+                    info += tdb.GetDbgInfo();
+#endif
                     g.DrawString(info, tipsFont, whiteBrush, 5, 5);
                 }
 
@@ -1661,7 +1649,11 @@ namespace LotteryAnalyze
                         g.DrawLine(grayDotLinePen, x, 0, x, winH);
                         g.DrawLine(grayDotLinePen, x + gridScaleW, 0, x + gridScaleW, winH);
 
-                        g.DrawString(tdm.waitingTradeDatas[i].GetTips(), tipsFont, whiteBrush, 5, 5);
+                        string info = tdm.waitingTradeDatas[i].GetTips();
+#if TRADE_DBG
+                        info += "\n" + tdm.waitingTradeDatas[i].GetDbgInfo();
+#endif
+                        g.DrawString(info, tipsFont, whiteBrush, 5, 5);
                     }
                 }
             }
