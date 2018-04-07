@@ -89,7 +89,7 @@ namespace LotteryAnalyze
         }
         public static int SortByNumber(NumberCmpInfo a, NumberCmpInfo b)
         {
-            if (a == null || a == null)
+            if (a == null || b == null)
                 return 0;
             if (a.number > b.number)
                 return 1;

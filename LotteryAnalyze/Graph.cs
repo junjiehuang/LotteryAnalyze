@@ -1449,7 +1449,7 @@ namespace LotteryAnalyze
                 return;
             List<NumberCmpInfo> nums = new List<NumberCmpInfo>();
             TradeDataManager.FindAllNumberProbabilities(currentItem, ref nums);
-            nums.Sort(NumberCmpInfo.SortByNumber);
+            //nums.Sort(NumberCmpInfo.SortByNumber);
 
             float startX = 0;
             float startY = winH * 0.1f;
@@ -1457,21 +1457,23 @@ namespace LotteryAnalyze
             float bottom = winH * 0.9f;
             
             float gap = (float)winW / 10;
-            Font tagFont = new Font(FontFamily.GenericSerif, 16);
+            Font tagFont = new Font(FontFamily.GenericSerif, 12);
             for (int i = 0; i < nums.Count; ++i)
             {
+                int index = NumberCmpInfo.FindIndex(nums, (sbyte)(i), false);
                 Brush brush = greenBrush;
-                float rate = nums[i].rate / 10.0f;
+                float rate = nums[index].rate / 100.0f;
                 if (rate > 0.1f)
                     brush = redBrush;
 
                 float rcH = MaxRcH * rate;
                 startY = bottom - rcH;
                 g.FillRectangle(brush, startX, startY, gap * 0.9f, rcH);
-                g.DrawString(nums[i].number.ToString(), tagFont, tagBrush, startX, bottom);
-                g.DrawString(nums[i].rate.ToString(), tagFont, tagBrush, startX, startY - 30);
+                g.DrawString(nums[index].number.ToString(), tagFont, tagBrush, startX, bottom);
+                g.DrawString(nums[index].rate.ToString("f1") + "%", tagFont, tagBrush, startX, startY - 30);
                 startX += gap;
             }
+            g.DrawString("统计" + LotteryStatisticInfo.LONG_COUNT + "期数字0-9的出现概率", tagFont, tagBrush, 5, 5);
         }
     }
 
