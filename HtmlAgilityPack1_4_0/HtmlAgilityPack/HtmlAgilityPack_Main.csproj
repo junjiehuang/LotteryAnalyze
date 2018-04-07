@@ -126,4 +126,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo "------ remove obj ------"
+rmdir /s/q ..\HtmlAgilityPack1_4_0\HtmlAgilityPack\obj</PostBuildEvent>
+  </PropertyGroup>
 </Project>
