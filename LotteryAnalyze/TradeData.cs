@@ -83,6 +83,8 @@ namespace LotteryAnalyze
         {
             if (a == null || b == null)
                 return 0;
+            if (a == b)
+                return 0;
             if (a.appearCount < b.appearCount)
                 return 1;
             return -1;
@@ -90,6 +92,8 @@ namespace LotteryAnalyze
         public static int SortByNumber(NumberCmpInfo a, NumberCmpInfo b)
         {
             if (a == null || b == null)
+                return 0;
+            if (a == b)
                 return 0;
             if (a.number > b.number)
                 return 1;
@@ -148,6 +152,17 @@ namespace LotteryAnalyze
                     tradeNumbers.Add(nums[i]);
                     if (count == maxNumCount)
                         break;
+                }
+            }
+        }
+        public void AddProbabilityNumber(ref List<NumberCmpInfo> nums, int num)
+        {
+            for (int i = 0; i < nums.Count; ++i)
+            {
+                if (nums[i].number == num && tradeNumbers.Contains(nums[i]) == false)
+                {
+                    tradeNumbers.Add(nums[i]);
+                    break;
                 }
             }
         }
@@ -343,6 +358,7 @@ namespace LotteryAnalyze
             eSingleMostPosibilityNums,
             // 所有数字位都选择连续N期出号概率最高的几个数
             eMultiMostPosibilityNums,
+            eSingleShortLongMostPosibilityNums,
 
         }
         public static string[] STRATEGY_NAMES = {
@@ -351,6 +367,7 @@ namespace LotteryAnalyze
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
+            "eSingleShortLongMostPosibilityNums",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -620,6 +637,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eMultiMostPosibilityNums:
                     TradeMultiMostPosibilityNums(item, trade);
                     break;
+                case TradeStrategy.eSingleShortLongMostPosibilityNums:
+                    TradeeSingleShortLongMostPosibilityNums(item, trade);
+                    break;
             }
         }
 
@@ -775,6 +795,68 @@ namespace LotteryAnalyze
                 tn.tradeCount = tradeCount;
                 tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums, needGetLessProbabilityNum, maxNumCount);
                 trade.tradeInfo.Add(i, tn);
+            }
+        }
+
+        void TradeeSingleShortLongMostPosibilityNums(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            int numID = 0;
+            if (simSelNumIndex != -1)
+                numID = simSelNumIndex;
+            FindAllNumberProbabilities(item, ref maxProbilityNums);
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            tn.SetMaxProbabilityNumber(tradeCount, ref maxProbilityNums, false, maxNumCount);
+
+            List<NumberCmpInfo> posNumInfos = new List<NumberCmpInfo>();
+            CollectDataItemNumPosInfo(ref posNumInfos, item, numID);
+            for( int i = 0; i < posNumInfos.Count; ++i )
+            {
+                if (posNumInfos[i].largerThanTheoryProbability)
+                    tn.AddProbabilityNumber(ref maxProbilityNums, posNumInfos[i].number);
+            }
+
+            trade.tradeInfo.Add(numID, tn);
+        }
+
+        void CollectDataItemNumPosInfo(ref List<NumberCmpInfo> nums, DataItem dataItem, int numID)
+        {
+            nums.Clear();
+            for( int i = 0; i < 10; ++i )
+            {
+                NumberCmpInfo info = new NumberCmpInfo();
+                info.appearCount = 0;
+                info.largerThanTheoryProbability = false;
+                info.number = (SByte)i;
+                info.rate = 0;
+                nums.Add(info);
+            }
+            int loop = 10;
+            int totalCount = 1;
+            DataItem curItem = dataItem;
+            int startCDTIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+            while ( curItem != null && totalCount <= loop)
+            {
+                sbyte num = curItem.GetNumberByIndex(numID);
+                nums[num].appearCount = nums[num].appearCount + 1;
+                nums[num].rate = nums[num].appearCount * 100 / totalCount;
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[startCDTIndex + num];
+                nums[num].largerThanTheoryProbability = nums[num].rate > GraphDataManager.GetTheoryProbability(cdt);
+
+                curItem = curItem.parent.GetPrevItem(curItem);
+                ++totalCount;
             }
         }
 
