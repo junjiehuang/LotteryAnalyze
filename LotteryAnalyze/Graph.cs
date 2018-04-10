@@ -590,7 +590,8 @@ namespace LotteryAnalyze
                         float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
                         float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
 
-                        g.DrawString(((TradeDataManager.WaveConfig)(mp.WAVE_CFG)).ToString(), auxFont, whiteBrush, 5, 5);
+                        string info = ((TradeDataManager.WaveConfig)(mp.WAVE_CFG)).ToString() + ", " + ((TradeDataManager.BarConfig)(mp.BAR_CFG)).ToString();
+                        g.DrawString(info, auxFont, whiteBrush, 5, 5);
                         int leftID = mp.LEFT_DIF_INDEX;
 
                         List<int> ids = new List<int>();

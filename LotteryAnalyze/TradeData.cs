@@ -343,7 +343,7 @@ namespace LotteryAnalyze
     // 交易数据管理器
     class TradeDataManager
     {
-        public const int LOOP_COUNT = 10;
+        public const int LOOP_COUNT = 5;
 
         // 交易策略
         public enum TradeStrategy
@@ -979,6 +979,30 @@ namespace LotteryAnalyze
             // 震荡下降
             eShakeDown,
         }
+        public enum BarConfig
+        {
+            eNone,
+
+            // 蓝区回调上升
+            eBlueSlowUp,
+            // 蓝区回调上升穿进红区
+            eBlue2RedUp,
+            // 红区上升
+            eRedUp,
+            // 红区震荡
+            eRedShake,
+            // 红区回调下降
+            eRedSlowDown,
+            // 红区回调下降穿进蓝区
+            eRed2BlueDown,
+            // 蓝区下降
+            eBlueDown,
+            // 蓝区震荡
+            eBlueShake,
+            // 0线震荡
+            eZeroShake,
+        }
+
         public static float GetWaveConfigValue(WaveConfig cfg)
         {
             switch(cfg)
@@ -1003,6 +1027,28 @@ namespace LotteryAnalyze
             return 1;
         }
 
+        public static float GetBarConfigValue(BarConfig cfg)
+        {
+            switch (cfg)
+            {
+                case BarConfig.eNone:
+                case BarConfig.eRedSlowDown:
+                case BarConfig.eRed2BlueDown:
+                case BarConfig.eBlueDown:
+                case BarConfig.eBlueShake:
+                    return 0;
+                case BarConfig.eBlueSlowUp:
+                case BarConfig.eZeroShake:
+                    return 0.5f;
+                case BarConfig.eBlue2RedUp:
+                case BarConfig.eRedShake:
+                    return 1;
+                case BarConfig.eRedUp:
+                    return 2;
+            }
+            return 1;
+        }
+
         public static ValueCmpState GetValueCmpState(MACDPoint mp)
         {
             ValueCmpState res = ValueCmpState.eNone;
@@ -1015,28 +1061,26 @@ namespace LotteryAnalyze
             return res;
         }
 
-        public static WaveConfig CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount)
+        public static void CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount, ref WaveConfig waveCfg, ref BarConfig barCfg)
         {
-            WaveConfig res = WaveConfig.eNone;
-            
+            waveCfg = WaveConfig.eNone;
+            barCfg = BarConfig.eNone;
+
             goldenCrossCount = 0;
             deadCrossCount = 0;
             confuseCount = 0;
             int loop = LOOP_COUNT;
             ValueCmpState lastVCS = ValueCmpState.eNone;
             ValueCmpState startVCS = ValueCmpState.eNone;
-            float maxDIF = 0;
-            int maxDIFIndex = -1;
-            float minDIF = 0;
-            int minDIFIndex = -1;
-            float leftDIF = 0;
-            int leftIndex = -1;
-            float rightDIF = 0;
-            int rightIndex = -1;
+            float maxDIF = 0, minDIF = 0, leftDIF = 0, rightDIF = 0, leftBar = 0, rightBar = 0, maxBAR = 0, minBAR = 0;
+            int maxDIFIndex = -1, minDIFIndex = -1, leftIndex = -1, rightIndex = -1, maxBARIndex = -1, minBARIndex = -1;
             MACDPointMap tmpMPM = curMpm;
             MACDPoint mp = tmpMPM.GetData(cdt, false);
-            rightDIF = mp.DIF;
-            rightIndex = curMpm.index;
+            rightDIF = leftDIF = mp.DIF;
+            rightIndex = leftIndex = curMpm.index;
+            rightBar = leftBar = mp.BAR;
+            maxBAR = minBAR = mp.BAR;
+            maxBARIndex = minBARIndex = curMpm.index;
 
             while ( tmpMPM != null && loop >= 0 )
             {
@@ -1092,44 +1136,86 @@ namespace LotteryAnalyze
                 }
 
                 leftDIF = mp.DIF;
+                leftBar = mp.BAR;
                 leftIndex = tmpMPM.index;
+                if(maxBAR < mp.BAR)
+                {
+                    maxBAR = mp.BAR;
+                    maxBARIndex = tmpMPM.index;
+                }
+                if(minBAR > mp.BAR)
+                {
+                    minBAR = mp.BAR;
+                    minBARIndex = tmpMPM.index;
+                }
+
                 --loop;
                 tmpMPM = tmpMPM.GetPrevMACDPM();
             }
 
             bool isShake = (goldenCrossCount > 0 && deadCrossCount > 0) || confuseCount > 0;
             if (Math.Abs(leftDIF - rightDIF) <= 0.0001f)
-                res = WaveConfig.eFlatShake;
+                waveCfg = WaveConfig.eFlatShake;
             else if (leftIndex == minDIFIndex && rightIndex == maxDIFIndex)
             {
                 if (!isShake)
-                    res = WaveConfig.ePureUp;
+                    waveCfg = WaveConfig.ePureUp;
                 else
-                    res = WaveConfig.eShakeUp;
+                    waveCfg = WaveConfig.eShakeUp;
             }
             else if (leftIndex == minDIFIndex && maxDIFIndex < rightIndex)
-                res = WaveConfig.eFirstUpThenSlowDown;
+                waveCfg = WaveConfig.eFirstUpThenSlowDown;
             else if (leftIndex < maxDIFIndex && rightIndex == minDIFIndex)
-                res = WaveConfig.eFirstUpThenFastDown;
+                waveCfg = WaveConfig.eFirstUpThenFastDown;
             else if (leftIndex == maxDIFIndex && rightIndex == minDIFIndex)
             {
                 if(!isShake)
-                    res = WaveConfig.ePureDown;
+                    waveCfg = WaveConfig.ePureDown;
                 else
-                    res = WaveConfig.eShakeDown;
+                    waveCfg = WaveConfig.eShakeDown;
             }
             else if (leftIndex == maxDIFIndex && minDIFIndex < rightIndex)
-                res = WaveConfig.eFirstDownThenSlowUp;
+                waveCfg = WaveConfig.eFirstDownThenSlowUp;
             else if (minDIFIndex > leftIndex && maxDIFIndex == rightIndex)
-                res = WaveConfig.eFirstDownThenFastUp;
+                waveCfg = WaveConfig.eFirstDownThenFastUp;
+
+            if(leftBar < rightBar)
+            {
+                if (rightBar <= 0)
+                    barCfg = BarConfig.eBlueSlowUp;
+                else if (leftBar <= 0 && rightBar >= 0)
+                    barCfg = BarConfig.eBlue2RedUp;
+                else if (leftBar >= 0)
+                    barCfg = BarConfig.eRedUp;
+            }
+            else if(leftBar > rightBar)
+            {
+                if (leftBar >= 0 && rightBar <= 0)
+                    barCfg = BarConfig.eRed2BlueDown;
+                else if (leftBar <= 0)
+                    barCfg = BarConfig.eBlueDown;
+                else if (rightBar >= 0)
+                    barCfg = BarConfig.eRedSlowDown;
+            }
+            else
+            {
+                if (leftBar > 0)
+                    barCfg = BarConfig.eRedShake;
+                else if (leftBar < 0)
+                    barCfg = BarConfig.eBlueShake;
+                else
+                    barCfg = BarConfig.eZeroShake;
+            }
 #if TRADE_DBG
             mp = curMpm.GetData(cdt, false);
-            mp.WAVE_CFG = (byte)(res);
+            mp.WAVE_CFG = (byte)(waveCfg);
             mp.MAX_DIF_INDEX = maxDIFIndex;
             mp.MIN_DIF_INDEX = minDIFIndex;
             mp.LEFT_DIF_INDEX = leftIndex;
+            mp.BAR_CFG = (byte)(barCfg);
+            mp.MAX_BAR_INDEX = maxBARIndex;
+            mp.MIN_BAR_INDEX = minBARIndex;
 #endif
-            return res;
         } 
 
         void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value)
@@ -1137,16 +1223,19 @@ namespace LotteryAnalyze
             if (curMpm == null || curMpm.index == 0)
                 return;
             int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
-            WaveConfig waveCfg = CheckMACDGoldenCrossAndDeadCross(
+            WaveConfig waveCfg = WaveConfig.eNone;
+            BarConfig barCfg = BarConfig.eNone;
+            CheckMACDGoldenCrossAndDeadCross(
                 curMpm, cdt, 
-                ref goldenCrossCount, ref deadCrossCount, ref confuseCount);
+                ref goldenCrossCount, ref deadCrossCount, ref confuseCount, ref waveCfg, ref barCfg);
 
-            value = GetWaveConfigValue(waveCfg);
-            MACDPoint mp = curMpm.GetData(cdt, false);
-            if (mp.DIF > 0)
-                value *= 2;
-            if (mp.DIF > mp.BAR && mp.BAR > 0)
-                value *= 2;
+            //value = GetWaveConfigValue(waveCfg);
+            //MACDPoint mp = curMpm.GetData(cdt, false);
+            //if (mp.DIF > 0)
+            //    value *= 2;
+            //if (mp.DIF > mp.BAR && mp.BAR > 0)
+            //    value *= 2;
+            value = GetBarConfigValue(barCfg);
         }
         
         void SortNumberPath(DataItem item, int numIndex, ref List<PathCmpInfo> res)
@@ -1167,7 +1256,7 @@ namespace LotteryAnalyze
 
         float[] CalcPathValue(DataItem item, int numIndex)
         {
-            float[] res = new float[3] { 1, 1, 1 };
+            float[] pathValues = new float[3] { 1, 1, 1 };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
@@ -1179,7 +1268,6 @@ namespace LotteryAnalyze
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             // MACD数据
             MACDPointMap mpm = kddc.GetMacdPointMap(kdd);
-            //float path0Value = 1, path1Value = 1, path2Value = 1;
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
             float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
             float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
@@ -1190,20 +1278,20 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
-                CheckMACD(mpm, CollectDataType.ePath0, ref res[0]);
-                CheckMACD(mpm, CollectDataType.ePath1, ref res[1]);
-                CheckMACD(mpm, CollectDataType.ePath2, ref res[2]);
+                CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
+                CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
+                CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2]);
             }
-            if (path0Avg5 > path0Bpm) res[0] *= 2;
-            if (path0Avg10 > path0Bpm) res[0] *= 2;
-            if (path0Avg5 > path0Avg10) res[0] *= 2;
-            if (path1Avg5 > path1Bpm) res[1] *= 2;
-            if (path1Avg10 > path1Bpm) res[1] *= 2;
-            if (path1Avg5 > path1Avg10) res[1] *= 2;
-            if (path2Avg5 > path2Bpm) res[2] *= 2;
-            if (path2Avg10 > path2Bpm) res[2] *= 2;
-            if (path2Avg5 > path2Avg10) res[2] *= 2;
-            return res;
+            if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
+            if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
+            if (path0Avg5 > path0Avg10) pathValues[0] *= 2;
+            if (path1Avg5 > path1Bpm) pathValues[1] *= 2;
+            if (path1Avg10 > path1Bpm) pathValues[1] *= 2;
+            if (path1Avg5 > path1Avg10) pathValues[1] *= 2;
+            if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
+            if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
+            if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
+            return pathValues;
         }
 
         void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)

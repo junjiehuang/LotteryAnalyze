@@ -506,6 +506,9 @@ namespace LotteryAnalyze
         public int MAX_DIF_INDEX = -1;
         public int MIN_DIF_INDEX = -1;
         public int LEFT_DIF_INDEX = -1;
+        public byte BAR_CFG = 0;
+        public int MAX_BAR_INDEX = -1;
+        public int MIN_BAR_INDEX = -1;
 #endif
     }
     public class MACDPointMap
