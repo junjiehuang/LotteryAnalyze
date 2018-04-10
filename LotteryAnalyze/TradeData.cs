@@ -1001,6 +1001,20 @@ namespace LotteryAnalyze
             eBlueShake,
             // 0线震荡
             eZeroShake,
+
+            // 有下降的趋势
+            ePrepareDown,
+            // 有上升的趋势
+            ePrepareUp,
+        }
+        public enum KGraphConfig
+        {
+            eNone,
+            eSlowUpPrepareDown,
+            ePureUp,
+            eSlowDownPrepareUp,
+            ePureDown,
+            eShake,
         }
 
         public static float GetWaveConfigValue(WaveConfig cfg)
@@ -1036,14 +1050,34 @@ namespace LotteryAnalyze
                 case BarConfig.eRed2BlueDown:
                 case BarConfig.eBlueDown:
                 case BarConfig.eBlueShake:
+                case BarConfig.ePrepareDown:
                     return 0;
                 case BarConfig.eBlueSlowUp:
                 case BarConfig.eZeroShake:
                     return 0.5f;
                 case BarConfig.eBlue2RedUp:
                 case BarConfig.eRedShake:
+                case BarConfig.ePrepareUp:
                     return 1;
                 case BarConfig.eRedUp:
+                    return 2;
+            }
+            return 1;
+        }
+
+        public static float GetKGraphConfigValue(KGraphConfig cfg)
+        {
+            switch (cfg)
+            {
+                case KGraphConfig.eNone:
+                case KGraphConfig.ePureDown:
+                case KGraphConfig.eSlowDownPrepareUp:
+                    return 0;
+                case KGraphConfig.eSlowUpPrepareDown:
+                    return 0.5f;
+                case KGraphConfig.eShake:
+                    return 1;
+                case KGraphConfig.ePureUp:
                     return 2;
             }
             return 1;
@@ -1181,21 +1215,37 @@ namespace LotteryAnalyze
 
             if(leftBar < rightBar)
             {
-                if (rightBar <= 0)
-                    barCfg = BarConfig.eBlueSlowUp;
-                else if (leftBar <= 0 && rightBar >= 0)
-                    barCfg = BarConfig.eBlue2RedUp;
-                else if (leftBar >= 0)
-                    barCfg = BarConfig.eRedUp;
+                if(maxBARIndex < rightIndex && maxBARIndex > leftIndex)
+                {
+                    if (maxBAR > rightBar)
+                        barCfg = BarConfig.ePrepareDown;
+                }
+                if (barCfg == BarConfig.eNone)
+                {
+                    if (rightBar <= 0)
+                        barCfg = BarConfig.eBlueSlowUp;
+                    else if (leftBar <= 0 && rightBar >= 0)
+                        barCfg = BarConfig.eBlue2RedUp;
+                    else if (leftBar >= 0)
+                        barCfg = BarConfig.eRedUp;
+                }
             }
             else if(leftBar > rightBar)
             {
-                if (leftBar >= 0 && rightBar <= 0)
-                    barCfg = BarConfig.eRed2BlueDown;
-                else if (leftBar <= 0)
-                    barCfg = BarConfig.eBlueDown;
-                else if (rightBar >= 0)
-                    barCfg = BarConfig.eRedSlowDown;
+                if(minBARIndex > leftIndex && minBARIndex < rightIndex)
+                {
+                    if (minBAR < rightBar)
+                        barCfg = BarConfig.ePrepareUp;
+                }
+                if (barCfg == BarConfig.eNone)
+                {
+                    if (leftBar >= 0 && rightBar <= 0)
+                        barCfg = BarConfig.eRed2BlueDown;
+                    else if (leftBar <= 0)
+                        barCfg = BarConfig.eBlueDown;
+                    else if (rightBar >= 0)
+                        barCfg = BarConfig.eRedSlowDown;
+                }
             }
             else
             {
@@ -1217,6 +1267,62 @@ namespace LotteryAnalyze
             mp.MIN_BAR_INDEX = minBARIndex;
 #endif
         } 
+
+        public static KGraphConfig CheckKGraphConfig(KDataDict item, CollectDataType cdt)
+        {
+            KGraphConfig cfg = KGraphConfig.eNone;
+            int loop = LOOP_COUNT;
+            KDataDict curItem = item;
+            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0;
+            float rightID = -1, leftID = -1, maxID = -1, minID = -1;
+            rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
+            rightID = leftID = maxID = minID = curItem.index;
+
+            while( curItem != null && loop >= 0 )
+            {
+                leftKV = curItem.GetData(cdt, false).KValue;
+                leftID = curItem.index;
+                if(maxKV < leftKV)
+                {
+                    maxKV = leftKV;
+                    maxID = leftID;
+                }
+                if(minKV > leftKV)
+                {
+                    minKV = leftKV;
+                    minID = leftID;
+                }
+
+                if (curItem.index == 0)
+                    break;
+                curItem = curItem.parent.dataLst[curItem.index-1];
+                --loop;
+            }
+
+            if (leftKV < rightKV)
+            {
+                if (maxID > leftID && maxID < rightID)
+                {
+                    if (maxKV > rightKV)
+                        cfg = KGraphConfig.eSlowUpPrepareDown;
+                }
+                if (cfg == KGraphConfig.eNone)
+                    cfg = KGraphConfig.ePureUp;
+            }
+            else if (leftKV > rightKV)
+            {
+                if (minID > leftID && minID < rightID)
+                {
+                    if (minKV < rightKV)
+                        cfg = KGraphConfig.eSlowDownPrepareUp;
+                }
+                if (cfg == KGraphConfig.eNone)
+                    cfg = KGraphConfig.ePureDown;
+            }
+            else
+                cfg = KGraphConfig.eShake;
+            return cfg;
+        }
 
         void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value)
         {
@@ -1257,6 +1363,7 @@ namespace LotteryAnalyze
         float[] CalcPathValue(DataItem item, int numIndex)
         {
             float[] pathValues = new float[3] { 1, 1, 1 };
+            float[] kValues = new float[3] { 1, 1, 1 };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
@@ -1281,6 +1388,14 @@ namespace LotteryAnalyze
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
                 CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2]);
+
+                kValues[0] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath0));
+                kValues[1] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath1));
+                kValues[2] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath2));
+
+                pathValues[0] = pathValues[0] * kValues[0];
+                pathValues[1] = pathValues[1] * kValues[1];
+                pathValues[2] = pathValues[2] * kValues[2];
             }
             if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
             if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
