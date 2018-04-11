@@ -509,6 +509,7 @@ namespace LotteryAnalyze
         public byte BAR_CFG = 0;
         public int MAX_BAR_INDEX = -1;
         public int MIN_BAR_INDEX = -1;
+        public byte KGRAPH_CFG = 0;
 #endif
     }
     public class MACDPointMap

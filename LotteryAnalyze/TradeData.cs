@@ -1073,9 +1073,9 @@ namespace LotteryAnalyze
                 case KGraphConfig.ePureDown:
                 case KGraphConfig.eSlowDownPrepareUp:
                     return 0;
-                case KGraphConfig.eSlowUpPrepareDown:
-                    return 0.5f;
                 case KGraphConfig.eShake:
+                    return 0.5f;
+                case KGraphConfig.eSlowUpPrepareDown:
                     return 1;
                 case KGraphConfig.ePureUp:
                     return 2;
@@ -1385,13 +1385,20 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
+                KGraphConfig kgc0 = CheckKGraphConfig(kdd, CollectDataType.ePath0);
+                KGraphConfig kgc1 = CheckKGraphConfig(kdd, CollectDataType.ePath1);
+                KGraphConfig kgc2 = CheckKGraphConfig(kdd, CollectDataType.ePath2);
+
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
                 CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2]);
 
-                kValues[0] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath0));
-                kValues[1] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath1));
-                kValues[2] = GetKGraphConfigValue(CheckKGraphConfig(kdd, CollectDataType.ePath2));
+                kValues[0] = GetKGraphConfigValue(kgc0);
+                kValues[1] = GetKGraphConfigValue(kgc1);
+                kValues[2] = GetKGraphConfigValue(kgc2);
+                mpm.GetData(CollectDataType.ePath0, false).KGRAPH_CFG = (byte)kgc0;
+                mpm.GetData(CollectDataType.ePath1, false).KGRAPH_CFG = (byte)kgc1;
+                mpm.GetData(CollectDataType.ePath2, false).KGRAPH_CFG = (byte)kgc2;
 
                 pathValues[0] = pathValues[0] * kValues[0];
                 pathValues[1] = pathValues[1] * kValues[1];
