@@ -1324,6 +1324,7 @@ namespace LotteryAnalyze
             return cfg;
         }
 
+
         void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value)
         {
             if (curMpm == null || curMpm.index == 0)
@@ -1400,9 +1401,14 @@ namespace LotteryAnalyze
                 mpm.GetData(CollectDataType.ePath1, false).KGRAPH_CFG = (byte)kgc1;
                 mpm.GetData(CollectDataType.ePath2, false).KGRAPH_CFG = (byte)kgc2;
 
-                pathValues[0] = pathValues[0] * kValues[0];
-                pathValues[1] = pathValues[1] * kValues[1];
-                pathValues[2] = pathValues[2] * kValues[2];
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+                float proShort0 = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort;
+                float proShort1 = sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort;
+                float proShort2 = sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort;
+                
+                pathValues[0] = pathValues[0] * kValues[0] * proShort0;
+                pathValues[1] = pathValues[1] * kValues[1] * proShort1;
+                pathValues[2] = pathValues[2] * kValues[2] * proShort2;
             }
             if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
             if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
