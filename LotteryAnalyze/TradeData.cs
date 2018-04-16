@@ -956,7 +956,7 @@ namespace LotteryAnalyze
             eDifEqualDea,
             eDifLessDea,
         }
-        public enum WaveConfig
+        public enum MACDLineWaveConfig
         {
             eNone,
 
@@ -979,7 +979,7 @@ namespace LotteryAnalyze
             // 震荡下降
             eShakeDown,
         }
-        public enum BarConfig
+        public enum MACDBarConfig
         {
             eNone,
 
@@ -1017,49 +1017,49 @@ namespace LotteryAnalyze
             eShake,
         }
 
-        public static float GetWaveConfigValue(WaveConfig cfg)
+        public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
         {
             switch(cfg)
             {
-                case WaveConfig.eNone:
-                case WaveConfig.ePureDown:
-                case WaveConfig.eShakeDown:
-                case WaveConfig.eFirstUpThenFastDown:
+                case MACDLineWaveConfig.eNone:
+                case MACDLineWaveConfig.ePureDown:
+                case MACDLineWaveConfig.eShakeDown:
+                case MACDLineWaveConfig.eFirstUpThenFastDown:
                     return 0;
-                case WaveConfig.eFirstDownThenSlowUp:
-                case WaveConfig.eFirstUpThenSlowDown:
+                case MACDLineWaveConfig.eFirstDownThenSlowUp:
+                case MACDLineWaveConfig.eFirstUpThenSlowDown:
                     return 0.5f;
-                case WaveConfig.eFlatShake:
+                case MACDLineWaveConfig.eFlatShake:
                     return 1;
-                case WaveConfig.eFirstDownThenFastUp:
+                case MACDLineWaveConfig.eFirstDownThenFastUp:
                     return 1.5f;
-                case WaveConfig.eShakeUp:
+                case MACDLineWaveConfig.eShakeUp:
                     return 2;
-                case WaveConfig.ePureUp:
+                case MACDLineWaveConfig.ePureUp:
                     return 4;
             }
             return 1;
         }
 
-        public static float GetBarConfigValue(BarConfig cfg)
+        public static float GetMACDBarConfigValue(MACDBarConfig cfg)
         {
             switch (cfg)
             {
-                case BarConfig.eNone:
-                case BarConfig.eRedSlowDown:
-                case BarConfig.eRed2BlueDown:
-                case BarConfig.eBlueDown:
-                case BarConfig.eBlueShake:
-                case BarConfig.ePrepareDown:
+                case MACDBarConfig.eNone:
+                case MACDBarConfig.eRedSlowDown:
+                case MACDBarConfig.eRed2BlueDown:
+                case MACDBarConfig.eBlueDown:
+                case MACDBarConfig.eBlueShake:
+                case MACDBarConfig.ePrepareDown:
                     return 0;
-                case BarConfig.eBlueSlowUp:
-                case BarConfig.eZeroShake:
+                case MACDBarConfig.eBlueSlowUp:
+                case MACDBarConfig.eZeroShake:
                     return 0.5f;
-                case BarConfig.eBlue2RedUp:
-                case BarConfig.eRedShake:
-                case BarConfig.ePrepareUp:
+                case MACDBarConfig.eBlue2RedUp:
+                case MACDBarConfig.eRedShake:
+                case MACDBarConfig.ePrepareUp:
                     return 1;
-                case BarConfig.eRedUp:
+                case MACDBarConfig.eRedUp:
                     return 2;
             }
             return 1;
@@ -1095,10 +1095,10 @@ namespace LotteryAnalyze
             return res;
         }
 
-        public static void CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount, ref WaveConfig waveCfg, ref BarConfig barCfg)
+        public static void CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount, ref MACDLineWaveConfig waveCfg, ref MACDBarConfig barCfg)
         {
-            waveCfg = WaveConfig.eNone;
-            barCfg = BarConfig.eNone;
+            waveCfg = MACDLineWaveConfig.eNone;
+            barCfg = MACDBarConfig.eNone;
 
             goldenCrossCount = 0;
             deadCrossCount = 0;
@@ -1189,45 +1189,45 @@ namespace LotteryAnalyze
 
             bool isShake = (goldenCrossCount > 0 && deadCrossCount > 0) || confuseCount > 0;
             if (Math.Abs(leftDIF - rightDIF) <= 0.0001f)
-                waveCfg = WaveConfig.eFlatShake;
+                waveCfg = MACDLineWaveConfig.eFlatShake;
             else if (leftIndex == minDIFIndex && rightIndex == maxDIFIndex)
             {
                 if (!isShake)
-                    waveCfg = WaveConfig.ePureUp;
+                    waveCfg = MACDLineWaveConfig.ePureUp;
                 else
-                    waveCfg = WaveConfig.eShakeUp;
+                    waveCfg = MACDLineWaveConfig.eShakeUp;
             }
             else if (leftIndex == minDIFIndex && maxDIFIndex < rightIndex)
-                waveCfg = WaveConfig.eFirstUpThenSlowDown;
+                waveCfg = MACDLineWaveConfig.eFirstUpThenSlowDown;
             else if (leftIndex < maxDIFIndex && rightIndex == minDIFIndex)
-                waveCfg = WaveConfig.eFirstUpThenFastDown;
+                waveCfg = MACDLineWaveConfig.eFirstUpThenFastDown;
             else if (leftIndex == maxDIFIndex && rightIndex == minDIFIndex)
             {
                 if(!isShake)
-                    waveCfg = WaveConfig.ePureDown;
+                    waveCfg = MACDLineWaveConfig.ePureDown;
                 else
-                    waveCfg = WaveConfig.eShakeDown;
+                    waveCfg = MACDLineWaveConfig.eShakeDown;
             }
             else if (leftIndex == maxDIFIndex && minDIFIndex < rightIndex)
-                waveCfg = WaveConfig.eFirstDownThenSlowUp;
+                waveCfg = MACDLineWaveConfig.eFirstDownThenSlowUp;
             else if (minDIFIndex > leftIndex && maxDIFIndex == rightIndex)
-                waveCfg = WaveConfig.eFirstDownThenFastUp;
+                waveCfg = MACDLineWaveConfig.eFirstDownThenFastUp;
 
             if(leftBar < rightBar)
             {
                 if(maxBARIndex < rightIndex && maxBARIndex > leftIndex)
                 {
                     if (maxBAR > rightBar)
-                        barCfg = BarConfig.ePrepareDown;
+                        barCfg = MACDBarConfig.ePrepareDown;
                 }
-                if (barCfg == BarConfig.eNone)
+                if (barCfg == MACDBarConfig.eNone)
                 {
                     if (rightBar <= 0)
-                        barCfg = BarConfig.eBlueSlowUp;
+                        barCfg = MACDBarConfig.eBlueSlowUp;
                     else if (leftBar <= 0 && rightBar >= 0)
-                        barCfg = BarConfig.eBlue2RedUp;
+                        barCfg = MACDBarConfig.eBlue2RedUp;
                     else if (leftBar >= 0)
-                        barCfg = BarConfig.eRedUp;
+                        barCfg = MACDBarConfig.eRedUp;
                 }
             }
             else if(leftBar > rightBar)
@@ -1235,26 +1235,26 @@ namespace LotteryAnalyze
                 if(minBARIndex > leftIndex && minBARIndex < rightIndex)
                 {
                     if (minBAR < rightBar)
-                        barCfg = BarConfig.ePrepareUp;
+                        barCfg = MACDBarConfig.ePrepareUp;
                 }
-                if (barCfg == BarConfig.eNone)
+                if (barCfg == MACDBarConfig.eNone)
                 {
                     if (leftBar >= 0 && rightBar <= 0)
-                        barCfg = BarConfig.eRed2BlueDown;
+                        barCfg = MACDBarConfig.eRed2BlueDown;
                     else if (leftBar <= 0)
-                        barCfg = BarConfig.eBlueDown;
+                        barCfg = MACDBarConfig.eBlueDown;
                     else if (rightBar >= 0)
-                        barCfg = BarConfig.eRedSlowDown;
+                        barCfg = MACDBarConfig.eRedSlowDown;
                 }
             }
             else
             {
                 if (leftBar > 0)
-                    barCfg = BarConfig.eRedShake;
+                    barCfg = MACDBarConfig.eRedShake;
                 else if (leftBar < 0)
-                    barCfg = BarConfig.eBlueShake;
+                    barCfg = MACDBarConfig.eBlueShake;
                 else
-                    barCfg = BarConfig.eZeroShake;
+                    barCfg = MACDBarConfig.eZeroShake;
             }
 #if TRADE_DBG
             mp = curMpm.GetData(cdt, false);
@@ -1330,8 +1330,8 @@ namespace LotteryAnalyze
             if (curMpm == null || curMpm.index == 0)
                 return;
             int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
-            WaveConfig waveCfg = WaveConfig.eNone;
-            BarConfig barCfg = BarConfig.eNone;
+            MACDLineWaveConfig waveCfg = MACDLineWaveConfig.eNone;
+            MACDBarConfig barCfg = MACDBarConfig.eNone;
             CheckMACDGoldenCrossAndDeadCross(
                 curMpm, cdt, 
                 ref goldenCrossCount, ref deadCrossCount, ref confuseCount, ref waveCfg, ref barCfg);
@@ -1342,7 +1342,7 @@ namespace LotteryAnalyze
             //    value *= 2;
             //if (mp.DIF > mp.BAR && mp.BAR > 0)
             //    value *= 2;
-            value = GetBarConfigValue(barCfg);
+            value = GetMACDBarConfigValue(barCfg);
         }
         
         void SortNumberPath(DataItem item, int numIndex, ref List<PathCmpInfo> res)
@@ -1410,15 +1410,15 @@ namespace LotteryAnalyze
                 pathValues[1] = pathValues[1] * kValues[1] * proShort1;
                 pathValues[2] = pathValues[2] * kValues[2] * proShort2;
             }
-            if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
-            if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
-            if (path0Avg5 > path0Avg10) pathValues[0] *= 2;
-            if (path1Avg5 > path1Bpm) pathValues[1] *= 2;
-            if (path1Avg10 > path1Bpm) pathValues[1] *= 2;
-            if (path1Avg5 > path1Avg10) pathValues[1] *= 2;
-            if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
-            if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
-            if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
+            //if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
+            //if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
+            //if (path0Avg5 > path0Avg10) pathValues[0] *= 2;
+            //if (path1Avg5 > path1Bpm) pathValues[1] *= 2;
+            //if (path1Avg10 > path1Bpm) pathValues[1] *= 2;
+            //if (path1Avg5 > path1Avg10) pathValues[1] *= 2;
+            //if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
+            //if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
+            //if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
             return pathValues;
         }
 
