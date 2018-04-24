@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace LotteryAnalyze
 {
@@ -796,7 +797,6 @@ namespace LotteryAnalyze
         }
     }
 
-
     // 枚举窗体
     public static class WindowsEnumerator
     {
@@ -861,4 +861,6 @@ namespace LotteryAnalyze
                 MakeWindowTransparent(item, alpha); // 0~255 128是50%透明度
         }
     }
+    
+
 }

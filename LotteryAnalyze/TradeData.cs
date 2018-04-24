@@ -1015,6 +1015,10 @@ namespace LotteryAnalyze
             eSlowDownPrepareUp,
             ePureDown,
             eShake,
+
+            ePureDownToBML,
+            ePureUpUponBML,
+            eShakeUp,
         }
 
         public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
@@ -1065,10 +1069,10 @@ namespace LotteryAnalyze
             return 1;
         }
 
-        public static float GetKGraphConfigValue(KGraphConfig cfg, int underAvgLineCount)
+        public static float GetKGraphConfigValue(KGraphConfig cfg, int belowAvgLineCount, int uponAvgLineCount)
         {
-            if (underAvgLineCount >= 3)
-                return 0;
+            //if (belowAvgLineCount > uponAvgLineCount)
+            //    return 0;
             switch (cfg)
             {
                 case KGraphConfig.eNone:
@@ -1081,6 +1085,11 @@ namespace LotteryAnalyze
                     return 1;
                 case KGraphConfig.ePureUp:
                     return 2;
+                case KGraphConfig.ePureUpUponBML:
+                case KGraphConfig.eShakeUp:
+                    return 4;
+                case KGraphConfig.ePureDownToBML:
+                    return 8;
             }
             return 1;
         }
@@ -1270,21 +1279,25 @@ namespace LotteryAnalyze
 #endif
         } 
 
-        public static KGraphConfig CheckKGraphConfig(KDataDict item, BollinPointMap bpm, CollectDataType cdt, ref int underAvgLineCount)
+        public static KGraphConfig CheckKGraphConfig(KDataDict item, BollinPointMap bpm, CollectDataType cdt, int missCount, ref int belowAvgLineCount, ref int uponAvgLineCount)
         {
             bool shouldCheckUnderAvgLineCount = true;
-            underAvgLineCount = 0;
+            belowAvgLineCount = 0;
+            uponAvgLineCount = 0;
             KGraphConfig cfg = KGraphConfig.eNone;
             int loop = LOOP_COUNT;
             KDataDict curItem = item;
-            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0;
+            BollinPointMap curBPM = bpm;
+            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, bpMid = 0;
             float rightID = -1, leftID = -1, maxID = -1, minID = -1;
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
+            bpMid = bpm.GetData(cdt, false).midValue;
 
-            while( curItem != null && loop >= 0 )
+            while ( curItem != null && loop >= 0 )
             {
                 KData data = curItem.GetData(cdt, false);
+                BollinPoint bp = curBPM.GetData(cdt, false);
                 leftKV = data.KValue;
                 leftID = curItem.index;
                 if(maxKV < leftKV)
@@ -1298,29 +1311,45 @@ namespace LotteryAnalyze
                     minID = leftID;
                 }
 
-                if(shouldCheckUnderAvgLineCount)
-                {
-                    if (leftKV <= bpm.GetData(cdt, false).midValue)
-                        ++underAvgLineCount;
-                    else
-                        shouldCheckUnderAvgLineCount = false;
-                }
+                if (leftKV < bp.midValue)
+                    ++belowAvgLineCount;
+                if (leftKV > bp.midValue)
+                    ++uponAvgLineCount;
 
                 if (curItem.index == 0)
                     break;
-                curItem = curItem.parent.dataLst[curItem.index-1];
+                curItem = curItem.parent.dataLst[curItem.index - 1];
+                curBPM = curBPM.parent.bollinMapLst[curBPM.index -1];
                 --loop;
             }
 
-            if (leftKV < rightKV)
+            float rightDelta = rightKV - bpMid;
+            if (missCount >= 2)
+            {
+                if (rightDelta >= -0.5f && rightDelta <= 0.5f)
+                    cfg = KGraphConfig.ePureDownToBML;
+                else
+                    cfg = KGraphConfig.ePureDown;
+            }
+            else if (leftKV < rightKV)
             {
                 if (maxID > leftID && maxID < rightID)
                 {
                     if (maxKV > rightKV)
-                        cfg = KGraphConfig.eSlowUpPrepareDown;
+                    {
+                        if (rightKV - bpMid >= -1)
+                            cfg = KGraphConfig.eShakeUp;
+                        else
+                            cfg = KGraphConfig.eSlowUpPrepareDown;
+                    }
                 }
                 if (cfg == KGraphConfig.eNone)
-                    cfg = KGraphConfig.ePureUp;
+                {
+                    if (uponAvgLineCount > belowAvgLineCount)
+                        cfg = KGraphConfig.ePureUpUponBML;
+                    else
+                        cfg = KGraphConfig.ePureUp;
+                }
             }
             else if (leftKV > rightKV)
             {
@@ -1330,10 +1359,17 @@ namespace LotteryAnalyze
                         cfg = KGraphConfig.eSlowDownPrepareUp;
                 }
                 if (cfg == KGraphConfig.eNone)
-                    cfg = KGraphConfig.ePureDown;
+                {
+                    if (uponAvgLineCount > belowAvgLineCount)
+                        cfg = KGraphConfig.ePureDownToBML;
+                    else
+                        cfg = KGraphConfig.ePureDown;
+                }
             }
             else
+            {
                 cfg = KGraphConfig.eShake;
+            }
             return cfg;
         }
 
@@ -1378,7 +1414,17 @@ namespace LotteryAnalyze
         {
             float[] pathValues = new float[3] { 1, 1, 1 };
             float[] kValues = new float[3] { 1, 1, 1 };
-            int[] underAvgLineCounts = new int[3] { 0, 0, 0 };
+            int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
+            int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
+            float[] proShort = new float[3] { 1, 1, 1, };
+
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            int[] missCounts = new int[3] 
+            {
+                sum.statisticUnitMap[CollectDataType.ePath0].missCount,
+                sum.statisticUnitMap[CollectDataType.ePath1].missCount,
+                sum.statisticUnitMap[CollectDataType.ePath2].missCount,
+            };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
@@ -1400,39 +1446,39 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
-                KGraphConfig kgc0 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath0, ref underAvgLineCounts[0]);
-                KGraphConfig kgc1 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath1, ref underAvgLineCounts[1]);
-                KGraphConfig kgc2 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath2, ref underAvgLineCounts[2]);
+                KGraphConfig kgc0 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath0, missCounts[0], ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
+                KGraphConfig kgc1 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath1, missCounts[1], ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
+                KGraphConfig kgc2 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath2, missCounts[2], ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
 
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
                 CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2]);
+                pathValues[0] = pathValues[1] = pathValues[2] = 1;
 
-                kValues[0] = GetKGraphConfigValue(kgc0, underAvgLineCounts[0]);
-                kValues[1] = GetKGraphConfigValue(kgc1, underAvgLineCounts[1]);
-                kValues[2] = GetKGraphConfigValue(kgc2, underAvgLineCounts[2]);
+                kValues[0] = GetKGraphConfigValue(kgc0, belowAvgLineCounts[0], uponAvgLineCounts[0]);
+                kValues[1] = GetKGraphConfigValue(kgc1, belowAvgLineCounts[1], uponAvgLineCounts[1]);
+                kValues[2] = GetKGraphConfigValue(kgc2, belowAvgLineCounts[2], uponAvgLineCounts[2]);
                 mpm.GetData(CollectDataType.ePath0, false).KGRAPH_CFG = (byte)kgc0;
                 mpm.GetData(CollectDataType.ePath1, false).KGRAPH_CFG = (byte)kgc1;
                 mpm.GetData(CollectDataType.ePath2, false).KGRAPH_CFG = (byte)kgc2;
 
-                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-                float proShort0 = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort;
-                float proShort1 = sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort;
-                float proShort2 = sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort;
+                //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort;
+                //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort;
+                //proShort[2] = sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort;
                 
-                pathValues[0] = pathValues[0] * kValues[0] * proShort0;
-                pathValues[1] = pathValues[1] * kValues[1] * proShort1;
-                pathValues[2] = pathValues[2] * kValues[2] * proShort2;
+                pathValues[0] = pathValues[0] * kValues[0] * proShort[0];
+                pathValues[1] = pathValues[1] * kValues[1] * proShort[1];
+                pathValues[2] = pathValues[2] * kValues[2] * proShort[2];
             }
-            if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
-            if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
-            if (path0Avg5 > path0Avg10) pathValues[0] *= 2;
-            if (path1Avg5 > path1Bpm) pathValues[1] *= 2;
-            if (path1Avg10 > path1Bpm) pathValues[1] *= 2;
-            if (path1Avg5 > path1Avg10) pathValues[1] *= 2;
-            if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
-            if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
-            if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
+            //if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
+            //if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
+            //if (path0Avg5 > path0Avg10) pathValues[0] *= 2;
+            //if (path1Avg5 > path1Bpm) pathValues[1] *= 2;
+            //if (path1Avg10 > path1Bpm) pathValues[1] *= 2;
+            //if (path1Avg5 > path1Avg10) pathValues[1] *= 2;
+            //if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
+            //if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
+            //if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
             return pathValues;
         }
 
