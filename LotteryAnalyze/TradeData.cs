@@ -1677,6 +1677,10 @@ namespace LotteryAnalyze
         public delegate void CallBackOnPrepareDataItems(DataItem startTradeItem);
         public static CallBackOnPrepareDataItems onPrepareDataItems;
 
+        public BatchTradeSimulator()
+        {
+
+        }
 
         public int GetMainProgress()
         {

@@ -27,9 +27,42 @@ namespace LotteryAnalyze.UI
         int endDate = -1;
         bool stopTradeOnNoMoney = true;
 
+        public void SaveCfg()
+        {
+            if (checkBoxSpecNumIndex.Checked == false)
+                TradeDataManager.Instance.simSelNumIndex = -1;
+            comboBoxSpecNumIndex.SelectedIndex = TradeDataManager.Instance.simSelNumIndex;
+
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "batch", BatchTradeSimulator.Instance.batch);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "startMoney", (int)BatchTradeSimulator.Instance.startMoney);
+            string tradeCountLstStr = TradeDataManager.Instance.GetTradeCountInfoStr();
+            SystemCfg.Instance.CFG.WriteString("SimTrade", "tradeCountLst", tradeCountLstStr);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "simSelNumIndex", TradeDataManager.Instance.simSelNumIndex);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "curTradeStrategy", (int)TradeDataManager.Instance.curTradeStrategy);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "forceTradeByMaxNumCount", TradeDataManager.Instance.forceTradeByMaxNumCount ? 1 : 0);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "maxNumCount", TradeDataManager.Instance.maxNumCount);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "specNumIndex", checkBoxSpecNumIndex.Checked ? 1 : 0);
+        }
+
+        public void ReadCfg()
+        {
+            BatchTradeSimulator.Instance.batch = SystemCfg.Instance.CFG.ReadInt("SimTrade", "batch", 5);
+            BatchTradeSimulator.Instance.startMoney = SystemCfg.Instance.CFG.ReadInt("SimTrade", "startMoney", 2000);
+            string tradeCountLstStr = SystemCfg.Instance.CFG.ReadString("SimTrade", "tradeCountLst", "1,2,4,8,16,32,64,128,256,512");
+            TradeDataManager.Instance.SetTradeCountInfo(tradeCountLstStr);
+            TradeDataManager.Instance.simSelNumIndex = SystemCfg.Instance.CFG.ReadInt("SimTrade", "simSelNumIndex", -1);
+            TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)SystemCfg.Instance.CFG.ReadInt("SimTrade", "curTradeStrategy", 0);
+            TradeDataManager.Instance.forceTradeByMaxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "forceTradeByMaxNumCount", 0) == 1;
+            TradeDataManager.Instance.maxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "maxNumCount", 5);
+
+            checkBoxSpecNumIndex.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "specNumIndex", 0) == 1;
+        }
+
         public GlobalSimTradeWindow()
         {
             InitializeComponent();
+
+            ReadCfg();
 
             textBoxDayCountPerBatch.Text = BatchTradeSimulator.Instance.batch.ToString();
             textBoxStartMoney.Text = BatchTradeSimulator.Instance.startMoney.ToString();
@@ -37,7 +70,7 @@ namespace LotteryAnalyze.UI
 
             comboBoxSpecNumIndex.DataSource = KDataDictContainer.C_TAGS;
             comboBoxSpecNumIndex.SelectedIndex = TradeDataManager.Instance.simSelNumIndex;
-            checkBoxSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
+            //checkBoxSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
 
             comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
             comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
@@ -181,6 +214,8 @@ namespace LotteryAnalyze.UI
 
             textBoxStartDate.Text = startDate.ToString();
             textBoxEndDate.Text = endDate.ToString();
+
+            SaveCfg();
         }
 
         private void buttonPauseResume_Click(object sender, EventArgs e)
