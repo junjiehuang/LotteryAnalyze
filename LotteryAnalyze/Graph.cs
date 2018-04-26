@@ -534,6 +534,12 @@ namespace LotteryAnalyze
                         for (int i = 0; i < endIndex; ++i)
                         {
                             DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
+                            if(i == preViewDataIndex)
+                            {
+                                BollinPoint bp = kddc.bollinDataLst.bollinMapLst[i].GetData(cdt, false);
+                                string info = "Boll值 = (" + bp.upValue + ", " + bp.midValue + ", " + bp.downValue + ")";
+                                g.DrawString(info, selDataFont, whiteBrush, 5, 45);
+                            }
                         }
                     }
                 }
@@ -590,10 +596,13 @@ namespace LotteryAnalyze
                         float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
                         float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
 
-                        string info = "MACDLineCfg = " + ((TradeDataManager.MACDLineWaveConfig)(mp.WAVE_CFG)).ToString() + ", MACDBarCfg = " + 
-                            ((TradeDataManager.MACDBarConfig)(mp.BAR_CFG)).ToString() + ", KGraphCfg = " + 
-                            ((TradeDataManager.KGraphConfig)(mp.KGRAPH_CFG)).ToString();
+                        string info = "MACD线形态 = " + ((TradeDataManager.MACDLineWaveConfig)(mp.WAVE_CFG)).ToString() + 
+                            ", MACD柱形态 = " + ((TradeDataManager.MACDBarConfig)(mp.BAR_CFG)).ToString() + 
+                            ", K线形态 = " + ((TradeDataManager.KGraphConfig)(mp.KGRAPH_CFG)).ToString();
                         g.DrawString(info, auxFont, whiteBrush, 5, 5);
+                        info = "MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
+                        g.DrawString(info, auxFont, whiteBrush, 5, 25);
+
                         int leftID = mp.LEFT_DIF_INDEX;
 
                         List<int> ids = new List<int>();
@@ -876,6 +885,7 @@ namespace LotteryAnalyze
                 //PushLinePts(grayDotLinePen, standX, 0, standX, winH);
                 //PushLinePts(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
+                g.DrawString("K值 = " + data.KValue.ToString(), selDataFont, whiteBrush, 5, 25);
             }
 
             if(data.index == selectKDataIndex)

@@ -1284,6 +1284,9 @@ namespace LotteryAnalyze
 
         public static KGraphConfig CheckKGraphConfig(KDataDict item, BollinPointMap bpm, CollectDataType cdt, int missCount, ref int belowAvgLineCount, ref int uponAvgLineCount)
         {
+            int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+            float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+
             bool shouldCheckUnderAvgLineCount = true;
             belowAvgLineCount = 0;
             uponAvgLineCount = 0;
@@ -1331,7 +1334,7 @@ namespace LotteryAnalyze
             float rightDelta = rightKV - bpMidRight;
             if (missCount >= 2)
             {
-                if (rightDelta >= -0.5f && rightDelta <= 0.5f)
+                if (rightDelta >= -missRelHeight && rightDelta <= missRelHeight)
                     cfg = KGraphConfig.ePureDownToBML;
                 else
                     cfg = KGraphConfig.ePureDown;
@@ -1342,7 +1345,7 @@ namespace LotteryAnalyze
                 {
                     if (maxKV > rightKV)
                     {
-                        if (rightKV - bpMidRight >= -1)
+                        if (rightKV - bpMidRight >= -missRelHeight)
                             cfg = KGraphConfig.eShakeUp;
                         else
                             cfg = KGraphConfig.eSlowUpPrepareDown;
@@ -1350,7 +1353,7 @@ namespace LotteryAnalyze
                 }
                 if (cfg == KGraphConfig.eNone)
                 {
-                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -1 && missCount < 2)
+                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && missCount < 2)
                         cfg = KGraphConfig.ePureUpUponBML;
                     else
                         cfg = KGraphConfig.ePureUp;
