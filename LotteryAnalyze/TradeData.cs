@@ -1016,8 +1016,11 @@ namespace LotteryAnalyze
             ePureDown,
             eShake,
 
+            // 连续下降到达布林线中轨
             ePureDownToBML,
+            // 连续在布林线中轨之上上升
             ePureUpUponBML,
+            // 震荡上升
             eShakeUp,
         }
 
@@ -1288,11 +1291,11 @@ namespace LotteryAnalyze
             int loop = LOOP_COUNT;
             KDataDict curItem = item;
             BollinPointMap curBPM = bpm;
-            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, bpMid = 0;
+            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, bpMidRight = 0, bpMidLeft = 0;
             float rightID = -1, leftID = -1, maxID = -1, minID = -1;
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
-            bpMid = bpm.GetData(cdt, false).midValue;
+            bpMidRight = bpm.GetData(cdt, false).midValue;
 
             while ( curItem != null && loop >= 0 )
             {
@@ -1300,7 +1303,9 @@ namespace LotteryAnalyze
                 BollinPoint bp = curBPM.GetData(cdt, false);
                 leftKV = data.KValue;
                 leftID = curItem.index;
-                if(maxKV < leftKV)
+                bpMidLeft = bp.midValue;
+
+                if (maxKV < leftKV)
                 {
                     maxKV = leftKV;
                     maxID = leftID;
@@ -1323,7 +1328,7 @@ namespace LotteryAnalyze
                 --loop;
             }
 
-            float rightDelta = rightKV - bpMid;
+            float rightDelta = rightKV - bpMidRight;
             if (missCount >= 2)
             {
                 if (rightDelta >= -0.5f && rightDelta <= 0.5f)
@@ -1337,7 +1342,7 @@ namespace LotteryAnalyze
                 {
                     if (maxKV > rightKV)
                     {
-                        if (rightKV - bpMid >= -1)
+                        if (rightKV - bpMidRight >= -1)
                             cfg = KGraphConfig.eShakeUp;
                         else
                             cfg = KGraphConfig.eSlowUpPrepareDown;
@@ -1345,7 +1350,7 @@ namespace LotteryAnalyze
                 }
                 if (cfg == KGraphConfig.eNone)
                 {
-                    if (uponAvgLineCount > belowAvgLineCount)
+                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -1 && missCount < 2)
                         cfg = KGraphConfig.ePureUpUponBML;
                     else
                         cfg = KGraphConfig.ePureUp;
