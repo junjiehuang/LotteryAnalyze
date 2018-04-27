@@ -1089,10 +1089,11 @@ namespace LotteryAnalyze
                 case KGraphConfig.ePureUp:
                     return 2;
                 case KGraphConfig.ePureUpUponBML:
-                case KGraphConfig.eShakeUp:
                     return 4;
-                case KGraphConfig.ePureDownToBML:
+                case KGraphConfig.eShakeUp:
                     return 8;
+                case KGraphConfig.ePureDownToBML:
+                    return 6;
             }
             return 1;
         }
@@ -1282,8 +1283,10 @@ namespace LotteryAnalyze
 #endif
         } 
 
-        public static KGraphConfig CheckKGraphConfig(KDataDict item, BollinPointMap bpm, CollectDataType cdt, int missCount, ref int belowAvgLineCount, ref int uponAvgLineCount)
+        public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, ref int belowAvgLineCount, ref int uponAvgLineCount)
         {
+            int maxMissCount = 0;
+            int curMissCount = 0;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
             float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
 
@@ -1299,11 +1302,19 @@ namespace LotteryAnalyze
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
             bpMidRight = bpm.GetData(cdt, false).midValue;
+            DataItem curDI = di;
+            curMissCount = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+            maxMissCount = curMissCount;
+            int reachBollinUpCount = 0;
 
             while ( curItem != null && loop >= 0 )
             {
                 KData data = curItem.GetData(cdt, false);
                 BollinPoint bp = curBPM.GetData(cdt, false);
+                int mc = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                if (maxMissCount < mc)
+                    maxMissCount = mc;
+
                 leftKV = data.KValue;
                 leftID = curItem.index;
                 bpMidLeft = bp.midValue;
@@ -1323,21 +1334,35 @@ namespace LotteryAnalyze
                     ++belowAvgLineCount;
                 if (leftKV > bp.midValue)
                     ++uponAvgLineCount;
+                if (leftKV >= bp.upValue)
+                    ++reachBollinUpCount;
 
                 if (curItem.index == 0)
                     break;
                 curItem = curItem.parent.dataLst[curItem.index - 1];
                 curBPM = curBPM.parent.bollinMapLst[curBPM.index -1];
+                curDI = curDI.parent.GetPrevItem(curDI);
                 --loop;
             }
 
             float rightDelta = rightKV - bpMidRight;
-            if (missCount >= 2)
+            // 当前的遗漏值超过2
+            if (curMissCount >= 2)
             {
-                if (rightDelta >= -missRelHeight && rightDelta <= missRelHeight)
+                // 如果当前k值在布林带中轨附近，认为这是从布林带上轨下降到中轨，有较大概率收到支撑反弹
+                if (rightDelta >= -missRelHeight*1.5f && rightDelta <= missRelHeight*0.5)
                     cfg = KGraphConfig.ePureDownToBML;
+                // 最大的遗漏值不超过2
+                else if (maxMissCount <= 2)
+                    cfg = KGraphConfig.eShakeUp;
+                // 否则，如果是在中轨之上或者中轨之下，那么还是有较大的概率会延续下降趋势
                 else
                     cfg = KGraphConfig.ePureDown;
+            }
+            // 最大的遗漏值不超过2
+            else if(maxMissCount <= 2)
+            {
+                cfg = KGraphConfig.eShakeUp;
             }
             else if (leftKV < rightKV)
             {
@@ -1353,7 +1378,7 @@ namespace LotteryAnalyze
                 }
                 if (cfg == KGraphConfig.eNone)
                 {
-                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && missCount < 2)
+                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && curMissCount < 2)
                         cfg = KGraphConfig.ePureUpUponBML;
                     else
                         cfg = KGraphConfig.ePureUp;
@@ -1427,12 +1452,12 @@ namespace LotteryAnalyze
             float[] proShort = new float[3] { 1, 1, 1, };
 
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-            int[] missCounts = new int[3] 
-            {
-                sum.statisticUnitMap[CollectDataType.ePath0].missCount,
-                sum.statisticUnitMap[CollectDataType.ePath1].missCount,
-                sum.statisticUnitMap[CollectDataType.ePath2].missCount,
-            };
+            //int[] missCounts = new int[3] 
+            //{
+            //    sum.statisticUnitMap[CollectDataType.ePath0].missCount,
+            //    sum.statisticUnitMap[CollectDataType.ePath1].missCount,
+            //    sum.statisticUnitMap[CollectDataType.ePath2].missCount,
+            //};
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
@@ -1454,9 +1479,9 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
-                KGraphConfig kgc0 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath0, missCounts[0], ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
-                KGraphConfig kgc1 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath1, missCounts[1], ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
-                KGraphConfig kgc2 = CheckKGraphConfig(kdd, bpm, CollectDataType.ePath2, missCounts[2], ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
+                KGraphConfig kgc0 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
+                KGraphConfig kgc1 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
+                KGraphConfig kgc2 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
 
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
