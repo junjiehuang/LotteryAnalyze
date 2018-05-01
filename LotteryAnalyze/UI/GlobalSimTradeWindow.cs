@@ -37,11 +37,13 @@ namespace LotteryAnalyze.UI
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "startMoney", (int)BatchTradeSimulator.Instance.startMoney);
             string tradeCountLstStr = TradeDataManager.Instance.GetTradeCountInfoStr();
             SystemCfg.Instance.CFG.WriteString("SimTrade", "tradeCountLst", tradeCountLstStr);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "strongUpStartIndex", TradeDataManager.Instance.strongUpStartTradeIndex);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "simSelNumIndex", TradeDataManager.Instance.simSelNumIndex);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "curTradeStrategy", (int)TradeDataManager.Instance.curTradeStrategy);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "forceTradeByMaxNumCount", TradeDataManager.Instance.forceTradeByMaxNumCount ? 1 : 0);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "maxNumCount", TradeDataManager.Instance.maxNumCount);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "specNumIndex", checkBoxSpecNumIndex.Checked ? 1 : 0);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "onlyTradeOnStrongUpPath", checkBoxOnTradeOnStrongUpPath.Checked ? 1 : 0);
         }
 
         public void ReadCfg()
@@ -50,12 +52,14 @@ namespace LotteryAnalyze.UI
             BatchTradeSimulator.Instance.startMoney = SystemCfg.Instance.CFG.ReadInt("SimTrade", "startMoney", 2000);
             string tradeCountLstStr = SystemCfg.Instance.CFG.ReadString("SimTrade", "tradeCountLst", "1,2,4,8,16,32,64,128,256,512");
             TradeDataManager.Instance.SetTradeCountInfo(tradeCountLstStr);
+            TradeDataManager.Instance.strongUpStartTradeIndex = SystemCfg.Instance.CFG.ReadInt("SimTrade", "strongUpStartIndex", 5);
             TradeDataManager.Instance.simSelNumIndex = SystemCfg.Instance.CFG.ReadInt("SimTrade", "simSelNumIndex", -1);
             TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)SystemCfg.Instance.CFG.ReadInt("SimTrade", "curTradeStrategy", 0);
             TradeDataManager.Instance.forceTradeByMaxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "forceTradeByMaxNumCount", 0) == 1;
             TradeDataManager.Instance.maxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "maxNumCount", 5);
 
             checkBoxSpecNumIndex.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "specNumIndex", 0) == 1;
+            checkBoxOnTradeOnStrongUpPath.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "onlyTradeOnStrongUpPath", 0) == 1;
         }
 
         public GlobalSimTradeWindow()
@@ -63,6 +67,8 @@ namespace LotteryAnalyze.UI
             InitializeComponent();
 
             ReadCfg();
+
+            textBoxStrongUpStartIndex.Text = TradeDataManager.Instance.strongUpStartTradeIndex.ToString();
 
             textBoxDayCountPerBatch.Text = BatchTradeSimulator.Instance.batch.ToString();
             textBoxStartMoney.Text = BatchTradeSimulator.Instance.startMoney.ToString();
@@ -87,7 +93,23 @@ namespace LotteryAnalyze.UI
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Start();
 
+            TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
+
             FormMain.AddWindow(this);
+        }
+
+        private void OnTradeCompleted()
+        {
+            if (TradeDataManager.Instance.currentMoney <= 0)
+            {
+                // 播放警告声
+                BeepUp.Beep(600, 1000);
+
+                if (comboBoxOnNoMoney.SelectedIndex == 1)
+                    Pause();
+                else if (comboBoxOnNoMoney.SelectedIndex == 2)
+                    Stop();
+            }
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -165,13 +187,13 @@ namespace LotteryAnalyze.UI
             else
                 textBoxCmd.Text = "";
 
-            if(TradeDataManager.Instance.currentMoney <= 0)
-            {
-                if (comboBoxOnNoMoney.SelectedIndex == 1)
-                    Pause();
-                else if(comboBoxOnNoMoney.SelectedIndex == 2)
-                    Stop();
-            }
+            //if(TradeDataManager.Instance.currentMoney <= 0)
+            //{
+            //    if (comboBoxOnNoMoney.SelectedIndex == 1)
+            //        Pause();
+            //    else if(comboBoxOnNoMoney.SelectedIndex == 2)
+            //        Stop();
+            //}
         }
 
         public static void Open()
@@ -257,6 +279,8 @@ namespace LotteryAnalyze.UI
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
+
             FormMain.RemoveWindow(this);
 
             BatchTradeSimulator.Instance.Stop();
@@ -304,6 +328,18 @@ namespace LotteryAnalyze.UI
         private void comboBoxOnNoMoney_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void textBoxStrongUpStartIndex_TextChanged(object sender, EventArgs e)
+        {
+            int v = TradeDataManager.Instance.strongUpStartTradeIndex;
+            if(int.TryParse(textBoxStrongUpStartIndex.Text, out v))
+                TradeDataManager.Instance.strongUpStartTradeIndex = v;
+        }
+
+        private void checkBoxOnTradeOnStrongUpPath_CheckedChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.onlyTradeOnStrongUpPath = checkBoxOnTradeOnStrongUpPath.Checked;
         }
     }
 }

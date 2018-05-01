@@ -514,6 +514,8 @@ namespace LotteryAnalyze.UI
         #region control callbacks
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
         {
+            TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
+
             FormMain.RemoveWindow(this);
             instLst.Remove(this);
         }
@@ -803,7 +805,13 @@ namespace LotteryAnalyze.UI
         private void checkBoxTradeSpecNumIndex_Click(object sender, EventArgs e)
         {
             if (checkBoxTradeSpecNumIndex.Checked)
+            {
+                if (comboBoxTradeNumIndex.SelectedIndex == -1)
+                {
+                    comboBoxTradeNumIndex.SelectedIndex = 0;
+                }
                 TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
+            }
             else
                 TradeDataManager.Instance.simSelNumIndex = -1;
         }
@@ -815,10 +823,12 @@ namespace LotteryAnalyze.UI
 
         private void comboBoxTradeNumIndex_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (checkBoxTradeSpecNumIndex.Checked)
-                TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
-            else
-                TradeDataManager.Instance.simSelNumIndex = -1;
+            //if (checkBoxTradeSpecNumIndex.Checked)
+            //    TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
+            //else
+            //    TradeDataManager.Instance.simSelNumIndex = -1;
+            TradeDataManager.Instance.simSelNumIndex = comboBoxTradeNumIndex.SelectedIndex;
+            checkBoxTradeSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
         }
 
         private void clearAllTradeDatasToolStripMenuItem_Click(object sender, EventArgs e)

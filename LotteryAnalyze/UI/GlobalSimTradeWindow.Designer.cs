@@ -51,12 +51,15 @@
             this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.checkBoxForceTradeByMaxNumCount = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.textBoxStrongUpStartIndex = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.comboBoxOnNoMoney = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxMaxNumCount = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.comboBoxOnNoMoney = new System.Windows.Forms.ComboBox();
-            this.label11 = new System.Windows.Forms.Label();
+            this.checkBoxOnTradeOnStrongUpPath = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -84,7 +87,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 56);
+            this.label3.Location = new System.Drawing.Point(3, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
@@ -112,7 +115,7 @@
             // 
             this.textBoxDayCountPerBatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDayCountPerBatch.Location = new System.Drawing.Point(74, 53);
+            this.textBoxDayCountPerBatch.Location = new System.Drawing.Point(74, 82);
             this.textBoxDayCountPerBatch.Name = "textBoxDayCountPerBatch";
             this.textBoxDayCountPerBatch.Size = new System.Drawing.Size(129, 21);
             this.textBoxDayCountPerBatch.TabIndex = 5;
@@ -156,14 +159,14 @@
             this.textBoxCmd.Location = new System.Drawing.Point(3, 32);
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(335, 245);
+            this.textBoxCmd.Size = new System.Drawing.Size(335, 296);
             this.textBoxCmd.TabIndex = 10;
             // 
             // progressBarCurrent
             // 
             this.progressBarCurrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarCurrent.Location = new System.Drawing.Point(75, 290);
+            this.progressBarCurrent.Location = new System.Drawing.Point(75, 341);
             this.progressBarCurrent.Name = "progressBarCurrent";
             this.progressBarCurrent.Size = new System.Drawing.Size(481, 23);
             this.progressBarCurrent.TabIndex = 11;
@@ -172,7 +175,7 @@
             // 
             this.progressBarTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarTotal.Location = new System.Drawing.Point(75, 320);
+            this.progressBarTotal.Location = new System.Drawing.Point(75, 371);
             this.progressBarTotal.Name = "progressBarTotal";
             this.progressBarTotal.Size = new System.Drawing.Size(481, 23);
             this.progressBarTotal.TabIndex = 12;
@@ -180,7 +183,7 @@
             // checkBoxSpecNumIndex
             // 
             this.checkBoxSpecNumIndex.AutoSize = true;
-            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 235);
+            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 264);
             this.checkBoxSpecNumIndex.Name = "checkBoxSpecNumIndex";
             this.checkBoxSpecNumIndex.Size = new System.Drawing.Size(108, 16);
             this.checkBoxSpecNumIndex.TabIndex = 13;
@@ -193,7 +196,7 @@
             this.comboBoxSpecNumIndex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxSpecNumIndex.FormattingEnabled = true;
-            this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(74, 79);
+            this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(74, 108);
             this.comboBoxSpecNumIndex.Name = "comboBoxSpecNumIndex";
             this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(129, 20);
             this.comboBoxSpecNumIndex.TabIndex = 14;
@@ -202,7 +205,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 82);
+            this.label4.Location = new System.Drawing.Point(3, 111);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 12);
             this.label4.TabIndex = 15;
@@ -211,7 +214,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 157);
+            this.label5.Location = new System.Drawing.Point(3, 186);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 12);
             this.label5.TabIndex = 16;
@@ -220,7 +223,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 182);
+            this.label6.Location = new System.Drawing.Point(3, 211);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 17;
@@ -230,7 +233,7 @@
             // 
             this.textBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStartDate.Location = new System.Drawing.Point(74, 155);
+            this.textBoxStartDate.Location = new System.Drawing.Point(74, 184);
             this.textBoxStartDate.Name = "textBoxStartDate";
             this.textBoxStartDate.ReadOnly = true;
             this.textBoxStartDate.Size = new System.Drawing.Size(129, 21);
@@ -240,7 +243,7 @@
             // 
             this.textBoxEndDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxEndDate.Location = new System.Drawing.Point(74, 179);
+            this.textBoxEndDate.Location = new System.Drawing.Point(74, 208);
             this.textBoxEndDate.Name = "textBoxEndDate";
             this.textBoxEndDate.ReadOnly = true;
             this.textBoxEndDate.Size = new System.Drawing.Size(129, 21);
@@ -249,7 +252,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 134);
+            this.label7.Location = new System.Drawing.Point(3, 163);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(65, 12);
             this.label7.TabIndex = 21;
@@ -260,7 +263,7 @@
             this.comboBoxTradeStrategy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTradeStrategy.FormattingEnabled = true;
-            this.comboBoxTradeStrategy.Location = new System.Drawing.Point(74, 129);
+            this.comboBoxTradeStrategy.Location = new System.Drawing.Point(74, 158);
             this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
             this.comboBoxTradeStrategy.Size = new System.Drawing.Size(129, 20);
             this.comboBoxTradeStrategy.TabIndex = 20;
@@ -269,7 +272,7 @@
             // checkBoxForceTradeByMaxNumCount
             // 
             this.checkBoxForceTradeByMaxNumCount.AutoSize = true;
-            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 257);
+            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 286);
             this.checkBoxForceTradeByMaxNumCount.Name = "checkBoxForceTradeByMaxNumCount";
             this.checkBoxForceTradeByMaxNumCount.Size = new System.Drawing.Size(144, 16);
             this.checkBoxForceTradeByMaxNumCount.TabIndex = 23;
@@ -287,6 +290,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.checkBoxOnTradeOnStrongUpPath);
+            this.splitContainer1.Panel1.Controls.Add(this.textBoxStrongUpStartIndex);
+            this.splitContainer1.Panel1.Controls.Add(this.label12);
             this.splitContainer1.Panel1.Controls.Add(this.comboBoxOnNoMoney);
             this.splitContainer1.Panel1.Controls.Add(this.label11);
             this.splitContainer1.Panel1.Controls.Add(this.label8);
@@ -314,14 +320,53 @@
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
-            this.splitContainer1.Size = new System.Drawing.Size(551, 280);
+            this.splitContainer1.Size = new System.Drawing.Size(551, 331);
             this.splitContainer1.SplitterDistance = 206;
             this.splitContainer1.TabIndex = 24;
+            // 
+            // textBoxStrongUpStartIndex
+            // 
+            this.textBoxStrongUpStartIndex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStrongUpStartIndex.Location = new System.Drawing.Point(74, 55);
+            this.textBoxStrongUpStartIndex.Name = "textBoxStrongUpStartIndex";
+            this.textBoxStrongUpStartIndex.Size = new System.Drawing.Size(129, 21);
+            this.textBoxStrongUpStartIndex.TabIndex = 29;
+            this.textBoxStrongUpStartIndex.TextChanged += new System.EventHandler(this.textBoxStrongUpStartIndex_TextChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 58);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(65, 12);
+            this.label12.TabIndex = 28;
+            this.label12.Text = "强交易线：";
+            // 
+            // comboBoxOnNoMoney
+            // 
+            this.comboBoxOnNoMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxOnNoMoney.FormattingEnabled = true;
+            this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 235);
+            this.comboBoxOnNoMoney.Name = "comboBoxOnNoMoney";
+            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(129, 20);
+            this.comboBoxOnNoMoney.TabIndex = 26;
+            this.comboBoxOnNoMoney.SelectedIndexChanged += new System.EventHandler(this.comboBoxOnNoMoney_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 240);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(65, 12);
+            this.label11.TabIndex = 27;
+            this.label11.Text = "崩盘处理：";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 106);
+            this.label8.Location = new System.Drawing.Point(3, 135);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(65, 12);
             this.label8.TabIndex = 24;
@@ -331,7 +376,7 @@
             // 
             this.textBoxMaxNumCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxMaxNumCount.Location = new System.Drawing.Point(74, 104);
+            this.textBoxMaxNumCount.Location = new System.Drawing.Point(74, 133);
             this.textBoxMaxNumCount.Name = "textBoxMaxNumCount";
             this.textBoxMaxNumCount.Size = new System.Drawing.Size(129, 21);
             this.textBoxMaxNumCount.TabIndex = 25;
@@ -341,7 +386,7 @@
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 295);
+            this.label9.Location = new System.Drawing.Point(8, 346);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 12);
             this.label9.TabIndex = 26;
@@ -351,37 +396,28 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 325);
+            this.label10.Location = new System.Drawing.Point(8, 376);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(53, 12);
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // comboBoxOnNoMoney
+            // checkBoxOnTradeOnStrongUpPath
             // 
-            this.comboBoxOnNoMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxOnNoMoney.FormattingEnabled = true;
-            this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 206);
-            this.comboBoxOnNoMoney.Name = "comboBoxOnNoMoney";
-            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(129, 20);
-            this.comboBoxOnNoMoney.TabIndex = 26;
-            this.comboBoxOnNoMoney.SelectedIndexChanged += new System.EventHandler(this.comboBoxOnNoMoney_SelectedIndexChanged);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(3, 211);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(65, 12);
-            this.label11.TabIndex = 27;
-            this.label11.Text = "崩盘处理：";
+            this.checkBoxOnTradeOnStrongUpPath.AutoSize = true;
+            this.checkBoxOnTradeOnStrongUpPath.Location = new System.Drawing.Point(3, 308);
+            this.checkBoxOnTradeOnStrongUpPath.Name = "checkBoxOnTradeOnStrongUpPath";
+            this.checkBoxOnTradeOnStrongUpPath.Size = new System.Drawing.Size(144, 16);
+            this.checkBoxOnTradeOnStrongUpPath.TabIndex = 30;
+            this.checkBoxOnTradeOnStrongUpPath.Text = "是否只在强上升时交易";
+            this.checkBoxOnTradeOnStrongUpPath.UseVisualStyleBackColor = true;
+            this.checkBoxOnTradeOnStrongUpPath.CheckedChanged += new System.EventHandler(this.checkBoxOnTradeOnStrongUpPath_CheckedChanged);
             // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 348);
+            this.ClientSize = new System.Drawing.Size(561, 399);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.splitContainer1);
@@ -432,5 +468,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboBoxOnNoMoney;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox textBoxStrongUpStartIndex;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.CheckBox checkBoxOnTradeOnStrongUpPath;
     }
 }

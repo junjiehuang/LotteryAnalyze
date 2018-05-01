@@ -193,6 +193,7 @@ namespace LotteryAnalyze
         public virtual string GetDbgInfo() { return ""; }
         public virtual void Update() { }
         public virtual void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex) { }
+        public virtual float CalcCost() { return 0; }
     }
 
     // 一星交易数据
@@ -253,6 +254,16 @@ namespace LotteryAnalyze
                     }
                 }
             }
+        }
+        public override float CalcCost()
+        {
+            float _cost = 0;
+            foreach (int numIndex in tradeInfo.Keys)
+            {
+                TradeNumbers tns = tradeInfo[numIndex];
+                _cost += SingleTradeCost * tns.tradeCount * tns.tradeNumbers.Count;
+            }
+            return _cost;
         }
 
         public override void Update()
@@ -343,7 +354,8 @@ namespace LotteryAnalyze
     // 交易数据管理器
     class TradeDataManager
     {
-        public const int LOOP_COUNT = 5;
+        public const int MACD_LOOP_COUNT = 5;
+        public const int KGRAPH_LOOP_COUNT = 10;
 
         // 交易策略
         public enum TradeStrategy
@@ -388,13 +400,31 @@ namespace LotteryAnalyze
         public int untradeCount = 0;
 
         //public bool simTradeFromFirstEveryTime = true;
-        public int simSelNumIndex = 0;
+        int _simSelNumIndex = 0;
+        public int simSelNumIndex
+        {
+            get { return _simSelNumIndex; }
+            set { _simSelNumIndex = value; }
+        }
         DataItem curTestTradeItem = null;
         bool pauseAutoTrade = true;
         bool needGetLatestItem = false;
         public List<int> tradeCountList = new List<int>();
         public int defaultTradeCount = 1;
         int currentTradeCountIndex = -1;
+        int _strongUpStartTradeIndex = 5;
+        public int strongUpStartTradeIndex
+        {
+            get { return _strongUpStartTradeIndex; }
+            set { _strongUpStartTradeIndex = curStrongUpTradeIndex = value; }
+        }
+        bool _onlyTradeOnStrongUpPath = false;
+        public bool onlyTradeOnStrongUpPath
+        {
+            get { return _onlyTradeOnStrongUpPath; }
+            set { _onlyTradeOnStrongUpPath = value; }
+        }
+        int curStrongUpTradeIndex = 5;
         public bool hasCompleted = false;
         bool stopAtTheLatestItem = false;
         bool tradeOneStep = false;
@@ -451,6 +481,50 @@ namespace LotteryAnalyze
             return trade;
         }
 
+
+        void RefreshTradeCountOnOneTradeCompleted(TradeDataBase trade)
+        {
+            if (curTradeStrategy == TradeStrategy.eSingleBestPath)
+            {
+                if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
+                {
+                    if (trade.reward > 0)
+                    {
+                        if(currentTradeCountIndex >= strongUpStartTradeIndex)
+                            curStrongUpTradeIndex = strongUpStartTradeIndex;
+                        currentTradeCountIndex = 0;
+                    }
+                    else if(trade.cost > 0)
+                    {
+                        if (currentTradeCountIndex < strongUpStartTradeIndex)
+                        {
+                            ++currentTradeCountIndex;
+                            if (currentTradeCountIndex == tradeCountList.Count)
+                                currentTradeCountIndex = 0;
+                        }
+                        else
+                            currentTradeCountIndex = 0;
+                    }
+                }
+            }
+            else
+            {
+                if (currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
+                {
+                    if (trade.reward > 0)
+                    {
+                        currentTradeCountIndex = 0;
+                    }
+                    else if (trade.cost > 0)
+                    {
+                        ++currentTradeCountIndex;
+                    }
+                    if (currentTradeCountIndex == tradeCountList.Count)
+                        currentTradeCountIndex = 0;
+                }
+            }
+        }
+
         public void Update()
         {
             if(waitingTradeDatas.Count > 0)
@@ -460,15 +534,20 @@ namespace LotteryAnalyze
                     waitingTradeDatas[i].Update();
                     if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
                     {
-                        if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
-                        {
-                            if (waitingTradeDatas[i].reward > 0)
-                                currentTradeCountIndex = 0;
-                            else if(waitingTradeDatas[i].cost > 0)
-                                ++currentTradeCountIndex;
-                            if (currentTradeCountIndex == tradeCountList.Count)
-                                currentTradeCountIndex = 0;
-                        }
+                        RefreshTradeCountOnOneTradeCompleted(waitingTradeDatas[i]);
+                        //if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
+                        //{
+                        //    if (waitingTradeDatas[i].reward > 0)
+                        //    {
+                        //        currentTradeCountIndex = 0;
+                        //    }
+                        //    else if (waitingTradeDatas[i].cost > 0)
+                        //    {
+                        //        ++currentTradeCountIndex;
+                        //    }
+                        //    if (currentTradeCountIndex == tradeCountList.Count)
+                        //        currentTradeCountIndex = 0;
+                        //}
 
                         if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
                             maxValue = waitingTradeDatas[i].moneyAtferTrade;
@@ -648,37 +727,52 @@ namespace LotteryAnalyze
             float maxV = -10;
             int bestNumIndex = -1;
             int bestPath = -1;
+            bool isFinalPathStrongUp = false;
             if (simSelNumIndex == -1)
             {
                 for (int i = 0; i < 5; ++i)
                 {
-                    JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath);
+                    JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
                 }
             }
             else
             {
-                JudgeNumberPath(item, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath);
+                JudgeNumberPath(item, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
             }
 
-            int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
-            {
-                if (tradeCountList.Count > 0)
-                {
-                    if (currentTradeCountIndex == -1)
-                        currentTradeCountIndex = 0;
-                    tradeCount = tradeCountList[currentTradeCountIndex];
-                }
-            }
-            else
-                tradeCount = 0;
             if (bestNumIndex >= 0 && bestPath >= 0)
             {
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (currentTradeCountIndex == -1)
+                            currentTradeCountIndex = 0;
+                        if (isFinalPathStrongUp && curStrongUpTradeIndex < tradeCountList.Count)
+                        {
+                            currentTradeCountIndex = curStrongUpTradeIndex;
+                            ++curStrongUpTradeIndex;
+                            if (curStrongUpTradeIndex == tradeCountList.Count)
+                                curStrongUpTradeIndex = strongUpStartTradeIndex;
+                        }
+                        tradeCount = tradeCountList[currentTradeCountIndex];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
                 FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
+                if(trade.CalcCost() > currentMoney)
+                {
+                    currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                    tn.tradeCount = tradeCount;
+                }
             }
         }
 
@@ -731,12 +825,13 @@ namespace LotteryAnalyze
             else
                 tradeCount = 0;
 
+            bool isFinalPathStrongUp = false;
             for (int i = 0; i < 5; ++i)
             {
                 float maxV = -10;
                 int bestNumIndex = -1;
                 int bestPath = -1;
-                JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath);
+                JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
                 if (bestNumIndex >= 0 && bestPath >= 0)
                 {
                     TradeNumbers tn = new TradeNumbers();
@@ -1118,7 +1213,7 @@ namespace LotteryAnalyze
             goldenCrossCount = 0;
             deadCrossCount = 0;
             confuseCount = 0;
-            int loop = LOOP_COUNT;
+            int loop = MACD_LOOP_COUNT;
             ValueCmpState lastVCS = ValueCmpState.eNone;
             ValueCmpState startVCS = ValueCmpState.eNone;
             float maxDIF = 0, minDIF = 0, leftDIF = 0, rightDIF = 0, leftBar = 0, rightBar = 0, maxBAR = 0, minBAR = 0;
@@ -1294,7 +1389,7 @@ namespace LotteryAnalyze
             belowAvgLineCount = 0;
             uponAvgLineCount = 0;
             KGraphConfig cfg = KGraphConfig.eNone;
-            int loop = LOOP_COUNT;
+            int loop = KGRAPH_LOOP_COUNT;
             KDataDict curItem = item;
             BollinPointMap curBPM = bpm;
             float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, bpMidRight = 0, bpMidLeft = 0;
@@ -1407,13 +1502,13 @@ namespace LotteryAnalyze
         }
 
 
-        void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value)
+        void CheckMACD(MACDPointMap curMpm, CollectDataType cdt, ref float value, ref MACDLineWaveConfig waveCfg, ref MACDBarConfig barCfg)
         {
             if (curMpm == null || curMpm.index == 0)
                 return;
             int goldenCrossCount = 0, deadCrossCount = 0, confuseCount = 0;
-            MACDLineWaveConfig waveCfg = MACDLineWaveConfig.eNone;
-            MACDBarConfig barCfg = MACDBarConfig.eNone;
+            waveCfg = MACDLineWaveConfig.eNone;
+            barCfg = MACDBarConfig.eNone;
             CheckMACDGoldenCrossAndDeadCross(
                 curMpm, cdt, 
                 ref goldenCrossCount, ref deadCrossCount, ref confuseCount, ref waveCfg, ref barCfg);
@@ -1430,7 +1525,8 @@ namespace LotteryAnalyze
         void SortNumberPath(DataItem item, int numIndex, ref List<PathCmpInfo> res)
         {
             res.Clear();
-            float[] pathValues = CalcPathValue(item, numIndex);
+            bool[] isStrongUp = new bool[3] { false, false, false };
+            float[] pathValues = CalcPathValue(item, numIndex, ref isStrongUp);
             for( int i = 0; i < pathValues.Length; ++i )
             {
                 res.Add(new PathCmpInfo(i, pathValues[i]));
@@ -1443,13 +1539,60 @@ namespace LotteryAnalyze
             });
         }
 
-        float[] CalcPathValue(DataItem item, int numIndex)
+        bool CheckIsStrongUp(MACDLineWaveConfig mlCFG, MACDBarConfig mbCFG, KGraphConfig kgCFG)
+        {
+            if (
+                mlCFG == MACDLineWaveConfig.eFirstDownThenSlowUp
+                || mlCFG == MACDLineWaveConfig.eFirstUpThenFastDown
+                || mlCFG == MACDLineWaveConfig.eFirstUpThenSlowDown
+                || mlCFG == MACDLineWaveConfig.eFlatShake
+                || mlCFG == MACDLineWaveConfig.eNone
+                || mlCFG == MACDLineWaveConfig.ePureDown
+                || mlCFG == MACDLineWaveConfig.eShakeDown
+                //|| mlCFG == MACDLineWaveConfig.eShakeUp
+                //|| mlCFG == MACDLineWaveConfig.eFirstDownThenFastUp
+                //|| mlCFG == MACDLineWaveConfig.ePureUp
+                )
+                return false;
+            if (
+                mbCFG == MACDBarConfig.eBlueDown 
+                || mbCFG == MACDBarConfig.eBlueShake
+                || mbCFG == MACDBarConfig.eNone
+                || mbCFG == MACDBarConfig.ePrepareDown
+                || mbCFG == MACDBarConfig.eRed2BlueDown
+                || mbCFG == MACDBarConfig.eRedShake
+                || mbCFG == MACDBarConfig.eRedSlowDown
+                || mbCFG == MACDBarConfig.eZeroShake
+                || mbCFG == MACDBarConfig.ePrepareUp
+                || mbCFG == MACDBarConfig.eBlueSlowUp
+                //|| mbCFG == MACDBarConfig.eBlue2RedUp
+                //|| mbCFG == MACDBarConfig.eRedUp
+                )
+                return false;
+            if (kgCFG == KGraphConfig.eNone
+                || kgCFG == KGraphConfig.ePureDown
+                || kgCFG == KGraphConfig.ePureDownToBML
+                || kgCFG == KGraphConfig.eShake
+                || kgCFG == KGraphConfig.eSlowUpPrepareDown
+                //|| kgCFG == KGraphConfig.eShakeUp
+                || kgCFG == KGraphConfig.eSlowDownPrepareUp
+                //|| kgCFG == KGraphConfig.ePureUp
+                //|| kgCFG == KGraphConfig.ePureUpUponBML
+                )
+                return false;
+            return true;
+        }
+
+        float[] CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp)
         {
             float[] pathValues = new float[3] { 1, 1, 1 };
             float[] kValues = new float[3] { 1, 1, 1 };
             int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
             int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
             float[] proShort = new float[3] { 1, 1, 1, };
+            MACDLineWaveConfig[] mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
+            MACDBarConfig[] mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
+            KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
 
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             //int[] missCounts = new int[3] 
@@ -1469,6 +1612,10 @@ namespace LotteryAnalyze
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             // MACD数据
             MACDPointMap mpm = kddc.GetMacdPointMap(kdd);
+            MACDPoint mp0 = mpm.GetData(CollectDataType.ePath0, false);
+            MACDPoint mp1 = mpm.GetData(CollectDataType.ePath1, false);
+            MACDPoint mp2 = mpm.GetData(CollectDataType.ePath2, false);
+
             float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
             float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
             float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
@@ -1479,21 +1626,21 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
-                KGraphConfig kgc0 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
-                KGraphConfig kgc1 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
-                KGraphConfig kgc2 = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
+                kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
+                kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
+                kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
 
-                CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0]);
-                CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1]);
-                CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2]);
+                CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0], ref mlCfgs[0], ref mbCfgs[0]);
+                CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1], ref mlCfgs[1], ref mbCfgs[1]);
+                CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2], ref mlCfgs[2], ref mbCfgs[2]);
                 pathValues[0] = pathValues[1] = pathValues[2] = 1;
 
-                kValues[0] = GetKGraphConfigValue(kgc0, belowAvgLineCounts[0], uponAvgLineCounts[0]);
-                kValues[1] = GetKGraphConfigValue(kgc1, belowAvgLineCounts[1], uponAvgLineCounts[1]);
-                kValues[2] = GetKGraphConfigValue(kgc2, belowAvgLineCounts[2], uponAvgLineCounts[2]);
-                mpm.GetData(CollectDataType.ePath0, false).KGRAPH_CFG = (byte)kgc0;
-                mpm.GetData(CollectDataType.ePath1, false).KGRAPH_CFG = (byte)kgc1;
-                mpm.GetData(CollectDataType.ePath2, false).KGRAPH_CFG = (byte)kgc2;
+                kValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
+                kValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
+                kValues[2] = GetKGraphConfigValue(kgCfgs[2], belowAvgLineCounts[2], uponAvgLineCounts[2]);
+                mp0.KGRAPH_CFG = (byte)kgCfgs[0];
+                mp1.KGRAPH_CFG = (byte)kgCfgs[1];
+                mp2.KGRAPH_CFG = (byte)kgCfgs[2];
 
                 //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort;
                 //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort;
@@ -1502,6 +1649,28 @@ namespace LotteryAnalyze
                 pathValues[0] = pathValues[0] * kValues[0] * proShort[0];
                 pathValues[1] = pathValues[1] * kValues[1] * proShort[1];
                 pathValues[2] = pathValues[2] * kValues[2] * proShort[2];
+
+                isPathStrongUp[0] = CheckIsStrongUp(mlCfgs[0], mbCfgs[0], kgCfgs[0]);
+                isPathStrongUp[1] = CheckIsStrongUp(mlCfgs[1], mbCfgs[1], kgCfgs[1]);
+                isPathStrongUp[2] = CheckIsStrongUp(mlCfgs[2], mbCfgs[2], kgCfgs[2]);
+
+                if (onlyTradeOnStrongUpPath)
+                {
+                    if (isPathStrongUp[0] == false)
+                        pathValues[0] = 0;
+                    if (isPathStrongUp[1] == false)
+                        pathValues[1] = 0;
+                    if (isPathStrongUp[2] == false)
+                        pathValues[2] = 0;
+                }
+
+                mp0.IS_STRONG_UP = isPathStrongUp[0];
+                mp1.IS_STRONG_UP = isPathStrongUp[1];
+                mp2.IS_STRONG_UP = isPathStrongUp[2];
+
+                mp0.LAST_DATA_TAG = item.idTag;
+                mp1.LAST_DATA_TAG = item.idTag;
+                mp2.LAST_DATA_TAG = item.idTag;
             }
             //if (path0Avg5 > path0Bpm) pathValues[0] *= 2;
             //if (path0Avg10 > path0Bpm) pathValues[0] *= 2;
@@ -1512,12 +1681,14 @@ namespace LotteryAnalyze
             //if (path2Avg5 > path2Bpm) pathValues[2] *= 2;
             //if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
             //if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
+
             return pathValues;
         }
 
-        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath)
+        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath, ref bool isFinalPathStrongUp)
         {
-            float[] pathValues = CalcPathValue(item, numIndex);
+            bool[] isStrongUp = new bool[3] { false, false, false, };
+            float[] pathValues = CalcPathValue(item, numIndex, ref isStrongUp);
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
@@ -1525,31 +1696,106 @@ namespace LotteryAnalyze
             StatisticUnit curBestSU = null;
             float curBestV = 0;
             int curBestPath = -1;
-            if(pathValues[0] > pathValues[1])
-                Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            else if(pathValues[0] < pathValues[1])
-                Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            else
-            { 
-                if(su0.appearProbabilityShort > su1.appearProbabilityShort)
+
+            if (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2] == false)
+            {
+                if (pathValues[0] > pathValues[1])
                     Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-                else if(su0.appearProbabilityShort < su1.appearProbabilityShort)
+                else if (pathValues[0] < pathValues[1])
                     Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
                 else
                 {
-                    if (su0.appearProbabilityLong > su1.appearProbabilityLong)
+                    if (su0.appearProbabilityShort > su1.appearProbabilityShort)
                         Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-                    else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
+                    else if (su0.appearProbabilityShort < su1.appearProbabilityShort)
                         Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                    else
+                    {
+                        if (su0.appearProbabilityLong > su1.appearProbabilityLong)
+                            Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                        else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
+                            Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
+                    }
                 }
             }
-            if(curBestPath != -1 && curBestV > 0)
+            else if (isStrongUp[0] && isStrongUp[1] == false && isStrongUp[2] == false)
+            {
+                curBestPath = 0;
+                curBestV = pathValues[0];
+                curBestSU = su0;
+            }
+            else if(isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2] == false)
+            {
+                curBestPath = 1;
+                curBestV = pathValues[1];
+                curBestSU = su1;
+            }
+            else if (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2])
+            {
+                curBestPath = 2;
+                curBestV = pathValues[2];
+                curBestSU = su2;
+            }
+            else if(isStrongUp[0] && isStrongUp[1] && isStrongUp[2] == false)
+            {
+                if (pathValues[0] > pathValues[1])
+                {
+                    curBestPath = 0;
+                    curBestV = pathValues[0];
+                    curBestSU = su0;
+                }
+                else if(pathValues[0] < pathValues[1])
+                {
+                    curBestPath = 1;
+                    curBestV = pathValues[1];
+                    curBestSU = su1;
+                }
+                else
+                    Check(su0, su1, pathValues[0], pathValues[1], 0, 1, ref curBestV, ref curBestPath, ref curBestSU);
+            }
+            else if (isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2])
+            {
+                if (pathValues[2] > pathValues[1])
+                {
+                    curBestPath = 2;
+                    curBestV = pathValues[2];
+                    curBestSU = su2;
+                }
+                else if (pathValues[2] < pathValues[1])
+                {
+                    curBestPath = 1;
+                    curBestV = pathValues[1];
+                    curBestSU = su1;
+                }
+                else
+                    Check(su2, su1, pathValues[2], pathValues[1], 2, 1, ref curBestV, ref curBestPath, ref curBestSU);
+            }
+            else if (isStrongUp[0] && isStrongUp[1] == false && isStrongUp[2])
+            {
+                if (pathValues[0] > pathValues[2])
+                {
+                    curBestPath = 0;
+                    curBestV = pathValues[0];
+                    curBestSU = su0;
+                }
+                else if (pathValues[0] < pathValues[2])
+                {
+                    curBestPath = 2;
+                    curBestV = pathValues[2];
+                    curBestSU = su2;
+                }
+                else
+                    Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
+            }
+
+            if (curBestPath != -1 && curBestV > 0)
             {
                 if(curBestV > maxV)
                 {
                     bestPath = curBestPath;
                     bestNumIndex = numIndex;
                     maxV = curBestV;
+                    isFinalPathStrongUp = isStrongUp[curBestPath];
                 }
                 else if(curBestV == maxV)
                 {
@@ -1561,6 +1807,7 @@ namespace LotteryAnalyze
                         bestPath = curBestPath;
                         bestNumIndex = numIndex;
                         maxV = curBestV;
+                        isFinalPathStrongUp = isStrongUp[curBestPath];
                     }
                     else if(suBest.appearProbabilityShort == curBestSU.appearProbabilityShort)
                     {
@@ -1569,6 +1816,7 @@ namespace LotteryAnalyze
                             bestPath = curBestPath;
                             bestNumIndex = numIndex;
                             maxV = curBestV;
+                            isFinalPathStrongUp = isStrongUp[curBestPath];
                         }
                     }
                 }

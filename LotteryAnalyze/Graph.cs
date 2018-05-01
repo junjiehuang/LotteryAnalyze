@@ -596,12 +596,14 @@ namespace LotteryAnalyze
                         float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
                         float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
 
-                        string info = "MACD线形态 = " + ((TradeDataManager.MACDLineWaveConfig)(mp.WAVE_CFG)).ToString() + 
-                            ", MACD柱形态 = " + ((TradeDataManager.MACDBarConfig)(mp.BAR_CFG)).ToString() + 
-                            ", K线形态 = " + ((TradeDataManager.KGraphConfig)(mp.KGRAPH_CFG)).ToString();
+                        string info = "MACD线 = " + ((TradeDataManager.MACDLineWaveConfig)(mp.WAVE_CFG)).ToString() + 
+                            ", MACD柱 = " + ((TradeDataManager.MACDBarConfig)(mp.BAR_CFG)).ToString() + 
+                            ", K线 = " + ((TradeDataManager.KGraphConfig)(mp.KGRAPH_CFG)).ToString();
+                        info += mp.IS_STRONG_UP ? ", 强列上升" : "";
                         g.DrawString(info, auxFont, whiteBrush, 5, 5);
                         info = "MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
                         g.DrawString(info, auxFont, whiteBrush, 5, 25);
+                        g.DrawString(mp.LAST_DATA_TAG, auxFont, whiteBrush, 5, 45);
 
                         int leftID = mp.LEFT_DIF_INDEX;
 
@@ -1501,9 +1503,11 @@ namespace LotteryAnalyze
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         Pen moneyLvLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
 
-        Font tipsFont = new Font(FontFamily.GenericMonospace, 12);
+        Font tipsFont = new Font(FontFamily.GenericMonospace, 9);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
+        SolidBrush redBrush = new SolidBrush(Color.Red);
+        SolidBrush greenBrush = new SolidBrush(Color.Green);
         int selectTradeIndex = -1;
         static float[] TRADE_LVS = new float[] { 0, 0.5f, 1.0f, 1.5f, 2.0f, };
 
@@ -1525,6 +1529,7 @@ namespace LotteryAnalyze
         }
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
+            bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
             g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
 
             float halfSize = gridScaleW * 0.2f;
@@ -1535,8 +1540,24 @@ namespace LotteryAnalyze
             float halfGridW = gridScaleW * 0.5f;
 
             TradeDataManager tdm = TradeDataManager.Instance;
+            float zeroY = StandToCanvas(0, false);
+            float startMoneyY = StandToCanvas(BatchTradeSimulator.Instance.startMoney * gridScaleH, false);
+            float maxMoneyY = StandToCanvas(BatchTradeSimulator.Instance.maxMoney * gridScaleH, false);
+            float minMoneyY = StandToCanvas(BatchTradeSimulator.Instance.minMoney * gridScaleH, false);
+            g.FillRectangle(redBrush, winW - 10, maxMoneyY, 10, startMoneyY - maxMoneyY);
+            g.FillRectangle(cyanBrush, winW - 10, startMoneyY, 10, zeroY - startMoneyY);
+            if (BatchTradeSimulator.Instance.minMoney < BatchTradeSimulator.Instance.startMoney)
+                g.FillRectangle(greenBrush, winW - 10, startMoneyY, 10, minMoneyY - startMoneyY);
 
-            bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
+            moneyLvLinePen.Color = Color.Red;
+            g.DrawLine(moneyLvLinePen, 0, maxMoneyY, winW, maxMoneyY);
+            if (isMouseAtRight)
+                g.DrawString(BatchTradeSimulator.Instance.maxMoney.ToString("f0"), tipsFont, whiteBrush, winW - 65, maxMoneyY);
+            moneyLvLinePen.Color = Color.Green;
+            g.DrawLine(moneyLvLinePen, 0, minMoneyY, winW, minMoneyY);
+            if (isMouseAtRight)
+                g.DrawString(BatchTradeSimulator.Instance.minMoney.ToString("f0"), tipsFont, whiteBrush, winW - 65, minMoneyY);
+
             for (int i = 0; i < TRADE_LVS.Length; ++i)
             {
                 float lv = TRADE_LVS[i];
@@ -1546,7 +1567,7 @@ namespace LotteryAnalyze
                 if (lv < 0)
                     moneyLvLinePen.Color = Color.Gray;
                 else if( lv == 0)
-                    moneyLvLinePen.Color = Color.Red;
+                    moneyLvLinePen.Color = Color.Gray;
                 else if (lv == 1)
                     moneyLvLinePen.Color = Color.Orange;
                 else if (lv > 1)
@@ -1557,6 +1578,7 @@ namespace LotteryAnalyze
                 if(isMouseAtRight)
                     g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
             }
+
             float curMouseY = CanvasToStand(mouseRelPos.Y, false);
             curMouseY /= gridScaleH;
             g.DrawString(curMouseY.ToString("f0"), tipsFont, whiteBrush, winW - 65, mouseRelPos.Y);
@@ -1572,8 +1594,8 @@ namespace LotteryAnalyze
                 return;
             }
 
-            //canvasOffset.Y = winH / 2;
-            float maxGap = Math.Max(Math.Abs(tdm.maxValue), Math.Abs(tdm.minValue)) * 2;
+            //float maxGap = Math.Max(Math.Abs(tdm.maxValue), Math.Abs(tdm.minValue)) * 2;
+            float maxGap = Math.Max(Math.Abs(BatchTradeSimulator.Instance.maxMoney), Math.Abs(BatchTradeSimulator.Instance.minMoney)) * 1.5f;
             gridScaleH = winH / maxGap * 0.9f;
             int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
             if (startIndex < 0)
