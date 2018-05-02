@@ -119,6 +119,12 @@ namespace LotteryAnalyze.UI
             progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
             progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
 
+            string missStr = "---------------------\r\n交易统计\r\n";
+            foreach( int key in BatchTradeSimulator.Instance.tradeMissInfo.Keys)
+            {
+                missStr += key + ", " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "\r\n";
+            }
+
             if (BatchTradeSimulator.Instance.HasFinished())
             {
                 string info = "";
@@ -140,7 +146,7 @@ namespace LotteryAnalyze.UI
                 info += (BatchTradeSimulator.Instance.untradeCount);
                 info += ("]\r\n");
 
-                textBoxCmd.Text = info;
+                textBoxCmd.Text = info + missStr;
             }
             else if (BatchTradeSimulator.Instance.HasJob())
             {
@@ -181,7 +187,7 @@ namespace LotteryAnalyze.UI
                 info += (BatchTradeSimulator.Instance.untradeCount);
                 info += ("]\r\n");
 
-                textBoxCmd.Text = info;
+                textBoxCmd.Text = info + missStr;
                 info = null;
             }
             else

@@ -371,6 +371,7 @@ namespace LotteryAnalyze
             // 所有数字位都选择连续N期出号概率最高的几个数
             eMultiMostPosibilityNums,
             eSingleShortLongMostPosibilityNums,
+            eSingleMostPosibilityPath,
 
         }
         public static string[] STRATEGY_NAMES = {
@@ -380,6 +381,7 @@ namespace LotteryAnalyze
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
             "eSingleShortLongMostPosibilityNums",
+            "eSingleMostPosibilityPath",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -434,6 +436,7 @@ namespace LotteryAnalyze
             set { stopAtTheLatestItem = value; }
         }
         List<NumberCmpInfo> maxProbilityNums = new List<NumberCmpInfo>();
+        List<NumberCmpInfo> maxProbilityPaths = new List<NumberCmpInfo>();
         public delegate void OnTradeComleted();
         public OnTradeComleted tradeCompletedCallBack;
 
@@ -534,21 +537,10 @@ namespace LotteryAnalyze
                     waitingTradeDatas[i].Update();
                     if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
                     {
-                        RefreshTradeCountOnOneTradeCompleted(waitingTradeDatas[i]);
-                        //if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
-                        //{
-                        //    if (waitingTradeDatas[i].reward > 0)
-                        //    {
-                        //        currentTradeCountIndex = 0;
-                        //    }
-                        //    else if (waitingTradeDatas[i].cost > 0)
-                        //    {
-                        //        ++currentTradeCountIndex;
-                        //    }
-                        //    if (currentTradeCountIndex == tradeCountList.Count)
-                        //        currentTradeCountIndex = 0;
-                        //}
+                        if (waitingTradeDatas[i].cost != 0)
+                            BatchTradeSimulator.Instance.OnOneTradeCompleted(waitingTradeDatas[i].reward > 0);
 
+                        RefreshTradeCountOnOneTradeCompleted(waitingTradeDatas[i]);
                         if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
                             maxValue = waitingTradeDatas[i].moneyAtferTrade;
                         if (minValue > waitingTradeDatas[i].moneyAtferTrade)
@@ -718,6 +710,9 @@ namespace LotteryAnalyze
                     break;
                 case TradeStrategy.eSingleShortLongMostPosibilityNums:
                     TradeeSingleShortLongMostPosibilityNums(item, trade);
+                    break;
+                case TradeStrategy.eSingleMostPosibilityPath:
+                    TradeSingleMostPosibilityPath(item, trade);
                     break;
             }
         }
@@ -924,6 +919,56 @@ namespace LotteryAnalyze
             }
 
             trade.tradeInfo.Add(numID, tn);
+        }
+
+        void TradeSingleMostPosibilityPath(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            int numID = 0;
+            if (simSelNumIndex != -1)
+                numID = simSelNumIndex;
+            else
+                numID = 0;
+            FindAllNumberProbabilities(item, ref maxProbilityNums, false);
+            byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].appearCountShort;
+            byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].appearCountShort;
+            byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].appearCountShort;
+            int bestPath = -1;
+            if(ac0 > ac1)
+            {
+                if (ac0 > ac2)
+                    bestPath = 0;
+                else
+                    bestPath = 2;
+            }
+            else
+            {
+                if (ac1 > ac2)
+                    bestPath = 1;
+                else
+                    bestPath = 2;
+            }
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
+            trade.tradeInfo.Add(numID, tn);
+            if (trade.CalcCost() > currentMoney * 0.5f)
+            {
+                currentTradeCountIndex = 0;
+                tradeCount = tradeCountList[currentTradeCountIndex];
+                tn.tradeCount = tradeCount;
+            }
         }
 
         void CollectDataItemNumPosInfo(ref List<NumberCmpInfo> nums, DataItem dataItem, int numID)
@@ -1840,12 +1885,13 @@ namespace LotteryAnalyze
             }
             return null;
         }
-        public static void FindAllNumberProbabilities(DataItem item, ref List<NumberCmpInfo> nums)
+        public static void FindAllNumberProbabilities(DataItem item, ref List<NumberCmpInfo> nums, bool collectByLongCount = true)
         {
             nums.Clear();
             int realCount = item.idGlobal + 1;
-            if (realCount > LotteryStatisticInfo.LONG_COUNT)
-                realCount = LotteryStatisticInfo.LONG_COUNT;
+            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.LONG_COUNT : LotteryStatisticInfo.SHOR_COUNT;
+            if (realCount > MAX_COUNT)
+                realCount = MAX_COUNT;
             float total = 5 * realCount;
             for ( int i = 0; i < 5; ++i )
             {
@@ -1857,7 +1903,32 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
-                    info.appearCount += sum.statisticUnitMap[cdt].appearCountLong;
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].appearCountLong : sum.statisticUnitMap[cdt].appearCountShort;
+                    info.rate = info.appearCount * 100 / total;
+                    info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
+                }
+            }
+            nums.Sort(NumberCmpInfo.SortByAppearCount);
+        }
+        public static void FindAllPathProbabilities(DataItem item, ref List<NumberCmpInfo> nums, bool collectByLongCount = true)
+        {
+            nums.Clear();
+            int realCount = item.idGlobal + 1;
+            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.LONG_COUNT : LotteryStatisticInfo.SHOR_COUNT;
+            if (realCount > MAX_COUNT)
+                realCount = MAX_COUNT;
+            float total = 5 * realCount;
+            for (int i = 0; i < 5; ++i)
+            {
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[i];
+                int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+                int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+                for (int num = startIndex; num <= endIndex; ++num)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
+                    SByte number = (SByte)(num - startIndex);
+                    NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].appearCountLong : sum.statisticUnitMap[cdt].appearCountShort;
                     info.rate = info.appearCount * 100 / total;
                     info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
                 }
@@ -1938,6 +2009,8 @@ namespace LotteryAnalyze
             }
         }
 
+        int continueTradeMissCount = 0;
+        public Dictionary<int, int> tradeMissInfo = new Dictionary<int, int>();
         List<int> fileIDLst = new List<int>();
         int lastIndex = -1;        
         SimState state = SimState.eNone;
@@ -1961,6 +2034,23 @@ namespace LotteryAnalyze
         public BatchTradeSimulator()
         {
 
+        }
+
+        public void OnOneTradeCompleted(bool tradeSuccess)
+        {
+            if (tradeSuccess)
+            {
+                if (continueTradeMissCount > 0)
+                {
+                    if (tradeMissInfo.ContainsKey(continueTradeMissCount))
+                        tradeMissInfo[continueTradeMissCount] = tradeMissInfo[continueTradeMissCount] + 1;
+                    else
+                        tradeMissInfo.Add(continueTradeMissCount, 1);
+                }
+                continueTradeMissCount = 0;
+            }
+            else
+                ++continueTradeMissCount;
         }
 
         public int GetMainProgress()
@@ -1987,6 +2077,7 @@ namespace LotteryAnalyze
 
         public void Start(ref int startDateID, ref int endDateID)
         {
+            tradeMissInfo.Clear();
             TradeDataManager.Instance.startMoney = startMoney;
             TradeDataManager.Instance.StopAtTheLatestItem = true;
             minMoney = maxMoney = currentMoney = startMoney;
