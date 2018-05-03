@@ -928,6 +928,16 @@ namespace LotteryAnalyze
             return GetPrivateProfileInt(section, name, def, this.m_FileName);
         }
 
+        public float ReadFloat(string section, string name, float def)
+        {
+            StringBuilder vRetSb = new StringBuilder(2048);
+            GetPrivateProfileString(section, name, def.ToString(), vRetSb, 2048, this.m_FileName);
+            float res = def;
+            if (float.TryParse(vRetSb.ToString(), out res) == false)
+                res = def;
+            return res;
+        }
+
         /// <summary>
         /// [扩展]读取string字符串
         /// </summary>
@@ -949,6 +959,12 @@ namespace LotteryAnalyze
         /// <param name="name">键</param>
         /// <param name="Ival">写入值</param>
         public void WriteInt(string section, string name, int Ival)
+        {
+
+            WritePrivateProfileString(section, name, Ival.ToString(), this.m_FileName);
+        }
+
+        public void WriteFloat(string section, string name, float Ival)
         {
 
             WritePrivateProfileString(section, name, Ival.ToString(), this.m_FileName);

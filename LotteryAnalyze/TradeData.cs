@@ -389,7 +389,12 @@ namespace LotteryAnalyze
         // 单次交易每个数字位投注的个数的最大值
         public int maxNumCount = 5;
 
-        public TradeStrategy curTradeStrategy = TradeStrategy.eSingleBestPath;
+        TradeStrategy _curTradeStrategy = TradeStrategy.eSingleBestPath;
+        public TradeStrategy curTradeStrategy
+        {
+            get { return _curTradeStrategy; }
+            set { _curTradeStrategy = value; }
+        }
         static TradeDataManager sInst = null;
         public List<TradeDataBase> historyTradeDatas = new List<TradeDataBase>();
         public List<TradeDataBase> waitingTradeDatas = new List<TradeDataBase>();
@@ -434,6 +439,12 @@ namespace LotteryAnalyze
         {
             get { return stopAtTheLatestItem; }
             set { stopAtTheLatestItem = value; }
+        }
+        float _riskControl = 1;
+        public float RiskControl
+        {
+            get { return _riskControl; }
+            set { _riskControl = value; }
         }
         List<NumberCmpInfo> maxProbilityNums = new List<NumberCmpInfo>();
         List<NumberCmpInfo> maxProbilityPaths = new List<NumberCmpInfo>();
@@ -762,7 +773,7 @@ namespace LotteryAnalyze
                 FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
                 tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(bestNumIndex, tn);
-                if(trade.CalcCost() > currentMoney)
+                if (TradeDataManager.Instance.RiskControl > 0 && trade.CalcCost() > currentMoney * TradeDataManager.Instance.RiskControl)
                 {
                     currentTradeCountIndex = 0;
                     tradeCount = tradeCountList[currentTradeCountIndex];
@@ -940,30 +951,48 @@ namespace LotteryAnalyze
                 numID = simSelNumIndex;
             else
                 numID = 0;
+
+            float maxV = 0;
+            int bestNumIndex = 0;
+            int bestPathOnGraphConfig = -1;
+            bool isFinalPathStrongUp = false;
+            JudgeNumberPath(item, numID, ref maxV, ref bestNumIndex, ref bestPathOnGraphConfig, ref isFinalPathStrongUp);
+
             FindAllNumberProbabilities(item, ref maxProbilityNums, false);
             byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].appearCountShort;
             byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].appearCountShort;
             byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].appearCountShort;
-            int bestPath = -1;
+            int bestPathOnProbability = -1;
             if(ac0 > ac1)
             {
                 if (ac0 > ac2)
-                    bestPath = 0;
+                    bestPathOnProbability = 0;
+                else if (ac0 < ac2)
+                    bestPathOnProbability = 2;
                 else
-                    bestPath = 2;
+                    bestPathOnProbability = bestPathOnGraphConfig;
+            }
+            else if(ac0 < ac1)
+            {
+                if (ac1 > ac2)
+                    bestPathOnProbability = 1;
+                else if(ac1 < ac2)
+                    bestPathOnProbability = 2;
+                else
+                    bestPathOnProbability = bestPathOnGraphConfig;
             }
             else
             {
-                if (ac1 > ac2)
-                    bestPath = 1;
+                if (ac1 < ac2)
+                    bestPathOnProbability = 2;
                 else
-                    bestPath = 2;
+                    bestPathOnProbability = bestPathOnGraphConfig;
             }
             TradeNumbers tn = new TradeNumbers();
             tn.tradeCount = tradeCount;
-            tn.SelPath012Number(bestPath, tradeCount, ref maxProbilityNums);
+            tn.SelPath012Number(bestPathOnProbability, tradeCount, ref maxProbilityNums);
             trade.tradeInfo.Add(numID, tn);
-            if (trade.CalcCost() > currentMoney * 0.5f)
+            if (TradeDataManager.Instance.RiskControl > 0 && trade.CalcCost() > currentMoney * TradeDataManager.Instance.RiskControl)
             {
                 currentTradeCountIndex = 0;
                 tradeCount = tradeCountList[currentTradeCountIndex];
