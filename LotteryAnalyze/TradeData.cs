@@ -1499,12 +1499,19 @@ namespace LotteryAnalyze
                     minID = leftID;
                 }
 
-                if (leftKV < bp.midValue)
-                    ++belowAvgLineCount;
-                if (leftKV > bp.midValue)
-                    ++uponAvgLineCount;
-                if (leftKV >= bp.upValue)
+                float deltaKV = leftKV - bp.midValue;
+                if(leftKV >= bp.upValue)
                     ++reachBollinUpCount;
+                else if(deltaKV >= -missRelHeight * 1.5f)
+                    ++uponAvgLineCount;
+                else
+                    ++belowAvgLineCount;
+                //if (leftKV < bp.midValue)
+                //    ++belowAvgLineCount;
+                //if (leftKV > bp.midValue)
+                //    ++uponAvgLineCount;
+                //if (leftKV >= bp.upValue)
+                //    ++reachBollinUpCount;
 
                 if (curItem.index == 0)
                     break;
@@ -1522,7 +1529,7 @@ namespace LotteryAnalyze
                 if (rightDelta >= -missRelHeight*1.5f && rightDelta <= missRelHeight*0.5)
                     cfg = KGraphConfig.ePureDownToBML;
                 // 最大的遗漏值不超过2
-                else if (maxMissCount <= 2)
+                else if (maxMissCount <= 2 || (belowAvgLineCount == 0 && leftKV < rightKV))
                     cfg = KGraphConfig.eShakeUp;
                 // 否则，如果是在中轨之上或者中轨之下，那么还是有较大的概率会延续下降趋势
                 else
