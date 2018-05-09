@@ -414,11 +414,20 @@ namespace LotteryAnalyze
             set { _simSelNumIndex = value; }
         }
         DataItem curTestTradeItem = null;
+        public DataItem CurTestTradeItem
+        {
+            get { return curTestTradeItem; }
+        }
         bool pauseAutoTrade = true;
         bool needGetLatestItem = false;
         public List<int> tradeCountList = new List<int>();
         public int defaultTradeCount = 1;
         int currentTradeCountIndex = -1;
+        public int CurrentTradeCountIndex
+        {
+            get { return currentTradeCountIndex; }
+            set { currentTradeCountIndex = value; }
+        }
         int _strongUpStartTradeIndex = 5;
         public int strongUpStartTradeIndex
         {
@@ -2051,6 +2060,7 @@ namespace LotteryAnalyze
         int lastIndex = -1;        
         SimState state = SimState.eNone;
         string lastTradeIDTag = null;
+        int lastTradeCountIndex = -1;
         DataItem curTradeItem;
         SimState backUpState = SimState.eNone;
 
@@ -2221,7 +2231,10 @@ namespace LotteryAnalyze
                 if (string.IsNullOrEmpty(lastTradeIDTag))
                     startTradeItem = TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromFirst, lastTradeIDTag);
                 else
+                {
                     startTradeItem = TradeDataManager.Instance.StartAutoTradeJob(TradeDataManager.StartTradeType.eFromSpec, lastTradeIDTag);
+                    TradeDataManager.Instance.CurrentTradeCountIndex = lastTradeCountIndex;
+                }
                 if(startTradeItem != null)
                 {
                     if (onPrepareDataItems != null)
@@ -2240,7 +2253,11 @@ namespace LotteryAnalyze
             if (minMoney > currentMoney)
                 minMoney = currentMoney;
             if (TradeDataManager.Instance.hasCompleted == true)
+            {
+                lastTradeIDTag = TradeDataManager.Instance.CurTestTradeItem.idTag;
+                lastTradeCountIndex = TradeDataManager.Instance.CurrentTradeCountIndex;
                 state = SimState.eFinishBatch;
+            }
         }
         void DoFinishBatch()
         {
