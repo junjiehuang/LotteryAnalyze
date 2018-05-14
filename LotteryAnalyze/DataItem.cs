@@ -891,10 +891,14 @@ namespace LotteryAnalyze
         {
             if (string.IsNullOrEmpty(idTag))
                 return null;
+            DataItem item = null;
             string[] strs = idTag.Split('-');
             int key = int.Parse(strs[0]);
-            OneDayDatas odd = allDatas[key];
-            DataItem item = odd.FindItem(idTag);
+            if (allDatas.ContainsKey(key))
+            {
+                OneDayDatas odd = allDatas[key];
+                item = odd.FindItem(idTag);
+            }
             return item;
         }
 

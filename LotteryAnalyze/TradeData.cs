@@ -619,7 +619,11 @@ namespace LotteryAnalyze
             else if (srt == StartTradeType.eFromLatest)
                 curTestTradeItem = DataManager.GetInst().GetLatestItem();
             else if (srt == StartTradeType.eFromSpec)
+            {
                 curTestTradeItem = DataManager.GetInst().GetDataItemByIdTag(idTag);
+                if(curTestTradeItem == null)
+                    curTestTradeItem = DataManager.GetInst().GetFirstItem();
+            }
             pauseAutoTrade = false;
             hasCompleted = false;
             return curTestTradeItem;
