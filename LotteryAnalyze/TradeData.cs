@@ -360,10 +360,12 @@ namespace LotteryAnalyze
         // 交易策略
         public enum TradeStrategy
         {
-            // 选择最优的某个数值位的某个012路
-            eSingleBestPath,
-            // 选择某个数值位的最优的某2个012路
-            eSingleBestTwoPath,
+            // 选择最优的某个数值位的单个012路的号码
+            eSinglePositionBestPath,
+            // 选择某个数值位评分最高的2个012路的号码
+            eSinglePositionBestTwoPath,
+            // 选择某个数值位最优的012路的号码（评分一致则多个）
+            eSinglePositionBestPaths,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
             // 选择某个数字位连续N期出号概率最高的几个数
@@ -375,8 +377,9 @@ namespace LotteryAnalyze
 
         }
         public static string[] STRATEGY_NAMES = {
-            "eSingleBestPath",
-            "eSingleBestTwoPath",
+            "eSinglePositionBestPath",
+            "eSinglePositionBestTwoPath",
+            "eSinglePositionBestPaths",
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
@@ -389,7 +392,7 @@ namespace LotteryAnalyze
         // 单次交易每个数字位投注的个数的最大值
         public int maxNumCount = 5;
 
-        TradeStrategy _curTradeStrategy = TradeStrategy.eSingleBestPath;
+        TradeStrategy _curTradeStrategy = TradeStrategy.eSinglePositionBestPath;
         public TradeStrategy curTradeStrategy
         {
             get { return _curTradeStrategy; }
@@ -507,7 +510,7 @@ namespace LotteryAnalyze
 
         void RefreshTradeCountOnOneTradeCompleted(TradeDataBase trade)
         {
-            if (curTradeStrategy == TradeStrategy.eSingleBestPath)
+            if (curTradeStrategy == TradeStrategy.eSinglePositionBestPath)
             {
                 if(currentTradeCountIndex >= 0 && currentTradeCountIndex < tradeCountList.Count)
                 {
@@ -717,11 +720,14 @@ namespace LotteryAnalyze
 
             switch (curTradeStrategy)
             {
-                case TradeStrategy.eSingleBestPath:
-                    TradeSingleBestPath(item, trade);
+                case TradeStrategy.eSinglePositionBestPath:
+                    TradeSinglePositionBestPath(item, trade);
                     break;
-                case TradeStrategy.eSingleBestTwoPath:
-                    TradeSingleBestTwoPath(item, trade);
+                case TradeStrategy.eSinglePositionBestTwoPath:
+                    TradeSinglePositionBestTwoPath(item, trade);
+                    break;
+                case TradeStrategy.eSinglePositionBestPaths:
+                    TradeSinglePositionBestPaths(item, trade);
                     break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
@@ -741,7 +747,7 @@ namespace LotteryAnalyze
             }
         }
 
-        void TradeSingleBestPath(DataItem item, TradeDataOneStar trade)
+        void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
         {
             float maxV = -10;
             int bestNumIndex = -1;
@@ -795,7 +801,7 @@ namespace LotteryAnalyze
             }
         }
 
-        void TradeSingleBestTwoPath(DataItem item, TradeDataOneStar trade)
+        void TradeSinglePositionBestTwoPath(DataItem item, TradeDataOneStar trade)
         {
             int bestNumIndex = 0;
             if (simSelNumIndex != -1)
@@ -828,6 +834,52 @@ namespace LotteryAnalyze
                     tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
         }
+
+        void TradeSinglePositionBestPaths(DataItem item, TradeDataOneStar trade)
+        {
+            int bestNumIndex = 0;
+            if (simSelNumIndex != -1)
+                bestNumIndex = simSelNumIndex;
+            List<PathCmpInfo> res = trade.pathCmpInfos[bestNumIndex];
+            SortNumberPath(item, bestNumIndex, ref res);
+
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(bestNumIndex, tn);
+            FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+
+            float lastPathValue = 0;
+            for (int i = 0; i < 2; ++i)
+            {
+                PathCmpInfo pci = res[i];
+                if (pci.pathValue > 0)
+                {
+                    if (i == 0)
+                    {
+                        lastPathValue = pci.pathValue;
+                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                    }
+                    else if( lastPathValue <= pci.pathValue )
+                    {
+                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                    }
+                }
+            }
+        }
+
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
         {
