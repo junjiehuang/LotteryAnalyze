@@ -867,12 +867,12 @@ namespace LotteryAnalyze
                 PathCmpInfo pci = res[i];
                 if (pci.pathValue > 0)
                 {
-                    if (i == 0)
-                    {
-                        lastPathValue = pci.pathValue;
-                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
-                    }
-                    else if( lastPathValue <= pci.pathValue )
+                    //if (i == 0)
+                    //{
+                    //    lastPathValue = pci.pathValue;
+                    //    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                    //}
+                    //else if( lastPathValue <= pci.pathValue )
                     {
                         tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
                     }
