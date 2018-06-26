@@ -1772,15 +1772,18 @@ namespace LotteryAnalyze
             float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
             float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
+                // 计算012路的K线图形态
                 kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, ref belowAvgLineCounts[0], ref uponAvgLineCounts[0]);
                 kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, ref belowAvgLineCounts[1], ref uponAvgLineCounts[1]);
                 kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, ref belowAvgLineCounts[2], ref uponAvgLineCounts[2]);
 
+                // 计算012路MACD形态的评估值
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0], ref mlCfgs[0], ref mbCfgs[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1], ref mlCfgs[1], ref mbCfgs[1]);
                 CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2], ref mlCfgs[2], ref mbCfgs[2]);
-                pathValues[0] = pathValues[1] = pathValues[2] = 1;
+                //pathValues[0] = pathValues[1] = pathValues[2] = 1;
 
+                // 计算012路k线形态的评估值
                 kValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
                 kValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
                 kValues[2] = GetKGraphConfigValue(kgCfgs[2], belowAvgLineCounts[2], uponAvgLineCounts[2]);
