@@ -1256,6 +1256,9 @@ namespace LotteryAnalyze
             ePureUpUponBML,
             // 震荡上升
             eShakeUp,
+
+            // 触摸到布林带上方并准备下降
+            eTouchBolleanUpAndDown,
         }
 
         public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
@@ -1315,6 +1318,7 @@ namespace LotteryAnalyze
                 case KGraphConfig.eNone:
                 case KGraphConfig.ePureDown:
                 case KGraphConfig.eSlowDownPrepareUp:
+                case KGraphConfig.eTouchBolleanUpAndDown:
                     return 0;
                 case KGraphConfig.eShake:
                     return 0.5f;
@@ -1587,62 +1591,71 @@ namespace LotteryAnalyze
             }
 
             float rightDelta = rightKV - bpMidRight;
-            // 当前的遗漏值超过2
-            if (curMissCount >= 2)
+            bool isNearBolleanMidLine = rightDelta >= -missRelHeight * 1.5f && rightDelta <= missRelHeight * 0.5;
+
+            // 出现遗漏值的时候，如果k线碰到布林带上方，并且当前还没接近布林中轨 
+            if (curMissCount >= 1 && reachBollinUpCount > 0 && isNearBolleanMidLine == false)
+                cfg = KGraphConfig.eTouchBolleanUpAndDown;
+
+            if (cfg == KGraphConfig.eNone)
             {
-                // 如果当前k值在布林带中轨附近，认为这是从布林带上轨下降到中轨，有较大概率收到支撑反弹
-                if (rightDelta >= -missRelHeight*1.5f && rightDelta <= missRelHeight*0.5)
-                    cfg = KGraphConfig.ePureDownToBML;
-                // 最大的遗漏值不超过2
-                else if (maxMissCount <= 2 || (belowAvgLineCount == 0 && leftKV < rightKV))
-                    cfg = KGraphConfig.eShakeUp;
-                // 否则，如果是在中轨之上或者中轨之下，那么还是有较大的概率会延续下降趋势
-                else
-                    cfg = KGraphConfig.ePureDown;
-            }
-            // 最大的遗漏值不超过2
-            else if(maxMissCount <= 2)
-            {
-                cfg = KGraphConfig.eShakeUp;
-            }
-            else if (leftKV < rightKV)
-            {
-                if (maxID > leftID && maxID < rightID)
+                // 当前的遗漏值超过2
+                if (curMissCount >= 2)
                 {
-                    if (maxKV > rightKV)
-                    {
-                        if (rightKV - bpMidRight >= -missRelHeight)
-                            cfg = KGraphConfig.eShakeUp;
-                        else
-                            cfg = KGraphConfig.eSlowUpPrepareDown;
-                    }
-                }
-                if (cfg == KGraphConfig.eNone)
-                {
-                    if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && curMissCount < 2)
-                        cfg = KGraphConfig.ePureUpUponBML;
-                    else
-                        cfg = KGraphConfig.ePureUp;
-                }
-            }
-            else if (leftKV > rightKV)
-            {
-                if (minID > leftID && minID < rightID)
-                {
-                    if (minKV < rightKV)
-                        cfg = KGraphConfig.eSlowDownPrepareUp;
-                }
-                if (cfg == KGraphConfig.eNone)
-                {
-                    if (uponAvgLineCount > belowAvgLineCount)
+                    // 如果当前k值在布林带中轨附近，认为这是从布林带上轨下降到中轨，有较大概率收到支撑反弹
+                    if (isNearBolleanMidLine)
                         cfg = KGraphConfig.ePureDownToBML;
+                    // 最大的遗漏值不超过2
+                    else if (maxMissCount <= 2 || (belowAvgLineCount == 0 && leftKV < rightKV))
+                        cfg = KGraphConfig.eShakeUp;
+                    // 否则，如果是在中轨之上或者中轨之下，那么还是有较大的概率会延续下降趋势
                     else
                         cfg = KGraphConfig.ePureDown;
                 }
-            }
-            else
-            {
-                cfg = KGraphConfig.eShake;
+                // 最大的遗漏值不超过2
+                else if (maxMissCount <= 2)
+                {
+                    cfg = KGraphConfig.eShakeUp;
+                }
+                else if (leftKV < rightKV)
+                {
+                    if (maxID > leftID && maxID < rightID)
+                    {
+                        if (maxKV > rightKV)
+                        {
+                            if (rightKV - bpMidRight >= -missRelHeight)
+                                cfg = KGraphConfig.eShakeUp;
+                            else
+                                cfg = KGraphConfig.eSlowUpPrepareDown;
+                        }
+                    }
+                    if (cfg == KGraphConfig.eNone)
+                    {
+                        if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && curMissCount < 2)
+                            cfg = KGraphConfig.ePureUpUponBML;
+                        else
+                            cfg = KGraphConfig.ePureUp;
+                    }
+                }
+                else if (leftKV > rightKV)
+                {
+                    if (minID > leftID && minID < rightID)
+                    {
+                        if (minKV < rightKV)
+                            cfg = KGraphConfig.eSlowDownPrepareUp;
+                    }
+                    if (cfg == KGraphConfig.eNone)
+                    {
+                        if (uponAvgLineCount > belowAvgLineCount)
+                            cfg = KGraphConfig.ePureDownToBML;
+                        else
+                            cfg = KGraphConfig.ePureDown;
+                    }
+                }
+                else
+                {
+                    cfg = KGraphConfig.eShake;
+                }
             }
             return cfg;
         }
