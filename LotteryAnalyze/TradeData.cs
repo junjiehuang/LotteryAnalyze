@@ -1258,7 +1258,10 @@ namespace LotteryAnalyze
             eShakeUp,
 
             // 触摸到布林带上方并准备下降
-            eTouchBolleanUpAndDown,
+            eTouchBolleanUpThenGoDown,
+            eShakeUp1,
+            eShakeUp2,
+            eShakeUp3,
         }
 
         public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
@@ -1318,7 +1321,7 @@ namespace LotteryAnalyze
                 case KGraphConfig.eNone:
                 case KGraphConfig.ePureDown:
                 case KGraphConfig.eSlowDownPrepareUp:
-                case KGraphConfig.eTouchBolleanUpAndDown:
+                case KGraphConfig.eTouchBolleanUpThenGoDown:
                     return 0;
                 case KGraphConfig.eShake:
                     return 0.5f;
@@ -1332,6 +1335,12 @@ namespace LotteryAnalyze
                     return 8;
                 case KGraphConfig.ePureDownToBML:
                     return 6;
+                case KGraphConfig.eShakeUp3:
+                    return 9;
+                case KGraphConfig.eShakeUp2:
+                    return 10;
+                case KGraphConfig.eShakeUp1:
+                    return 11;
             }
             return 1;
         }
@@ -1519,10 +1528,11 @@ namespace LotteryAnalyze
             mp.MAX_BAR_INDEX = maxBARIndex;
             mp.MIN_BAR_INDEX = minBARIndex;
 #endif
-        } 
+        }
 
         public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, ref int belowAvgLineCount, ref int uponAvgLineCount)
         {
+            int[] missCountCollect = new int[4] { 0, 0, 0, 0, };
             int maxMissCount = 0;
             int curMissCount = 0;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
@@ -1545,13 +1555,15 @@ namespace LotteryAnalyze
             maxMissCount = curMissCount;
             int reachBollinUpCount = 0;
 
-            while ( curItem != null && loop >= 0 )
+            while (curItem != null && loop >= 0)
             {
                 KData data = curItem.GetData(cdt, false);
                 BollinPoint bp = curBPM.GetData(cdt, false);
                 int mc = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
                 if (maxMissCount < mc)
                     maxMissCount = mc;
+                if (mc < 4)
+                    missCountCollect[mc] = missCountCollect[mc] + 1;
 
                 leftKV = data.KValue;
                 leftID = curItem.index;
@@ -1562,16 +1574,16 @@ namespace LotteryAnalyze
                     maxKV = leftKV;
                     maxID = leftID;
                 }
-                if(minKV > leftKV)
+                if (minKV > leftKV)
                 {
                     minKV = leftKV;
                     minID = leftID;
                 }
 
                 float deltaKV = leftKV - bp.midValue;
-                if(leftKV >= bp.upValue)
+                if (leftKV >= bp.upValue)
                     ++reachBollinUpCount;
-                else if(deltaKV >= -missRelHeight * 1.5f)
+                else if (deltaKV >= -missRelHeight * 1.5f)
                     ++uponAvgLineCount;
                 else
                     ++belowAvgLineCount;
@@ -1585,17 +1597,27 @@ namespace LotteryAnalyze
                 if (curItem.index == 0)
                     break;
                 curItem = curItem.parent.dataLst[curItem.index - 1];
-                curBPM = curBPM.parent.bollinMapLst[curBPM.index -1];
+                curBPM = curBPM.parent.bollinMapLst[curBPM.index - 1];
                 curDI = curDI.parent.GetPrevItem(curDI);
                 --loop;
             }
 
             float rightDelta = rightKV - bpMidRight;
             bool isNearBolleanMidLine = rightDelta >= -missRelHeight * 1.5f && rightDelta <= missRelHeight * 0.5;
+            bool isContinusSmallMissCount = missCountCollect[0] > 1 || missCountCollect[1] > 1 || missCountCollect[2] > 1 || missCountCollect[3] > 1;
 
             // 出现遗漏值的时候，如果k线碰到布林带上方，并且当前还没接近布林中轨 
             if (curMissCount >= 1 && reachBollinUpCount > 0 && isNearBolleanMidLine == false)
-                cfg = KGraphConfig.eTouchBolleanUpAndDown;
+                cfg = KGraphConfig.eTouchBolleanUpThenGoDown;
+            else if(isContinusSmallMissCount && maxMissCount <= 3 && leftKV < rightKV)
+            {
+                if (curMissCount == 3)
+                    cfg = KGraphConfig.eShakeUp3;
+                else if (curMissCount == 2)
+                    cfg = KGraphConfig.eShakeUp2;
+                else
+                    cfg = KGraphConfig.eShakeUp1;
+            }
 
             if (cfg == KGraphConfig.eNone)
             {
@@ -1794,7 +1816,7 @@ namespace LotteryAnalyze
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0], ref mlCfgs[0], ref mbCfgs[0]);
                 CheckMACD(mpm, CollectDataType.ePath1, ref pathValues[1], ref mlCfgs[1], ref mbCfgs[1]);
                 CheckMACD(mpm, CollectDataType.ePath2, ref pathValues[2], ref mlCfgs[2], ref mbCfgs[2]);
-                //pathValues[0] = pathValues[1] = pathValues[2] = 1;
+                pathValues[0] = pathValues[1] = pathValues[2] = 1;
 
                 // 计算012路k线形态的评估值
                 kValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
