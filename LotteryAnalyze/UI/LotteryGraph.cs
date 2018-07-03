@@ -26,6 +26,7 @@ namespace LotteryAnalyze.UI
         bool hasMouseMoveOnUpPanel = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
+        static Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
         Pen curUpdatePen;
         System.Windows.Forms.Timer updateTimer;
 
@@ -139,10 +140,20 @@ namespace LotteryAnalyze.UI
             trackBarTradeData.Maximum = TradeDataManager.Instance.historyTradeDatas.Count;
             if(hasNewDataUpdate)
             {
-                if (curUpdatePen == redPen)
+                if (curUpdatePen == redPen || curUpdatePen == yellowPen)
                     curUpdatePen = greenPen;
                 else if (curUpdatePen == greenPen)
                     curUpdatePen = redPen;
+                else
+                    curUpdatePen = redPen;
+                Invalidate(true);
+            }
+            else if (TradeDataManager.Instance.IsPause())
+            {
+                if (curUpdatePen == redPen || curUpdatePen == yellowPen)
+                    curUpdatePen = greenPen;
+                else if (curUpdatePen == greenPen)
+                    curUpdatePen = yellowPen;
                 else
                     curUpdatePen = redPen;
                 Invalidate(true);

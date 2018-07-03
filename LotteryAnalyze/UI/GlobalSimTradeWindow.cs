@@ -391,5 +391,10 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.RiskControl = (float)trackBarRiskControl.Value / trackBarRiskControl.Maximum;
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
         }
+
+        private void buttonDebugSetting_Click(object sender, EventArgs e)
+        {
+            TradeDebugWindow.Open();
+        }
     }
 }

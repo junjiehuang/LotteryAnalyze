@@ -298,6 +298,8 @@ namespace LotteryAnalyze
                     }
                 }
             }
+
+            BatchTradeSimulator.Instance.RefreshMoney();
         }
 
         public override string GetTips()
@@ -408,6 +410,7 @@ namespace LotteryAnalyze
         public int rightCount = 0;
         public int wrongCount = 0;
         public int untradeCount = 0;
+        public Dictionary<KGraphConfig, bool> debugNodes = new Dictionary<KGraphConfig, bool>();
 
         //public bool simTradeFromFirstEveryTime = true;
         int _simSelNumIndex = 0;
@@ -475,6 +478,12 @@ namespace LotteryAnalyze
             tradeCountList.Add(8);
             tradeCountList.Add(16);
             ClearAllTradeDatas();
+
+            debugNodes.Clear();
+            for (KGraphConfig i = KGraphConfig.eNone; i < KGraphConfig.eMAX; ++i)
+            {
+                debugNodes.Add(i, false);
+            }
         }
         public static TradeDataManager Instance
         {
@@ -757,12 +766,12 @@ namespace LotteryAnalyze
             {
                 for (int i = 0; i < 5; ++i)
                 {
-                    JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
+                    JudgeNumberPath(item, trade, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
                 }
             }
             else
             {
-                JudgeNumberPath(item, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
+                JudgeNumberPath(item, trade, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
             }
 
             if (bestNumIndex >= 0 && bestPath >= 0)
@@ -902,7 +911,7 @@ namespace LotteryAnalyze
                 float maxV = -10;
                 int bestNumIndex = -1;
                 int bestPath = -1;
-                JudgeNumberPath(item, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
+                JudgeNumberPath(item, trade, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
                 if (bestNumIndex >= 0 && bestPath >= 0)
                 {
                     TradeNumbers tn = new TradeNumbers();
@@ -1021,7 +1030,7 @@ namespace LotteryAnalyze
             int bestNumIndex = 0;
             int bestPathOnGraphConfig = -1;
             bool isFinalPathStrongUp = false;
-            JudgeNumberPath(item, numID, ref maxV, ref bestNumIndex, ref bestPathOnGraphConfig, ref isFinalPathStrongUp);
+            JudgeNumberPath(item, trade, numID, ref maxV, ref bestNumIndex, ref bestPathOnGraphConfig, ref isFinalPathStrongUp);
 
             FindAllNumberProbabilities(item, ref maxProbilityNums, false);
             byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].appearCountShort;
@@ -1264,6 +1273,8 @@ namespace LotteryAnalyze
             eShakeUp3,
             // K线从布林下轨升到布林中轨
             eFromBMDownTouchBMMid,
+
+            eMAX,
         }
 
         public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
@@ -1725,6 +1736,11 @@ namespace LotteryAnalyze
                     cfg = KGraphConfig.eShake;
                 }
             }
+
+            if(TradeDataManager.Instance.debugNodes[cfg] == true)
+            {
+                TradeDataManager.Instance.PauseAutoTradeJob();
+            }
             return cfg;
         }
 
@@ -1915,10 +1931,25 @@ namespace LotteryAnalyze
             return pathValues;
         }
 
-        void JudgeNumberPath(DataItem item, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath, ref bool isFinalPathStrongUp)
+        void JudgeNumberPath(DataItem item, TradeDataOneStar trade, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath, ref bool isFinalPathStrongUp)
         {
             bool[] isStrongUp = new bool[3] { false, false, false, };
             float[] pathValues = CalcPathValue(item, numIndex, ref isStrongUp);
+
+            //--------------------------
+            trade.pathCmpInfos[numIndex].Clear();
+            for (int i = 0; i < pathValues.Length; ++i)
+            {
+                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i]));
+            }
+            trade.pathCmpInfos[numIndex].Sort((x, y) =>
+            {
+                if (x.pathValue > y.pathValue)
+                    return -1;
+                return 1;
+            });
+            //--------------------------
+
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             StatisticUnit su0 = sum.statisticUnitMap[CollectDataType.ePath0];
             StatisticUnit su1 = sum.statisticUnitMap[CollectDataType.ePath1];
@@ -2385,13 +2416,17 @@ namespace LotteryAnalyze
             else
                 state = SimState.eFinishAll;
         }
-        void DoSimTrade()
+        public void RefreshMoney()
         {
             currentMoney = TradeDataManager.Instance.currentMoney;
             if (maxMoney < currentMoney)
                 maxMoney = currentMoney;
             if (minMoney > currentMoney)
                 minMoney = currentMoney;
+        }
+        void DoSimTrade()
+        {
+            RefreshMoney();
             if (TradeDataManager.Instance.hasCompleted == true)
             {
                 lastTradeIDTag = TradeDataManager.Instance.CurTestTradeItem.idTag;

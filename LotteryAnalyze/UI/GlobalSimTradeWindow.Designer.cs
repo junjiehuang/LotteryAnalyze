@@ -51,6 +51,9 @@
             this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.checkBoxForceTradeByMaxNumCount = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.textBoxRiskControl = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.trackBarRiskControl = new System.Windows.Forms.TrackBar();
             this.checkBoxOnTradeOnStrongUpPath = new System.Windows.Forms.CheckBox();
             this.textBoxStrongUpStartIndex = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -60,9 +63,7 @@
             this.textBoxMaxNumCount = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.trackBarRiskControl = new System.Windows.Forms.TrackBar();
-            this.label13 = new System.Windows.Forms.Label();
-            this.textBoxRiskControl = new System.Windows.Forms.TextBox();
+            this.buttonDebugSetting = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -325,6 +326,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.buttonDebugSetting);
             this.splitContainer1.Panel2.Controls.Add(this.textBoxCmd);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
@@ -332,6 +334,36 @@
             this.splitContainer1.Size = new System.Drawing.Size(551, 349);
             this.splitContainer1.SplitterDistance = 206;
             this.splitContainer1.TabIndex = 24;
+            // 
+            // textBoxRiskControl
+            // 
+            this.textBoxRiskControl.Location = new System.Drawing.Point(74, 252);
+            this.textBoxRiskControl.Name = "textBoxRiskControl";
+            this.textBoxRiskControl.ReadOnly = true;
+            this.textBoxRiskControl.Size = new System.Drawing.Size(129, 21);
+            this.textBoxRiskControl.TabIndex = 33;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 230);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(65, 12);
+            this.label13.TabIndex = 32;
+            this.label13.Text = "风险控制：";
+            // 
+            // trackBarRiskControl
+            // 
+            this.trackBarRiskControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarRiskControl.AutoSize = false;
+            this.trackBarRiskControl.Location = new System.Drawing.Point(74, 227);
+            this.trackBarRiskControl.Maximum = 100;
+            this.trackBarRiskControl.Name = "trackBarRiskControl";
+            this.trackBarRiskControl.Size = new System.Drawing.Size(129, 23);
+            this.trackBarRiskControl.TabIndex = 31;
+            this.trackBarRiskControl.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarRiskControl.Scroll += new System.EventHandler(this.trackBarRiskControl_Scroll);
             // 
             // checkBoxOnTradeOnStrongUpPath
             // 
@@ -422,35 +454,15 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // trackBarRiskControl
+            // buttonDebugSetting
             // 
-            this.trackBarRiskControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarRiskControl.AutoSize = false;
-            this.trackBarRiskControl.Location = new System.Drawing.Point(74, 227);
-            this.trackBarRiskControl.Maximum = 100;
-            this.trackBarRiskControl.Name = "trackBarRiskControl";
-            this.trackBarRiskControl.Size = new System.Drawing.Size(129, 23);
-            this.trackBarRiskControl.TabIndex = 31;
-            this.trackBarRiskControl.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBarRiskControl.Scroll += new System.EventHandler(this.trackBarRiskControl_Scroll);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(3, 230);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(65, 12);
-            this.label13.TabIndex = 32;
-            this.label13.Text = "风险控制：";
-            // 
-            // textBoxRiskControl
-            // 
-            this.textBoxRiskControl.Location = new System.Drawing.Point(74, 252);
-            this.textBoxRiskControl.Name = "textBoxRiskControl";
-            this.textBoxRiskControl.ReadOnly = true;
-            this.textBoxRiskControl.Size = new System.Drawing.Size(129, 21);
-            this.textBoxRiskControl.TabIndex = 33;
+            this.buttonDebugSetting.Location = new System.Drawing.Point(246, 3);
+            this.buttonDebugSetting.Name = "buttonDebugSetting";
+            this.buttonDebugSetting.Size = new System.Drawing.Size(75, 23);
+            this.buttonDebugSetting.TabIndex = 11;
+            this.buttonDebugSetting.Text = "调试设置";
+            this.buttonDebugSetting.UseVisualStyleBackColor = true;
+            this.buttonDebugSetting.Click += new System.EventHandler(this.buttonDebugSetting_Click);
             // 
             // GlobalSimTradeWindow
             // 
@@ -514,5 +526,6 @@
         private System.Windows.Forms.TrackBar trackBarRiskControl;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox textBoxRiskControl;
+        private System.Windows.Forms.Button buttonDebugSetting;
     }
 }

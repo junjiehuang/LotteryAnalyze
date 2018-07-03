@@ -109,6 +109,12 @@
     <Compile Include="UI\TradeCalculater.Designer.cs">
       <DependentUpon>TradeCalculater.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\TradeDebugWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TradeDebugWindow.Designer.cs">
+      <DependentUpon>TradeDebugWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TradeWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,6 +146,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TradeCalculater.resx">
       <DependentUpon>TradeCalculater.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TradeDebugWindow.resx">
+      <DependentUpon>TradeDebugWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TradeWindow.resx">
       <DependentUpon>TradeWindow.cs</DependentUpon>
