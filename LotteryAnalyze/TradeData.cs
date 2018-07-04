@@ -1696,7 +1696,7 @@ namespace LotteryAnalyze
                 if (testMCI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount > 0)
                 {
                     KData data = testKDD.GetData(cdt, false);
-                    BollinPoint bp = curBPM.GetData(cdt, false);
+                    BollinPoint bp = testBPM.GetData(cdt, false);
                     float kv = data.KValue;
                     float bdv = bp.downValue;
                     if( kv - bdv < missRelHeight )
