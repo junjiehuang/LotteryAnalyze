@@ -2027,7 +2027,7 @@ namespace LotteryAnalyze
             float curBestV = 0;
             int curBestPath = -1;
 
-            if (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2] == false)
+            if (onlyTradeOnStrongUpPath == false || (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2] == false))
             {
                 if (pathValues[0] > pathValues[1])
                     Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
@@ -2054,7 +2054,7 @@ namespace LotteryAnalyze
                 curBestV = pathValues[0];
                 curBestSU = su0;
             }
-            else if(isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2] == false)
+            else if (isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2] == false)
             {
                 curBestPath = 1;
                 curBestV = pathValues[1];
@@ -2066,7 +2066,7 @@ namespace LotteryAnalyze
                 curBestV = pathValues[2];
                 curBestSU = su2;
             }
-            else if(isStrongUp[0] && isStrongUp[1] && isStrongUp[2] == false)
+            else if (isStrongUp[0] && isStrongUp[1] && isStrongUp[2] == false)
             {
                 if (pathValues[0] > pathValues[1])
                 {
@@ -2074,7 +2074,7 @@ namespace LotteryAnalyze
                     curBestV = pathValues[0];
                     curBestSU = su0;
                 }
-                else if(pathValues[0] < pathValues[1])
+                else if (pathValues[0] < pathValues[1])
                 {
                     curBestPath = 1;
                     curBestV = pathValues[1];
