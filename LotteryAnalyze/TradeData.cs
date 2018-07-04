@@ -35,10 +35,17 @@ namespace LotteryAnalyze
     {
         public int pathIndex;
         public float pathValue;
-        public PathCmpInfo(int id, float v)
+        public TradeDataManager.MACDLineWaveConfig macdLineCfg;
+        public TradeDataManager.MACDBarConfig macdBarCfg;
+        public TradeDataManager.KGraphConfig kGraphCfg;
+
+        public PathCmpInfo(int id, float v, TradeDataManager.MACDLineWaveConfig lineCFG, TradeDataManager.MACDBarConfig barCFG, TradeDataManager.KGraphConfig kCFG)
         {
             pathIndex = id;
             pathValue = v;
+            macdLineCfg = lineCFG;
+            macdBarCfg = barCFG;
+            kGraphCfg = kCFG;
         }
     }
 
@@ -50,7 +57,7 @@ namespace LotteryAnalyze
         eDone,
     }
 
-    class NumberCmpInfo
+    public class NumberCmpInfo
     {
         public SByte number;
         public float rate;
@@ -101,7 +108,7 @@ namespace LotteryAnalyze
         }
     }
 
-    class TradeNumbers
+    public class TradeNumbers
     {
         public List<NumberCmpInfo> tradeNumbers = new List<NumberCmpInfo>();
         public int tradeCount = 0;
@@ -169,7 +176,7 @@ namespace LotteryAnalyze
     }
 
     // 基本交易数据
-    class TradeDataBase
+    public class TradeDataBase
     {
         public static string[] NUM_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
 
@@ -197,7 +204,7 @@ namespace LotteryAnalyze
     }
 
     // 一星交易数据
-    class TradeDataOneStar : TradeDataBase
+    public class TradeDataOneStar : TradeDataBase
     {
         public static float SingleTradeCost = 1;
         public static float SingleTradeReward = 9.8f;
@@ -229,7 +236,10 @@ namespace LotteryAnalyze
                 {
                     for(int j = 0; j < pathCmpInfos[i].Count; ++j)
                     {
-                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue + "]\n";
+                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue + 
+                            ", K = " + pathCmpInfos[i][j].kGraphCfg.ToString() + 
+                            ", L = " + pathCmpInfos[i][j].macdLineCfg.ToString() + 
+                            ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString() + "]\n";
                     }
                 }
             }
@@ -353,11 +363,242 @@ namespace LotteryAnalyze
         }
     }
 
+    public class DebugInfo
+    {
+        public Dictionary<TradeDataManager.KGraphConfig, bool> kGraphCfgBPs = new Dictionary<TradeDataManager.KGraphConfig, bool>();
+        public string dataItemTagBP = "";
+        public int wrongCountBP = -1;
+
+        public DebugInfo()
+        {
+            kGraphCfgBPs.Clear();
+            for (TradeDataManager.KGraphConfig i = TradeDataManager.KGraphConfig.eNone; i < TradeDataManager.KGraphConfig.eMAX; ++i)
+            {
+                kGraphCfgBPs.Add(i, false);
+            }
+        }
+
+        public void ClearAllBreakPoints()
+        {
+            foreach(TradeDataManager.KGraphConfig key in kGraphCfgBPs.Keys)
+            {
+                kGraphCfgBPs[key] = false;
+            }
+            dataItemTagBP = "";
+            wrongCountBP = -1;
+        }
+
+        public bool Hit(TradeDataManager.KGraphConfig cfg)
+        {
+            if (kGraphCfgBPs.ContainsKey(cfg))
+                return kGraphCfgBPs[cfg];
+            return false;
+        }
+
+        public bool Hit(string tag)
+        {
+            return dataItemTagBP.CompareTo(tag) == 0;
+        }
+
+        public bool Hit(int wrongCount)
+        {
+            return wrongCountBP >= 0 && wrongCountBP <= wrongCount;
+        }
+    }
+
     // 交易数据管理器
-    class TradeDataManager
+    public class TradeDataManager
     {
         public const int MACD_LOOP_COUNT = 5;
         public const int KGRAPH_LOOP_COUNT = 10;
+
+        public enum ValueCmpState
+        {
+            eNone,
+            eDifGreaterDea,
+            eDifEqualDea,
+            eDifLessDea,
+        }
+        public enum MACDLineWaveConfig
+        {
+            eNone,
+
+            // 直线上升
+            ePureUp,
+            // 上升后回调下降
+            eFirstUpThenSlowDown,
+            // 上升后快速下降
+            eFirstUpThenFastDown,
+            // 直线下降
+            ePureDown,
+            // 下降后回调上升
+            eFirstDownThenSlowUp,
+            // 下降后快速上升
+            eFirstDownThenFastUp,
+            // 水平震荡
+            eFlatShake,
+            // 震荡上升
+            eShakeUp,
+            // 震荡下降
+            eShakeDown,
+        }
+        public enum MACDBarConfig
+        {
+            eNone,
+
+            // 蓝区回调上升
+            eBlueSlowUp,
+            // 蓝区回调上升穿进红区
+            eBlue2RedUp,
+            // 红区上升
+            eRedUp,
+            // 红区震荡
+            eRedShake,
+            // 红区回调下降
+            eRedSlowDown,
+            // 红区回调下降穿进蓝区
+            eRed2BlueDown,
+            // 蓝区下降
+            eBlueDown,
+            // 蓝区震荡
+            eBlueShake,
+            // 0线震荡
+            eZeroShake,
+
+            // 有下降的趋势
+            ePrepareDown,
+            // 有上升的趋势
+            ePrepareUp,
+        }
+        public enum KGraphConfig
+        {
+            eNone,
+            eSlowUpPrepareDown,
+            ePureUp,
+            eSlowDownPrepareUp,
+            ePureDown,
+            eShake,
+
+            // 连续下降到达布林线中轨
+            ePureDownToBML,
+            // 连续在布林线中轨之上上升
+            ePureUpUponBML,
+            // 震荡上升
+            eShakeUp,
+
+            // 触摸到布林带上方并准备下降
+            eTouchBolleanUpThenGoDown,
+            eShakeUp1,
+            eShakeUp2,
+            eShakeUp3,
+            // K线从布林下轨升到布林中轨
+            eFromBMDownTouchBMMid,
+
+            eMAX,
+        }
+
+        // 获取MACD线形态评估值
+        public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
+        {
+            switch (cfg)
+            {
+                case MACDLineWaveConfig.eNone:
+                case MACDLineWaveConfig.ePureDown:
+                case MACDLineWaveConfig.eShakeDown:
+                case MACDLineWaveConfig.eFirstUpThenFastDown:
+                    return 0;
+                case MACDLineWaveConfig.eFirstDownThenSlowUp:
+                case MACDLineWaveConfig.eFirstUpThenSlowDown:
+                    return 0.5f;
+                case MACDLineWaveConfig.eFlatShake:
+                    return 1;
+                case MACDLineWaveConfig.eFirstDownThenFastUp:
+                    return 1.5f;
+                case MACDLineWaveConfig.eShakeUp:
+                    return 2;
+                case MACDLineWaveConfig.ePureUp:
+                    return 4;
+            }
+            return 1;
+        }
+
+        // 获取MACD柱形态评估值
+        public static float GetMACDBarConfigValue(MACDBarConfig cfg)
+        {
+            switch (cfg)
+            {
+                case MACDBarConfig.eNone:
+                case MACDBarConfig.eRedSlowDown:
+                case MACDBarConfig.eRed2BlueDown:
+                case MACDBarConfig.eBlueDown:
+                case MACDBarConfig.eBlueShake:
+                case MACDBarConfig.ePrepareDown:
+                    return 0;
+                case MACDBarConfig.eBlueSlowUp:
+                case MACDBarConfig.eZeroShake:
+                    return 0.5f;
+                case MACDBarConfig.eBlue2RedUp:
+                case MACDBarConfig.eRedShake:
+                case MACDBarConfig.ePrepareUp:
+                    return 1;
+                case MACDBarConfig.eRedUp:
+                    return 2;
+            }
+            return 1;
+        }
+
+        // 获取K线形态评估值
+        public static float GetKGraphConfigValue(KGraphConfig cfg, int belowAvgLineCount, int uponAvgLineCount)
+        {
+            switch (cfg)
+            {
+                case KGraphConfig.eNone:
+                case KGraphConfig.ePureDown:
+                case KGraphConfig.eSlowDownPrepareUp:
+                case KGraphConfig.eTouchBolleanUpThenGoDown:
+                case KGraphConfig.eFromBMDownTouchBMMid:
+                    return 0;
+                case KGraphConfig.eShake:
+                    return 0.5f;
+                case KGraphConfig.eSlowUpPrepareDown:
+                    return 1;
+                case KGraphConfig.ePureUp:
+                    return 2;
+                case KGraphConfig.ePureUpUponBML:
+                    return 4;
+                case KGraphConfig.eShakeUp:
+                    return 8;
+                case KGraphConfig.ePureDownToBML:
+                    return 6;
+                case KGraphConfig.eShakeUp3:
+                    return 9;
+                case KGraphConfig.eShakeUp2:
+                    return 10;
+                case KGraphConfig.eShakeUp1:
+                    return 11;
+            }
+            return 1;
+        }
+
+        public static ValueCmpState GetValueCmpState(MACDPoint mp)
+        {
+            ValueCmpState res = ValueCmpState.eNone;
+            if (mp.DIF > mp.DEA)
+                res = ValueCmpState.eDifGreaterDea;
+            else if (mp.DIF < mp.DEA)
+                res = ValueCmpState.eDifLessDea;
+            else
+                res = ValueCmpState.eDifEqualDea;
+            return res;
+        }
+
+
+        public enum StartTradeType
+        {
+            eFromFirst,
+            eFromLatest,
+            eFromSpec,
+        }
 
         // 交易策略
         public enum TradeStrategy
@@ -410,7 +651,8 @@ namespace LotteryAnalyze
         public int rightCount = 0;
         public int wrongCount = 0;
         public int untradeCount = 0;
-        public Dictionary<KGraphConfig, bool> debugNodes = new Dictionary<KGraphConfig, bool>();
+
+        public DebugInfo debugInfo = new DebugInfo();
 
         //public bool simTradeFromFirstEveryTime = true;
         int _simSelNumIndex = 0;
@@ -478,12 +720,6 @@ namespace LotteryAnalyze
             tradeCountList.Add(8);
             tradeCountList.Add(16);
             ClearAllTradeDatas();
-
-            debugNodes.Clear();
-            for (KGraphConfig i = KGraphConfig.eNone; i < KGraphConfig.eMAX; ++i)
-            {
-                debugNodes.Add(i, false);
-            }
         }
         public static TradeDataManager Instance
         {
@@ -609,12 +845,7 @@ namespace LotteryAnalyze
             return info;
         }
 
-        public enum StartTradeType
-        {
-            eFromFirst,
-            eFromLatest,
-            eFromSpec,
-        }
+
         public void SetStartMoney(float _startMoney)
         {
             startMoney = _startMoney;
@@ -719,6 +950,13 @@ namespace LotteryAnalyze
         /// <param name="item"></param>
         void PredictAndTrade(DataItem item)
         {
+            if (TradeDataManager.Instance.debugInfo.Hit(item.idTag) ||
+                TradeDataManager.Instance.debugInfo.Hit(wrongCount))
+            {
+                TradeDataManager.Instance.PauseAutoTradeJob();
+            }
+            
+
             // 自动计算辅助线
             autoAnalyzeTool.Analyze(item.idGlobal);
 
@@ -1192,184 +1430,6 @@ namespace LotteryAnalyze
 
         }
 
-        public enum ValueCmpState
-        {
-            eNone,
-            eDifGreaterDea,
-            eDifEqualDea,
-            eDifLessDea,
-        }
-        public enum MACDLineWaveConfig
-        {
-            eNone,
-
-            // 直线上升
-            ePureUp,
-            // 上升后回调下降
-            eFirstUpThenSlowDown,
-            // 上升后快速下降
-            eFirstUpThenFastDown,
-            // 直线下降
-            ePureDown,
-            // 下降后回调上升
-            eFirstDownThenSlowUp,
-            // 下降后快速上升
-            eFirstDownThenFastUp,
-            // 水平震荡
-            eFlatShake,
-            // 震荡上升
-            eShakeUp,
-            // 震荡下降
-            eShakeDown,
-        }
-        public enum MACDBarConfig
-        {
-            eNone,
-
-            // 蓝区回调上升
-            eBlueSlowUp,
-            // 蓝区回调上升穿进红区
-            eBlue2RedUp,
-            // 红区上升
-            eRedUp,
-            // 红区震荡
-            eRedShake,
-            // 红区回调下降
-            eRedSlowDown,
-            // 红区回调下降穿进蓝区
-            eRed2BlueDown,
-            // 蓝区下降
-            eBlueDown,
-            // 蓝区震荡
-            eBlueShake,
-            // 0线震荡
-            eZeroShake,
-
-            // 有下降的趋势
-            ePrepareDown,
-            // 有上升的趋势
-            ePrepareUp,
-        }
-        public enum KGraphConfig
-        {
-            eNone,
-            eSlowUpPrepareDown,
-            ePureUp,
-            eSlowDownPrepareUp,
-            ePureDown,
-            eShake,
-
-            // 连续下降到达布林线中轨
-            ePureDownToBML,
-            // 连续在布林线中轨之上上升
-            ePureUpUponBML,
-            // 震荡上升
-            eShakeUp,
-
-            // 触摸到布林带上方并准备下降
-            eTouchBolleanUpThenGoDown,
-            eShakeUp1,
-            eShakeUp2,
-            eShakeUp3,
-            // K线从布林下轨升到布林中轨
-            eFromBMDownTouchBMMid,
-
-            eMAX,
-        }
-
-        public static float GetMACDLineWaveConfigValue(MACDLineWaveConfig cfg)
-        {
-            switch(cfg)
-            {
-                case MACDLineWaveConfig.eNone:
-                case MACDLineWaveConfig.ePureDown:
-                case MACDLineWaveConfig.eShakeDown:
-                case MACDLineWaveConfig.eFirstUpThenFastDown:
-                    return 0;
-                case MACDLineWaveConfig.eFirstDownThenSlowUp:
-                case MACDLineWaveConfig.eFirstUpThenSlowDown:
-                    return 0.5f;
-                case MACDLineWaveConfig.eFlatShake:
-                    return 1;
-                case MACDLineWaveConfig.eFirstDownThenFastUp:
-                    return 1.5f;
-                case MACDLineWaveConfig.eShakeUp:
-                    return 2;
-                case MACDLineWaveConfig.ePureUp:
-                    return 4;
-            }
-            return 1;
-        }
-
-        public static float GetMACDBarConfigValue(MACDBarConfig cfg)
-        {
-            switch (cfg)
-            {
-                case MACDBarConfig.eNone:
-                case MACDBarConfig.eRedSlowDown:
-                case MACDBarConfig.eRed2BlueDown:
-                case MACDBarConfig.eBlueDown:
-                case MACDBarConfig.eBlueShake:
-                case MACDBarConfig.ePrepareDown:
-                    return 0;
-                case MACDBarConfig.eBlueSlowUp:
-                case MACDBarConfig.eZeroShake:
-                    return 0.5f;
-                case MACDBarConfig.eBlue2RedUp:
-                case MACDBarConfig.eRedShake:
-                case MACDBarConfig.ePrepareUp:
-                    return 1;
-                case MACDBarConfig.eRedUp:
-                    return 2;
-            }
-            return 1;
-        }
-
-        public static float GetKGraphConfigValue(KGraphConfig cfg, int belowAvgLineCount, int uponAvgLineCount)
-        {
-            //if (belowAvgLineCount > uponAvgLineCount)
-            //    return 0;
-            switch (cfg)
-            {
-                case KGraphConfig.eNone:
-                case KGraphConfig.ePureDown:
-                case KGraphConfig.eSlowDownPrepareUp:
-                case KGraphConfig.eTouchBolleanUpThenGoDown:
-                case KGraphConfig.eFromBMDownTouchBMMid:
-                    return 0;
-                case KGraphConfig.eShake:
-                    return 0.5f;
-                case KGraphConfig.eSlowUpPrepareDown:
-                    return 1;
-                case KGraphConfig.ePureUp:
-                    return 2;
-                case KGraphConfig.ePureUpUponBML:
-                    return 4;
-                case KGraphConfig.eShakeUp:
-                    return 8;
-                case KGraphConfig.ePureDownToBML:
-                    return 6;
-                case KGraphConfig.eShakeUp3:
-                    return 9;
-                case KGraphConfig.eShakeUp2:
-                    return 10;
-                case KGraphConfig.eShakeUp1:
-                    return 11;
-            }
-            return 1;
-        }
-
-        public static ValueCmpState GetValueCmpState(MACDPoint mp)
-        {
-            ValueCmpState res = ValueCmpState.eNone;
-            if (mp.DIF > mp.DEA)
-                res = ValueCmpState.eDifGreaterDea;
-            else if (mp.DIF < mp.DEA)
-                res = ValueCmpState.eDifLessDea;
-            else
-                res = ValueCmpState.eDifEqualDea;
-            return res;
-        }
 
         public static void CheckMACDGoldenCrossAndDeadCross(MACDPointMap curMpm, CollectDataType cdt, ref int goldenCrossCount, ref int deadCrossCount, ref int confuseCount, ref MACDLineWaveConfig waveCfg, ref MACDBarConfig barCfg)
         {
@@ -1737,7 +1797,7 @@ namespace LotteryAnalyze
                 }
             }
 
-            if(TradeDataManager.Instance.debugNodes[cfg] == true)
+            if(TradeDataManager.Instance.debugInfo.Hit(cfg))
             {
                 TradeDataManager.Instance.PauseAutoTradeJob();
             }
@@ -1769,10 +1829,14 @@ namespace LotteryAnalyze
         {
             res.Clear();
             bool[] isStrongUp = new bool[3] { false, false, false };
-            float[] pathValues = CalcPathValue(item, numIndex, ref isStrongUp);
+            float[] pathValues;
+            MACDLineWaveConfig[] lineCfgs;
+            MACDBarConfig[] barCfgs;
+            KGraphConfig[] kCfgs;
+            CalcPathValue(item, numIndex, ref isStrongUp, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
             for( int i = 0; i < pathValues.Length; ++i )
             {
-                res.Add(new PathCmpInfo(i, pathValues[i]));
+                res.Add(new PathCmpInfo(i, pathValues[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
             }
             res.Sort((x, y) =>
             {
@@ -1826,16 +1890,16 @@ namespace LotteryAnalyze
             return true;
         }
 
-        float[] CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp)
+        void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs)
         {
-            float[] pathValues = new float[3] { 1, 1, 1 };
+            pathValues = new float[3] { 1, 1, 1 };
             float[] kValues = new float[3] { 1, 1, 1 };
             int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
             int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
             float[] proShort = new float[3] { 1, 1, 1, };
-            MACDLineWaveConfig[] mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
-            MACDBarConfig[] mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
-            KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
+            mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
+            mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
+            kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
 
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             //int[] missCounts = new int[3] 
@@ -1928,19 +1992,24 @@ namespace LotteryAnalyze
             //if (path2Avg10 > path2Bpm) pathValues[2] *= 2;
             //if (path2Avg5 > path2Avg10) pathValues[2] *= 2;
 
-            return pathValues;
+            //return pathValues;
         }
 
         void JudgeNumberPath(DataItem item, TradeDataOneStar trade, int numIndex, ref float maxV, ref int bestNumIndex, ref int bestPath, ref bool isFinalPathStrongUp)
         {
             bool[] isStrongUp = new bool[3] { false, false, false, };
-            float[] pathValues = CalcPathValue(item, numIndex, ref isStrongUp);
+
+            float[] pathValues;
+            MACDLineWaveConfig[] lineCfgs;
+            MACDBarConfig[] barCfgs;
+            KGraphConfig[] kCfgs;
+            CalcPathValue(item, numIndex, ref isStrongUp, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
 
             //--------------------------
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
-                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i]));
+                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
             }
             trade.pathCmpInfos[numIndex].Sort((x, y) =>
             {
@@ -2197,7 +2266,7 @@ namespace LotteryAnalyze
     /// <summary>
     /// 批量模拟交易
     /// </summary>
-    class BatchTradeSimulator
+    public class BatchTradeSimulator
     {
         enum SimState
         {

@@ -23,15 +23,22 @@ namespace LotteryAnalyze.UI
         {
             InitializeComponent();
 
-            for( TradeDataManager.KGraphConfig i = TradeDataManager.KGraphConfig.eNone;
-                i < TradeDataManager.KGraphConfig.eMAX; ++i )
+            Data2UI();
+            FormMain.AddWindow(this);
+        }
+
+        void Data2UI()
+        {
+            treeViewDebugNodes.Nodes.Clear();
+            for (TradeDataManager.KGraphConfig i = TradeDataManager.KGraphConfig.eNone; i < TradeDataManager.KGraphConfig.eMAX; ++i)
             {
                 TreeNode node = new TreeNode(i.ToString());
-                node.Checked = TradeDataManager.Instance.debugNodes[i];
+                node.Checked = TradeDataManager.Instance.debugInfo.kGraphCfgBPs[i];
                 node.Tag = i;
                 treeViewDebugNodes.Nodes.Add(node);
             }
-            FormMain.AddWindow(this);
+            textBoxDataItemTag.Text = TradeDataManager.Instance.debugInfo.dataItemTagBP;
+            textBoxWrongCountBP.Text = TradeDataManager.Instance.debugInfo.wrongCountBP.ToString();
         }
 
         private void treeViewDebugNodes_AfterSelect(object sender, TreeViewEventArgs e)
@@ -42,14 +49,10 @@ namespace LotteryAnalyze.UI
         private void treeViewDebugNodes_AfterCheck(object sender, TreeViewEventArgs e)
         {
             TreeNode node = e.Node;
-            //if (sender is TreeView)
-            //    node = (sender as TreeView).SelectedNode;
-            //else if (sender is TreeNode)
-            //    node = sender as TreeNode;
             if (node != null)
             {
                 TradeDataManager.KGraphConfig cfg = (TradeDataManager.KGraphConfig)(node.Tag);
-                TradeDataManager.Instance.debugNodes[cfg] = node.Checked;
+                TradeDataManager.Instance.debugInfo.kGraphCfgBPs[cfg] = node.Checked;
             }
         }
 
@@ -57,6 +60,22 @@ namespace LotteryAnalyze.UI
         {
             sInst = null;
             FormMain.RemoveWindow(this);
+        }
+
+        private void textBoxDataItemTag_TextChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.debugInfo.dataItemTagBP = textBoxDataItemTag.Text;
+        }        
+
+        private void textBoxWrongCountBP_TextChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.debugInfo.wrongCountBP = int.Parse(textBoxWrongCountBP.Text);
+        }
+
+        private void buttonClearAllBPs_Click(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.debugInfo.ClearAllBreakPoints();
+            Data2UI();
         }
     }
 }
