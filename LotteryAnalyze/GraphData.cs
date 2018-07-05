@@ -48,6 +48,46 @@ namespace LotteryAnalyze
         public float KValue;
 
         //string info = null;
+        bool hasRefreshUpDownValue = false;
+        float upValue;
+        float downValue;
+
+        public float UpValue
+        {
+            get
+            {
+                RefreshUpDownValue();
+                return upValue;
+            }
+        }
+
+        public float DownValue
+        {
+            get
+            {
+                RefreshUpDownValue();
+                return downValue;
+            }
+        }
+
+        public float RelateDistTo(float testValue)
+        {
+            float KDIST = UpValue - DownValue;
+            if (testValue >= DownValue && testValue <= UpValue)
+                return 0;
+            else if (testValue > UpValue)
+            {
+                if(KDIST != 0)
+                    return (testValue - UpValue) / KDIST;
+                return testValue - UpValue;
+            }
+            else
+            {
+                if (KDIST != 0)
+                    return (testValue - DownValue) / KDIST;
+                return testValue - DownValue;
+            }
+        }
 
         public int index
         {
@@ -57,6 +97,17 @@ namespace LotteryAnalyze
                     return -1;
                 return parent.index;
             }
+        }
+
+        void RefreshUpDownValue()
+        {
+            if (hasRefreshUpDownValue)
+                return;
+            hasRefreshUpDownValue = true;
+            int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+            float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+            upValue = KValue + HitValue;
+            downValue = KValue - MissValue * missRelHeight;
         }
 
         public string GetInfo()
