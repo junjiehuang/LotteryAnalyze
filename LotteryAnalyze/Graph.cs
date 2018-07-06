@@ -406,6 +406,13 @@ namespace LotteryAnalyze
         public AuxiliaryLine selAuxLine = null;
         public int selAuxLinePointIndex = -1;
 
+        float downGraphYOffset = 0;
+        public float DownGraphYOffset
+        {
+            get { return downGraphYOffset; }
+            set { downGraphYOffset = value; }
+        }
+
         public GraphKCurve()
         {
             selDataFont = new Font(FontFamily.GenericSerif, 12);
@@ -433,6 +440,7 @@ namespace LotteryAnalyze
         {
             canvasOffset.X = 0;
             canvasOffset.Y = 0;
+            DownGraphYOffset = 0;
         }
 
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
@@ -565,7 +573,7 @@ namespace LotteryAnalyze
                 float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
 
                 float oriYOff = canvasOffset.Y;
-                canvasOffset.Y = winH * 0.5f;
+                canvasOffset.Y = winH * 0.5f + DownGraphYOffset;
                 lastValue = 0;
                 findPrevPt = false;
                 int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;

@@ -1120,6 +1120,8 @@
             this.panelDown.TabIndex = 0;
             this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
+            this.panelDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseDown);
+            this.panelDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseUp);
             // 
             // LotteryGraph
             // 

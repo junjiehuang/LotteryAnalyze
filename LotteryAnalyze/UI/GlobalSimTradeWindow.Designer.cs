@@ -61,9 +61,11 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxMaxNumCount = new System.Windows.Forms.TextBox();
+            this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.buttonDebugSetting = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBoxUponValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -165,7 +167,7 @@
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
             this.textBoxCmd.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxCmd.Size = new System.Drawing.Size(335, 314);
+            this.textBoxCmd.Size = new System.Drawing.Size(335, 342);
             this.textBoxCmd.TabIndex = 10;
             this.textBoxCmd.WordWrap = false;
             // 
@@ -173,7 +175,7 @@
             // 
             this.progressBarCurrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarCurrent.Location = new System.Drawing.Point(75, 359);
+            this.progressBarCurrent.Location = new System.Drawing.Point(75, 387);
             this.progressBarCurrent.Name = "progressBarCurrent";
             this.progressBarCurrent.Size = new System.Drawing.Size(481, 23);
             this.progressBarCurrent.TabIndex = 11;
@@ -182,7 +184,7 @@
             // 
             this.progressBarTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarTotal.Location = new System.Drawing.Point(75, 389);
+            this.progressBarTotal.Location = new System.Drawing.Point(75, 417);
             this.progressBarTotal.Name = "progressBarTotal";
             this.progressBarTotal.Size = new System.Drawing.Size(481, 23);
             this.progressBarTotal.TabIndex = 12;
@@ -190,7 +192,7 @@
             // checkBoxSpecNumIndex
             // 
             this.checkBoxSpecNumIndex.AutoSize = true;
-            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 285);
+            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 316);
             this.checkBoxSpecNumIndex.Name = "checkBoxSpecNumIndex";
             this.checkBoxSpecNumIndex.Size = new System.Drawing.Size(108, 16);
             this.checkBoxSpecNumIndex.TabIndex = 13;
@@ -221,7 +223,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 162);
+            this.label5.Location = new System.Drawing.Point(3, 193);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 12);
             this.label5.TabIndex = 16;
@@ -230,7 +232,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 186);
+            this.label6.Location = new System.Drawing.Point(3, 217);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 17;
@@ -240,7 +242,7 @@
             // 
             this.textBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStartDate.Location = new System.Drawing.Point(74, 160);
+            this.textBoxStartDate.Location = new System.Drawing.Point(74, 191);
             this.textBoxStartDate.Name = "textBoxStartDate";
             this.textBoxStartDate.ReadOnly = true;
             this.textBoxStartDate.Size = new System.Drawing.Size(129, 21);
@@ -250,7 +252,7 @@
             // 
             this.textBoxEndDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxEndDate.Location = new System.Drawing.Point(74, 183);
+            this.textBoxEndDate.Location = new System.Drawing.Point(74, 214);
             this.textBoxEndDate.Name = "textBoxEndDate";
             this.textBoxEndDate.ReadOnly = true;
             this.textBoxEndDate.Size = new System.Drawing.Size(129, 21);
@@ -279,7 +281,7 @@
             // checkBoxForceTradeByMaxNumCount
             // 
             this.checkBoxForceTradeByMaxNumCount.AutoSize = true;
-            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 307);
+            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 338);
             this.checkBoxForceTradeByMaxNumCount.Name = "checkBoxForceTradeByMaxNumCount";
             this.checkBoxForceTradeByMaxNumCount.Size = new System.Drawing.Size(144, 16);
             this.checkBoxForceTradeByMaxNumCount.TabIndex = 23;
@@ -297,6 +299,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label14);
+            this.splitContainer1.Panel1.Controls.Add(this.textBoxUponValue);
             this.splitContainer1.Panel1.Controls.Add(this.textBoxRiskControl);
             this.splitContainer1.Panel1.Controls.Add(this.label13);
             this.splitContainer1.Panel1.Controls.Add(this.trackBarRiskControl);
@@ -331,13 +335,13 @@
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
-            this.splitContainer1.Size = new System.Drawing.Size(551, 349);
+            this.splitContainer1.Size = new System.Drawing.Size(551, 377);
             this.splitContainer1.SplitterDistance = 206;
             this.splitContainer1.TabIndex = 24;
             // 
             // textBoxRiskControl
             // 
-            this.textBoxRiskControl.Location = new System.Drawing.Point(74, 252);
+            this.textBoxRiskControl.Location = new System.Drawing.Point(74, 283);
             this.textBoxRiskControl.Name = "textBoxRiskControl";
             this.textBoxRiskControl.ReadOnly = true;
             this.textBoxRiskControl.Size = new System.Drawing.Size(129, 21);
@@ -346,7 +350,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(3, 230);
+            this.label13.Location = new System.Drawing.Point(3, 261);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(65, 12);
             this.label13.TabIndex = 32;
@@ -357,7 +361,7 @@
             this.trackBarRiskControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarRiskControl.AutoSize = false;
-            this.trackBarRiskControl.Location = new System.Drawing.Point(74, 227);
+            this.trackBarRiskControl.Location = new System.Drawing.Point(74, 258);
             this.trackBarRiskControl.Maximum = 100;
             this.trackBarRiskControl.Name = "trackBarRiskControl";
             this.trackBarRiskControl.Size = new System.Drawing.Size(129, 23);
@@ -368,7 +372,7 @@
             // checkBoxOnTradeOnStrongUpPath
             // 
             this.checkBoxOnTradeOnStrongUpPath.AutoSize = true;
-            this.checkBoxOnTradeOnStrongUpPath.Location = new System.Drawing.Point(3, 329);
+            this.checkBoxOnTradeOnStrongUpPath.Location = new System.Drawing.Point(3, 360);
             this.checkBoxOnTradeOnStrongUpPath.Name = "checkBoxOnTradeOnStrongUpPath";
             this.checkBoxOnTradeOnStrongUpPath.Size = new System.Drawing.Size(144, 16);
             this.checkBoxOnTradeOnStrongUpPath.TabIndex = 30;
@@ -400,7 +404,7 @@
             this.comboBoxOnNoMoney.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxOnNoMoney.FormattingEnabled = true;
-            this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 206);
+            this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 237);
             this.comboBoxOnNoMoney.Name = "comboBoxOnNoMoney";
             this.comboBoxOnNoMoney.Size = new System.Drawing.Size(129, 20);
             this.comboBoxOnNoMoney.TabIndex = 26;
@@ -409,7 +413,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(3, 211);
+            this.label11.Location = new System.Drawing.Point(3, 242);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(65, 12);
             this.label11.TabIndex = 27;
@@ -434,26 +438,6 @@
             this.textBoxMaxNumCount.TabIndex = 25;
             this.textBoxMaxNumCount.TextChanged += new System.EventHandler(this.textBoxMaxNumCount_TextChanged);
             // 
-            // label9
-            // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 364);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(65, 12);
-            this.label9.TabIndex = 26;
-            this.label9.Text = "当前进度：";
-            // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 394);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(53, 12);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "总进度：";
-            // 
             // buttonDebugSetting
             // 
             this.buttonDebugSetting.Location = new System.Drawing.Point(246, 3);
@@ -464,11 +448,50 @@
             this.buttonDebugSetting.UseVisualStyleBackColor = true;
             this.buttonDebugSetting.Click += new System.EventHandler(this.buttonDebugSetting_Click);
             // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 392);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(65, 12);
+            this.label9.TabIndex = 26;
+            this.label9.Text = "当前进度：";
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 422);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(53, 12);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "总进度：";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(3, 165);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(65, 12);
+            this.label14.TabIndex = 34;
+            this.label14.Text = "评分起点：";
+            // 
+            // textBoxUponValue
+            // 
+            this.textBoxUponValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxUponValue.Location = new System.Drawing.Point(74, 163);
+            this.textBoxUponValue.Name = "textBoxUponValue";
+            this.textBoxUponValue.Size = new System.Drawing.Size(129, 21);
+            this.textBoxUponValue.TabIndex = 35;
+            this.textBoxUponValue.TextChanged += new System.EventHandler(this.textBoxUponValue_TextChanged);
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 417);
+            this.ClientSize = new System.Drawing.Size(561, 445);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.splitContainer1);
@@ -527,5 +550,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox textBoxRiskControl;
         private System.Windows.Forms.Button buttonDebugSetting;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBoxUponValue;
     }
 }

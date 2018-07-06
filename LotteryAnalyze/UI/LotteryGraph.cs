@@ -22,6 +22,7 @@ namespace LotteryAnalyze.UI
         Point upPanelMousePosOnMove = new Point();
         Point upPanelMousePosOnBtnDown = new Point();
         Point downPanelMousePosOnMove = new Point();
+        Point downPanelMousePosLastDrag = new Point();
         bool hasNewDataUpdate = false;
         bool hasMouseMoveOnUpPanel = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
@@ -481,7 +482,28 @@ namespace LotteryAnalyze.UI
         private void panelDown_MouseMove(object sender, MouseEventArgs e)
         {
             downPanelMousePosOnMove = e.Location;
+
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
+            {
+                float dx = e.Location.X - downPanelMousePosLastDrag.X;
+                float dy = e.Location.Y - downPanelMousePosLastDrag.Y;
+                downPanelMousePosLastDrag = e.Location;
+
+                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                {
+                    graphMgr.kvalueGraph.DownGraphYOffset += dy;
+                }
+            }
             this.Invalidate(true);//触发Paint事件
+        }
+
+        private void panelDown_MouseDown(object sender, MouseEventArgs e)
+        {
+            downPanelMousePosLastDrag = e.Location;
+        }
+        private void panelDown_MouseUp(object sender, MouseEventArgs e)
+        {
+
         }
 
         private void panelUp_Paint(object sender, PaintEventArgs e)

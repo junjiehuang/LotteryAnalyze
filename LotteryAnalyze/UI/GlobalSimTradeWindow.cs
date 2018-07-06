@@ -45,6 +45,7 @@ namespace LotteryAnalyze.UI
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "specNumIndex", checkBoxSpecNumIndex.Checked ? 1 : 0);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "onlyTradeOnStrongUpPath", checkBoxOnTradeOnStrongUpPath.Checked ? 1 : 0);
             SystemCfg.Instance.CFG.WriteFloat("SimTrade", "riskControl", TradeDataManager.Instance.RiskControl);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "uponValue", TradeDataManager.Instance.uponValue);
 
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
         }
@@ -61,6 +62,7 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.forceTradeByMaxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "forceTradeByMaxNumCount", 0) == 1;
             TradeDataManager.Instance.maxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "maxNumCount", 5);
             TradeDataManager.Instance.RiskControl = SystemCfg.Instance.CFG.ReadFloat("SimTrade", "riskControl", 1);
+            TradeDataManager.Instance.uponValue = SystemCfg.Instance.CFG.ReadInt("SimTrade", "uponValue", 0);
 
             checkBoxSpecNumIndex.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "specNumIndex", 0) == 1;
             checkBoxOnTradeOnStrongUpPath.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "onlyTradeOnStrongUpPath", 0) == 1;
@@ -395,6 +397,13 @@ namespace LotteryAnalyze.UI
         private void buttonDebugSetting_Click(object sender, EventArgs e)
         {
             TradeDebugWindow.Open();
+        }
+
+        private void textBoxUponValue_TextChanged(object sender, EventArgs e)
+        {
+            int v = TradeDataManager.Instance.uponValue;
+            if (int.TryParse(textBoxUponValue.Text, out v))
+                TradeDataManager.Instance.uponValue = v;
         }
     }
 }
