@@ -1614,7 +1614,6 @@ namespace LotteryAnalyze
             int maxMissCount = 0;
             int curMissCount = 0;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-            //float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
 
             bool shouldCheckUnderAvgLineCount = true;
             belowAvgLineCount = 0;
@@ -1622,13 +1621,13 @@ namespace LotteryAnalyze
             KGraphConfig cfg = KGraphConfig.eNone;
             int loop = KGRAPH_LOOP_COUNT;
             KDataDict curItem = item;
-            BollinPointMap curBPM = bpm;
-            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, bpMidRight = 0, bpUpRight = 0, bpMidLeft = 0, kvOnMaxMissCount = 0, relateDist = 0;
-            float rightID = -1, leftID = -1, maxID = -1, minID = -1, idOnMaxMissCount;
+            BollinPointMap curBPM = bpm, maxMissBPM = null;
+            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, rightBpMid = 0, rightBpUp = 0, leftBpMid = 0, maxMissKV = 0, relateDist = 0;
+            float rightID = -1, leftID = -1, maxID = -1, minID = -1, maxMissID = -1;
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
-            bpMidRight = bpm.GetData(cdt, false).midValue;
-            bpUpRight = bpm.GetData(cdt, false).upValue;
+            rightBpMid = bpm.GetData(cdt, false).midValue;
+            rightBpUp = bpm.GetData(cdt, false).upValue;
             DataItem curDI = di;
             curMissCount = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
             maxMissCount = curMissCount;
@@ -1636,10 +1635,10 @@ namespace LotteryAnalyze
             int reachBollinUpCount = 0;
             // 最大遗漏值回溯是否碰到布林线下轨
             bool hasMaxMissCountTouchBolleanDown = false;
-            DataItem maxMissCountItem = null;
-            KDataDict maxMissCountKdd = null;
-            BollinPointMap maxMissCountBPM = null;
-            KData leftKData = null, rightKData = item.GetData(cdt, false), maxMissCountKData = null;
+            DataItem maxMissDataItem = null;
+            KDataDict maxMissKdd = null;
+            BollinPoint maxMissBP = null, leftBP = null, rightBP = curBPM.GetData(cdt, false), maxBP = rightBP, minBP = rightBP;
+            KData leftKData = null, rightKData = item.GetData(cdt, false), maxMissKData = null, maxKData = rightKData, minKData = rightKData;
 
             while (curItem != null && loop >= 0)
             {
@@ -1649,47 +1648,50 @@ namespace LotteryAnalyze
                 int mc = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
                 if (maxMissCount < mc)
                 {
+                    maxMissBPM = curBPM;
                     maxMissCount = mc;
-                    kvOnMaxMissCount = data.KValue;
-                    idOnMaxMissCount = curItem.index;
-                    maxMissCountItem = curDI;
-                    maxMissCountKdd = curItem;
-                    maxMissCountBPM = curBPM;
-                    maxMissCountKData = data;
+                    maxMissKV = data.KValue;
+                    maxMissID = curItem.index;
+                    maxMissDataItem = curDI;
+                    maxMissKdd = curItem;
+                    maxMissBP = bp;
+                    maxMissKData = data;
                 }
                 if (mc < 4)
                     missCountCollect[mc] = missCountCollect[mc] + 1;
 
                 leftKV = data.KValue;
                 leftID = curItem.index;
-                bpMidLeft = bp.midValue;
+                leftBpMid = bp.midValue;
+                leftBP = bp;
+                leftKData = data;
 
                 if (maxKV < leftKV)
                 {
                     maxKV = leftKV;
                     maxID = leftID;
+                    maxBP = bp;
+                    maxKData = data;
                 }
                 if (minKV > leftKV)
                 {
                     minKV = leftKV;
                     minID = leftID;
+                    minBP = bp;
+                    minKData = data;
                 }
 
                 relateDist = data.RelateDistTo(bp.upValue);
-                if (relateDist >= -0.5f && relateDist <= 0.5f)
+                // 达到布林上轨的个数
+                if (relateDist >= -0.5f)
                     ++reachBollinUpCount;
                 relateDist = data.RelateDistTo(bp.midValue);
+                // 超过布林中轨的个数
                 if (relateDist > 0.5f)
                     ++uponAvgLineCount;
+                // 低于布林中轨的个数
                 else if (relateDist < -0.5f)
                     ++belowAvgLineCount;
-                //float deltaKV = leftKV - bp.midValue;
-                //if (leftKV >= bp.upValue)
-                //    ++reachBollinUpCount;
-                //else if (deltaKV >= -missRelHeight * 1.5f)
-                //    ++uponAvgLineCount;
-                //else
-                //    ++belowAvgLineCount;
 
                 if (curItem.index == 0)
                     break;
@@ -1698,28 +1700,24 @@ namespace LotteryAnalyze
                 curDI = curDI.parent.GetPrevItem(curDI);
                 --loop;
             }
-            DataItem testMCI = maxMissCountItem;
-            KDataDict testKDD = maxMissCountKdd;
-            BollinPointMap testBPM = maxMissCountBPM;
+            DataItem testMCI = maxMissDataItem;
+            KDataDict testKDD = maxMissKdd;
+            BollinPointMap testBPM = maxMissBPM;
+            // 从最大遗漏值那期开始回溯
             while (testMCI != null)
             {
+                // 如果这期还是遗漏
                 if (testMCI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount > 0)
                 {
                     KData data = testKDD.GetData(cdt, false);
                     BollinPoint bp = testBPM.GetData(cdt, false);
                     relateDist = data.RelateDistTo(bp.downValue);
+                    // 如果出现在布林下轨
                     if(relateDist <= 0)
                     {
                         hasMaxMissCountTouchBolleanDown = true;
                         break;
                     }
-                    //float kv = data.KValue;
-                    //float bdv = bp.downValue;
-                    //if( kv - bdv < missRelHeight )
-                    //{
-                    //    hasMaxMissCountTouchBolleanDown = true;
-                    //    break;
-                    //}
                 }
                 else
                     break;
@@ -1728,38 +1726,51 @@ namespace LotteryAnalyze
                 testKDD = testKDD.parent.dataLst[testKDD.index - 1];
                 testBPM = testBPM.parent.bollinMapLst[testBPM.index - 1];
             }
-
-            //float rightDelta = rightKV - bpMidRight;
-            //bool isNearBolleanMidLine = rightDelta >= -missRelHeight * 1.5f && rightDelta <= missRelHeight * 0.5;
-            relateDist = item.GetData(cdt, false).RelateDistTo(bpMidRight);
+            
+            relateDist = item.GetData(cdt, false).RelateDistTo(rightBpMid);
+            // 右端是否在布林中轨
             bool isRightNearBolleanMidLine = relateDist >= -0.5f && relateDist <= 0.5f;
+            // 是否连续出现 0-2 期的遗漏值 如果是，那么就是一种震荡的形态
             bool isContinusSmallMissCount = missCountCollect[1] > 1 || missCountCollect[2] > 1 || missCountCollect[3] > 1;
-            float LSideRelateDistToBolleanMid = leftKData.RelateDistTo(bpMidLeft);
-            float RSideRelateDistToBolleanUp = rightKData.RelateDistTo(bpUpRight);
+            // 左边与布林中轨的相对值
+            float LSideRelateDistToBolleanMid = leftKData.RelateDistTo(leftBpMid);
+            // 右边与布林上轨的相对值
+            float RSideRelateDistToBolleanUp = rightKData.RelateDistTo(rightBpUp);
+            // 右边与布林中轨的相对值
+            float RSideRelateDistToBolleanMid = relateDist;
+            // 最大遗漏那期与布林中轨的相对值
             float maxMissCountRelateDistToBolleanMid = 0;
             float maxMissCountKV = leftKV;
-            if (maxMissCountKdd != null)
+            if (maxMissKdd != null)
             {
-                maxMissCountRelateDistToBolleanMid = maxMissCountKdd.GetData(cdt, false).RelateDistTo(maxMissCountBPM.GetData(cdt, false).midValue);
-                maxMissCountKV = maxMissCountKData.KValue;
+                maxMissCountRelateDistToBolleanMid = maxMissKData.RelateDistTo(maxMissBP.midValue);
+                maxMissCountKV = maxMissKData.KValue;
             }
             else
+            {
                 maxMissCountRelateDistToBolleanMid = LSideRelateDistToBolleanMid;
+                maxMissID = leftID;
+            }
+            // 从最大遗漏期到最新期的K线是否在布林中轨之上,且右边还没触及布林中轨
+            bool isKGraphUponBolleanMid = 
+                (maxMissCountRelateDistToBolleanMid >= -0.5f && RSideRelateDistToBolleanMid > 1 && (rightID - maxMissID >= (KGRAPH_LOOP_COUNT/2)));
 
-            // k线贴着布林上轨持续上升
-            if (maxMissCountRelateDistToBolleanMid >= -1 && 
-                RSideRelateDistToBolleanUp >= -1 && 
+            // k线贴着布林上轨持续上升（大买）
+            if (isKGraphUponBolleanMid && 
                 reachBollinUpCount > 0 &&
                 maxMissCountKV < rightKV && 
                 maxMissCount < 2 && 
                 curMissCount < 2 )
                 cfg = KGraphConfig.eNearBolleanUpAndKeepUp;
-            // 出现遗漏值的时候，如果k线碰到布林带上方，并且当前还没接近布林中轨 
-            //else if (curMissCount > 1 && reachBollinUpCount > 0 && isRightNearBolleanMidLine == false)
-            else if(LSideRelateDistToBolleanMid >= 0 && RSideRelateDistToBolleanUp < -1 && reachBollinUpCount > 0 && leftKV < rightKV && curMissCount > 1)
+            // K线在布林中轨之上，触碰到布林上轨，连降2期以上，可能是要连续下降了，（大卖）
+            else if(isKGraphUponBolleanMid && 
+                RSideRelateDistToBolleanUp < -1 && 
+                reachBollinUpCount > 0 && 
+                leftKV < rightKV && 
+                curMissCount > 1)
                 cfg = KGraphConfig.eTouchBolleanUpThenGoDown;
-            // k线碰到布林下轨，最大遗漏值在0-3之间，且最大遗漏值到右边是上升的
-            else if(hasMaxMissCountTouchBolleanDown && isContinusSmallMissCount && maxMissCount <= 3 && kvOnMaxMissCount < rightKV)
+            // k线碰到布林下轨，且最大遗漏值到右边是上升的
+            else if(hasMaxMissCountTouchBolleanDown && isContinusSmallMissCount && maxMissKV < rightKV)
             {
                 if (curMissCount == 3)
                     cfg = KGraphConfig.eShakeUp3;
@@ -1769,7 +1780,11 @@ namespace LotteryAnalyze
                     cfg = KGraphConfig.eShakeUp1;
             }
             // K线从布林下轨升到中轨
-            else if(kvOnMaxMissCount < rightKV && hasMaxMissCountTouchBolleanDown && reachBollinUpCount == 0 && rightKV > bpMidRight)
+            else if(maxMissKV < rightKV && 
+                hasMaxMissCountTouchBolleanDown && 
+                reachBollinUpCount == 0 && 
+                rightKV > rightBpMid &&
+                RSideRelateDistToBolleanMid >= 0 && RSideRelateDistToBolleanMid <= 1)
             {
                 cfg = KGraphConfig.eFromBMDownTouchBMMid;
             }
