@@ -2466,6 +2466,7 @@ namespace LotteryAnalyze
 
         public void Start(ref int startDateID, ref int endDateID)
         {
+            lastTradeIDTag = "";
             tradeMissInfo.Clear();
             TradeDataManager.Instance.startMoney = startMoney;
             TradeDataManager.Instance.StopAtTheLatestItem = true;
@@ -2537,7 +2538,7 @@ namespace LotteryAnalyze
         }
         public bool HasJob()
         {
-            return fileIDLst.Count > 0 && lastIndex < fileIDLst.Count;
+            return (fileIDLst.Count > 0 && lastIndex < fileIDLst.Count) || (state != SimState.eFinishAll);
         }
 
         void DoPrepareData()
