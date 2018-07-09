@@ -51,6 +51,8 @@
             this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.checkBoxForceTradeByMaxNumCount = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBoxUponValue = new System.Windows.Forms.TextBox();
             this.textBoxRiskControl = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.trackBarRiskControl = new System.Windows.Forms.TrackBar();
@@ -64,13 +66,17 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.textBoxUponValue = new System.Windows.Forms.TextBox();
+            this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRiskControl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -106,7 +112,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(74, 5);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(129, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(186, 21);
             this.textBoxStartMoney.TabIndex = 3;
             // 
             // textBoxTradeCountLst
@@ -115,7 +121,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxTradeCountLst.Location = new System.Drawing.Point(74, 27);
             this.textBoxTradeCountLst.Name = "textBoxTradeCountLst";
-            this.textBoxTradeCountLst.Size = new System.Drawing.Size(129, 21);
+            this.textBoxTradeCountLst.Size = new System.Drawing.Size(186, 21);
             this.textBoxTradeCountLst.TabIndex = 4;
             // 
             // textBoxDayCountPerBatch
@@ -124,7 +130,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDayCountPerBatch.Location = new System.Drawing.Point(74, 71);
             this.textBoxDayCountPerBatch.Name = "textBoxDayCountPerBatch";
-            this.textBoxDayCountPerBatch.Size = new System.Drawing.Size(129, 21);
+            this.textBoxDayCountPerBatch.Size = new System.Drawing.Size(186, 21);
             this.textBoxDayCountPerBatch.TabIndex = 5;
             // 
             // buttonStart
@@ -163,11 +169,11 @@
             this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCmd.Location = new System.Drawing.Point(3, 32);
+            this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
             this.textBoxCmd.Multiline = true;
             this.textBoxCmd.Name = "textBoxCmd";
             this.textBoxCmd.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxCmd.Size = new System.Drawing.Size(335, 342);
+            this.textBoxCmd.Size = new System.Drawing.Size(214, 344);
             this.textBoxCmd.TabIndex = 10;
             this.textBoxCmd.WordWrap = false;
             // 
@@ -177,7 +183,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarCurrent.Location = new System.Drawing.Point(75, 387);
             this.progressBarCurrent.Name = "progressBarCurrent";
-            this.progressBarCurrent.Size = new System.Drawing.Size(481, 23);
+            this.progressBarCurrent.Size = new System.Drawing.Size(634, 23);
             this.progressBarCurrent.TabIndex = 11;
             // 
             // progressBarTotal
@@ -186,7 +192,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarTotal.Location = new System.Drawing.Point(75, 417);
             this.progressBarTotal.Name = "progressBarTotal";
-            this.progressBarTotal.Size = new System.Drawing.Size(481, 23);
+            this.progressBarTotal.Size = new System.Drawing.Size(634, 23);
             this.progressBarTotal.TabIndex = 12;
             // 
             // checkBoxSpecNumIndex
@@ -207,7 +213,7 @@
             this.comboBoxSpecNumIndex.FormattingEnabled = true;
             this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(74, 94);
             this.comboBoxSpecNumIndex.Name = "comboBoxSpecNumIndex";
-            this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(129, 20);
+            this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(186, 20);
             this.comboBoxSpecNumIndex.TabIndex = 14;
             this.comboBoxSpecNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpecNumIndex_SelectedIndexChanged);
             // 
@@ -245,7 +251,7 @@
             this.textBoxStartDate.Location = new System.Drawing.Point(74, 191);
             this.textBoxStartDate.Name = "textBoxStartDate";
             this.textBoxStartDate.ReadOnly = true;
-            this.textBoxStartDate.Size = new System.Drawing.Size(129, 21);
+            this.textBoxStartDate.Size = new System.Drawing.Size(186, 21);
             this.textBoxStartDate.TabIndex = 18;
             // 
             // textBoxEndDate
@@ -255,7 +261,7 @@
             this.textBoxEndDate.Location = new System.Drawing.Point(74, 214);
             this.textBoxEndDate.Name = "textBoxEndDate";
             this.textBoxEndDate.ReadOnly = true;
-            this.textBoxEndDate.Size = new System.Drawing.Size(129, 21);
+            this.textBoxEndDate.Size = new System.Drawing.Size(186, 21);
             this.textBoxEndDate.TabIndex = 19;
             // 
             // label7
@@ -274,7 +280,7 @@
             this.comboBoxTradeStrategy.FormattingEnabled = true;
             this.comboBoxTradeStrategy.Location = new System.Drawing.Point(74, 138);
             this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
-            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(129, 20);
+            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(186, 20);
             this.comboBoxTradeStrategy.TabIndex = 20;
             this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
             // 
@@ -330,14 +336,33 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.buttonDebugSetting);
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxCmd);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
-            this.splitContainer1.Size = new System.Drawing.Size(551, 377);
-            this.splitContainer1.SplitterDistance = 206;
+            this.splitContainer1.Size = new System.Drawing.Size(704, 377);
+            this.splitContainer1.SplitterDistance = 263;
             this.splitContainer1.TabIndex = 24;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(3, 165);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(65, 12);
+            this.label14.TabIndex = 34;
+            this.label14.Text = "评分起点：";
+            // 
+            // textBoxUponValue
+            // 
+            this.textBoxUponValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxUponValue.Location = new System.Drawing.Point(74, 163);
+            this.textBoxUponValue.Name = "textBoxUponValue";
+            this.textBoxUponValue.Size = new System.Drawing.Size(186, 21);
+            this.textBoxUponValue.TabIndex = 35;
+            this.textBoxUponValue.TextChanged += new System.EventHandler(this.textBoxUponValue_TextChanged);
             // 
             // textBoxRiskControl
             // 
@@ -364,7 +389,7 @@
             this.trackBarRiskControl.Location = new System.Drawing.Point(74, 258);
             this.trackBarRiskControl.Maximum = 100;
             this.trackBarRiskControl.Name = "trackBarRiskControl";
-            this.trackBarRiskControl.Size = new System.Drawing.Size(129, 23);
+            this.trackBarRiskControl.Size = new System.Drawing.Size(186, 23);
             this.trackBarRiskControl.TabIndex = 31;
             this.trackBarRiskControl.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarRiskControl.Scroll += new System.EventHandler(this.trackBarRiskControl_Scroll);
@@ -386,7 +411,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStrongUpStartIndex.Location = new System.Drawing.Point(74, 49);
             this.textBoxStrongUpStartIndex.Name = "textBoxStrongUpStartIndex";
-            this.textBoxStrongUpStartIndex.Size = new System.Drawing.Size(129, 21);
+            this.textBoxStrongUpStartIndex.Size = new System.Drawing.Size(186, 21);
             this.textBoxStrongUpStartIndex.TabIndex = 29;
             this.textBoxStrongUpStartIndex.TextChanged += new System.EventHandler(this.textBoxStrongUpStartIndex_TextChanged);
             // 
@@ -406,7 +431,7 @@
             this.comboBoxOnNoMoney.FormattingEnabled = true;
             this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 237);
             this.comboBoxOnNoMoney.Name = "comboBoxOnNoMoney";
-            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(129, 20);
+            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(186, 20);
             this.comboBoxOnNoMoney.TabIndex = 26;
             this.comboBoxOnNoMoney.SelectedIndexChanged += new System.EventHandler(this.comboBoxOnNoMoney_SelectedIndexChanged);
             // 
@@ -434,7 +459,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMaxNumCount.Location = new System.Drawing.Point(74, 116);
             this.textBoxMaxNumCount.Name = "textBoxMaxNumCount";
-            this.textBoxMaxNumCount.Size = new System.Drawing.Size(129, 21);
+            this.textBoxMaxNumCount.Size = new System.Drawing.Size(186, 21);
             this.textBoxMaxNumCount.TabIndex = 25;
             this.textBoxMaxNumCount.TextChanged += new System.EventHandler(this.textBoxMaxNumCount_TextChanged);
             // 
@@ -468,30 +493,41 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // label14
+            // treeViewLongWrongTradeInfos
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(3, 165);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(65, 12);
-            this.label14.TabIndex = 34;
-            this.label14.Text = "评分起点：";
-            // 
-            // textBoxUponValue
-            // 
-            this.textBoxUponValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.treeViewLongWrongTradeInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxUponValue.Location = new System.Drawing.Point(74, 163);
-            this.textBoxUponValue.Name = "textBoxUponValue";
-            this.textBoxUponValue.Size = new System.Drawing.Size(129, 21);
-            this.textBoxUponValue.TabIndex = 35;
-            this.textBoxUponValue.TextChanged += new System.EventHandler(this.textBoxUponValue_TextChanged);
+            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
+            this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 344);
+            this.treeViewLongWrongTradeInfos.TabIndex = 12;
+            this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(3, 27);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.textBoxCmd);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
+            this.splitContainer2.Size = new System.Drawing.Size(434, 349);
+            this.splitContainer2.SplitterDistance = 217;
+            this.splitContainer2.TabIndex = 13;
             // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 445);
+            this.ClientSize = new System.Drawing.Size(714, 445);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.splitContainer1);
@@ -503,10 +539,14 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRiskControl)).EndInit();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,5 +592,7 @@
         private System.Windows.Forms.Button buttonDebugSetting;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox textBoxUponValue;
+        private System.Windows.Forms.TreeView treeViewLongWrongTradeInfos;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }

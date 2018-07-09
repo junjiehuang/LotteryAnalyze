@@ -109,6 +109,7 @@ namespace LotteryAnalyze.UI
             updateTimer.Start();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
+            TradeDataManager.Instance.longWrongTradeCallBack += OnLongWrongTrade;
 
             FormMain.AddWindow(this);
         }
@@ -128,6 +129,30 @@ namespace LotteryAnalyze.UI
                 else if (comboBoxOnNoMoney.SelectedIndex == 2)
                     Stop();
             }
+        }
+
+        private void OnLongWrongTrade(LongWrongTradeInfo info)
+        {
+            TreeNode parNode = null;
+            for (int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
+            {
+                TreeNode node = treeViewLongWrongTradeInfos.Nodes[i];
+                if((int)(node.Tag) == info.count)
+                {
+                    parNode = node;
+                    break;
+                }
+            }
+            if(parNode == null)
+            {
+                parNode = new TreeNode();
+                parNode.Tag = info.count;
+                parNode.Text = info.count.ToString();
+                treeViewLongWrongTradeInfos.Nodes.Add(parNode);
+            }
+            TreeNode cNode = new TreeNode();
+            cNode.Text = info.startDataItemTag + "," + info.endDataItemTag;
+            parNode.Nodes.Add(cNode);
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -326,6 +351,7 @@ namespace LotteryAnalyze.UI
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
+            TradeDataManager.Instance.longWrongTradeCallBack -= OnLongWrongTrade;
 
             FormMain.RemoveWindow(this);
 
@@ -404,6 +430,24 @@ namespace LotteryAnalyze.UI
             int v = TradeDataManager.Instance.uponValue;
             if (int.TryParse(textBoxUponValue.Text, out v))
                 TradeDataManager.Instance.uponValue = v;
+        }
+
+        private void treeViewLongWrongTradeInfos_DoubleClick(object sender, EventArgs e)
+        {
+            TreeNode node = treeViewLongWrongTradeInfos.SelectedNode;
+            if(node != null && node.Tag == null)
+            {
+                string[] spt = node.Text.Split(',');
+                if(spt.Length == 2)
+                {
+                    string lastTag = spt[1];
+                    DataItem item = DataManager.GetInst().GetDataItemByIdTag(lastTag);
+                    if(item!=null)
+                    {
+                        LotteryGraph.OnSelectDataItemOuter(item.idGlobal);
+                    }
+                }
+            }
         }
     }
 }

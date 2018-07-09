@@ -987,6 +987,42 @@ namespace LotteryAnalyze.UI
             CollectBarGraphData(curItem);
         }
 
+        public static void OnSelectDataItemOuter(int index)
+        {
+            for( int i = 0; i < instLst.Count; ++i )
+            {
+                instLst[i].SelectDataItem(index);
+            }
+        }
+
+        public void SelectDataItem(int index)
+        {
+            if(graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                graphMgr.kvalueGraph.autoAllign = true;
+                //TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
+                //index = latestTradedItem.targetLotteryItem.idGlobal;
+                int xOffSet = 0;
+                if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
+                    xOffSet = -checkW;
+                else
+                    xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleW);
+                graphMgr.kvalueGraph.ScrollToData(
+                    index,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    true, xOffSet);
+
+                trackBarTradeData.Value = trackBarTradeData.Maximum;
+                this.Invalidate(true);
+                textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
+
+                DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
+                CollectBarGraphData(curItem);
+            }
+        }
+
         private void buttonHorzExpand_Click(object sender, EventArgs e)
         {
             splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;

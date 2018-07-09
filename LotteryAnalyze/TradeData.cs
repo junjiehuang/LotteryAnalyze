@@ -406,6 +406,13 @@ namespace LotteryAnalyze
         }
     }
 
+    public class LongWrongTradeInfo
+    {
+        public int count = 0;
+        public string startDataItemTag;
+        public string endDataItemTag; 
+    }
+
     // 交易数据管理器
     public class TradeDataManager
     {
@@ -716,9 +723,14 @@ namespace LotteryAnalyze
         List<NumberCmpInfo> maxProbilityPaths = new List<NumberCmpInfo>();
         public delegate void OnTradeComleted();
         public OnTradeComleted tradeCompletedCallBack;
+        public delegate void OnLongWrongTrade(LongWrongTradeInfo info);
+        public OnLongWrongTrade longWrongTradeCallBack;
 
         public AutoAnalyzeTool autoAnalyzeTool = new AutoAnalyzeTool();
         public AutoAnalyzeTool curPreviewAnalyzeTool = new AutoAnalyzeTool();
+
+        public Dictionary<int, List<LongWrongTradeInfo>> longWrongTradeInfo = new Dictionary<int, List<LongWrongTradeInfo>>();
+        public LongWrongTradeInfo tmpLongWrongTradeInfo = null;
 
         TradeDataManager()
         {
@@ -814,8 +826,10 @@ namespace LotteryAnalyze
                     waitingTradeDatas[i].Update();
                     if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
                     {
-                        if (waitingTradeDatas[i].cost != 0)
-                            BatchTradeSimulator.Instance.OnOneTradeCompleted(waitingTradeDatas[i].reward > 0);
+                        //if (waitingTradeDatas[i].cost != 0)
+                        {
+                            BatchTradeSimulator.Instance.OnOneTradeCompleted(waitingTradeDatas[i]);
+                        }
 
                         RefreshTradeCountOnOneTradeCompleted(waitingTradeDatas[i]);
                         if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
@@ -2425,8 +2439,9 @@ namespace LotteryAnalyze
 
         }
 
-        public void OnOneTradeCompleted(bool tradeSuccess)
+        public void OnOneTradeCompleted(TradeDataBase trade)
         {
+            bool tradeSuccess = trade.reward > 0;
             if (tradeSuccess)
             {
                 if (continueTradeMissCount > 0)
@@ -2435,11 +2450,38 @@ namespace LotteryAnalyze
                         tradeMissInfo[continueTradeMissCount] = tradeMissInfo[continueTradeMissCount] + 1;
                     else
                         tradeMissInfo.Add(continueTradeMissCount, 1);
+
+                    if (continueTradeMissCount >= TradeDataManager.Instance.tradeCountList.Count)
+                    {
+                        TradeDataManager.Instance.tmpLongWrongTradeInfo.endDataItemTag = trade.targetLotteryItem.idTag;
+                        TradeDataManager.Instance.tmpLongWrongTradeInfo.count = continueTradeMissCount;
+                        if (TradeDataManager.Instance.longWrongTradeCallBack != null)
+                            TradeDataManager.Instance.longWrongTradeCallBack(TradeDataManager.Instance.tmpLongWrongTradeInfo);
+                        List<LongWrongTradeInfo> lst = null;
+                        if (TradeDataManager.Instance.longWrongTradeInfo.ContainsKey(continueTradeMissCount))
+                            lst = TradeDataManager.Instance.longWrongTradeInfo[continueTradeMissCount];
+                        else
+                        {
+                            lst = new List<LongWrongTradeInfo>();
+                            TradeDataManager.Instance.longWrongTradeInfo.Add(continueTradeMissCount,lst);
+                        }
+                        lst.Add(TradeDataManager.Instance.tmpLongWrongTradeInfo);
+                        TradeDataManager.Instance.tmpLongWrongTradeInfo = null;
+                    }
                 }
                 continueTradeMissCount = 0;
+                if (TradeDataManager.Instance.tmpLongWrongTradeInfo != null)
+                    TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag = null;
             }
             else
-                ++continueTradeMissCount;
+            {
+                if(TradeDataManager.Instance.tmpLongWrongTradeInfo == null)
+                    TradeDataManager.Instance.tmpLongWrongTradeInfo = new LongWrongTradeInfo();
+                if(string.IsNullOrEmpty(TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag))
+                    TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag = trade.targetLotteryItem.idTag;
+                if(trade.cost > 0)
+                    ++continueTradeMissCount;
+            }
         }
 
         public int GetMainProgress()
@@ -2468,6 +2510,8 @@ namespace LotteryAnalyze
         {
             lastTradeIDTag = "";
             tradeMissInfo.Clear();
+            TradeDataManager.Instance.longWrongTradeInfo.Clear();
+            TradeDataManager.Instance.tmpLongWrongTradeInfo = null;
             TradeDataManager.Instance.startMoney = startMoney;
             TradeDataManager.Instance.StopAtTheLatestItem = true;
             minMoney = maxMoney = currentMoney = startMoney;
