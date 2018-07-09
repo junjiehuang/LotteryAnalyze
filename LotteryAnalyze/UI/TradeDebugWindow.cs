@@ -69,6 +69,8 @@ namespace LotteryAnalyze.UI
 
         private void textBoxWrongCountBP_TextChanged(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(textBoxWrongCountBP.Text))
+                textBoxWrongCountBP.Text = "-1";
             TradeDataManager.Instance.debugInfo.wrongCountBP = int.Parse(textBoxWrongCountBP.Text);
         }
 

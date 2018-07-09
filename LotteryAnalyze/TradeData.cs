@@ -178,6 +178,7 @@ namespace LotteryAnalyze
     // 基本交易数据
     public class TradeDataBase
     {
+        static int S_COUNT = 0;
         public static string[] NUM_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
 
         public TradeStatus tradeStatus = TradeStatus.eWaiting;
@@ -191,6 +192,20 @@ namespace LotteryAnalyze
         public float moneyAtferTrade = 0;
         //protected string tips = "";
         public bool isAutoTrade = false;
+
+        int _INDEX = -1;
+        public int INDEX
+        {
+            get { return _INDEX; }
+        }
+
+        public void UpdateIndex()
+        {
+            if(_INDEX == -1)
+            {
+                _INDEX = S_COUNT++;
+            }
+        }
 
         public virtual string GetTips()
         {
@@ -217,8 +232,9 @@ namespace LotteryAnalyze
 
         public TradeDataOneStar()
         {
+            UpdateIndex();
 #if TRADE_DBG
-            for(int i = 0; i < 5; ++i)
+            for (int i = 0; i < 5; ++i)
             {
                 pathCmpInfos.Add(new List<PathCmpInfo>());
             }
@@ -408,6 +424,7 @@ namespace LotteryAnalyze
 
     public class LongWrongTradeInfo
     {
+        public int tradeID = -1;
         public int count = 0;
         public string startDataItemTag;
         public string endDataItemTag; 
@@ -731,6 +748,7 @@ namespace LotteryAnalyze
 
         public Dictionary<int, List<LongWrongTradeInfo>> longWrongTradeInfo = new Dictionary<int, List<LongWrongTradeInfo>>();
         public LongWrongTradeInfo tmpLongWrongTradeInfo = null;
+        public int continueTradeMissCount = 0;
 
         TradeDataManager()
         {
@@ -750,6 +768,29 @@ namespace LotteryAnalyze
                     sInst = new TradeDataManager();
                 return sInst;
             }
+        }
+
+        public TradeDataBase GetTrade(int index)
+        {
+            if( historyTradeDatas.Count > 0)
+            {
+                TradeDataBase sTD = historyTradeDatas[0];
+                TradeDataBase eTD = historyTradeDatas[historyTradeDatas.Count - 1];
+                if (sTD.INDEX == index)
+                    return sTD;
+                else if (eTD.INDEX == index)
+                    return eTD;
+                else if(sTD.INDEX < index && index < eTD.INDEX)
+                {
+                    TradeDataBase tTD = historyTradeDatas[index - sTD.INDEX];
+                    if(tTD.INDEX != index)
+                    {
+                        throw new Exception("invalid index!");
+                    }
+                    return tTD;
+                }
+            }
+            return null;
         }
         
         public DataItem GetLatestTradedDataItem()
@@ -974,7 +1015,7 @@ namespace LotteryAnalyze
         void PredictAndTrade(DataItem item)
         {
             if (TradeDataManager.Instance.debugInfo.Hit(item.idTag) ||
-                TradeDataManager.Instance.debugInfo.Hit(wrongCount))
+                TradeDataManager.Instance.debugInfo.Hit(continueTradeMissCount))
             {
                 TradeDataManager.Instance.PauseAutoTradeJob();
             }
@@ -2411,7 +2452,7 @@ namespace LotteryAnalyze
             }
         }
 
-        int continueTradeMissCount = 0;
+        
         public Dictionary<int, int> tradeMissInfo = new Dictionary<int, int>();
         List<int> fileIDLst = new List<int>();
         int lastIndex = -1;        
@@ -2444,32 +2485,33 @@ namespace LotteryAnalyze
             bool tradeSuccess = trade.reward > 0;
             if (tradeSuccess)
             {
-                if (continueTradeMissCount > 0)
+                if (TradeDataManager.Instance.continueTradeMissCount > 0)
                 {
-                    if (tradeMissInfo.ContainsKey(continueTradeMissCount))
-                        tradeMissInfo[continueTradeMissCount] = tradeMissInfo[continueTradeMissCount] + 1;
+                    if (tradeMissInfo.ContainsKey(TradeDataManager.Instance.continueTradeMissCount))
+                        tradeMissInfo[TradeDataManager.Instance.continueTradeMissCount] = tradeMissInfo[TradeDataManager.Instance.continueTradeMissCount] + 1;
                     else
-                        tradeMissInfo.Add(continueTradeMissCount, 1);
+                        tradeMissInfo.Add(TradeDataManager.Instance.continueTradeMissCount, 1);
 
-                    if (continueTradeMissCount >= TradeDataManager.Instance.tradeCountList.Count)
+                    if (TradeDataManager.Instance.continueTradeMissCount >= TradeDataManager.Instance.tradeCountList.Count)
                     {
                         TradeDataManager.Instance.tmpLongWrongTradeInfo.endDataItemTag = trade.targetLotteryItem.idTag;
-                        TradeDataManager.Instance.tmpLongWrongTradeInfo.count = continueTradeMissCount;
+                        TradeDataManager.Instance.tmpLongWrongTradeInfo.count = TradeDataManager.Instance.continueTradeMissCount;
+                        TradeDataManager.Instance.tmpLongWrongTradeInfo.tradeID = trade.INDEX;
                         if (TradeDataManager.Instance.longWrongTradeCallBack != null)
                             TradeDataManager.Instance.longWrongTradeCallBack(TradeDataManager.Instance.tmpLongWrongTradeInfo);
                         List<LongWrongTradeInfo> lst = null;
-                        if (TradeDataManager.Instance.longWrongTradeInfo.ContainsKey(continueTradeMissCount))
-                            lst = TradeDataManager.Instance.longWrongTradeInfo[continueTradeMissCount];
+                        if (TradeDataManager.Instance.longWrongTradeInfo.ContainsKey(TradeDataManager.Instance.continueTradeMissCount))
+                            lst = TradeDataManager.Instance.longWrongTradeInfo[TradeDataManager.Instance.continueTradeMissCount];
                         else
                         {
                             lst = new List<LongWrongTradeInfo>();
-                            TradeDataManager.Instance.longWrongTradeInfo.Add(continueTradeMissCount,lst);
+                            TradeDataManager.Instance.longWrongTradeInfo.Add(TradeDataManager.Instance.continueTradeMissCount,lst);
                         }
                         lst.Add(TradeDataManager.Instance.tmpLongWrongTradeInfo);
                         TradeDataManager.Instance.tmpLongWrongTradeInfo = null;
                     }
                 }
-                continueTradeMissCount = 0;
+                TradeDataManager.Instance.continueTradeMissCount = 0;
                 if (TradeDataManager.Instance.tmpLongWrongTradeInfo != null)
                     TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag = null;
             }
@@ -2480,7 +2522,7 @@ namespace LotteryAnalyze
                 if(string.IsNullOrEmpty(TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag))
                     TradeDataManager.Instance.tmpLongWrongTradeInfo.startDataItemTag = trade.targetLotteryItem.idTag;
                 if(trade.cost > 0)
-                    ++continueTradeMissCount;
+                    ++TradeDataManager.Instance.continueTradeMissCount;
             }
         }
 

@@ -987,40 +987,51 @@ namespace LotteryAnalyze.UI
             CollectBarGraphData(curItem);
         }
 
-        public static void OnSelectDataItemOuter(int index)
+        public static void OnSelectDataItemOuter(int dataItemIndex, int tradeIndex)
         {
             for( int i = 0; i < instLst.Count; ++i )
             {
-                instLst[i].SelectDataItem(index);
+                instLst[i].SelectDataItem( dataItemIndex, tradeIndex);
             }
         }
 
-        public void SelectDataItem(int index)
+        public void SelectDataItem(int dataItemIndex, int tradeIndex)
         {
-            if(graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+            if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
-                int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
-                graphMgr.kvalueGraph.autoAllign = true;
-                //TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
-                //index = latestTradedItem.targetLotteryItem.idGlobal;
+                graphMgr.tradeGraph.autoAllign = true;
                 int xOffSet = 0;
-                if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
+                if (tradeIndex * graphMgr.tradeGraph.gridScaleW > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleW);
-                graphMgr.kvalueGraph.ScrollToData(
-                    index,
+                    xOffSet = -(int)(tradeIndex * graphMgr.tradeGraph.gridScaleW);
+                graphMgr.tradeGraph.ScrollToData(
+                    tradeIndex,
                     this.panelUp.ClientSize.Width,
                     this.panelUp.ClientSize.Height,
                     true, xOffSet);
-
-                trackBarTradeData.Value = trackBarTradeData.Maximum;
-                this.Invalidate(true);
-                textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
-
-                DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
-                CollectBarGraphData(curItem);
             }
+            else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            {
+                graphMgr.kvalueGraph.autoAllign = true;
+                int xOffSet = 0;
+                if (dataItemIndex * graphMgr.kvalueGraph.gridScaleW > checkW)
+                    xOffSet = -checkW;
+                else
+                    xOffSet = -(int)(dataItemIndex * graphMgr.kvalueGraph.gridScaleW);
+                graphMgr.kvalueGraph.ScrollToData(
+                    dataItemIndex,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    true, xOffSet);
+            }
+            trackBarTradeData.Value = trackBarTradeData.Maximum;
+            this.Invalidate(true);
+            textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
+
+            DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
+            CollectBarGraphData(curItem);
         }
 
         private void buttonHorzExpand_Click(object sender, EventArgs e)

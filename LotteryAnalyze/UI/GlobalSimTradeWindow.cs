@@ -151,7 +151,7 @@ namespace LotteryAnalyze.UI
                 treeViewLongWrongTradeInfos.Nodes.Add(parNode);
             }
             TreeNode cNode = new TreeNode();
-            cNode.Text = info.startDataItemTag + "," + info.endDataItemTag;
+            cNode.Text = info.startDataItemTag + "," + info.endDataItemTag + "," + info.tradeID;
             parNode.Nodes.Add(cNode);
         }
 
@@ -265,6 +265,17 @@ namespace LotteryAnalyze.UI
             //    else if(comboBoxOnNoMoney.SelectedIndex == 2)
             //        Stop();
             //}
+
+            if (BatchTradeSimulator.Instance.IsPause())
+            {
+                buttonPauseResume.Text = "恢复";
+                buttonPauseResume.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                buttonPauseResume.Text = "暂停";
+                buttonPauseResume.BackColor = Color.Yellow;
+            }
         }
 
         public static void Open()
@@ -331,13 +342,13 @@ namespace LotteryAnalyze.UI
         void Pause()
         {
             BatchTradeSimulator.Instance.Pause();
-            buttonPauseResume.Text = "恢复";
+            //buttonPauseResume.Text = "恢复";
         }
 
         void Resume()
         {
             BatchTradeSimulator.Instance.Resume();
-            buttonPauseResume.Text = "暂停";
+            //buttonPauseResume.Text = "暂停";
         }
 
         void Stop()
@@ -438,13 +449,16 @@ namespace LotteryAnalyze.UI
             if(node != null && node.Tag == null)
             {
                 string[] spt = node.Text.Split(',');
-                if(spt.Length == 2)
+                if(spt.Length == 3)
                 {
                     string lastTag = spt[1];
+                    string tradeID = spt[2];
+                    int tradeIndex = int.Parse(tradeID);
                     DataItem item = DataManager.GetInst().GetDataItemByIdTag(lastTag);
-                    if(item!=null)
+                    TradeDataBase trade = TradeDataManager.Instance.GetTrade(tradeIndex);
+                    if (item!=null && trade!=null)
                     {
-                        LotteryGraph.OnSelectDataItemOuter(item.idGlobal);
+                        LotteryGraph.OnSelectDataItemOuter(item.idGlobal, trade.INDEX);
                     }
                 }
             }
