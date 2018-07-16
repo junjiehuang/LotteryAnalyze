@@ -148,11 +148,25 @@ namespace LotteryAnalyze.UI
                 parNode = new TreeNode();
                 parNode.Tag = info.count;
                 parNode.Text = info.count.ToString();
-                treeViewLongWrongTradeInfos.Nodes.Add(parNode);
+
+                bool hasAdd = false;
+                for(int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
+                {
+                    int cc = (int)(treeViewLongWrongTradeInfos.Nodes[i].Tag);
+                    if(cc < info.count)
+                    {
+                        treeViewLongWrongTradeInfos.Nodes.Insert(i, parNode);
+                        hasAdd = true;
+                        break;
+                    }
+                }
+                if(!hasAdd)
+                    treeViewLongWrongTradeInfos.Nodes.Add(parNode);
             }
             TreeNode cNode = new TreeNode();
             cNode.Text = info.startDataItemTag + "," + info.endDataItemTag + "," + info.tradeID;
             parNode.Nodes.Add(cNode);
+            parNode.Text = info.count + "_" + parNode.Nodes.Count;
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -357,6 +371,8 @@ namespace LotteryAnalyze.UI
             textBoxDayCountPerBatch.Enabled = true;
             textBoxStartMoney.Enabled = true;
             textBoxTradeCountLst.Enabled = true;
+
+            treeViewLongWrongTradeInfos.Nodes.Clear();
         }
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)

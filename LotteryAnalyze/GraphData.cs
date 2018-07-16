@@ -70,6 +70,11 @@ namespace LotteryAnalyze
             }
         }
 
+
+        // 测试点与K值的相对距离
+        // > 0, 测试点在K线的上方
+        // = 0，测试点在K线内
+        // < 0，测试点在K线的下方
         public float RelateDistTo(float testValue)
         {
             float KDIST = UpValue - DownValue;

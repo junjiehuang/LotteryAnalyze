@@ -1220,14 +1220,23 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
 
-            float lastPathValue = 0;
-            for (int i = 0; i < 2; ++i)
+            if (currentTradeCountIndex >= tradeCountList.Count - 3)
             {
-                PathCmpInfo pci = res[i];
-                if (pci.pathValue > uponValue)
+                float lastPathValue = 0;
+                for (int i = 0; i < 2; ++i)
                 {
-                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                    PathCmpInfo pci = res[i];
+                    if (pci.pathValue > uponValue)
+                    {
+                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                    }
                 }
+            }
+            else
+            {
+                PathCmpInfo pci = res[0];
+                if (pci.pathValue > 0)
+                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
         }
 
@@ -1745,7 +1754,7 @@ namespace LotteryAnalyze
                 leftKData = data;
                 BollinPoint bp = curBPM.GetData(cdt, false);
                 int mc = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
-                if (maxMissCount < mc)
+                if (maxMissCount <= mc)
                 {
                     maxMissBPM = curBPM;
                     maxMissCount = mc;
@@ -1782,14 +1791,14 @@ namespace LotteryAnalyze
 
                 relateDist = data.RelateDistTo(bp.upValue);
                 // 达到布林上轨的个数
-                if (relateDist >= -0.5f)
+                if (relateDist <= 0)
                     ++reachBollinUpCount;
                 relateDist = data.RelateDistTo(bp.midValue);
                 // 超过布林中轨的个数
-                if (relateDist > 0.5f)
+                if (relateDist < 0)
                     ++uponAvgLineCount;
                 // 低于布林中轨的个数
-                else if (relateDist < -0.5f)
+                else if (relateDist > 0)
                     ++belowAvgLineCount;
 
                 if (curItem.index == 0)
@@ -1826,6 +1835,7 @@ namespace LotteryAnalyze
                 testBPM = testBPM.parent.bollinMapLst[testBPM.index - 1];
             }
             
+            // 左右边k值与布林中轨关系
             relateDist = item.GetData(cdt, false).RelateDistTo(rightBpMid);
             // 右端是否在布林中轨
             bool isRightNearBolleanMidLine = relateDist >= -0.5f && relateDist <= 0.5f;
@@ -1852,7 +1862,7 @@ namespace LotteryAnalyze
             }
             // 从最大遗漏期到最新期的K线是否在布林中轨之上,且右边还没触及布林中轨
             bool isKGraphUponBolleanMid = 
-                (maxMissCountRelateDistToBolleanMid >= -0.5f && RSideRelateDistToBolleanMid > 1 && (rightID - maxMissID >= (KGRAPH_LOOP_COUNT/2)));
+                (maxMissCountRelateDistToBolleanMid <= 0 && RSideRelateDistToBolleanMid < -1 && (rightID - maxMissID >= (KGRAPH_LOOP_COUNT/2)));
 
             // k线贴着布林上轨持续上升（大买）
             if (isKGraphUponBolleanMid && 
@@ -1863,7 +1873,7 @@ namespace LotteryAnalyze
                 cfg = KGraphConfig.eNearBolleanUpAndKeepUp;
             // K线在布林中轨之上，触碰到布林上轨，连降2期以上，可能是要连续下降了，（大卖）
             else if(isKGraphUponBolleanMid && 
-                RSideRelateDistToBolleanUp < -1 && 
+                RSideRelateDistToBolleanUp > 1 && 
                 reachBollinUpCount > 0 && 
                 leftKV < rightKV && 
                 curMissCount > 1)
@@ -1883,7 +1893,7 @@ namespace LotteryAnalyze
                 hasMaxMissCountTouchBolleanDown && 
                 reachBollinUpCount == 0 && 
                 rightKV > rightBpMid &&
-                RSideRelateDistToBolleanMid >= 0 && RSideRelateDistToBolleanMid <= 1)
+                RSideRelateDistToBolleanMid >= -0.5f && RSideRelateDistToBolleanMid <= 0.5f)
             {
                 cfg = KGraphConfig.eFromBMDownTouchBMMid;
             }
@@ -1918,7 +1928,7 @@ namespace LotteryAnalyze
                         if (maxKV > rightKV)
                         {
                             //if (rightKV - bpMidRight >= -missRelHeight)
-                            if( relateDist >= -0.5f )
+                            if( relateDist <= 0.5f )
                                 cfg = KGraphConfig.eShakeUp;
                             else
                                 cfg = KGraphConfig.eSlowUpPrepareDown;
@@ -1926,9 +1936,8 @@ namespace LotteryAnalyze
                     }
                     if (cfg == KGraphConfig.eNone)
                     {
-                        
                         //if (uponAvgLineCount > belowAvgLineCount && leftKV - bpMidLeft >= -missRelHeight && curMissCount < 2)
-                        if(uponAvgLineCount > belowAvgLineCount && curMissCount < 2 && LSideRelateDistToBolleanMid >= -0.5f)
+                        if(uponAvgLineCount > belowAvgLineCount && curMissCount < 2 && LSideRelateDistToBolleanMid <= 0.5f)
                             cfg = KGraphConfig.ePureUpUponBML;
                         else
                             cfg = KGraphConfig.ePureUp;
