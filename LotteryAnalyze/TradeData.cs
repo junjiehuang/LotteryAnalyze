@@ -639,6 +639,8 @@ namespace LotteryAnalyze
             eSinglePositionBestPaths,
             // 选择某个数值位012路的分值高于指定值的号码
             eSinglePositionPathsUponSpecValue,
+            // 选择某个数值位012路最小遗漏的号码
+            eSinglePositionSmallestMissCountPath,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
 
@@ -655,6 +657,7 @@ namespace LotteryAnalyze
             "eSinglePositionBestTwoPath",
             "eSinglePositionBestPaths",
             "eSinglePositionPathsUponSpecValue",
+            "eSinglePositionSmallestMissCountPath",
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
@@ -1043,6 +1046,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eSinglePositionPathsUponSpecValue:
                     TradeSinglePositionPathsUponSpecValue(item, trade);
                     break;
+                case TradeStrategy.eSinglePositionSmallestMissCountPath:
+                    TradeSinglePositionSmallestMissCountPath(item, trade);
+                    break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
                     break;
@@ -1238,6 +1244,36 @@ namespace LotteryAnalyze
                 if (pci.pathValue > 0)
                     tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
+        }
+
+        void TradeSinglePositionSmallestMissCountPath(DataItem item, TradeDataOneStar trade)
+        {
+            int bestNumIndex = 0;
+            if (simSelNumIndex != -1)
+                bestNumIndex = simSelNumIndex;
+
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            GetBestPath(item, bestNumIndex, trade);
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(bestNumIndex, tn);
+            FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+
+            PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+            tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -2055,6 +2091,78 @@ namespace LotteryAnalyze
                 )
                 return false;
             return true;
+        }
+        
+        void GetBestPath(DataItem item, int numIndex, TradeDataOneStar trade)
+        {
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            int loop = KGRAPH_LOOP_COUNT;
+            int[] maxMissCounts = new int[3] { 0, 0, 0, };
+            int[] prevMaxMissCounts = new int[3] { 0, 0, 0, };
+            int[] curMissCounts = new int[3] { 0, 0, 0, };
+            int[] maxMissCountIDs = new int[3] { item.idGlobal, item.idGlobal, item.idGlobal, };
+            int[] prevMaxMissCountIDs = new int[3] { -1, -1, -1, };
+            float[] pathValues = new float[3] { 0, 0, 0, };
+            int[] stepCount = new int[3] { 0, 0, 0, };
+            CollectDataType[] cdts = new CollectDataType[3] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            for( int i = 0; i < 3; ++i )
+            {
+                curMissCounts[i] = sum.statisticUnitMap[cdts[i]].missCount;
+                maxMissCounts[i] = curMissCounts[i];
+                stepCount[i] = curMissCounts[i];
+            }
+            DataItem testItem = item.parent.GetPrevItem(item);
+            while (testItem != null && loop > 0)
+            {
+                sum = testItem.statisticInfo.allStatisticInfo[numIndex];
+                for (int i = 0; i < 3; ++i)
+                {
+                    int misscount = sum.statisticUnitMap[cdts[i]].missCount;
+                    if (maxMissCounts[i] <= misscount)
+                    {
+                        maxMissCounts[i] = misscount;
+                        maxMissCountIDs[i] = testItem.idGlobal;
+                    }
+
+                    if (stepCount[i] > 0)
+                    {
+                        --stepCount[i];
+                        continue;
+                    }
+                    if(prevMaxMissCounts[i] <= misscount)
+                    {
+                        prevMaxMissCounts[i] = misscount;
+                        prevMaxMissCountIDs[i] = testItem.idGlobal;
+                    }
+                }
+                testItem = testItem.parent.GetPrevItem(testItem);
+                --loop;
+            }
+            for (int i = 0; i < 3; ++i)
+            {
+                float main_rate = (float)maxMissCounts[i] / KGRAPH_LOOP_COUNT;
+                if(prevMaxMissCountIDs[i] == -1)
+                {
+                    if (curMissCounts[i] > 0)
+                        pathValues[i] = 1;
+                    else
+                        pathValues[i] = 0;
+                }
+                else
+                    pathValues[i] = (float)curMissCounts[i] / (float)prevMaxMissCounts[i] * main_rate;
+            }
+
+            trade.pathCmpInfos[numIndex].Clear();
+            for (int i = 0; i < 3; ++i)
+            {
+                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], MACDLineWaveConfig.eNone, MACDBarConfig.eNone, KGraphConfig.eNone));
+            }
+            trade.pathCmpInfos[numIndex].Sort((x, y) =>
+            {
+                if (x.pathValue < y.pathValue)
+                    return -1;
+                return 1;
+            });
         }
 
         void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs)
