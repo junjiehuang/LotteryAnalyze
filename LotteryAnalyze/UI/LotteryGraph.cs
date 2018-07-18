@@ -296,6 +296,13 @@ namespace LotteryAnalyze.UI
                     else
                         trackBarTradeData.Value = startIndex;
                 }
+                else if(graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+                {
+                    upPanelMousePosLastDrag = e.Location;
+                    graphMgr.MoveGraph(dx, dy);
+                    needUpdate = true;
+
+                }
             }
             if (needUpdate)
                 this.Invalidate(true);//触发Paint事件

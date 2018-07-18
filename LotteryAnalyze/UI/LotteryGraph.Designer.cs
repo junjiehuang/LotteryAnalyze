@@ -1,4 +1,6 @@
-﻿namespace LotteryAnalyze.UI
+﻿//#define FIX_DISIGNER
+
+namespace LotteryAnalyze.UI
 {
     partial class LotteryGraph
     {
@@ -49,11 +51,23 @@
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+#if FIX_DESIGNER
+            this.panelUp = new System.Windows.Forms.Panel();
+#else
+            this.panelUp = new ExtPanel();
+#endif
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonVertExpand = new System.Windows.Forms.Button();
+            this.buttonHorzExpand = new System.Windows.Forms.Button();
+#if FIX_DESIGNER
+            this.panelDown = new System.Windows.Forms.Panel();
+#else
+            this.panelDown = new ExtPanel();
+#endif
             this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
             this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
             this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
@@ -96,6 +110,8 @@
             this.comboBoxBarCollectType = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPageTrade = new System.Windows.Forms.TabPage();
+            this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.btnSetAsStartTrade = new System.Windows.Forms.Button();
             this.textBoxStartDataItem = new System.Windows.Forms.TextBox();
             this.trackBarTradeData = new System.Windows.Forms.TrackBar();
@@ -113,12 +129,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
-            this.panelUp = new LotteryAnalyze.UI.ExtPanel();
-            this.buttonVertExpand = new System.Windows.Forms.Button();
-            this.buttonHorzExpand = new System.Windows.Forms.Button();
-            this.panelDown = new LotteryAnalyze.UI.ExtPanel();
+            this.tabPageAppearence = new System.Windows.Forms.TabPage();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -128,6 +139,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.panelUp.SuspendLayout();
             this.contextMenuStripRightClick.SuspendLayout();
             this.tabControlView.SuspendLayout();
             this.tabPageKGraph.SuspendLayout();
@@ -136,7 +148,6 @@
             this.tabPageBarGraph.SuspendLayout();
             this.tabPageTrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
-            this.panelUp.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -313,7 +324,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.comboBoxNumIndex);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Size = new System.Drawing.Size(696, 523);
-            this.splitContainer1.SplitterDistance = 501;
+            this.splitContainer1.SplitterDistance = 471;
             this.splitContainer1.TabIndex = 1;
             // 
             // splitContainer2
@@ -330,9 +341,27 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panelDown);
-            this.splitContainer2.Size = new System.Drawing.Size(501, 523);
+            this.splitContainer2.Size = new System.Drawing.Size(471, 523);
             this.splitContainer2.SplitterDistance = 319;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // panelUp
+            // 
+            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
+            this.panelUp.Controls.Add(this.buttonVertExpand);
+            this.panelUp.Controls.Add(this.buttonHorzExpand);
+            this.panelUp.Location = new System.Drawing.Point(3, 4);
+            this.panelUp.Name = "panelUp";
+            this.panelUp.Size = new System.Drawing.Size(465, 312);
+            this.panelUp.TabIndex = 0;
+            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
+            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
+            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
+            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
+            this.panelUp.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             // 
             // contextMenuStripRightClick
             // 
@@ -372,6 +401,47 @@
             this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
             this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
             // 
+            // buttonVertExpand
+            // 
+            this.buttonVertExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonVertExpand.Location = new System.Drawing.Point(0, 297);
+            this.buttonVertExpand.Name = "buttonVertExpand";
+            this.buttonVertExpand.Size = new System.Drawing.Size(465, 15);
+            this.buttonVertExpand.TabIndex = 1;
+            this.buttonVertExpand.UseVisualStyleBackColor = true;
+            this.buttonVertExpand.Click += new System.EventHandler(this.buttonVertExpand_Click);
+            // 
+            // buttonHorzExpand
+            // 
+            this.buttonHorzExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonHorzExpand.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonHorzExpand.FlatAppearance.BorderColor = System.Drawing.Color.Fuchsia;
+            this.buttonHorzExpand.FlatAppearance.BorderSize = 0;
+            this.buttonHorzExpand.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Blue;
+            this.buttonHorzExpand.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.buttonHorzExpand.Location = new System.Drawing.Point(450, 0);
+            this.buttonHorzExpand.Name = "buttonHorzExpand";
+            this.buttonHorzExpand.Size = new System.Drawing.Size(15, 312);
+            this.buttonHorzExpand.TabIndex = 0;
+            this.buttonHorzExpand.UseVisualStyleBackColor = false;
+            this.buttonHorzExpand.Click += new System.EventHandler(this.buttonHorzExpand_Click);
+            // 
+            // panelDown
+            // 
+            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDown.Location = new System.Drawing.Point(3, 3);
+            this.panelDown.Name = "panelDown";
+            this.panelDown.Size = new System.Drawing.Size(465, 194);
+            this.panelDown.TabIndex = 0;
+            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
+            this.panelDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseDown);
+            this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
+            this.panelDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseUp);
+            // 
             // buttonClearFavoriteCharts
             // 
             this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 136);
@@ -400,7 +470,7 @@
             this.listBoxFavoriteCharts.ItemHeight = 12;
             this.listBoxFavoriteCharts.Location = new System.Drawing.Point(87, 105);
             this.listBoxFavoriteCharts.Name = "listBoxFavoriteCharts";
-            this.listBoxFavoriteCharts.Size = new System.Drawing.Size(101, 76);
+            this.listBoxFavoriteCharts.Size = new System.Drawing.Size(131, 76);
             this.listBoxFavoriteCharts.TabIndex = 11;
             this.listBoxFavoriteCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxFavoriteCharts_SelectedIndexChanged);
             // 
@@ -446,10 +516,11 @@
             this.tabControlView.Controls.Add(this.tabPageKGraph);
             this.tabControlView.Controls.Add(this.tabPageBarGraph);
             this.tabControlView.Controls.Add(this.tabPageTrade);
+            this.tabControlView.Controls.Add(this.tabPageAppearence);
             this.tabControlView.Location = new System.Drawing.Point(2, 205);
             this.tabControlView.Name = "tabControlView";
             this.tabControlView.SelectedIndex = 0;
-            this.tabControlView.Size = new System.Drawing.Size(186, 315);
+            this.tabControlView.Size = new System.Drawing.Size(216, 315);
             this.tabControlView.TabIndex = 6;
             this.tabControlView.SelectedIndexChanged += new System.EventHandler(this.tabControlView_SelectedIndexChanged);
             // 
@@ -471,7 +542,7 @@
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageKGraph.Size = new System.Drawing.Size(178, 289);
+            this.tabPageKGraph.Size = new System.Drawing.Size(208, 289);
             this.tabPageKGraph.TabIndex = 0;
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
@@ -496,7 +567,7 @@
             this.trackBarKData.AutoSize = false;
             this.trackBarKData.Location = new System.Drawing.Point(5, 242);
             this.trackBarKData.Name = "trackBarKData";
-            this.trackBarKData.Size = new System.Drawing.Size(168, 36);
+            this.trackBarKData.Size = new System.Drawing.Size(195, 36);
             this.trackBarKData.TabIndex = 16;
             this.trackBarKData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarKData.Scroll += new System.EventHandler(this.trackBarKData_Scroll);
@@ -525,7 +596,7 @@
             "2路"});
             this.comboBoxOperations.Location = new System.Drawing.Point(65, 66);
             this.comboBoxOperations.Name = "comboBoxOperations";
-            this.comboBoxOperations.Size = new System.Drawing.Size(106, 20);
+            this.comboBoxOperations.Size = new System.Drawing.Size(133, 20);
             this.comboBoxOperations.TabIndex = 14;
             this.comboBoxOperations.SelectedIndexChanged += new System.EventHandler(this.comboBoxOperations_SelectedIndexChanged);
             // 
@@ -586,7 +657,7 @@
             "2路"});
             this.comboBoxAvgAlgorithm.Location = new System.Drawing.Point(65, 37);
             this.comboBoxAvgAlgorithm.Name = "comboBoxAvgAlgorithm";
-            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(106, 20);
+            this.comboBoxAvgAlgorithm.Size = new System.Drawing.Size(133, 20);
             this.comboBoxAvgAlgorithm.TabIndex = 8;
             this.comboBoxAvgAlgorithm.SelectedIndexChanged += new System.EventHandler(this.comboBoxAvgAlgorithm_SelectedIndexChanged);
             // 
@@ -617,7 +688,7 @@
             this.groupBoxAvgSettings.Controls.Add(this.checkBoxAvg5);
             this.groupBoxAvgSettings.Location = new System.Drawing.Point(3, 153);
             this.groupBoxAvgSettings.Name = "groupBoxAvgSettings";
-            this.groupBoxAvgSettings.Size = new System.Drawing.Size(168, 83);
+            this.groupBoxAvgSettings.Size = new System.Drawing.Size(195, 83);
             this.groupBoxAvgSettings.TabIndex = 6;
             this.groupBoxAvgSettings.TabStop = false;
             // 
@@ -757,7 +828,7 @@
             this.textBoxCycleLength.Enabled = false;
             this.textBoxCycleLength.Location = new System.Drawing.Point(65, 9);
             this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(106, 21);
+            this.textBoxCycleLength.Size = new System.Drawing.Size(133, 21);
             this.textBoxCycleLength.TabIndex = 5;
             this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
@@ -772,7 +843,7 @@
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(178, 289);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 289);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -783,7 +854,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
             this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
-            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(172, 21);
+            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(175, 21);
             this.textBoxCustomCollectRange.TabIndex = 5;
             this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
             // 
@@ -803,7 +874,7 @@
             this.comboBoxCollectRange.FormattingEnabled = true;
             this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
             this.comboBoxCollectRange.Name = "comboBoxCollectRange";
-            this.comboBoxCollectRange.Size = new System.Drawing.Size(172, 20);
+            this.comboBoxCollectRange.Size = new System.Drawing.Size(175, 20);
             this.comboBoxCollectRange.TabIndex = 3;
             this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
             // 
@@ -823,7 +894,7 @@
             this.comboBoxBarCollectType.FormattingEnabled = true;
             this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
             this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
-            this.comboBoxBarCollectType.Size = new System.Drawing.Size(172, 20);
+            this.comboBoxBarCollectType.Size = new System.Drawing.Size(175, 20);
             this.comboBoxBarCollectType.TabIndex = 1;
             this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
             // 
@@ -855,10 +926,30 @@
             this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
-            this.tabPageTrade.Size = new System.Drawing.Size(178, 289);
+            this.tabPageTrade.Size = new System.Drawing.Size(181, 289);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxTradeStrategy
+            // 
+            this.comboBoxTradeStrategy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxTradeStrategy.FormattingEnabled = true;
+            this.comboBoxTradeStrategy.Location = new System.Drawing.Point(79, 133);
+            this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
+            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(97, 20);
+            this.comboBoxTradeStrategy.TabIndex = 14;
+            this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(3, 136);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(65, 12);
+            this.label15.TabIndex = 13;
+            this.label15.Text = "交易策略：";
             // 
             // btnSetAsStartTrade
             // 
@@ -876,7 +967,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 191);
             this.textBoxStartDataItem.Name = "textBoxStartDataItem";
-            this.textBoxStartDataItem.Size = new System.Drawing.Size(94, 21);
+            this.textBoxStartDataItem.Size = new System.Drawing.Size(97, 21);
             this.textBoxStartDataItem.TabIndex = 11;
             // 
             // trackBarTradeData
@@ -885,7 +976,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarTradeData.Location = new System.Drawing.Point(1, 214);
             this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(172, 45);
+            this.trackBarTradeData.Size = new System.Drawing.Size(175, 45);
             this.trackBarTradeData.TabIndex = 10;
             this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
@@ -896,7 +987,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(79, 105);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(94, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(97, 21);
             this.textBoxStartMoney.TabIndex = 9;
             this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
             // 
@@ -916,7 +1007,7 @@
             this.comboBoxTradeNumIndex.FormattingEnabled = true;
             this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 79);
             this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
-            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(94, 20);
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(97, 20);
             this.comboBoxTradeNumIndex.TabIndex = 7;
             this.comboBoxTradeNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeNumIndex_SelectedIndexChanged);
             // 
@@ -946,7 +1037,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCommitTradeCount.Location = new System.Drawing.Point(1, 159);
             this.buttonCommitTradeCount.Name = "buttonCommitTradeCount";
-            this.buttonCommitTradeCount.Size = new System.Drawing.Size(172, 23);
+            this.buttonCommitTradeCount.Size = new System.Drawing.Size(175, 23);
             this.buttonCommitTradeCount.TabIndex = 4;
             this.buttonCommitTradeCount.Text = "提交交易设定";
             this.buttonCommitTradeCount.UseVisualStyleBackColor = true;
@@ -958,7 +1049,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
             this.textBoxDefaultCount.Name = "textBoxDefaultCount";
-            this.textBoxDefaultCount.Size = new System.Drawing.Size(94, 21);
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(97, 21);
             this.textBoxDefaultCount.TabIndex = 3;
             // 
             // label12
@@ -976,7 +1067,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
             this.textBoxMultiCount.Name = "textBoxMultiCount";
-            this.textBoxMultiCount.Size = new System.Drawing.Size(94, 21);
+            this.textBoxMultiCount.Size = new System.Drawing.Size(97, 21);
             this.textBoxMultiCount.TabIndex = 1;
             // 
             // label11
@@ -999,7 +1090,7 @@
             "2路"});
             this.comboBoxCollectionDataType.Location = new System.Drawing.Point(87, 78);
             this.comboBoxCollectionDataType.Name = "comboBoxCollectionDataType";
-            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(101, 20);
+            this.comboBoxCollectionDataType.Size = new System.Drawing.Size(131, 20);
             this.comboBoxCollectionDataType.TabIndex = 3;
             this.comboBoxCollectionDataType.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectionDataType_SelectedIndexChanged);
             // 
@@ -1031,7 +1122,7 @@
             "个位"});
             this.comboBoxNumIndex.Location = new System.Drawing.Point(87, 52);
             this.comboBoxNumIndex.Name = "comboBoxNumIndex";
-            this.comboBoxNumIndex.Size = new System.Drawing.Size(101, 20);
+            this.comboBoxNumIndex.Size = new System.Drawing.Size(131, 20);
             this.comboBoxNumIndex.TabIndex = 1;
             this.comboBoxNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxNumIndex_SelectedIndexChanged);
             // 
@@ -1044,84 +1135,14 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // label15
+            // tabPageAppearence
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 136);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(65, 12);
-            this.label15.TabIndex = 13;
-            this.label15.Text = "交易策略：";
-            // 
-            // comboBoxTradeStrategy
-            // 
-            this.comboBoxTradeStrategy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxTradeStrategy.FormattingEnabled = true;
-            this.comboBoxTradeStrategy.Location = new System.Drawing.Point(79, 133);
-            this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
-            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(94, 20);
-            this.comboBoxTradeStrategy.TabIndex = 14;
-            this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
-            // 
-            // panelUp
-            // 
-            this.panelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelUp.ContextMenuStrip = this.contextMenuStripRightClick;
-            this.panelUp.Controls.Add(this.buttonVertExpand);
-            this.panelUp.Controls.Add(this.buttonHorzExpand);
-            this.panelUp.Location = new System.Drawing.Point(3, 4);
-            this.panelUp.Name = "panelUp";
-            this.panelUp.Size = new System.Drawing.Size(495, 312);
-            this.panelUp.TabIndex = 0;
-            this.panelUp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelUp_Paint);
-            this.panelUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseDown);
-            this.panelUp.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseMove);
-            this.panelUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelUp_MouseUp);
-            this.panelUp.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
-            // 
-            // buttonVertExpand
-            // 
-            this.buttonVertExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonVertExpand.Location = new System.Drawing.Point(0, 297);
-            this.buttonVertExpand.Name = "buttonVertExpand";
-            this.buttonVertExpand.Size = new System.Drawing.Size(495, 15);
-            this.buttonVertExpand.TabIndex = 1;
-            this.buttonVertExpand.UseVisualStyleBackColor = true;
-            this.buttonVertExpand.Click += new System.EventHandler(this.buttonVertExpand_Click);
-            // 
-            // buttonHorzExpand
-            // 
-            this.buttonHorzExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonHorzExpand.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonHorzExpand.FlatAppearance.BorderColor = System.Drawing.Color.Fuchsia;
-            this.buttonHorzExpand.FlatAppearance.BorderSize = 0;
-            this.buttonHorzExpand.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Blue;
-            this.buttonHorzExpand.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonHorzExpand.Location = new System.Drawing.Point(480, 0);
-            this.buttonHorzExpand.Name = "buttonHorzExpand";
-            this.buttonHorzExpand.Size = new System.Drawing.Size(15, 312);
-            this.buttonHorzExpand.TabIndex = 0;
-            this.buttonHorzExpand.UseVisualStyleBackColor = false;
-            this.buttonHorzExpand.Click += new System.EventHandler(this.buttonHorzExpand_Click);
-            // 
-            // panelDown
-            // 
-            this.panelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDown.Location = new System.Drawing.Point(3, 3);
-            this.panelDown.Name = "panelDown";
-            this.panelDown.Size = new System.Drawing.Size(495, 194);
-            this.panelDown.TabIndex = 0;
-            this.panelDown.Paint += new System.Windows.Forms.PaintEventHandler(this.panelDown_Paint);
-            this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
-            this.panelDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseDown);
-            this.panelDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseUp);
+            this.tabPageAppearence.Location = new System.Drawing.Point(4, 22);
+            this.tabPageAppearence.Name = "tabPageAppearence";
+            this.tabPageAppearence.Size = new System.Drawing.Size(181, 289);
+            this.tabPageAppearence.TabIndex = 3;
+            this.tabPageAppearence.Text = "出号率图";
+            this.tabPageAppearence.UseVisualStyleBackColor = true;
             // 
             // LotteryGraph
             // 
@@ -1147,6 +1168,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.panelUp.ResumeLayout(false);
             this.contextMenuStripRightClick.ResumeLayout(false);
             this.tabControlView.ResumeLayout(false);
             this.tabPageKGraph.ResumeLayout(false);
@@ -1159,13 +1181,12 @@
             this.tabPageTrade.ResumeLayout(false);
             this.tabPageTrade.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
-            this.panelUp.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
-        #endregion
+#endregion
 
         private System.Windows.Forms.MenuStrip menuStripGraph;
         private System.Windows.Forms.ToolStripMenuItem operationToolStripMenuItem;
@@ -1205,12 +1226,20 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
-        private ExtPanel panelUp;
+#if FIX_DESIGNER
+        private System.Windows.Forms.Panel panelUp;
+#else
+        private LotteryAnalyze.UI.ExtPanel panelUp;
+#endif
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxGridScaleH;
         private System.Windows.Forms.TextBox textBoxGridScaleW;
         private System.Windows.Forms.Label label9;
-        private ExtPanel panelDown;
+#if FIX_DESIGNER
+        private System.Windows.Forms.Panel panelDown;
+#else
+        private LotteryAnalyze.UI.ExtPanel panelDown;
+#endif
         private System.Windows.Forms.ToolStripMenuItem autoAllignToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxOperations;
         private System.Windows.Forms.Label label10;
@@ -1257,5 +1286,6 @@
         private System.Windows.Forms.ToolStripMenuItem simTradeOneStepToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxTradeStrategy;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TabPage tabPageAppearence;
     }
 }

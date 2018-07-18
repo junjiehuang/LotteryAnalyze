@@ -19,6 +19,8 @@ namespace LotteryAnalyze
         eBarGraph,
         // 资金图
         eTradeGraph,
+        // 出号率曲线
+        eAppearenceGraph,
     }
 
     public enum AuxLineType
@@ -1740,6 +1742,102 @@ namespace LotteryAnalyze
         }
     }
 
+    class GraphAppearence : GraphBase
+    {
+        SolidBrush redBrush = new SolidBrush(Color.Red);
+        SolidBrush tagBrush = new SolidBrush(Color.White);
+        SolidBrush greenBrush = new SolidBrush(Color.Green);
+
+        Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+        Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
+
+
+        public GraphAppearence()
+        {
+            gridScaleW = 10;
+        }
+
+        public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
+        {
+            return true;
+        }
+        public override void MoveGraph(float dx, float dy)
+        {
+            canvasOffset.X += dx;
+            canvasOffset.Y += dy;
+            if (canvasOffset.X < 0)
+                canvasOffset.X = 0;
+        }
+
+        public override void ResetGraphPosition()
+        {
+
+        }
+
+        public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+            bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
+            float halfSize = gridScaleW * 0.2f;
+            if (halfSize < 4)
+                halfSize = 4;
+            float fullSize = halfSize * 2;
+            float halfWinH = winH * 0.5f;
+            float halfGridW = gridScaleW * 0.5f;
+            TradeDataManager tdm = TradeDataManager.Instance;
+            DataManager dm = DataManager.GetInst();
+
+            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            if (endIndex > dm.GetAllDataItemCount())
+                endIndex = dm.GetAllDataItemCount();
+
+            float top = winH * 0.1f;
+            float bottom = winH * 0.9f;
+            float maxHeight = bottom - top;
+            float prevY = 0;
+            float prevX = 0;
+            bool hasChoose = false;
+            for (int i = startIndex; i < endIndex; ++i)
+            {
+                DataItem item = dm.FindDataItem(i);
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+                float rH = sum.statisticUnitMap[cdt].appearProbabilityShort / 100 * maxHeight;
+                float rT = bottom - rH;
+                float x = i * gridScaleW + halfGridW;
+                x = StandToCanvas(x, true);
+                g.FillRectangle(redBrush, x - halfSize, rT - halfSize, fullSize, fullSize);
+                if(i > startIndex)
+                {
+                    g.DrawLine(redLinePen, x, rT, prevX, prevY);
+                }
+                prevX = x;
+                prevY = rT;
+
+                float left = x - halfGridW;
+                float right = x + halfGridW;
+                if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+                {
+                    g.DrawLine(grayDotLinePen, left, 0, left, winH);
+                    g.DrawLine(grayDotLinePen, right, 0, right, winH);
+                    hasChoose = true;
+                }
+            }
+
+            g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+            //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
+        }
+        public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+
+        }
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
+        {
+
+        }
+    }
+
 #endregion
 
     // 图表管理器
@@ -1759,6 +1857,7 @@ namespace LotteryAnalyze
         public GraphBar barGraph;
         public GraphKCurve kvalueGraph;
         public GraphTrade tradeGraph;
+        public GraphAppearence appearenceGraph;
         public int endShowDataItemIndex = -1;
 
         public GraphManager()
@@ -1766,10 +1865,11 @@ namespace LotteryAnalyze
             barGraph = new GraphBar(); barGraph.parent = this;
             kvalueGraph = new GraphKCurve(); kvalueGraph.parent = this;
             tradeGraph = new GraphTrade(); tradeGraph.parent = this;
+            appearenceGraph = new GraphAppearence(); appearenceGraph.parent = this;
             sGraphMap.Add(GraphType.eKCurveGraph, kvalueGraph);
             sGraphMap.Add(GraphType.eBarGraph, barGraph);
             sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
-
+            sGraphMap.Add(GraphType.eAppearenceGraph, appearenceGraph);
         }
 
         public void OnTradeCompleted()
