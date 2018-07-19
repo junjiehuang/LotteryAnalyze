@@ -1273,7 +1273,14 @@ namespace LotteryAnalyze
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
 
             PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+            float firstPV = pci.pathValue;
             tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            if(currentTradeCountIndex > tradeCountList.Count - 3)
+            {
+                pci = trade.pathCmpInfos[bestNumIndex][1];
+                if(pci.pathValue <= 2 * firstPV)
+                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            }
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -2140,16 +2147,25 @@ namespace LotteryAnalyze
             }
             for (int i = 0; i < 3; ++i)
             {
-                float main_rate = (float)maxMissCounts[i] / KGRAPH_LOOP_COUNT;
-                if(prevMaxMissCountIDs[i] == -1)
+                float main_rate = (float)maxMissCounts[i];// KGRAPH_LOOP_COUNT;
+                if (prevMaxMissCountIDs[i] == -1)
                 {
+                    // 连错
                     if (curMissCounts[i] > 0)
-                        pathValues[i] = 1;
+                        pathValues[i] = 0xEFFFFFFF;
+                    // 连对
                     else
                         pathValues[i] = 0;
                 }
+                else if (curMissCounts[i] > prevMaxMissCounts[i])
+                {
+                    if(prevMaxMissCounts[i] > 4)
+                        pathValues[i] = 0xEFFFFFFF;
+                    else
+                        pathValues[i] = main_rate + (float)curMissCounts[i] / KGRAPH_LOOP_COUNT;
+                }
                 else
-                    pathValues[i] = (float)curMissCounts[i] / (float)prevMaxMissCounts[i] * main_rate;
+                    pathValues[i] = main_rate + (float)curMissCounts[i] / KGRAPH_LOOP_COUNT;// (float)prevMaxMissCounts[i];
             }
 
             trade.pathCmpInfos[numIndex].Clear();

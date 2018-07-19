@@ -112,8 +112,10 @@ namespace LotteryAnalyze.UI
             buttonHorzExpand.Hide();
             buttonVertExpand.Hide();
 
+            int selID = (int)TradeDataManager.Instance.curTradeStrategy;
             comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
-            comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
+            comboBoxTradeStrategy.SelectedIndex = selID;
+            TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)(selID);
 
             checkBoxShowSingleLine.Checked = graphMgr.appearenceGraph.onlyShowSelectCDTLine;
             int Y = 10;
@@ -1005,15 +1007,6 @@ namespace LotteryAnalyze.UI
             if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
                 graphMgr.tradeGraph.autoAllign = true;
-                //if (index * graphMgr.tradeGraph.gridScaleW > checkW)
-                //    index -= (int)(checkW / graphMgr.tradeGraph.gridScaleW);
-                //else
-                //    index = 0;
-                //graphMgr.tradeGraph.ScrollToData(
-                //    index,
-                //    this.panelUp.ClientSize.Width,
-                //    this.panelUp.ClientSize.Height,
-                //    false);
                 int xOffSet = 0;
                 if (index * graphMgr.tradeGraph.gridScaleW > checkW)
                     xOffSet = -checkW;
@@ -1030,21 +1023,28 @@ namespace LotteryAnalyze.UI
                 graphMgr.kvalueGraph.autoAllign = true;
                 TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
                 index = latestTradedItem.targetLotteryItem.idGlobal;
-                //if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
-                //    index -= (int)(checkW / graphMgr.kvalueGraph.gridScaleW);
-                //else
-                //    index = 0;
-                //graphMgr.kvalueGraph.ScrollToData(
-                //    index,
-                //    this.panelUp.ClientSize.Width,
-                //    this.panelUp.ClientSize.Height,
-                //    true);
                 int xOffSet = 0;
                 if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
                     xOffSet = -checkW;
                 else
                     xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleW);
                 graphMgr.kvalueGraph.ScrollToData(
+                    index,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    true, xOffSet);
+            }
+            else if(graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+            {
+                graphMgr.appearenceGraph.autoAllign = true;
+                TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
+                index = latestTradedItem.targetLotteryItem.idGlobal;
+                int xOffSet = 0;
+                if (index * graphMgr.appearenceGraph.gridScaleW > checkW)
+                    xOffSet = -checkW;
+                else
+                    xOffSet = -(int)(index * graphMgr.appearenceGraph.gridScaleW);
+                graphMgr.appearenceGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
                     this.panelUp.ClientSize.Height,

@@ -1745,6 +1745,7 @@ namespace LotteryAnalyze
     // 出号率曲线图
     class GraphAppearence : GraphBase
     {
+        
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush tagBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.Green);
@@ -1760,6 +1761,8 @@ namespace LotteryAnalyze
 
         DataItem hoverItem;
         int selectDataIndex;
+
+        public bool autoAllign = false;
 
         public GraphAppearence()
         {
@@ -1929,7 +1932,12 @@ namespace LotteryAnalyze
         }
         public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
         {
-
+            if (needSelect)
+                selectDataIndex = index;
+            else
+                selectDataIndex = -1;
+            canvasOffset.X = index * gridScaleW + xOffset;
+            autoAllign = true;
         }
 
         void DrawSingleCDTLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
