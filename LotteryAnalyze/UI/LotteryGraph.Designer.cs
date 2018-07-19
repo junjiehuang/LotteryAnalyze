@@ -1,5 +1,16 @@
 ﻿//#define FIX_DISIGNER
 
+//#if FIX_DISIGNER
+//            this.panelUp = new System.Windows.Forms.Panel();
+//#else
+//            this.panelUp = new ExtPanel();
+//#endif
+//#if FIX_DISIGNER
+//            this.panelDown = new System.Windows.Forms.Panel();
+//#else
+//            this.panelDown = new ExtPanel();
+//#endif
+
 namespace LotteryAnalyze.UI
 {
     partial class LotteryGraph
@@ -51,8 +62,8 @@ namespace LotteryAnalyze.UI
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-#if FIX_DESIGNER
-            this.panelUp = new System.Windows.Forms.Panel();
+#if FIX_DISIGNER
+                        this.panelUp = new System.Windows.Forms.Panel();
 #else
             this.panelUp = new ExtPanel();
 #endif
@@ -63,8 +74,8 @@ namespace LotteryAnalyze.UI
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonVertExpand = new System.Windows.Forms.Button();
             this.buttonHorzExpand = new System.Windows.Forms.Button();
-#if FIX_DESIGNER
-            this.panelDown = new System.Windows.Forms.Panel();
+#if FIX_DISIGNER
+                        this.panelDown = new System.Windows.Forms.Panel();
 #else
             this.panelDown = new ExtPanel();
 #endif
@@ -125,11 +136,13 @@ namespace LotteryAnalyze.UI
             this.label12 = new System.Windows.Forms.Label();
             this.textBoxMultiCount = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.tabPageAppearence = new System.Windows.Forms.TabPage();
+            this.groupBoxCDTShowSetting = new System.Windows.Forms.GroupBox();
+            this.checkBoxShowSingleLine = new System.Windows.Forms.CheckBox();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabPageAppearence = new System.Windows.Forms.TabPage();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -148,6 +161,7 @@ namespace LotteryAnalyze.UI
             this.tabPageBarGraph.SuspendLayout();
             this.tabPageTrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
+            this.tabPageAppearence.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -843,7 +857,7 @@ namespace LotteryAnalyze.UI
             this.tabPageBarGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageBarGraph.Name = "tabPageBarGraph";
             this.tabPageBarGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBarGraph.Size = new System.Drawing.Size(181, 289);
+            this.tabPageBarGraph.Size = new System.Drawing.Size(208, 289);
             this.tabPageBarGraph.TabIndex = 1;
             this.tabPageBarGraph.Text = "柱状图";
             this.tabPageBarGraph.UseVisualStyleBackColor = true;
@@ -926,7 +940,7 @@ namespace LotteryAnalyze.UI
             this.tabPageTrade.Controls.Add(this.label11);
             this.tabPageTrade.Location = new System.Drawing.Point(4, 22);
             this.tabPageTrade.Name = "tabPageTrade";
-            this.tabPageTrade.Size = new System.Drawing.Size(181, 289);
+            this.tabPageTrade.Size = new System.Drawing.Size(208, 289);
             this.tabPageTrade.TabIndex = 2;
             this.tabPageTrade.Text = "交易图";
             this.tabPageTrade.UseVisualStyleBackColor = true;
@@ -1079,6 +1093,40 @@ namespace LotteryAnalyze.UI
             this.label11.TabIndex = 0;
             this.label11.Text = "倍投设置：";
             // 
+            // tabPageAppearence
+            // 
+            this.tabPageAppearence.Controls.Add(this.groupBoxCDTShowSetting);
+            this.tabPageAppearence.Controls.Add(this.checkBoxShowSingleLine);
+            this.tabPageAppearence.Location = new System.Drawing.Point(4, 22);
+            this.tabPageAppearence.Name = "tabPageAppearence";
+            this.tabPageAppearence.Size = new System.Drawing.Size(208, 289);
+            this.tabPageAppearence.TabIndex = 3;
+            this.tabPageAppearence.Text = "出号率图";
+            this.tabPageAppearence.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxCDTShowSetting
+            // 
+            this.groupBoxCDTShowSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxCDTShowSetting.Location = new System.Drawing.Point(4, 27);
+            this.groupBoxCDTShowSetting.Name = "groupBoxCDTShowSetting";
+            this.groupBoxCDTShowSetting.Size = new System.Drawing.Size(200, 257);
+            this.groupBoxCDTShowSetting.TabIndex = 1;
+            this.groupBoxCDTShowSetting.TabStop = false;
+            this.groupBoxCDTShowSetting.Text = "曲线显示选项";
+            // 
+            // checkBoxShowSingleLine
+            // 
+            this.checkBoxShowSingleLine.AutoSize = true;
+            this.checkBoxShowSingleLine.Location = new System.Drawing.Point(4, 4);
+            this.checkBoxShowSingleLine.Name = "checkBoxShowSingleLine";
+            this.checkBoxShowSingleLine.Size = new System.Drawing.Size(108, 16);
+            this.checkBoxShowSingleLine.TabIndex = 0;
+            this.checkBoxShowSingleLine.Text = "只显示单条曲线";
+            this.checkBoxShowSingleLine.UseVisualStyleBackColor = true;
+            this.checkBoxShowSingleLine.CheckedChanged += new System.EventHandler(this.checkBoxShowSingleLine_CheckedChanged);
+            // 
             // comboBoxCollectionDataType
             // 
             this.comboBoxCollectionDataType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1135,15 +1183,6 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // tabPageAppearence
-            // 
-            this.tabPageAppearence.Location = new System.Drawing.Point(4, 22);
-            this.tabPageAppearence.Name = "tabPageAppearence";
-            this.tabPageAppearence.Size = new System.Drawing.Size(181, 289);
-            this.tabPageAppearence.TabIndex = 3;
-            this.tabPageAppearence.Text = "出号率图";
-            this.tabPageAppearence.UseVisualStyleBackColor = true;
-            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1181,6 +1220,8 @@ namespace LotteryAnalyze.UI
             this.tabPageTrade.ResumeLayout(false);
             this.tabPageTrade.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
+            this.tabPageAppearence.ResumeLayout(false);
+            this.tabPageAppearence.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1226,19 +1267,19 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
-#if FIX_DESIGNER
+#if FIX_DISIGNER
         private System.Windows.Forms.Panel panelUp;
 #else
-        private LotteryAnalyze.UI.ExtPanel panelUp;
+        private ExtPanel panelUp;
 #endif
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxGridScaleH;
         private System.Windows.Forms.TextBox textBoxGridScaleW;
         private System.Windows.Forms.Label label9;
-#if FIX_DESIGNER
+#if FIX_DISIGNER
         private System.Windows.Forms.Panel panelDown;
 #else
-        private LotteryAnalyze.UI.ExtPanel panelDown;
+        private ExtPanel panelDown;
 #endif
         private System.Windows.Forms.ToolStripMenuItem autoAllignToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxOperations;
@@ -1287,5 +1328,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ComboBox comboBoxTradeStrategy;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TabPage tabPageAppearence;
+        private System.Windows.Forms.GroupBox groupBoxCDTShowSetting;
+        private System.Windows.Forms.CheckBox checkBoxShowSingleLine;
     }
 }

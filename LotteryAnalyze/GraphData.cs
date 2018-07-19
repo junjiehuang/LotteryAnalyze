@@ -1299,6 +1299,7 @@ namespace LotteryAnalyze
         public static List<string> S_CDT_TAG_LIST = new List<string>();
         public static List<float> S_CDT_PROBABILITY_LIST = new List<float>();
         public static List<float> S_CDT_MISS_REL_LENGTH_LIST = new List<float>();
+        public static List<Color> S_CDT_COLOR_LIST = new List<Color>();
         public static Dictionary<GraphType, GraphDataContainerBase> S_GRAPH_DATA_CONTS = new Dictionary<GraphType, GraphDataContainerBase>();
 
         public static KGraphDataContainer KGDC;
@@ -1306,40 +1307,46 @@ namespace LotteryAnalyze
 
         static GraphDataManager()
         {
-            AddPreInfo(CollectDataType.ePath0, "0路", 4.0f / 10);
-            AddPreInfo(CollectDataType.ePath1, "1路", 3.0f / 10);
-            AddPreInfo(CollectDataType.ePath2, "2路", 3.0f / 10);
-            AddPreInfo(CollectDataType.eBigNum, "大数", 5.0f / 10);
-            AddPreInfo(CollectDataType.eSmallNum, "小数", 5.0f / 10);
-            AddPreInfo(CollectDataType.eOddNum, "奇数", 5.0f / 10);
-            AddPreInfo(CollectDataType.eEvenNum, "偶数", 5.0f / 10);
-            AddPreInfo(CollectDataType.ePrimeNum, "质数", 5.0f / 10);
-            AddPreInfo(CollectDataType.eCompositeNum, "合数", 5.0f / 10);
-            AddPreInfo(CollectDataType.eNum0, "数字0", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum1, "数字1", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum2, "数字2", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum3, "数字3", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum4, "数字4", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum5, "数字5", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum6, "数字6", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum7, "数字7", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum8, "数字8", 1.0f / 10);
-            AddPreInfo(CollectDataType.eNum9, "数字9", 1.0f / 10);
+            AddPreInfo(CollectDataType.ePath0, "0路", 4.0f / 10, Color.Red);
+            AddPreInfo(CollectDataType.ePath1, "1路", 3.0f / 10, Color.Green);
+            AddPreInfo(CollectDataType.ePath2, "2路", 3.0f / 10, Color.Blue);
+            AddPreInfo(CollectDataType.eBigNum, "大数", 5.0f / 10, Color.Firebrick);
+            AddPreInfo(CollectDataType.eSmallNum, "小数", 5.0f / 10, Color.Aquamarine);
+            AddPreInfo(CollectDataType.eOddNum, "奇数", 5.0f / 10, Color.Beige);
+            AddPreInfo(CollectDataType.eEvenNum, "偶数", 5.0f / 10, Color.Bisque);
+            AddPreInfo(CollectDataType.ePrimeNum, "质数", 5.0f / 10, Color.BlueViolet);
+            AddPreInfo(CollectDataType.eCompositeNum, "合数", 5.0f / 10, Color.Brown);
+            AddPreInfo(CollectDataType.eNum0, "数字0", 1.0f / 10, Color.BurlyWood);
+            AddPreInfo(CollectDataType.eNum1, "数字1", 1.0f / 10, Color.Chocolate);
+            AddPreInfo(CollectDataType.eNum2, "数字2", 1.0f / 10, Color.Cyan);
+            AddPreInfo(CollectDataType.eNum3, "数字3", 1.0f / 10, Color.DarkBlue);
+            AddPreInfo(CollectDataType.eNum4, "数字4", 1.0f / 10, Color.DarkGoldenrod);
+            AddPreInfo(CollectDataType.eNum5, "数字5", 1.0f / 10, Color.DarkGreen);
+            AddPreInfo(CollectDataType.eNum6, "数字6", 1.0f / 10, Color.DarkOrange);
+            AddPreInfo(CollectDataType.eNum7, "数字7", 1.0f / 10, Color.DarkSeaGreen);
+            AddPreInfo(CollectDataType.eNum8, "数字8", 1.0f / 10, Color.DeepPink);
+            AddPreInfo(CollectDataType.eNum9, "数字9", 1.0f / 10, Color.DodgerBlue);
 
             S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
             S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new BarGraphDataContianer());
         }
-        static void AddPreInfo(CollectDataType cdt, string name, float probability)
+        static void AddPreInfo(CollectDataType cdt, string name, float probability, Color col)
         {
             S_CDT_LIST.Add(cdt);
             S_CDT_TAG_LIST.Add(name);
             S_CDT_PROBABILITY_LIST.Add(probability);
             S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
+            S_CDT_COLOR_LIST.Add(col);
         }
         public static float GetTheoryProbability(CollectDataType cdt)
         {
             int index = S_CDT_LIST.IndexOf(cdt);
             return S_CDT_PROBABILITY_LIST[index] * 100.0f;
+        }
+        public static Color GetCdtColor(CollectDataType cdt)
+        {
+            int index = S_CDT_LIST.IndexOf(cdt);
+            return S_CDT_COLOR_LIST[index];
         }
 
 

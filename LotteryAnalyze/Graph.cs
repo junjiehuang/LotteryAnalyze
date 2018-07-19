@@ -1402,6 +1402,7 @@ namespace LotteryAnalyze
     // 柱状图
     class GraphBar : GraphBase
     {
+        Font tagFont = new Font(FontFamily.GenericSerif, 16);
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush tagBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.Green);
@@ -1425,8 +1426,7 @@ namespace LotteryAnalyze
 
             BarGraphDataContianer.DataUnitLst dul = bgdc.allDatas[numIndex];
             float gap = (float)winW / dul.dataLst.Count;
-
-            Font tagFont = new Font(FontFamily.GenericSerif, 16);
+            
             for (int i = 0; i < dul.dataLst.Count; ++i)
             {
                 Brush brush = greenBrush;
@@ -1742,6 +1742,7 @@ namespace LotteryAnalyze
         }
     }
 
+    // 出号率曲线图
     class GraphAppearence : GraphBase
     {
         SolidBrush redBrush = new SolidBrush(Color.Red);
@@ -1749,12 +1750,85 @@ namespace LotteryAnalyze
         SolidBrush greenBrush = new SolidBrush(Color.Green);
 
         Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
-        Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
+        Font tagFont = new Font(FontFamily.GenericSerif, 12);
 
+        Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
+        Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
+
+        public bool onlyShowSelectCDTLine = true;
+        public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
+
+        DataItem hoverItem;
+        int selectDataIndex;
 
         public GraphAppearence()
         {
+            selectDataIndex = -1;
             gridScaleW = 10;
+
+            for( int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i )
+            {
+                cdtLineShowStates.Add(GraphDataManager.S_CDT_LIST[i], false);
+            }
+        }
+
+        public bool GetCDTLineShowState(CollectDataType cdt)
+        {
+            return cdtLineShowStates[cdt];
+        }
+        public void SetCDTLineShowState(CollectDataType cdt, bool v)
+        {
+            cdtLineShowStates[cdt] = v;
+        }
+
+        Brush GetBrush(CollectDataType cdt)
+        {
+            Color col = GraphDataManager.GetCdtColor(cdt);
+            return GetBrush(col);
+        }
+
+        Brush GetBrush(Color col)
+        {
+            if (brushes.ContainsKey(col))
+                return brushes[col];
+            else
+            {
+                SolidBrush brush = new SolidBrush(col);
+                brushes.Add(col, brush);
+                return brush;
+            }
+        }
+        Pen GetLinePen(CollectDataType cdt)
+        {
+            Color col = GraphDataManager.GetCdtColor(cdt);
+            return GetLinePen(col);
+        }
+        Pen GetLinePen(Color col)
+        {
+            if (pens.ContainsKey(col))
+                return pens[col];
+            else
+            {
+                Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, col, 1);
+                pens.Add(col, pen);
+                return pen;
+            }
+        }
+
+        public int SelectDataItem(Point mouseRelPos)
+        {
+            DataManager dm = DataManager.GetInst();
+            selectDataIndex = -1;
+            Point standMousePos = CanvasToStand(mouseRelPos);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+            if (mouseHoverID >= dm.GetAllDataItemCount())
+                mouseHoverID = -1;
+            selectDataIndex = mouseHoverID;
+            return selectDataIndex;
+        }
+        public void UnselectDataItem()
+        {
+            selectDataIndex = -1;
         }
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -1776,6 +1850,7 @@ namespace LotteryAnalyze
 
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
+            hoverItem = null;
             bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
             float halfSize = gridScaleW * 0.2f;
             if (halfSize < 4)
@@ -1799,34 +1874,54 @@ namespace LotteryAnalyze
             float prevY = 0;
             float prevX = 0;
             bool hasChoose = false;
-            for (int i = startIndex; i < endIndex; ++i)
-            {
-                DataItem item = dm.FindDataItem(i);
-                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-                float rH = sum.statisticUnitMap[cdt].appearProbabilityShort / 100 * maxHeight;
-                float rT = bottom - rH;
-                float x = i * gridScaleW + halfGridW;
-                x = StandToCanvas(x, true);
-                g.FillRectangle(redBrush, x - halfSize, rT - halfSize, fullSize, fullSize);
-                if(i > startIndex)
-                {
-                    g.DrawLine(redLinePen, x, rT, prevX, prevY);
-                }
-                prevX = x;
-                prevY = rT;
 
-                float left = x - halfGridW;
-                float right = x + halfGridW;
-                if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+            if (onlyShowSelectCDTLine)
+            {
+                DrawSingleCDTLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+
+                float tp = GraphDataManager.GetTheoryProbability(cdt);
+                float tY = bottom - (bottom - top) * tp / 100;
+                g.DrawLine(GetLinePen(cdt), 0, tY, winW, tY);
+            }
+            else
+            {
+                var etor = cdtLineShowStates.GetEnumerator();
+                while(etor.MoveNext())
                 {
-                    g.DrawLine(grayDotLinePen, left, 0, left, winH);
-                    g.DrawLine(grayDotLinePen, right, 0, right, winH);
-                    hasChoose = true;
+                    CollectDataType type = etor.Current.Key;
+                    if(etor.Current.Value)
+                    {
+                        DrawSingleCDTLine(g, numIndex, startIndex, endIndex, type, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+                    }
                 }
             }
 
             g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
-            //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
+            g.DrawLine(grayDotLinePen, 0, top, winW, top);
+            g.DrawLine(grayDotLinePen, 0, bottom, winW, bottom);
+            if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
+            {
+                float v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
+                g.DrawString(v.ToString("f2") + "%", tagFont, tagBrush, winW - 60, mouseRelPos.Y );
+            }
+
+            if (hoverItem != null)
+            {
+                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "]";
+                g.DrawString(info, tagFont, tagBrush, 5, 5);
+            }
+
+            if(selectDataIndex != -1)
+            {
+                Pen pen = GetLinePen(Color.Yellow);
+                float left = selectDataIndex * gridScaleW;
+                left = StandToCanvas(left, true);
+                float right = left + gridScaleW;
+                g.DrawLine(pen, left, 0, left, winH);
+                g.DrawLine(pen, right, 0, right, winH);
+            }
+
+
         }
         public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
@@ -1835,6 +1930,41 @@ namespace LotteryAnalyze
         public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
         {
 
+        }
+
+        void DrawSingleCDTLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
+        {
+            float prevY = 0;
+            float prevX = 0;
+            DataManager dm = DataManager.GetInst();
+            Brush brush = GetBrush(cdt);
+            Pen pen = GetLinePen(cdt);
+            for (int i = startIndex; i < endIndex; ++i)
+            {
+                DataItem item = dm.FindDataItem(i);
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+                float rH = sum.statisticUnitMap[cdt].appearProbabilityShort / 100 * maxHeight;
+                float rT = bottom - rH;
+                float x = i * gridScaleW + halfGridW;
+                x = StandToCanvas(x, true);
+                g.FillRectangle(brush, x - halfSize, rT - halfSize, fullSize, fullSize);
+                if (i > startIndex)
+                {
+                    g.DrawLine(pen, x, rT, prevX, prevY);
+                }
+                prevX = x;
+                prevY = rT;
+
+                float left = x - halfGridW;
+                float right = x + halfGridW;
+                if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+                {
+                    hoverItem = item;
+                    g.DrawLine(grayDotLinePen, left, 0, left, winH);
+                    g.DrawLine(grayDotLinePen, right, 0, right, winH);
+                    hasChoose = true;
+                }
+            }
         }
     }
 

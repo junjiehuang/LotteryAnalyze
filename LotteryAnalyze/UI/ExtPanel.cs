@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace LotteryAnalyze.UI
-{
+//namespace LotteryAnalyze.UI
+//{
     class ExtPanel : System.Windows.Forms.Panel
     {
         public ExtPanel()
@@ -15,4 +15,4 @@ namespace LotteryAnalyze.UI
             this.SetStyle(ControlStyles.UserPaint, true);
         }
     }
-}
+//}

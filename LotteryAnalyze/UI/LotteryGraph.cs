@@ -115,8 +115,50 @@ namespace LotteryAnalyze.UI
             comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
             comboBoxTradeStrategy.SelectedIndex = (int)TradeDataManager.Instance.curTradeStrategy;
 
+            checkBoxShowSingleLine.Checked = graphMgr.appearenceGraph.onlyShowSelectCDTLine;
+            int Y = 10;
+            int X = 10;
+            int half_size = groupBoxCDTShowSetting.Size.Width / 2;
+            int colorBoxSize = 18;
+            int gap = 2;
+            for ( int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++ i )
+            {
+                X = (i % 2) * half_size + 10;
+                Y = (i / 2) * (colorBoxSize + gap) + 20;
+                Button btn = new Button();
+                btn.Size = new Size(colorBoxSize, colorBoxSize);
+                btn.Location = new Point(X, Y);
+                btn.Enabled = false;
+                btn.BackColor = GraphDataManager.S_CDT_COLOR_LIST[i];
+                groupBoxCDTShowSetting.Controls.Add(btn);
+
+                X += 10 + colorBoxSize;
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+                CheckBox chk = new CheckBox();
+                chk.Tag = cdt;
+                chk.Text = GraphDataManager.S_CDT_TAG_LIST[i];
+                chk.Location = new Point(X, Y);
+                chk.Size = new Size(half_size - colorBoxSize - 10, colorBoxSize);
+                chk.CheckedChanged += chk_CheckedChanged;
+                groupBoxCDTShowSetting.Controls.Add(chk);
+
+                chk.Checked = graphMgr.appearenceGraph.GetCDTLineShowState(cdt);
+            }
+
             this.KeyPreview = true;
             FormMain.AddWindow(this);
+        }
+
+        void chk_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox ckb = sender as CheckBox;
+            CollectDataType cdt = (CollectDataType)(ckb.Tag);
+            graphMgr.appearenceGraph.SetCDTLineShowState(cdt, ckb.Checked);
+
+            if(graphMgr.appearenceGraph.onlyShowSelectCDTLine == false)
+            {
+                Invalidate(true);
+            }
         }
 
         void SetUIGridWH()
@@ -338,7 +380,29 @@ namespace LotteryAnalyze.UI
         {
             if (e.Button == MouseButtons.Left)
             {
-                if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
+                if(graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+                {
+                    int selID = graphMgr.appearenceGraph.SelectDataItem(e.Location);
+                    if(selID != -1)
+                    {
+                        // 滚动到屏幕中间
+                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                        int xOffset = 0;
+                        if (selID * graphMgr.kvalueGraph.gridScaleW > checkW)
+                            xOffset = -checkW;
+                        else
+                            xOffset = -(int)(selID * graphMgr.kvalueGraph.gridScaleW);
+
+                        graphMgr.kvalueGraph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+                        FormMain.Instance.SelectDataItem(selID);
+                    }
+                    else
+                    {
+                        graphMgr.appearenceGraph.UnselectDataItem();
+                        graphMgr.kvalueGraph.UnSelectData();
+                    }
+                }
+                else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
                     TradeDataBase selectTD = null;
                     int kdataID = -1;
@@ -1082,6 +1146,11 @@ namespace LotteryAnalyze.UI
         private void comboBoxTradeStrategy_SelectedIndexChanged(object sender, EventArgs e)
         {
             TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)comboBoxTradeStrategy.SelectedIndex;
+        }
+
+        private void checkBoxShowSingleLine_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.appearenceGraph.onlyShowSelectCDTLine = checkBoxShowSingleLine.Checked;
         }
     }
 }
