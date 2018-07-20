@@ -2102,6 +2102,14 @@ namespace LotteryAnalyze
         
         void GetBestPath(DataItem item, int numIndex, TradeDataOneStar trade)
         {
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+
+            BollinPoint bp;
+            KData kdata;
+            float rel_dist;
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             int loop = KGRAPH_LOOP_COUNT;
             int[] maxMissCounts = new int[3] { 0, 0, 0, };
@@ -2111,12 +2119,24 @@ namespace LotteryAnalyze
             int[] prevMaxMissCountIDs = new int[3] { -1, -1, -1, };
             float[] pathValues = new float[3] { 0, 0, 0, };
             int[] stepCount = new int[3] { 0, 0, 0, };
+            int[] uponBMCounts = new int[3] { 0, 0, 0, };
+            int[] underBMCounts = new int[3] { 0, 0, 0, };
+            bool[] isPreMissCountUponBM = new bool[3] { false, false, false, };
+
             CollectDataType[] cdts = new CollectDataType[3] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             for( int i = 0; i < 3; ++i )
             {
                 curMissCounts[i] = sum.statisticUnitMap[cdts[i]].missCount;
                 maxMissCounts[i] = curMissCounts[i];
                 stepCount[i] = curMissCounts[i];
+
+                bp = bpm.GetData(cdts[i], false);
+                kdata = kdd.GetData(cdts[i], false);
+                rel_dist = kdata.RelateDistTo(bp.midValue);
+                if (rel_dist <= 0)
+                    ++uponBMCounts[i];
+                if (rel_dist >= 0)
+                    ++underBMCounts[i];
             }
             DataItem testItem = item.parent.GetPrevItem(item);
             while (testItem != null && loop > 0)
@@ -2124,6 +2144,16 @@ namespace LotteryAnalyze
                 sum = testItem.statisticInfo.allStatisticInfo[numIndex];
                 for (int i = 0; i < 3; ++i)
                 {
+                    kdd = kddc.GetKDataDict(testItem);
+                    bpm = kddc.GetBollinPointMap(kdd);
+                    bp = bpm.GetData(cdts[i], false);
+                    kdata = kdd.GetData(cdts[i], false);
+                    rel_dist = kdata.RelateDistTo(bp.midValue);
+                    if (rel_dist <= 0)
+                        ++uponBMCounts[i];
+                    if (rel_dist >= 0)
+                        ++underBMCounts[i];
+
                     int misscount = sum.statisticUnitMap[cdts[i]].missCount;
                     if (maxMissCounts[i] <= misscount)
                     {
@@ -2140,6 +2170,8 @@ namespace LotteryAnalyze
                     {
                         prevMaxMissCounts[i] = misscount;
                         prevMaxMissCountIDs[i] = testItem.idGlobal;
+
+                        isPreMissCountUponBM[i] = (rel_dist <= 0);
                     }
                 }
                 testItem = testItem.parent.GetPrevItem(testItem);
@@ -2156,6 +2188,10 @@ namespace LotteryAnalyze
                     // 连对
                     else
                         pathValues[i] = 0;
+                }
+                else if(isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2 )
+                {
+                    pathValues[i] = 0;
                 }
                 else if (curMissCounts[i] > prevMaxMissCounts[i])
                 {
