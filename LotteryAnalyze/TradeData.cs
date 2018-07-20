@@ -1278,7 +1278,7 @@ namespace LotteryAnalyze
             if(currentTradeCountIndex > tradeCountList.Count - 3)
             {
                 pci = trade.pathCmpInfos[bestNumIndex][1];
-                if(pci.pathValue <= 2 * firstPV)
+                //if(pci.pathValue <= 2 * firstPV)
                     tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
         }
