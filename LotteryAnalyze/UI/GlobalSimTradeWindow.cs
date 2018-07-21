@@ -487,9 +487,10 @@ namespace LotteryAnalyze.UI
                     int tradeIndex = int.Parse(tradeID);
                     DataItem item = DataManager.GetInst().GetDataItemByIdTag(lastTag);
                     TradeDataBase trade = TradeDataManager.Instance.GetTrade(tradeIndex);
+                    TradeDataBase firstTrade = TradeDataManager.Instance.GetFirstHistoryTradeData();
                     if (item!=null && trade!=null)
                     {
-                        LotteryGraph.OnSelectDataItemOuter(item.idGlobal, trade.INDEX);
+                        LotteryGraph.OnSelectDataItemOuter(item.idGlobal, trade.INDEX - firstTrade.INDEX);
                     }
                 }
             }

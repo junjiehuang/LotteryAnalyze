@@ -773,6 +773,13 @@ namespace LotteryAnalyze
             }
         }
 
+        public TradeDataBase GetFirstHistoryTradeData()
+        {
+            if (historyTradeDatas.Count > 0)
+                return historyTradeDatas[0];
+            return null;
+        }
+
         public TradeDataBase GetTrade(int index)
         {
             if( historyTradeDatas.Count > 0)
