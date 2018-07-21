@@ -176,46 +176,56 @@ namespace LotteryAnalyze.UI
             progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
             progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
 
-            string missStr = "---------------------\r\n交易统计\r\n";
+            string NL = "<br>";
+
+            string missStr = "---------------------#NL#交易统计#NL#";
             List<int> keys = BatchTradeSimulator.Instance.tradeMissInfo.Keys.ToList<int>();
             keys.Sort();
             foreach ( int key in keys)
             {
-                missStr += "连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "\r\n";
+                if(key >= TradeDataManager.Instance.tradeCountList.Count)
+                    missStr += "<font color=\"blue\">连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "#NL#</font>";
+                else
+                    missStr += "<font color=\"black\">连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "#NL#</font>";
             }
-
+            
             if (BatchTradeSimulator.Instance.HasFinished())
             {
                 string info = "";
-                info += ("结束任务!\r\n---------------------\r\n");
+                info += ("结束任务!#NL#---------------------#NL#");
                 info += ("[当前金额: (");
                 info += (BatchTradeSimulator.Instance.currentMoney);
-                info += (")]\r\n[最高金额: (");
+                info += (")]#NL#[最高金额: (");
                 info += (BatchTradeSimulator.Instance.maxMoney);
-                info += (")]\r\n[最低金额: (");
+                info += (")]#NL#[最低金额: (");
                 info += (BatchTradeSimulator.Instance.minMoney);
                 if(BatchTradeSimulator.Instance.currentMoney > BatchTradeSimulator.Instance.startMoney)
                 {
-                    info += (")]\r\n[盈利: (");
-                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);
+                    info += (")]#NL#[盈利: (<font color=\"red\">");
+                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney) + "</font>";
                 }
                 else if(BatchTradeSimulator.Instance.currentMoney < BatchTradeSimulator.Instance.startMoney)
                 {
-                    info += (")]\r\n[亏损: (");
-                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney);
+                    info += (")]#NL#[亏损: (<font color=\"green\">");
+                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney) + "</font>";
                 }
-                info += (")]\r\n---------------------\r\n");
+                info += (")]#NL#---------------------#NL#");
                 info += ("[总的次数: ");
                 info += (BatchTradeSimulator.Instance.totalCount);
-                info += ("]\r\n[对的次数: ");
+                info += ("]#NL#[对的次数: ");
                 info += (BatchTradeSimulator.Instance.tradeRightCount);
-                info += ("]\r\n[错的次数: ");
+                info += ("]#NL#[错的次数: ");
                 info += (BatchTradeSimulator.Instance.tradeWrongCount);
-                info += ("]\r\n[忽略次数: ");
+                info += ("]#NL#[忽略次数: ");
                 info += (BatchTradeSimulator.Instance.untradeCount);
-                info += ("]\r\n");
+                info += ("]#NL#");
 
-                textBoxCmd.Text = info + missStr;
+                info = "<font size=2>" + info + missStr + "</font>";
+                info = info.Replace("#NL#", NL);
+                Point scrollpos = textBoxCmd.AutoScrollOffset;
+                textBoxCmd.DocumentText = info;
+                textBoxCmd.AutoScrollOffset = scrollpos;
+                //textBoxCmd.Text = info + missStr;
             }
             else if (BatchTradeSimulator.Instance.HasJob())
             {
@@ -228,45 +238,50 @@ namespace LotteryAnalyze.UI
                 info += (progressBarCurrent.Value);
                 info += ("%] [总进度: ");
                 info += (progressBarTotal.Value);
-                info += ("%]\r\n---------------------\r\n");
+                info += ("%]#NL#---------------------#NL#");
                 if (fItem != null && lItem != null && cItem != null)
                 {
                     info += ("[首期: ");
                     info += (fItem.idTag);
-                    info += ("]\r\n[末期: ");
+                    info += ("]#NL#[末期: ");
                     info += (lItem.idTag);
-                    info += ("]\r\n[当期: ");
+                    info += ("]#NL#[当期: ");
                     info += (cItem.idTag);
-                    info += ("]\r\n---------------------\r\n");
+                    info += ("]#NL#---------------------#NL#");
                 }
                 info += ("[当前金额: (");
                 info += (BatchTradeSimulator.Instance.currentMoney);
-                info += (")]\r\n[最高金额: (");
+                info += (")]#NL#[最高金额: (");
                 info += (BatchTradeSimulator.Instance.maxMoney);
-                info += (")]\r\n[最低金额: (");
+                info += (")]#NL#[最低金额: (");
                 info += (BatchTradeSimulator.Instance.minMoney);
                 if (BatchTradeSimulator.Instance.currentMoney > BatchTradeSimulator.Instance.startMoney)
                 {
-                    info += (")]\r\n[盈利: (");//<font color=\"red\">");
-                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);// + "</font>";
+                    info += (")]#NL#[盈利: (<font color=\"red\">");
+                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney) + "</font>";
                 }
                 else if (BatchTradeSimulator.Instance.currentMoney < BatchTradeSimulator.Instance.startMoney)
                 {
-                    info += (")]\r\n[亏损: (");//<font color=\"green\">");
-                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney);// + "</font>";
+                    info += (")]#NL#[亏损: (<font color=\"green\">");
+                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney) + "</font>";
                 }
-                info += (")]\r\n---------------------\r\n");
+                info += (")]#NL#---------------------#NL#");
                 info += ("[总的次数: ");
                 info += (BatchTradeSimulator.Instance.totalCount);
-                info += ("]\r\n[对的次数: ");
+                info += ("]#NL#[对的次数: ");
                 info += (BatchTradeSimulator.Instance.tradeRightCount);
-                info += ("]\r\n[错的次数: ");
+                info += ("]#NL#[错的次数: ");
                 info += (BatchTradeSimulator.Instance.tradeWrongCount);
-                info += ("]\r\n[忽略次数: ");
+                info += ("]#NL#[忽略次数: ");
                 info += (BatchTradeSimulator.Instance.untradeCount);
-                info += ("]\r\n");
+                info += ("]#NL#");
 
-                textBoxCmd.Text = info + missStr;
+                info = "<font size=2>" + info + missStr + "</font>";
+                info = info.Replace("#NL#", NL);
+                //textBoxCmd.Text = info;
+                Point scrollpos = textBoxCmd.AutoScrollOffset;
+                textBoxCmd.DocumentText = info;
+                textBoxCmd.AutoScrollOffset = scrollpos;
                 info = null;
             }
             else
@@ -320,7 +335,7 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.SetTradeCountInfo(textBoxTradeCountLst.Text);
             LotteryGraph.NotifyAllGraphsStartSimTrade();
 
-            textBoxCmd.ReadOnly = true;
+            //textBoxCmd.ReadOnly = true;
             buttonPauseResume.Text = "暂停";
             BatchTradeSimulator.Instance.Start(ref startDate, ref endDate);
             textBoxDayCountPerBatch.Enabled = false;

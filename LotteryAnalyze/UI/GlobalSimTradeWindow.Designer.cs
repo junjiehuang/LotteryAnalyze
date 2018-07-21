@@ -37,7 +37,6 @@
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonPauseResume = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
-            this.textBoxCmd = new System.Windows.Forms.TextBox();
             this.progressBarCurrent = new System.Windows.Forms.ProgressBar();
             this.progressBarTotal = new System.Windows.Forms.ProgressBar();
             this.checkBoxSpecNumIndex = new System.Windows.Forms.CheckBox();
@@ -63,11 +62,12 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxMaxNumCount = new System.Windows.Forms.TextBox();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.textBoxCmd = new System.Windows.Forms.WebBrowser();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -162,20 +162,6 @@
             this.buttonStop.Text = "结束";
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
-            // 
-            // textBoxCmd
-            // 
-            this.textBoxCmd.AcceptsReturn = true;
-            this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
-            this.textBoxCmd.Multiline = true;
-            this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxCmd.Size = new System.Drawing.Size(214, 344);
-            this.textBoxCmd.TabIndex = 10;
-            this.textBoxCmd.WordWrap = false;
             // 
             // progressBarCurrent
             // 
@@ -463,6 +449,36 @@
             this.textBoxMaxNumCount.TabIndex = 25;
             this.textBoxMaxNumCount.TextChanged += new System.EventHandler(this.textBoxMaxNumCount_TextChanged);
             // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(3, 27);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.textBoxCmd);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
+            this.splitContainer2.Size = new System.Drawing.Size(434, 349);
+            this.splitContainer2.SplitterDistance = 217;
+            this.splitContainer2.TabIndex = 13;
+            // 
+            // treeViewLongWrongTradeInfos
+            // 
+            this.treeViewLongWrongTradeInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
+            this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 344);
+            this.treeViewLongWrongTradeInfos.TabIndex = 12;
+            this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
+            // 
             // buttonDebugSetting
             // 
             this.buttonDebugSetting.Location = new System.Drawing.Point(246, 3);
@@ -493,35 +509,16 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // treeViewLongWrongTradeInfos
+            // textBoxCmd
             // 
-            this.treeViewLongWrongTradeInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.textBoxCmd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
-            this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 344);
-            this.treeViewLongWrongTradeInfos.TabIndex = 12;
-            this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(3, 27);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.textBoxCmd);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
-            this.splitContainer2.Size = new System.Drawing.Size(434, 349);
-            this.splitContainer2.SplitterDistance = 217;
-            this.splitContainer2.TabIndex = 13;
+            this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
+            this.textBoxCmd.MinimumSize = new System.Drawing.Size(20, 20);
+            this.textBoxCmd.Name = "textBoxCmd";
+            this.textBoxCmd.Size = new System.Drawing.Size(214, 343);
+            this.textBoxCmd.TabIndex = 0;
             // 
             // GlobalSimTradeWindow
             // 
@@ -543,7 +540,6 @@
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRiskControl)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -563,7 +559,6 @@
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Button buttonPauseResume;
         private System.Windows.Forms.Button buttonStop;
-        private System.Windows.Forms.TextBox textBoxCmd;
         private System.Windows.Forms.ProgressBar progressBarCurrent;
         private System.Windows.Forms.ProgressBar progressBarTotal;
         private System.Windows.Forms.CheckBox checkBoxSpecNumIndex;
@@ -594,5 +589,6 @@
         private System.Windows.Forms.TextBox textBoxUponValue;
         private System.Windows.Forms.TreeView treeViewLongWrongTradeInfos;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.WebBrowser textBoxCmd;
     }
 }

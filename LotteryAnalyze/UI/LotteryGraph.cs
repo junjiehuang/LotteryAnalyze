@@ -455,6 +455,23 @@ namespace LotteryAnalyze.UI
                     {
                         graphMgr.kvalueGraph.UnSelectData();
                     }
+
+                    if(kdataID != -1)
+                    {
+                        // 滚动到屏幕中间
+                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                        int xOffset = 0;
+                        if (kdataID * graphMgr.appearenceGraph.gridScaleW > checkW)
+                            xOffset = -checkW;
+                        else
+                            xOffset = -(int)(kdataID * graphMgr.appearenceGraph.gridScaleW);
+
+                        graphMgr.appearenceGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+                    }
+                    else
+                    {
+                        graphMgr.appearenceGraph.UnselectDataItem();
+                    }
                 }
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
