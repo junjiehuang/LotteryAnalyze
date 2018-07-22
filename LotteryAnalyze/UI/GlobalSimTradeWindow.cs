@@ -222,9 +222,13 @@ namespace LotteryAnalyze.UI
 
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
-                Point scrollpos = textBoxCmd.AutoScrollOffset;
-                textBoxCmd.DocumentText = info;
-                textBoxCmd.AutoScrollOffset = scrollpos;
+
+                if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                {
+                    Point scrollpos = textBoxCmd.AutoScrollOffset;
+                    textBoxCmd.DocumentText = info;
+                    textBoxCmd.AutoScrollOffset = scrollpos;
+                }
                 //textBoxCmd.Text = info + missStr;
             }
             else if (BatchTradeSimulator.Instance.HasJob())
@@ -279,9 +283,12 @@ namespace LotteryAnalyze.UI
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
                 //textBoxCmd.Text = info;
-                Point scrollpos = textBoxCmd.AutoScrollOffset;
-                textBoxCmd.DocumentText = info;
-                textBoxCmd.AutoScrollOffset = scrollpos;
+                if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                {
+                    Point scrollpos = textBoxCmd.AutoScrollOffset;
+                    textBoxCmd.DocumentText = info;
+                    textBoxCmd.AutoScrollOffset = scrollpos;
+                }
                 info = null;
             }
             else

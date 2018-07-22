@@ -2129,6 +2129,7 @@ namespace LotteryAnalyze
             int[] uponBMCounts = new int[3] { 0, 0, 0, };
             int[] underBMCounts = new int[3] { 0, 0, 0, };
             bool[] isPreMissCountUponBM = new bool[3] { false, false, false, };
+            float[] curBMDists = new float[3] { 0, 0, 0, };
 
             CollectDataType[] cdts = new CollectDataType[3] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             for( int i = 0; i < 3; ++i )
@@ -2140,6 +2141,7 @@ namespace LotteryAnalyze
                 bp = bpm.GetData(cdts[i], false);
                 kdata = kdd.GetData(cdts[i], false);
                 rel_dist = kdata.RelateDistTo(bp.midValue);
+                curBMDists[i] = rel_dist;
                 if (rel_dist <= 0)
                     ++uponBMCounts[i];
                 if (rel_dist >= 0)
@@ -2197,6 +2199,10 @@ namespace LotteryAnalyze
                         pathValues[i] = 0;
                 }
                 else if(isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2 )
+                {
+                    pathValues[i] = 0;
+                }
+                else if(isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curBMDists[i] >= -0.5f && curBMDists[i] <= 0.5f)
                 {
                     pathValues[i] = 0;
                 }
