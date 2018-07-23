@@ -897,7 +897,8 @@ namespace LotteryAnalyze
                 //PushLinePts(grayDotLinePen, standX, 0, standX, winH);
                 //PushLinePts(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
                 g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
-                g.DrawString("K值 = " + data.KValue.ToString(), selDataFont, whiteBrush, 5, 25);
+                string str = "K值 = " + data.KValue.ToString() + ", 上 = " + data.UpValue.ToString() + ", 下 = " + data.DownValue.ToString();
+                g.DrawString(str, selDataFont, whiteBrush, 5, 25);
             }
 
             if(data.index == selectKDataIndex)

@@ -614,5 +614,14 @@ namespace LotteryAnalyze
                 ApplyOpacityToAllWindows();
             }
         }
+
+        private void stopAutoUpdateLatestDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer = null;
+            }
+        }
     }
 }

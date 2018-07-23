@@ -124,7 +124,7 @@ namespace LotteryAnalyze
                     if (i != tradeNumbers.Count - 1)
                         info += ",";
                 }
-                info += "} 倍数：" + tradeCount + "\n";
+                info += "} 倍数：" + tradeCount + ", 第 " + TradeDataManager.Instance.tradeCountList.IndexOf(tradeCount).ToString() + " 级交易\n";
             }
         }
         public void SelPath012Number(int path, int tradeCount, ref List<NumberCmpInfo> nums)

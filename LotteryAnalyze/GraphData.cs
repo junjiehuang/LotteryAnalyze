@@ -111,8 +111,17 @@ namespace LotteryAnalyze
             hasRefreshUpDownValue = true;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
             float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
-            upValue = KValue + HitValue;
-            downValue = KValue - MissValue * missRelHeight;
+            float missV = MissValue * missRelHeight;
+            if (HitValue > missV)
+            {
+                upValue = KValue;
+                downValue = KValue - missV;
+            }
+            else
+            {
+                upValue = KValue + HitValue;
+                downValue = KValue;
+            }
         }
 
         public string GetInfo()
