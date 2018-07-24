@@ -35,17 +35,19 @@ namespace LotteryAnalyze
     {
         public int pathIndex;
         public float pathValue;
+        public int uponBMCount;
         public TradeDataManager.MACDLineWaveConfig macdLineCfg;
         public TradeDataManager.MACDBarConfig macdBarCfg;
         public TradeDataManager.KGraphConfig kGraphCfg;
 
-        public PathCmpInfo(int id, float v, TradeDataManager.MACDLineWaveConfig lineCFG, TradeDataManager.MACDBarConfig barCFG, TradeDataManager.KGraphConfig kCFG)
+        public PathCmpInfo(int id, float v, int _uponBMCount, TradeDataManager.MACDLineWaveConfig lineCFG, TradeDataManager.MACDBarConfig barCFG, TradeDataManager.KGraphConfig kCFG)
         {
             pathIndex = id;
             pathValue = v;
             macdLineCfg = lineCFG;
             macdBarCfg = barCFG;
             kGraphCfg = kCFG;
+            uponBMCount = _uponBMCount;
         }
     }
 
@@ -1287,7 +1289,12 @@ namespace LotteryAnalyze
             if(currentTradeCountIndex > tradeCountList.Count - 3)
             {
                 pci = trade.pathCmpInfos[bestNumIndex][1];
-                //if(pci.pathValue <= 2 * firstPV)
+                tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            }
+            else
+            {
+                pci = trade.pathCmpInfos[bestNumIndex][1];
+                if(pci.pathValue == 0)
                     tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
         }
@@ -2049,13 +2056,14 @@ namespace LotteryAnalyze
             res.Clear();
             bool[] isStrongUp = new bool[3] { false, false, false };
             float[] pathValues;
+            int[] uponAvgLineCounts;
             MACDLineWaveConfig[] lineCfgs;
             MACDBarConfig[] barCfgs;
             KGraphConfig[] kCfgs;
-            CalcPathValue(item, numIndex, ref isStrongUp, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
+            CalcPathValue(item, numIndex, ref isStrongUp, out uponAvgLineCounts, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
             for( int i = 0; i < pathValues.Length; ++i )
             {
-                res.Add(new PathCmpInfo(i, pathValues[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
+                res.Add(new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
             }
             res.Sort((x, y) =>
             {
@@ -2205,6 +2213,18 @@ namespace LotteryAnalyze
 
             for (int i = 0; i < 3; ++i)
             {
+                float prevMaxMissCountLeftTopKV = 0;
+                if(prevMaxMissCountIDs[i] != -1)
+                {
+                    int id = prevMaxMissCountIDs[i] - prevMaxMissCounts[i];
+                    if (id < 0)
+                        id = 0;
+                    DataItem di = DataManager.GetInst().FindDataItem(id);
+                    
+                    kdd = kddc.GetKDataDict(di);
+                    prevMaxMissCountLeftTopKV = kdd.GetData(cdts[i], false).KValue;
+                }
+
                 float main_rate = (float)maxMissCounts[i];// KGRAPH_LOOP_COUNT;
                 if (prevMaxMissCountIDs[i] == -1)
                 {
@@ -2230,6 +2250,11 @@ namespace LotteryAnalyze
                 {
                     pathValues[i] = 0;
                 }
+                // 当前K值超过前期的一个峰值，且当前的遗漏值小于2
+                else if(prevMaxMissCountLeftTopKV < curKValues[i] && curMissCounts[i] < 2)
+                {
+                    pathValues[i] = 0;
+                }
                 else if (curMissCounts[i] > prevMaxMissCounts[i])
                 {
                     if(prevMaxMissCounts[i] > 4)
@@ -2244,22 +2269,31 @@ namespace LotteryAnalyze
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < 3; ++i)
             {
-                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], MACDLineWaveConfig.eNone, MACDBarConfig.eNone, KGraphConfig.eNone));
+                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], uponBMCounts[i], MACDLineWaveConfig.eNone, MACDBarConfig.eNone, KGraphConfig.eNone));
             }
             trade.pathCmpInfos[numIndex].Sort((x, y) =>
             {
                 if (x.pathValue < y.pathValue)
                     return -1;
-                return 1;
+                else if(x.pathValue > y.pathValue)
+                    return 1;
+                else
+                {
+                    if (x.uponBMCount > y.uponBMCount)
+                        return -1;
+                    else
+                        return 1;
+                }
             });
         }
 
-        void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs)
+        void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out int[] uponAvgLineCounts, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs)
         {
             pathValues = new float[3] { 1, 1, 1 };
             float[] kValues = new float[3] { 1, 1, 1 };
             int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
-            int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
+            //int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
+            uponAvgLineCounts = new int[3] { 0, 0, 0 };
             float[] proShort = new float[3] { 1, 1, 1, };
             mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
             mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
@@ -2364,16 +2398,17 @@ namespace LotteryAnalyze
             bool[] isStrongUp = new bool[3] { false, false, false, };
 
             float[] pathValues;
+            int[] uponAvgLineCounts;
             MACDLineWaveConfig[] lineCfgs;
             MACDBarConfig[] barCfgs;
             KGraphConfig[] kCfgs;
-            CalcPathValue(item, numIndex, ref isStrongUp, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
+            CalcPathValue(item, numIndex, ref isStrongUp, out uponAvgLineCounts, out pathValues, out lineCfgs, out barCfgs, out kCfgs);
 
             //--------------------------
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
-                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
+                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], lineCfgs[i], barCfgs[i], kCfgs[i]));
             }
             trade.pathCmpInfos[numIndex].Sort((x, y) =>
             {
