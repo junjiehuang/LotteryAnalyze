@@ -117,14 +117,16 @@ namespace LotteryAnalyze
         {
             if (tradeNumbers.Count > 0)
             {
-                info += " { ";
+                int index = TradeDataManager.Instance.tradeCountList.IndexOf(tradeCount);
+
+                info += "[" + index + ", "+ tradeCount+"] {";
                 for (int i = 0; i < tradeNumbers.Count; ++i)
                 {
                     info += tradeNumbers[i].ToString();
                     if (i != tradeNumbers.Count - 1)
                         info += ",";
                 }
-                info += "} 倍数：" + tradeCount + ", 第 " + TradeDataManager.Instance.tradeCountList.IndexOf(tradeCount).ToString() + " 级交易\n";
+                info += "}\n";
             }
         }
         public void SelPath012Number(int path, int tradeCount, ref List<NumberCmpInfo> nums)
@@ -2119,17 +2121,21 @@ namespace LotteryAnalyze
             float rel_dist;
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             int loop = KGRAPH_LOOP_COUNT;
+            int HALF_TRADE_LVS = TradeDataManager.Instance.tradeCountList.Count / 2;
             int[] maxMissCounts = new int[3] { 0, 0, 0, };
             int[] prevMaxMissCounts = new int[3] { 0, 0, 0, };
             int[] curMissCounts = new int[3] { 0, 0, 0, };
             int[] maxMissCountIDs = new int[3] { item.idGlobal, item.idGlobal, item.idGlobal, };
             int[] prevMaxMissCountIDs = new int[3] { -1, -1, -1, };
+            float[] preMaxCountKValues = new float[3] { 0, 0, 0, };
+            float[] curKValues = new float[3] { 0, 0, 0, };
             float[] pathValues = new float[3] { 0, 0, 0, };
             int[] stepCount = new int[3] { 0, 0, 0, };
             int[] uponBMCounts = new int[3] { 0, 0, 0, };
             int[] underBMCounts = new int[3] { 0, 0, 0, };
             bool[] isPreMissCountUponBM = new bool[3] { false, false, false, };
             float[] curBMDists = new float[3] { 0, 0, 0, };
+            int[] preMaxMissUponBMCounts = new int[3] { 0, 0, 0, };
 
             CollectDataType[] cdts = new CollectDataType[3] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             for( int i = 0; i < 3; ++i )
@@ -2142,6 +2148,7 @@ namespace LotteryAnalyze
                 kdata = kdd.GetData(cdts[i], false);
                 rel_dist = kdata.RelateDistTo(bp.midValue);
                 curBMDists[i] = rel_dist;
+                curKValues[i] = kdata.KValue;
                 if (rel_dist <= 0)
                     ++uponBMCounts[i];
                 if (rel_dist >= 0)
@@ -2177,15 +2184,25 @@ namespace LotteryAnalyze
                     }
                     if(prevMaxMissCounts[i] <= misscount)
                     {
+                        preMaxCountKValues[i] = kdata.KValue;
                         prevMaxMissCounts[i] = misscount;
                         prevMaxMissCountIDs[i] = testItem.idGlobal;
-
                         isPreMissCountUponBM[i] = (rel_dist <= 0);
+                        if (isPreMissCountUponBM[i])
+                            preMaxMissUponBMCounts[i] = 1;
+                        else
+                            preMaxMissUponBMCounts[i] = 0;
+                    }
+                    if(prevMaxMissCountIDs[i] - testItem.idGlobal < prevMaxMissCounts[i])
+                    {
+                        if (rel_dist <= 0)
+                            ++preMaxMissUponBMCounts[i];
                     }
                 }
                 testItem = testItem.parent.GetPrevItem(testItem);
                 --loop;
             }
+
             for (int i = 0; i < 3; ++i)
             {
                 float main_rate = (float)maxMissCounts[i];// KGRAPH_LOOP_COUNT;
@@ -2198,11 +2215,18 @@ namespace LotteryAnalyze
                     else
                         pathValues[i] = 0;
                 }
-                else if(isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2 )
+                // 前面的最大遗漏超过HALF_TRADE_LVS个，且当先的遗漏小于2
+                else if (prevMaxMissCounts[i] >= HALF_TRADE_LVS && curMissCounts[i] < 2 && preMaxCountKValues[i] < curKValues[i])
                 {
                     pathValues[i] = 0;
                 }
-                else if(isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curBMDists[i] >= -0.5f && curBMDists[i] <= 0.5f)
+                // 最大遗漏项之前的是否都在布林中轨之上，并且在布林中轨之上的个数达到KGRAPH_LOOP_COUNT个，当前项在布林中轨
+                else if (isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curBMDists[i] >= -0.5f && curBMDists[i] <= 0.5f)
+                {
+                    pathValues[i] = 0;
+                }
+                // 最大遗漏项之前的是否都在布林中轨之上，并且在布林中轨之上的个数达到KGRAPH_LOOP_COUNT个，当前的遗漏在2以内
+                else if (isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2 )
                 {
                     pathValues[i] = 0;
                 }
