@@ -1036,7 +1036,7 @@ namespace LotteryAnalyze
             
 
             // 自动计算辅助线
-            autoAnalyzeTool.Analyze(item.idGlobal);
+            autoAnalyzeTool.Analyze(item.idGlobal, KGRAPH_LOOP_COUNT);
 
             TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
             trade.lastDateItem = item;

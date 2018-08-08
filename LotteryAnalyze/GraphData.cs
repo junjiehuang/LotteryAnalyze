@@ -1405,7 +1405,7 @@ namespace LotteryAnalyze
 
     public class AutoAnalyzeTool
     {
-        public static int C_ANALYZE_LOOP_COUNT = 50;
+        public const int C_ANALYZE_LOOP_COUNT = 50;
 
         public enum CalcType
         {
@@ -1650,9 +1650,9 @@ namespace LotteryAnalyze
             }
         }
 
-        public void Analyze(int curKDataIndex)
+        public void Analyze(int curKDataIndex, int loopCount = C_ANALYZE_LOOP_COUNT)
         {
-            int loopCount = C_ANALYZE_LOOP_COUNT;
+            //int loopCount = C_ANALYZE_LOOP_COUNT;
             if (curKDataIndex < 2)
                 return;
             Reset();
