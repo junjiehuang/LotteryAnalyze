@@ -1357,7 +1357,11 @@ namespace LotteryAnalyze
             int index = S_CDT_LIST.IndexOf(cdt);
             return S_CDT_COLOR_LIST[index];
         }
-
+        public static float GetMissRelLength(CollectDataType cdt)
+        {
+            int index = S_CDT_LIST.IndexOf(cdt);
+            return S_CDT_MISS_REL_LENGTH_LIST[index];
+        }
 
         static GraphDataManager sInst = null;
         public static GraphDataManager Instance

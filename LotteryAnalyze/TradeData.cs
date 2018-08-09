@@ -1291,12 +1291,12 @@ namespace LotteryAnalyze
                 pci = trade.pathCmpInfos[bestNumIndex][1];
                 tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             }
-            else
-            {
-                pci = trade.pathCmpInfos[bestNumIndex][1];
-                if(pci.pathValue == 0)
-                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
-            }
+            //else
+            //{
+            //    pci = trade.pathCmpInfos[bestNumIndex][1];
+            //    if(pci.pathValue == 0)
+            //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            //}
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -2144,6 +2144,8 @@ namespace LotteryAnalyze
             bool[] isPreMissCountUponBM = new bool[3] { false, false, false, };
             float[] curBMDists = new float[3] { 0, 0, 0, };
             int[] preMaxMissUponBMCounts = new int[3] { 0, 0, 0, };
+            KData[] curKDatas = new KData[3] { null, null, null, };
+            float[] auxLineDist = new float[3] { 0, 0, 0, };
 
             CollectDataType[] cdts = new CollectDataType[3] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             for( int i = 0; i < 3; ++i )
@@ -2161,6 +2163,8 @@ namespace LotteryAnalyze
                     ++uponBMCounts[i];
                 if (rel_dist >= 0)
                     ++underBMCounts[i];
+
+                curKDatas[i] = kdata;
             }
             DataItem testItem = item.parent.GetPrevItem(item);
             while (testItem != null && loop > 0)
@@ -2225,6 +2229,52 @@ namespace LotteryAnalyze
                     prevMaxMissCountLeftTopKV = kdd.GetData(cdts[i], false).KValue;
                 }
 
+                AutoAnalyzeTool.SingleAuxLineInfo lineInfo = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdts[i]);
+                KData upL = null, upR = null, downL = null, downR = null;
+                if (lineInfo.upLineData.valid)
+                {
+                    if(lineInfo.upLineData.dataNextSharp != null && lineInfo.upLineData.dataSharp != null)
+                    {
+                        upL = lineInfo.upLineData.dataSharp;
+                        upR = lineInfo.upLineData.dataNextSharp;
+                    }
+                    else if(lineInfo.upLineData.dataSharp != null && lineInfo.upLineData.dataPrevSharp != null)
+                    {
+                        upL = lineInfo.upLineData.dataPrevSharp;
+                        upR = lineInfo.upLineData.dataSharp;
+                    }
+                }
+                if (lineInfo.downLineData.valid)
+                {
+                    if (lineInfo.downLineData.dataNextSharp != null && lineInfo.downLineData.dataSharp != null)
+                    {
+                        downL = lineInfo.downLineData.dataSharp;
+                        downR = lineInfo.downLineData.dataNextSharp;
+                    }
+                    else if (lineInfo.downLineData.dataSharp != null && lineInfo.downLineData.dataPrevSharp != null)
+                    {
+                        downL = lineInfo.downLineData.dataPrevSharp;
+                        downR = lineInfo.downLineData.dataSharp;
+                    }
+                }
+                bool hasUpK = (upL != null && upR != null);
+                bool hasDownK = (downL != null && downR != null);
+                float distToUpLine = 0, distToDownLine = 0, upK = 0, downK = 0, upLV = 0, downLV = 0;
+                if(hasUpK)
+                {
+                    upK = (upR.KValue - upL.KValue) / (upR.index - upL.index);
+                    upLV = upK * (curKDatas[i].index - upR.index) + upR.KValue;
+                    distToUpLine = curKDatas[i].KValue - upLV;
+                }
+                if (hasDownK)
+                {
+                    downK = (downR.KValue - downL.KValue) / (downR.index - downL.index);
+                    downLV = downK * (curKDatas[i].index - downR.index) + downR.KValue;
+                    distToDownLine = curKDatas[i].KValue - downLV;
+                }
+
+                float curCDTMiss = GraphDataManager.GetMissRelLength(cdts[i]);
+
                 float main_rate = (float)maxMissCounts[i];// KGRAPH_LOOP_COUNT;
                 if (prevMaxMissCountIDs[i] == -1)
                 {
@@ -2235,6 +2285,7 @@ namespace LotteryAnalyze
                     else
                         pathValues[i] = 0;
                 }
+
                 // 前面的最大遗漏超过HALF_TRADE_LVS个，且当先的遗漏小于2
                 else if (prevMaxMissCounts[i] >= HALF_TRADE_LVS && curMissCounts[i] < 2 && preMaxCountKValues[i] < curKValues[i])
                 {
@@ -2246,18 +2297,39 @@ namespace LotteryAnalyze
                     pathValues[i] = 0;
                 }
                 // 最大遗漏项之前的是否都在布林中轨之上，并且在布林中轨之上的个数达到KGRAPH_LOOP_COUNT个，当前的遗漏在2以内
-                else if (isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2 )
+                else if (isPreMissCountUponBM[i] && uponBMCounts[i] >= KGRAPH_LOOP_COUNT && curMissCounts[i] < 2)
                 {
                     pathValues[i] = 0;
                 }
                 // 当前K值超过前期的一个峰值，且当前的遗漏值小于2
-                else if(prevMaxMissCountLeftTopKV < curKValues[i] && curMissCounts[i] < 2)
+                else if (prevMaxMissCountLeftTopKV < curKValues[i] && curMissCounts[i] < 2)
                 {
                     pathValues[i] = 0;
                 }
+
+                //////////////////////////////////
+                // 大热
+                else if (hasUpK && distToUpLine > -1 && curMissCounts[i] < 2)
+                {
+                    pathValues[i] = 0;
+                }
+                // 大冷
+                else if (hasDownK && distToDownLine < -curCDTMiss && curMissCounts[i] > 0)
+                {
+                    pathValues[i] = 0xEFFFFFFF;
+                }
+                // 在压力线和支撑线之间
+                else if (hasUpK && hasDownK)
+                {
+                    float realDist = Math.Abs(Math.Abs(distToUpLine) > Math.Abs(distToDownLine) ? distToDownLine : distToUpLine);
+                    int maxDist = Math.Abs((int)(upLV - downLV));
+                    pathValues[i] = maxDist + realDist / maxDist;
+                }
+                ///////////////////////////////////
+
                 else if (curMissCounts[i] > prevMaxMissCounts[i])
                 {
-                    if(prevMaxMissCounts[i] > 4)
+                    if (prevMaxMissCounts[i] > 4)
                         pathValues[i] = 0xEFFFFFFF;
                     else
                         pathValues[i] = main_rate + (float)curMissCounts[i] / KGRAPH_LOOP_COUNT;
