@@ -46,8 +46,10 @@ namespace LotteryAnalyze.UI
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "onlyTradeOnStrongUpPath", checkBoxOnTradeOnStrongUpPath.Checked ? 1 : 0);
             SystemCfg.Instance.CFG.WriteFloat("SimTrade", "riskControl", TradeDataManager.Instance.RiskControl);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "uponValue", TradeDataManager.Instance.uponValue);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "multiPathTradeCount", TradeDataManager.Instance.MultiTradePathCount);
 
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
+            textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
         }
 
         public void ReadCfg()
@@ -63,10 +65,12 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.maxNumCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "maxNumCount", 5);
             TradeDataManager.Instance.RiskControl = SystemCfg.Instance.CFG.ReadFloat("SimTrade", "riskControl", 1);
             TradeDataManager.Instance.uponValue = SystemCfg.Instance.CFG.ReadInt("SimTrade", "uponValue", 0);
+            TradeDataManager.Instance.MultiTradePathCount = SystemCfg.Instance.CFG.ReadInt("SimTrade", "multiPathTradeCount", 3);
 
             checkBoxSpecNumIndex.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "specNumIndex", 0) == 1;
             checkBoxOnTradeOnStrongUpPath.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "onlyTradeOnStrongUpPath", 0) == 1;
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
+            textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
         }
 
         public GlobalSimTradeWindow()

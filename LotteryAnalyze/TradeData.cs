@@ -743,6 +743,13 @@ namespace LotteryAnalyze
             get { return _riskControl; }
             set { _riskControl = value; }
         }
+        int _multiTradePathCount = 3;
+        public int MultiTradePathCount
+        {
+            get { return _multiTradePathCount; }
+            set { _multiTradePathCount = value; }
+        }
+
         List<NumberCmpInfo> maxProbilityNums = new List<NumberCmpInfo>();
         List<NumberCmpInfo> maxProbilityPaths = new List<NumberCmpInfo>();
         public delegate void OnTradeComleted();
@@ -1286,7 +1293,7 @@ namespace LotteryAnalyze
             PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
             float firstPV = pci.pathValue;
             tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
-            if(currentTradeCountIndex > tradeCountList.Count - 3)
+            if(currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
             {
                 pci = trade.pathCmpInfos[bestNumIndex][1];
                 tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
