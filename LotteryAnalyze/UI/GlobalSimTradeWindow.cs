@@ -506,5 +506,12 @@ namespace LotteryAnalyze.UI
                 }
             }
         }
+
+        private void textBoxMultiPathTradeCount_TextChanged(object sender, EventArgs e)
+        {
+            int v = TradeDataManager.Instance.MultiTradePathCount;
+            if (int.TryParse(textBoxMultiPathTradeCount.Text, out v))
+                TradeDataManager.Instance.MultiTradePathCount = v;
+        }
     }
 }

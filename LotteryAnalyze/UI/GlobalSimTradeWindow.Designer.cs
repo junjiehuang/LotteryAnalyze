@@ -50,6 +50,8 @@
             this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.checkBoxForceTradeByMaxNumCount = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBoxMultiPathTradeCount = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.textBoxUponValue = new System.Windows.Forms.TextBox();
             this.textBoxRiskControl = new System.Windows.Forms.TextBox();
@@ -68,8 +70,6 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBoxMultiPathTradeCount = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -335,6 +335,25 @@
             this.splitContainer1.SplitterDistance = 263;
             this.splitContainer1.TabIndex = 24;
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(3, 312);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(89, 12);
+            this.label15.TabIndex = 36;
+            this.label15.Text = "多路交易个数：";
+            // 
+            // textBoxMultiPathTradeCount
+            // 
+            this.textBoxMultiPathTradeCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxMultiPathTradeCount.Location = new System.Drawing.Point(98, 310);
+            this.textBoxMultiPathTradeCount.Name = "textBoxMultiPathTradeCount";
+            this.textBoxMultiPathTradeCount.Size = new System.Drawing.Size(162, 21);
+            this.textBoxMultiPathTradeCount.TabIndex = 37;
+            this.textBoxMultiPathTradeCount.TextChanged += new System.EventHandler(this.textBoxMultiPathTradeCount_TextChanged);
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
@@ -525,24 +544,6 @@
             this.label10.Size = new System.Drawing.Size(53, 12);
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 312);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(89, 12);
-            this.label15.TabIndex = 36;
-            this.label15.Text = "多路交易个数：";
-            // 
-            // textBoxMultiPathTradeCount
-            // 
-            this.textBoxMultiPathTradeCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxMultiPathTradeCount.Location = new System.Drawing.Point(98, 310);
-            this.textBoxMultiPathTradeCount.Name = "textBoxMultiPathTradeCount";
-            this.textBoxMultiPathTradeCount.Size = new System.Drawing.Size(162, 21);
-            this.textBoxMultiPathTradeCount.TabIndex = 37;
             // 
             // GlobalSimTradeWindow
             // 
