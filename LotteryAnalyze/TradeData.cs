@@ -190,6 +190,16 @@ namespace LotteryAnalyze
                 }
             }
         }
+        public void RemoveNumber(SByte number)
+        {
+            for (int i = 0; i < tradeNumbers.Count; ++i)
+            {
+                if (tradeNumbers[i].number == number)
+                {
+                    tradeNumbers.RemoveAt(i);
+                }
+            }
+        }
     }
 
     // 基本交易数据
@@ -707,6 +717,7 @@ namespace LotteryAnalyze
         public int wrongCount = 0;
         public int untradeCount = 0;
         public int uponValue = 0;
+        public bool killLastNumber = false;
 
         public DebugInfo debugInfo = new DebugInfo();
 
@@ -1100,6 +1111,20 @@ namespace LotteryAnalyze
                     TradeSingleMostPosibilityPath(item, trade);
                     break;
             }
+
+            // 杀掉上期开出的号，为了节省开销
+            if(killLastNumber)
+            {
+                DataItem lastItem = item.parent.GetPrevItem(item);
+                if (lastItem != null)
+                {
+                    foreach (int numID in trade.tradeInfo.Keys)
+                    {
+                        SByte lastNum = lastItem.GetNumberByIndex(numID);
+                        trade.tradeInfo[numID].RemoveNumber(lastNum);
+                    }
+                }
+            }
         }
 
         void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
@@ -1162,7 +1187,7 @@ namespace LotteryAnalyze
                 if (res[1].pathValue > 0)
                 {
                     float rate = Math.Abs(res[0].pathValue - res[1].pathValue) / res[0].pathValue;
-                    if (rate < 0.2f || currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
+                    if (rate < 0.1f || currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
                         tn.SelPath012Number(res[1].pathIndex, tradeCount, ref maxProbilityNums);
                 }
                 trade.tradeInfo.Add(bestNumIndex, tn);

@@ -47,6 +47,7 @@ namespace LotteryAnalyze.UI
             SystemCfg.Instance.CFG.WriteFloat("SimTrade", "riskControl", TradeDataManager.Instance.RiskControl);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "uponValue", TradeDataManager.Instance.uponValue);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "multiPathTradeCount", TradeDataManager.Instance.MultiTradePathCount);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "killLastNumber", checkBoxKillLastNumber.Checked ? 1 : 0);
 
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
             textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
@@ -69,6 +70,8 @@ namespace LotteryAnalyze.UI
 
             checkBoxSpecNumIndex.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "specNumIndex", 0) == 1;
             checkBoxOnTradeOnStrongUpPath.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "onlyTradeOnStrongUpPath", 0) == 1;
+            checkBoxKillLastNumber.Checked = SystemCfg.Instance.CFG.ReadInt("SimTrade", "killLastNumber", 0) == 1;
+
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
             textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
         }
@@ -100,6 +103,8 @@ namespace LotteryAnalyze.UI
 
             checkBoxForceTradeByMaxNumCount.Checked = TradeDataManager.Instance.forceTradeByMaxNumCount;
             textBoxMaxNumCount.Text = TradeDataManager.Instance.maxNumCount.ToString();
+
+            checkBoxKillLastNumber.Checked = TradeDataManager.Instance.killLastNumber;
 
             //checkBoxStopOnNoMoney.Checked = stopTradeOnNoMoney;
             comboBoxOnNoMoney.DataSource = OperateOnNoMoneyAR;
@@ -512,6 +517,11 @@ namespace LotteryAnalyze.UI
             int v = TradeDataManager.Instance.MultiTradePathCount;
             if (int.TryParse(textBoxMultiPathTradeCount.Text, out v))
                 TradeDataManager.Instance.MultiTradePathCount = v;
+        }
+
+        private void checkBoxKillLastNumber_CheckedChanged(object sender, EventArgs e)
+        {
+            TradeDataManager.Instance.killLastNumber = checkBoxKillLastNumber.Checked;
         }
     }
 }

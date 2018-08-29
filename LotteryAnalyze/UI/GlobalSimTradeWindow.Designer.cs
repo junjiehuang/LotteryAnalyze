@@ -70,6 +70,7 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.checkBoxKillLastNumber = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -169,7 +170,7 @@
             // 
             this.progressBarCurrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarCurrent.Location = new System.Drawing.Point(75, 419);
+            this.progressBarCurrent.Location = new System.Drawing.Point(75, 404);
             this.progressBarCurrent.Name = "progressBarCurrent";
             this.progressBarCurrent.Size = new System.Drawing.Size(634, 23);
             this.progressBarCurrent.TabIndex = 11;
@@ -178,7 +179,7 @@
             // 
             this.progressBarTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarTotal.Location = new System.Drawing.Point(75, 449);
+            this.progressBarTotal.Location = new System.Drawing.Point(75, 434);
             this.progressBarTotal.Name = "progressBarTotal";
             this.progressBarTotal.Size = new System.Drawing.Size(634, 23);
             this.progressBarTotal.TabIndex = 12;
@@ -186,7 +187,7 @@
             // checkBoxSpecNumIndex
             // 
             this.checkBoxSpecNumIndex.AutoSize = true;
-            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 343);
+            this.checkBoxSpecNumIndex.Location = new System.Drawing.Point(3, 322);
             this.checkBoxSpecNumIndex.Name = "checkBoxSpecNumIndex";
             this.checkBoxSpecNumIndex.Size = new System.Drawing.Size(108, 16);
             this.checkBoxSpecNumIndex.TabIndex = 13;
@@ -275,7 +276,7 @@
             // checkBoxForceTradeByMaxNumCount
             // 
             this.checkBoxForceTradeByMaxNumCount.AutoSize = true;
-            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 365);
+            this.checkBoxForceTradeByMaxNumCount.Location = new System.Drawing.Point(3, 344);
             this.checkBoxForceTradeByMaxNumCount.Name = "checkBoxForceTradeByMaxNumCount";
             this.checkBoxForceTradeByMaxNumCount.Size = new System.Drawing.Size(144, 16);
             this.checkBoxForceTradeByMaxNumCount.TabIndex = 23;
@@ -293,6 +294,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.checkBoxKillLastNumber);
             this.splitContainer1.Panel1.Controls.Add(this.label15);
             this.splitContainer1.Panel1.Controls.Add(this.textBoxMultiPathTradeCount);
             this.splitContainer1.Panel1.Controls.Add(this.label14);
@@ -331,14 +333,14 @@
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
-            this.splitContainer1.Size = new System.Drawing.Size(704, 409);
+            this.splitContainer1.Size = new System.Drawing.Size(704, 394);
             this.splitContainer1.SplitterDistance = 263;
             this.splitContainer1.TabIndex = 24;
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 312);
+            this.label15.Location = new System.Drawing.Point(3, 280);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(89, 12);
             this.label15.TabIndex = 36;
@@ -348,7 +350,7 @@
             // 
             this.textBoxMultiPathTradeCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxMultiPathTradeCount.Location = new System.Drawing.Point(98, 310);
+            this.textBoxMultiPathTradeCount.Location = new System.Drawing.Point(98, 277);
             this.textBoxMultiPathTradeCount.Name = "textBoxMultiPathTradeCount";
             this.textBoxMultiPathTradeCount.Size = new System.Drawing.Size(162, 21);
             this.textBoxMultiPathTradeCount.TabIndex = 37;
@@ -375,12 +377,10 @@
             // 
             // textBoxRiskControl
             // 
-            this.textBoxRiskControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxRiskControl.Location = new System.Drawing.Point(98, 283);
+            this.textBoxRiskControl.Location = new System.Drawing.Point(74, 252);
             this.textBoxRiskControl.Name = "textBoxRiskControl";
             this.textBoxRiskControl.ReadOnly = true;
-            this.textBoxRiskControl.Size = new System.Drawing.Size(162, 21);
+            this.textBoxRiskControl.Size = new System.Drawing.Size(47, 21);
             this.textBoxRiskControl.TabIndex = 33;
             // 
             // label13
@@ -397,10 +397,10 @@
             this.trackBarRiskControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarRiskControl.AutoSize = false;
-            this.trackBarRiskControl.Location = new System.Drawing.Point(98, 253);
+            this.trackBarRiskControl.Location = new System.Drawing.Point(127, 251);
             this.trackBarRiskControl.Maximum = 100;
             this.trackBarRiskControl.Name = "trackBarRiskControl";
-            this.trackBarRiskControl.Size = new System.Drawing.Size(162, 23);
+            this.trackBarRiskControl.Size = new System.Drawing.Size(133, 23);
             this.trackBarRiskControl.TabIndex = 31;
             this.trackBarRiskControl.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarRiskControl.Scroll += new System.EventHandler(this.trackBarRiskControl_Scroll);
@@ -408,7 +408,7 @@
             // checkBoxOnTradeOnStrongUpPath
             // 
             this.checkBoxOnTradeOnStrongUpPath.AutoSize = true;
-            this.checkBoxOnTradeOnStrongUpPath.Location = new System.Drawing.Point(3, 387);
+            this.checkBoxOnTradeOnStrongUpPath.Location = new System.Drawing.Point(3, 366);
             this.checkBoxOnTradeOnStrongUpPath.Name = "checkBoxOnTradeOnStrongUpPath";
             this.checkBoxOnTradeOnStrongUpPath.Size = new System.Drawing.Size(144, 16);
             this.checkBoxOnTradeOnStrongUpPath.TabIndex = 30;
@@ -489,7 +489,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
-            this.splitContainer2.Size = new System.Drawing.Size(434, 381);
+            this.splitContainer2.Size = new System.Drawing.Size(434, 375);
             this.splitContainer2.SplitterDistance = 217;
             this.splitContainer2.TabIndex = 13;
             // 
@@ -501,7 +501,7 @@
             this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
             this.textBoxCmd.MinimumSize = new System.Drawing.Size(20, 20);
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(214, 375);
+            this.textBoxCmd.Size = new System.Drawing.Size(214, 378);
             this.textBoxCmd.TabIndex = 0;
             // 
             // treeViewLongWrongTradeInfos
@@ -511,7 +511,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
             this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 376);
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 379);
             this.treeViewLongWrongTradeInfos.TabIndex = 12;
             this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
             // 
@@ -529,7 +529,7 @@
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 424);
+            this.label9.Location = new System.Drawing.Point(8, 409);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 12);
             this.label9.TabIndex = 26;
@@ -539,17 +539,28 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 454);
+            this.label10.Location = new System.Drawing.Point(8, 439);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(53, 12);
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
+            // checkBoxKillLastNumber
+            // 
+            this.checkBoxKillLastNumber.AutoSize = true;
+            this.checkBoxKillLastNumber.Location = new System.Drawing.Point(3, 304);
+            this.checkBoxKillLastNumber.Name = "checkBoxKillLastNumber";
+            this.checkBoxKillLastNumber.Size = new System.Drawing.Size(108, 16);
+            this.checkBoxKillLastNumber.TabIndex = 38;
+            this.checkBoxKillLastNumber.Text = "是否杀上期号码";
+            this.checkBoxKillLastNumber.UseVisualStyleBackColor = true;
+            this.checkBoxKillLastNumber.CheckedChanged += new System.EventHandler(this.checkBoxKillLastNumber_CheckedChanged);
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(714, 477);
+            this.ClientSize = new System.Drawing.Size(714, 462);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.splitContainer1);
@@ -617,5 +628,6 @@
         private System.Windows.Forms.WebBrowser textBoxCmd;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textBoxMultiPathTradeCount;
+        private System.Windows.Forms.CheckBox checkBoxKillLastNumber;
     }
 }
