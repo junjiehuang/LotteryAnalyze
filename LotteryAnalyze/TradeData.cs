@@ -1157,11 +1157,12 @@ namespace LotteryAnalyze
                 List<PathCmpInfo> res = trade.pathCmpInfos[bestNumIndex];
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
-                if(res[0].pathValue > 0)
+                if (res[0].pathValue > 0)
                     tn.SelPath012Number(res[0].pathIndex, tradeCount, ref maxProbilityNums);                
-                if (currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
+                if (res[1].pathValue > 0)
                 {
-                    if(res[1].pathValue > 0)
+                    float rate = Math.Abs(res[0].pathValue - res[1].pathValue) / res[0].pathValue;
+                    if (rate < 0.2f || currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
                         tn.SelPath012Number(res[1].pathIndex, tradeCount, ref maxProbilityNums);
                 }
                 trade.tradeInfo.Add(bestNumIndex, tn);
@@ -2577,24 +2578,22 @@ namespace LotteryAnalyze
                     return -1;
                 else if(x.pathValue < y.pathValue)
                     return 1;
+
                 if (x.su.appearProbabilityShort > y.su.appearProbabilityShort)
                     return -1;
                 else if (x.su.appearProbabilityShort < y.su.appearProbabilityShort)
                     return 1;
-                else
-                {
-                    if (x.su.appearProbabilityLong > y.su.appearProbabilityLong)
-                        return -1;
-                    else if (x.su.appearProbabilityLong < y.su.appearProbabilityLong)
-                        return 1;
-                    else
-                    {
-                        if (x.maxMissCount < y.maxMissCount)
-                            return -1;
-                        else if (x.maxMissCount > y.maxMissCount)
-                            return 1;
-                    }
-                }
+                
+                if (x.su.appearProbabilityLong > y.su.appearProbabilityLong)
+                    return -1;
+                else if (x.su.appearProbabilityLong < y.su.appearProbabilityLong)
+                    return 1;
+
+                if (x.maxMissCount < y.maxMissCount)
+                    return -1;
+                else if (x.maxMissCount > y.maxMissCount)
+                    return 1;
+
                 return 0;
             });
             //--------------------------
