@@ -113,7 +113,7 @@ namespace LotteryAnalyze.UI
             trackBarRiskControl.Value = (int)(TradeDataManager.Instance.RiskControl * trackBarRiskControl.Maximum);
 
             updateTimer = new Timer();
-            updateTimer.Interval = 500;
+            updateTimer.Interval = 10;
             updateTimer.Tick += UpdateTimer_Tick;
             updateTimer.Start();
 

@@ -31,7 +31,7 @@ namespace LotteryAnalyze
         eFiveStar,
     }
 
-    public struct PathCmpInfo
+    public class PathCmpInfo
     {
         public int pathIndex;
         public float pathValue;
@@ -43,6 +43,8 @@ namespace LotteryAnalyze
         public StatisticUnit su;
         public bool isStrongUp;
         public int maxMissCount;
+
+        public float avgPathValue = 0;
 
         public PathCmpInfo(int id, float v, int _uponBMCount, 
             TradeDataManager.MACDLineWaveConfig lineCFG,
@@ -2588,8 +2590,35 @@ namespace LotteryAnalyze
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
-                trade.pathCmpInfos[numIndex].Add(new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], lineCfgs[i], barCfgs[i], kCfgs[i], sus[i], isStrongUp[i], maxMissCounts[i]));
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], lineCfgs[i], barCfgs[i], kCfgs[i], sus[i], isStrongUp[i], maxMissCounts[i]);
+                pci.avgPathValue = pathValues[i];
+                trade.pathCmpInfos[numIndex].Add(pci);
             }
+
+            int valid_count = 1;
+            int lastID = historyTradeDatas.Count - 1;
+            while (lastID >= 0)
+            {
+                ++valid_count;
+                TradeDataOneStar ltrade = historyTradeDatas[lastID] as TradeDataOneStar;
+                for (int i = 0; i < pathValues.Length; ++i)
+                {
+                    PathCmpInfo lpci = ltrade.pathCmpInfos[numIndex][i];
+                    PathCmpInfo cpci = trade.pathCmpInfos[numIndex][lpci.pathIndex];
+                    cpci.avgPathValue += lpci.pathValue;
+                }
+                ++valid_count;
+                --lastID;
+                if(valid_count == 5)
+                {
+                    break;
+                }
+            }
+            for (int i = 0; i < pathValues.Length; ++i)
+            {
+                trade.pathCmpInfos[numIndex][i].avgPathValue /= valid_count;
+            }
+
             trade.pathCmpInfos[numIndex].Sort((x, y) =>
             {
                 if(onlyTradeOnStrongUpPath)
@@ -2599,9 +2628,14 @@ namespace LotteryAnalyze
                     else if (x.isStrongUp == false && y.isStrongUp)
                         return 1;
                 }
+                if (x.avgPathValue > y.avgPathValue)
+                    return -1;
+                else if (x.avgPathValue < y.avgPathValue)
+                    return 1;
+
                 if (x.pathValue > y.pathValue)
                     return -1;
-                else if(x.pathValue < y.pathValue)
+                else if (x.pathValue < y.pathValue)
                     return 1;
 
                 if (x.su.appearProbabilityShort > y.su.appearProbabilityShort)
