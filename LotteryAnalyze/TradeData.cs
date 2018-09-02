@@ -46,6 +46,11 @@ namespace LotteryAnalyze
 
         public float avgPathValue = 0;
 
+        public int horzDistToMaxMiss = 0;
+        public int vertDistToMaxMissV = 0;
+        public int vertDistToBML = 0;
+        public int maxVertDist = 0;
+
         public PathCmpInfo(int id, float v, int _uponBMCount, 
             TradeDataManager.MACDLineWaveConfig lineCFG,
             TradeDataManager.MACDBarConfig barCFG, 
@@ -63,6 +68,26 @@ namespace LotteryAnalyze
             su = _su;
             isStrongUp = _isStrongUp;
             maxMissCount = _maxMissCount;
+        }
+
+        public PathCmpInfo(int id, float v, int _uponBMCount)
+        {
+            pathIndex = id;
+            pathValue = v;
+            uponBMCount = _uponBMCount;
+        }
+
+        public PathCmpInfo(int id, float v, int _uponBMCount, int _horzDistToMaxMiss, int _vertDistToMaxMissV, int _vertDistToBML)
+        {
+            pathIndex = id;
+            pathValue = v;
+            uponBMCount = _uponBMCount;
+            horzDistToMaxMiss = _horzDistToMaxMiss;
+            vertDistToMaxMissV = _vertDistToMaxMissV;
+            vertDistToBML = _vertDistToBML;
+            maxVertDist = Math.Abs(vertDistToMaxMissV);
+            if (vertDistToBML < 0 && maxVertDist < -vertDistToBML)
+                maxVertDist = Math.Abs(vertDistToBML);
         }
     }
 
@@ -281,13 +306,19 @@ namespace LotteryAnalyze
                 {
                     for(int j = 0; j < pathCmpInfos[i].Count; ++j)
                     {
-                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue + 
-                            ", K = " + pathCmpInfos[i][j].kGraphCfg.ToString() + 
-                            ", L = " + pathCmpInfos[i][j].macdLineCfg.ToString() + 
-                            ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString() + 
-                            ", Up = " + pathCmpInfos[i][j].isStrongUp.ToString() +
-                            ", MM = " + pathCmpInfos[i][j].maxMissCount.ToString() +
-                            "]\n";
+                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue;
+                        if (pathCmpInfos[i][j].kGraphCfg != TradeDataManager.KGraphConfig.eNone)
+                            dbgtxt += ", K = " + pathCmpInfos[i][j].kGraphCfg.ToString();
+                        if (pathCmpInfos[i][j].macdLineCfg != TradeDataManager.MACDLineWaveConfig.eNone)
+                            dbgtxt += ", L = " + pathCmpInfos[i][j].macdLineCfg.ToString();
+                        if (pathCmpInfos[i][j].macdBarCfg != TradeDataManager.MACDBarConfig.eNone)
+                            dbgtxt += ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString();
+                        //dbgtxt += ", Up = " + pathCmpInfos[i][j].isStrongUp.ToString();
+                        //dbgtxt += ", MM = " + pathCmpInfos[i][j].maxMissCount.ToString();
+                        dbgtxt += ", VD2MM = " + pathCmpInfos[i][j].vertDistToMaxMissV.ToString();
+                        dbgtxt += ", VD2BML = " + pathCmpInfos[i][j].vertDistToBML.ToString();
+                        dbgtxt += ", MaxVD = " + pathCmpInfos[i][j].maxVertDist.ToString();
+                        dbgtxt += "]\n";
                     }
                 }
             }
@@ -673,6 +704,8 @@ namespace LotteryAnalyze
             eSinglePositionPathsUponSpecValue,
             // 选择某个数值位012路最小遗漏的号码
             eSinglePositionSmallestMissCountPath,
+            // 选择某个数值位012路顶低区间在交易次数范围内的号码
+            eSinglePositionPathOnArea,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
 
@@ -690,6 +723,7 @@ namespace LotteryAnalyze
             "eSinglePositionBestPaths",
             "eSinglePositionPathsUponSpecValue",
             "eSinglePositionSmallestMissCountPath",
+            "eSinglePositionPathOnArea",
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
@@ -1097,6 +1131,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eSinglePositionSmallestMissCountPath:
                     TradeSinglePositionSmallestMissCountPath(item, trade);
                     break;
+                case TradeStrategy.eSinglePositionPathOnArea:
+                    TradeSingleSinglePositionPathOnArea(item, trade);
+                    break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
                     break;
@@ -1117,13 +1154,16 @@ namespace LotteryAnalyze
             // 杀掉上期开出的号，为了节省开销
             if(killLastNumber)
             {
-                DataItem lastItem = item.parent.GetPrevItem(item);
-                if (lastItem != null)
+                if (item.idGlobal % 2 == 0 && currentTradeCountIndex < tradeCountList.Count - MultiTradePathCount)
                 {
-                    foreach (int numID in trade.tradeInfo.Keys)
+                    DataItem lastItem = item;// item.parent.GetPrevItem(item);
+                    if (lastItem != null)
                     {
-                        SByte lastNum = lastItem.GetNumberByIndex(numID);
-                        trade.tradeInfo[numID].RemoveNumber(lastNum);
+                        foreach (int numID in trade.tradeInfo.Keys)
+                        {
+                            SByte lastNum = lastItem.GetNumberByIndex(numID);
+                            trade.tradeInfo[numID].RemoveNumber(lastNum);
+                        }
                     }
                 }
             }
@@ -1367,6 +1407,67 @@ namespace LotteryAnalyze
             //    if(pci.pathValue == 0)
             //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             //}
+        }
+
+
+        int m_lastTradePath = -1;
+        void TradeSingleSinglePositionPathOnArea(DataItem item, TradeDataOneStar trade)
+        {
+            int bestNumIndex = 0;
+            if (simSelNumIndex != -1)
+                bestNumIndex = simSelNumIndex;
+
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            CalcPaths(item, bestNumIndex, trade);
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(bestNumIndex, tn);
+            FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+            
+            if (m_lastTradePath == -1)
+            {
+                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+                if (pci.maxVertDist < tradeCountList.Count - 1)
+                    m_lastTradePath = pci.pathIndex;
+            }
+            else
+            {
+                for( int i = 0; i < trade.pathCmpInfos[bestNumIndex].Count; ++ i)
+                {
+                    PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][i];
+                    if(pci.pathIndex == m_lastTradePath)
+                    {
+                        if(pci.maxVertDist > tradeCountList.Count - 1)
+                        {
+                            m_lastTradePath = -1;
+                            PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
+                            if (pci0.maxVertDist < tradeCountList.Count - 1)
+                                m_lastTradePath = pci0.pathIndex;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (m_lastTradePath != -1)
+            {
+                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][m_lastTradePath];
+                float firstPV = pci.pathValue;
+                tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            }
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -1845,11 +1946,15 @@ namespace LotteryAnalyze
 #endif
         }
 
-        public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, ref int belowAvgLineCount, ref int uponAvgLineCount, ref int maxMissCount)
+        public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, 
+            ref int belowAvgLineCount, ref int uponAvgLineCount, ref int maxMissCount, 
+            ref int maxMissID, ref int vertCountFromCurToMaxMiss, ref int vertCountFromCurToBollMidLine)
         {
             int[] missCountCollect = new int[4] { 0, 0, 0, 0, };
             //int maxMissCount = 0;
             maxMissCount = 0;
+            vertCountFromCurToMaxMiss = 0;
+            vertCountFromCurToBollMidLine = 0;
             int curMissCount = 0;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
 
@@ -1861,7 +1966,8 @@ namespace LotteryAnalyze
             KDataDict curItem = item;
             BollinPointMap curBPM = bpm, maxMissBPM = null;
             float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, rightBpMid = 0, rightBpUp = 0, leftBpMid = 0, maxMissKV = 0, relateDist = 0;
-            float rightID = -1, leftID = -1, maxID = -1, minID = -1, maxMissID = -1;
+            int rightID = -1, leftID = -1, maxID = -1, minID = -1;
+            maxMissID = -1;
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
             rightBpMid = bpm.GetData(cdt, false).midValue;
@@ -1964,9 +2070,15 @@ namespace LotteryAnalyze
                 testKDD = testKDD.parent.dataLst[testKDD.index - 1];
                 testBPM = testBPM.parent.bollinMapLst[testBPM.index - 1];
             }
-            
+
+            float missRelH = GraphDataManager.GetMissRelLength(cdt);
+            float relv = rightKData.RelateDistTo(maxMissKData.KValue);
+            vertCountFromCurToMaxMiss = (int)(relv / missRelH);
+
             // 左右边k值与布林中轨关系
             relateDist = item.GetData(cdt, false).RelateDistTo(rightBpMid);
+            vertCountFromCurToBollMidLine = (int)(relateDist / missRelH);
+
             // 右端是否在布林中轨
             bool isRightNearBolleanMidLine = relateDist >= -0.5f && relateDist <= 0.5f;
             // 是否连续出现 0-2 期的遗漏值 如果是，那么就是一种震荡的形态
@@ -2461,6 +2573,88 @@ namespace LotteryAnalyze
             });
         }
 
+        void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)
+        {
+            float[] pathValues = new float[] { 0, 0, 0, };
+            int[] maxMissCounts = new int[3] { 0, 0, 0, };
+            int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
+            int[] maxMissID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
+            int[] vertCountFromCurToMaxMissV = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
+            int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
+            KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+
+            // 计算012路的K线图形态
+            kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0,
+                ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0],
+                ref maxMissID[0], ref vertCountFromCurToMaxMissV[0], ref vertCountFromCurToBollMidLine[0]);
+            kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1,
+                ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
+                ref maxMissID[1], ref vertCountFromCurToMaxMissV[1], ref vertCountFromCurToBollMidLine[1]);
+            kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2,
+                ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
+                ref maxMissID[2], ref vertCountFromCurToMaxMissV[2], ref vertCountFromCurToBollMidLine[2]);
+
+            pathValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
+            pathValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
+            pathValues[2] = GetKGraphConfigValue(kgCfgs[2], belowAvgLineCounts[2], uponAvgLineCounts[2]);
+
+            trade.pathCmpInfos[numIndex].Clear();
+            for (int i = 0; i < pathValues.Length; ++i)
+            {
+                int horzDist = item.idGlobal - maxMissID[i];
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], horzDist, vertCountFromCurToMaxMissV[i], vertCountFromCurToBollMidLine[i]);
+                pci.avgPathValue = pathValues[i];
+                trade.pathCmpInfos[numIndex].Add(pci);
+            }
+            int valid_count = 1;
+            int lastID = historyTradeDatas.Count - 1;
+            while (lastID >= 0)
+            {
+                ++valid_count;
+                TradeDataOneStar ltrade = historyTradeDatas[lastID] as TradeDataOneStar;
+                for (int i = 0; i < pathValues.Length; ++i)
+                {
+                    PathCmpInfo lpci = ltrade.pathCmpInfos[numIndex][i];
+                    PathCmpInfo cpci = trade.pathCmpInfos[numIndex][lpci.pathIndex];
+                    cpci.avgPathValue += lpci.pathValue;
+                }
+                ++valid_count;
+                --lastID;
+                if (valid_count == 5)
+                {
+                    break;
+                }
+            }
+            for (int i = 0; i < pathValues.Length; ++i)
+            {
+                trade.pathCmpInfos[numIndex][i].avgPathValue /= valid_count;
+            }
+
+            trade.pathCmpInfos[numIndex].Sort((x, y) =>
+            {
+                if (x.maxVertDist < y.maxVertDist)
+                    return -1;
+                else if(x.maxVertDist > y.maxVertDist)
+                    return 1;
+
+                if (x.avgPathValue > y.avgPathValue)
+                    return -1;
+                else if (x.avgPathValue < y.avgPathValue)
+                    return 1;
+
+                if (x.pathValue > y.pathValue)
+                    return -1;
+                else if (x.pathValue < y.pathValue)
+                    return 1;
+                return 0;
+            });
+        }
+
         void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out int[] uponAvgLineCounts, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs, out int[] maxMissCounts)
         {
             pathValues = new float[3] { 1, 1, 1 };
@@ -2469,6 +2663,10 @@ namespace LotteryAnalyze
             //int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
             uponAvgLineCounts = new int[3] { 0, 0, 0 };
             float[] proShort = new float[3] { 1, 1, 1, };
+            int[] maxMissID = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToMaxMissV = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
+
             mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
             mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
             kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
@@ -2484,10 +2682,10 @@ namespace LotteryAnalyze
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
-            // 5期均线
-            AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
-            // 10期均线
-            AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
+            //// 5期均线
+            //AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
+            //// 10期均线
+            //AvgPointMap apm10 = kddc.GetAvgPointMap(10, kdd);
             // 布林带数据
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             // MACD数据
@@ -2496,20 +2694,26 @@ namespace LotteryAnalyze
             MACDPoint mp1 = mpm.GetData(CollectDataType.ePath1, false);
             MACDPoint mp2 = mpm.GetData(CollectDataType.ePath2, false);
 
-            float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
-            float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
-            float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
-            float path0Avg10 = apm10.GetData(CollectDataType.ePath0, false).avgKValue;
-            float path1Avg10 = apm10.GetData(CollectDataType.ePath1, false).avgKValue;
-            float path2Avg10 = apm10.GetData(CollectDataType.ePath2, false).avgKValue;
-            float path0Bpm = bpm.GetData(CollectDataType.ePath0, false).midValue;
-            float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
-            float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
+            //float path0Avg5 = apm5.GetData(CollectDataType.ePath0, false).avgKValue;
+            //float path1Avg5 = apm5.GetData(CollectDataType.ePath1, false).avgKValue;
+            //float path2Avg5 = apm5.GetData(CollectDataType.ePath2, false).avgKValue;
+            //float path0Avg10 = apm10.GetData(CollectDataType.ePath0, false).avgKValue;
+            //float path1Avg10 = apm10.GetData(CollectDataType.ePath1, false).avgKValue;
+            //float path2Avg10 = apm10.GetData(CollectDataType.ePath2, false).avgKValue;
+            //float path0Bpm = bpm.GetData(CollectDataType.ePath0, false).midValue;
+            //float path1Bpm = bpm.GetData(CollectDataType.ePath1, false).midValue;
+            //float path2Bpm = bpm.GetData(CollectDataType.ePath2, false).midValue;
             {
                 // 计算012路的K线图形态
-                kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0]);
-                kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1]);
-                kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2]);
+                kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, 
+                    ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0], 
+                    ref maxMissID[0], ref vertCountFromCurToMaxMissV[0], ref vertCountFromCurToBollMidLine[0]);
+                kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, 
+                    ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
+                    ref maxMissID[1], ref vertCountFromCurToMaxMissV[1], ref vertCountFromCurToBollMidLine[1]);
+                kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, 
+                    ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
+                    ref maxMissID[2], ref vertCountFromCurToMaxMissV[2], ref vertCountFromCurToBollMidLine[2]);
 
                 // 计算012路MACD形态的评估值
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0], ref mlCfgs[0], ref mbCfgs[0]);

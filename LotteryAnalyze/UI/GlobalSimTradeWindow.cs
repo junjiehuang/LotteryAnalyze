@@ -232,11 +232,18 @@ namespace LotteryAnalyze.UI
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
 
-                if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                try
                 {
-                    Point scrollpos = textBoxCmd.AutoScrollOffset;
-                    textBoxCmd.DocumentText = info;
-                    textBoxCmd.AutoScrollOffset = scrollpos;
+                    if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                    {
+                        Point scrollpos = textBoxCmd.AutoScrollOffset;
+                        textBoxCmd.DocumentText = info;
+                        textBoxCmd.AutoScrollOffset = scrollpos;
+                    }
+                }
+                catch(Exception exp)
+                {
+                    
                 }
                 //textBoxCmd.Text = info + missStr;
             }
@@ -292,11 +299,18 @@ namespace LotteryAnalyze.UI
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
                 //textBoxCmd.Text = info;
-                if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                try
                 {
-                    Point scrollpos = textBoxCmd.AutoScrollOffset;
-                    textBoxCmd.DocumentText = info;
-                    textBoxCmd.AutoScrollOffset = scrollpos;
+                    if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                    {
+                        Point scrollpos = textBoxCmd.AutoScrollOffset;
+                        textBoxCmd.DocumentText = info;
+                        textBoxCmd.AutoScrollOffset = scrollpos;
+                    }
+                }
+                catch (Exception exp)
+                {
+
                 }
                 info = null;
             }
