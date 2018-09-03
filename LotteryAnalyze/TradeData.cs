@@ -90,9 +90,9 @@ namespace LotteryAnalyze
             //    maxVertDist = Math.Abs(vertDistToBML);
             if (vertDistToBML < 0)
             {
-                maxVertDist = -vertDistToBML;
+                maxVertDist = vertDistToBML;
                 if (vertDistToMinKValue < 0 && vertDistToMinKValue > vertDistToBML)
-                    maxVertDist = -vertDistToMinKValue;
+                    maxVertDist = vertDistToMinKValue;
             }
             else
             {
@@ -1450,12 +1450,16 @@ namespace LotteryAnalyze
             tn.tradeCount = tradeCount;
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
-            
+
+            int sel_index = -1;
             if (m_lastTradePath == -1)
             {
                 PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
                 if (pci.maxVertDist < tradeCountList.Count - 1)
+                {
                     m_lastTradePath = pci.pathIndex;
+                    sel_index = 0;
+                }
             }
             else
             {
@@ -1464,27 +1468,31 @@ namespace LotteryAnalyze
                     PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][i];
                     if(pci.pathIndex == m_lastTradePath)
                     {
-                        if(pci.maxVertDist > tradeCountList.Count - 1)
+                        sel_index = i;
+                        if (Math.Abs(pci.maxVertDist) > tradeCountList.Count - 1)
                         {
                             m_lastTradePath = -1;
                             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
                             if (pci0.maxVertDist < tradeCountList.Count - 1)
+                            {
                                 m_lastTradePath = pci0.pathIndex;
+                                sel_index = 0;
+                            }
                         }
                         break;
                     }
                 }
             }
 
-            if (m_lastTradePath != -1)
+            if (sel_index != -1)
             {
-                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][m_lastTradePath];
+                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][sel_index];
                 float firstPV = pci.pathValue;
                 tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
 
                 if(m_lastTradePath != trade.pathCmpInfos[bestNumIndex][0].pathIndex)
                 {
-                    if(trade.pathCmpInfos[bestNumIndex][0].maxVertDist < tradeCountList.Count - 1)
+                    if(Math.Abs(trade.pathCmpInfos[bestNumIndex][0].maxVertDist) < tradeCountList.Count - 1)
                     {
                         tn.SelPath012Number(trade.pathCmpInfos[bestNumIndex][0].pathIndex, tradeCount, ref maxProbilityNums);
                     }
