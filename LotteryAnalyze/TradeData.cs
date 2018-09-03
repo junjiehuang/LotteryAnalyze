@@ -45,10 +45,10 @@ namespace LotteryAnalyze
         public int maxMissCount;
 
         public float avgPathValue = 0;
-
-        public int horzDistToMaxMiss = 0;
-        public int vertDistToMaxMissV = 0;
+        
+        public int vertDistToMinKValue = 0;
         public int vertDistToBML = 0;
+        public int vertDistToBDL = 0;
         public int maxVertDist = 0;
 
         public PathCmpInfo(int id, float v, int _uponBMCount, 
@@ -77,17 +77,30 @@ namespace LotteryAnalyze
             uponBMCount = _uponBMCount;
         }
 
-        public PathCmpInfo(int id, float v, int _uponBMCount, int _horzDistToMaxMiss, int _vertDistToMaxMissV, int _vertDistToBML)
+        public PathCmpInfo(int id, float v, int _uponBMCount, int _vertDistToMinKValue, int _vertDistToBML, int _vertDistToBDL)
         {
             pathIndex = id;
             pathValue = v;
             uponBMCount = _uponBMCount;
-            horzDistToMaxMiss = _horzDistToMaxMiss;
-            vertDistToMaxMissV = _vertDistToMaxMissV;
+            vertDistToMinKValue = _vertDistToMinKValue;
             vertDistToBML = _vertDistToBML;
-            maxVertDist = Math.Abs(vertDistToMaxMissV);
-            if (vertDistToBML < 0 && maxVertDist < -vertDistToBML)
-                maxVertDist = Math.Abs(vertDistToBML);
+            vertDistToBDL = _vertDistToBDL;
+            //maxVertDist = Math.Abs(vertDistToMaxMissV);
+            //if (vertDistToBML < 0 && maxVertDist < -vertDistToBML)
+            //    maxVertDist = Math.Abs(vertDistToBML);
+            if (vertDistToBML < 0)
+            {
+                maxVertDist = -vertDistToBML;
+                if (vertDistToMinKValue < 0 && vertDistToMinKValue > vertDistToBML)
+                    maxVertDist = -vertDistToMinKValue;
+            }
+            else
+            {
+                if (vertDistToMinKValue < 0)
+                    maxVertDist = -vertDistToMinKValue;
+                if (vertDistToBDL < 0 && vertDistToBDL > vertDistToMinKValue)
+                    maxVertDist = -vertDistToBDL;
+            }
         }
     }
 
@@ -315,8 +328,9 @@ namespace LotteryAnalyze
                             dbgtxt += ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString();
                         //dbgtxt += ", Up = " + pathCmpInfos[i][j].isStrongUp.ToString();
                         //dbgtxt += ", MM = " + pathCmpInfos[i][j].maxMissCount.ToString();
-                        dbgtxt += ", VD2MM = " + pathCmpInfos[i][j].vertDistToMaxMissV.ToString();
+                        dbgtxt += ", VD2MKV = " + pathCmpInfos[i][j].vertDistToMinKValue.ToString();
                         dbgtxt += ", VD2BML = " + pathCmpInfos[i][j].vertDistToBML.ToString();
+                        dbgtxt += ", VD2BDL = " + pathCmpInfos[i][j].vertDistToBDL.ToString();
                         dbgtxt += ", MaxVD = " + pathCmpInfos[i][j].maxVertDist.ToString();
                         dbgtxt += "]\n";
                     }
@@ -1467,6 +1481,14 @@ namespace LotteryAnalyze
                 PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][m_lastTradePath];
                 float firstPV = pci.pathValue;
                 tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+
+                if(m_lastTradePath != trade.pathCmpInfos[bestNumIndex][0].pathIndex)
+                {
+                    if(trade.pathCmpInfos[bestNumIndex][0].maxVertDist < tradeCountList.Count - 1)
+                    {
+                        tn.SelPath012Number(trade.pathCmpInfos[bestNumIndex][0].pathIndex, tradeCount, ref maxProbilityNums);
+                    }
+                }
             }
         }
 
@@ -1947,13 +1969,13 @@ namespace LotteryAnalyze
         }
 
         public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, 
-            ref int belowAvgLineCount, ref int uponAvgLineCount, ref int maxMissCount, 
-            ref int maxMissID, ref int vertCountFromCurToMaxMiss, ref int vertCountFromCurToBollMidLine)
+            ref int belowAvgLineCount, ref int uponAvgLineCount, ref int maxMissCount, ref int maxMissID, 
+            ref int minKValueID, ref int vertCountFromCurToMinKV, ref int vertCountFromCurToBollMidLine, ref int vertCountFromCurToBollDownLine)
         {
             int[] missCountCollect = new int[4] { 0, 0, 0, 0, };
             //int maxMissCount = 0;
             maxMissCount = 0;
-            vertCountFromCurToMaxMiss = 0;
+            vertCountFromCurToMinKV = 0;
             vertCountFromCurToBollMidLine = 0;
             int curMissCount = 0;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
@@ -1965,13 +1987,14 @@ namespace LotteryAnalyze
             int loop = KGRAPH_LOOP_COUNT;
             KDataDict curItem = item;
             BollinPointMap curBPM = bpm, maxMissBPM = null;
-            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, rightBpMid = 0, rightBpUp = 0, leftBpMid = 0, maxMissKV = 0, relateDist = 0;
+            float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, rightBpMid = 0, rightBpUp = 0, rightBpDown = 0, leftBpMid = 0, maxMissKV = 0, relateDist = 0;
             int rightID = -1, leftID = -1, maxID = -1, minID = -1;
             maxMissID = -1;
             rightKV = leftKV = maxKV = minKV = curItem.GetData(cdt, false).KValue;
             rightID = leftID = maxID = minID = curItem.index;
             rightBpMid = bpm.GetData(cdt, false).midValue;
             rightBpUp = bpm.GetData(cdt, false).upValue;
+            rightBpDown = bpm.GetData(cdt, false).downValue;
             DataItem curDI = di;
             curMissCount = curDI.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
             maxMissCount = curMissCount;
@@ -2044,6 +2067,7 @@ namespace LotteryAnalyze
                 curDI = curDI.parent.GetPrevItem(curDI);
                 --loop;
             }
+            minKValueID = minID;
             DataItem testMCI = maxMissDataItem;
             KDataDict testKDD = maxMissKdd;
             BollinPointMap testBPM = maxMissBPM;
@@ -2072,11 +2096,14 @@ namespace LotteryAnalyze
             }
 
             float missRelH = GraphDataManager.GetMissRelLength(cdt);
-            float relv = rightKData.RelateDistTo(maxMissKData.KValue);
-            vertCountFromCurToMaxMiss = (int)(relv / missRelH);
+            relateDist = rightKData.RelateDistTo(minKV);
+            vertCountFromCurToMinKV = (int)(relateDist / missRelH);
+
+            relateDist = rightKData.RelateDistTo(rightBpDown);
+            vertCountFromCurToBollDownLine = (int)(relateDist / missRelH);
 
             // 左右边k值与布林中轨关系
-            relateDist = item.GetData(cdt, false).RelateDistTo(rightBpMid);
+            relateDist = rightKData.RelateDistTo(rightBpMid);
             vertCountFromCurToBollMidLine = (int)(relateDist / missRelH);
 
             // 右端是否在布林中轨
@@ -2579,8 +2606,10 @@ namespace LotteryAnalyze
             int[] maxMissCounts = new int[3] { 0, 0, 0, };
             int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
             int[] maxMissID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
-            int[] vertCountFromCurToMaxMissV = new int[] { 0, 0, 0, };
+            int[] minKValueID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
+            int[] vertCountFromCurToMinKValue = new int[] { 0, 0, 0, };
             int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToBollDownLine = new int[] { 0, 0, 0, };
             int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
             KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -2591,13 +2620,13 @@ namespace LotteryAnalyze
             // 计算012路的K线图形态
             kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0,
                 ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0],
-                ref maxMissID[0], ref vertCountFromCurToMaxMissV[0], ref vertCountFromCurToBollMidLine[0]);
+                ref maxMissID[0], ref minKValueID[0], ref vertCountFromCurToMinKValue[0], ref vertCountFromCurToBollMidLine[0], ref vertCountFromCurToBollDownLine[0]);
             kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1,
                 ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
-                ref maxMissID[1], ref vertCountFromCurToMaxMissV[1], ref vertCountFromCurToBollMidLine[1]);
+                ref maxMissID[1], ref minKValueID[1], ref vertCountFromCurToMinKValue[1], ref vertCountFromCurToBollMidLine[1], ref vertCountFromCurToBollDownLine[1]);
             kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2,
                 ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
-                ref maxMissID[2], ref vertCountFromCurToMaxMissV[2], ref vertCountFromCurToBollMidLine[2]);
+                ref maxMissID[2], ref minKValueID[2], ref vertCountFromCurToMinKValue[2], ref vertCountFromCurToBollMidLine[2], ref vertCountFromCurToBollDownLine[2]);
 
             pathValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
             pathValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
@@ -2607,7 +2636,7 @@ namespace LotteryAnalyze
             for (int i = 0; i < pathValues.Length; ++i)
             {
                 int horzDist = item.idGlobal - maxMissID[i];
-                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], horzDist, vertCountFromCurToMaxMissV[i], vertCountFromCurToBollMidLine[i]);
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], horzDist, vertCountFromCurToMinKValue[i], vertCountFromCurToBollMidLine[i]);
                 pci.avgPathValue = pathValues[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
@@ -2664,8 +2693,10 @@ namespace LotteryAnalyze
             uponAvgLineCounts = new int[3] { 0, 0, 0 };
             float[] proShort = new float[3] { 1, 1, 1, };
             int[] maxMissID = new int[] { 0, 0, 0, };
-            int[] vertCountFromCurToMaxMissV = new int[] { 0, 0, 0, };
+            int[] minKValueID = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToMinKValue = new int[] { 0, 0, 0, };
             int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
+            int[] vertCountFromCurToBollDownLine = new int[] { 0, 0, 0, };
 
             mlCfgs = new MACDLineWaveConfig[3] { MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, MACDLineWaveConfig.eNone, };
             mbCfgs = new MACDBarConfig[3] { MACDBarConfig.eNone, MACDBarConfig.eNone, MACDBarConfig.eNone, };
@@ -2707,13 +2738,13 @@ namespace LotteryAnalyze
                 // 计算012路的K线图形态
                 kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0, 
                     ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0], 
-                    ref maxMissID[0], ref vertCountFromCurToMaxMissV[0], ref vertCountFromCurToBollMidLine[0]);
+                    ref maxMissID[0], ref minKValueID[0], ref vertCountFromCurToMinKValue[0], ref vertCountFromCurToBollMidLine[0], ref vertCountFromCurToBollDownLine[0]);
                 kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1, 
                     ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
-                    ref maxMissID[1], ref vertCountFromCurToMaxMissV[1], ref vertCountFromCurToBollMidLine[1]);
+                    ref maxMissID[1], ref minKValueID[1], ref vertCountFromCurToMinKValue[1], ref vertCountFromCurToBollMidLine[1], ref vertCountFromCurToBollDownLine[1]);
                 kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2, 
                     ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
-                    ref maxMissID[2], ref vertCountFromCurToMaxMissV[2], ref vertCountFromCurToBollMidLine[2]);
+                    ref maxMissID[2], ref minKValueID[2], ref vertCountFromCurToMinKValue[2], ref vertCountFromCurToBollMidLine[2], ref vertCountFromCurToBollDownLine[2]);
 
                 // 计算012路MACD形态的评估值
                 CheckMACD(mpm, CollectDataType.ePath0, ref pathValues[0], ref mlCfgs[0], ref mbCfgs[0]);
