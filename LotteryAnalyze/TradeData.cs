@@ -1506,13 +1506,29 @@ namespace LotteryAnalyze
             if (sel_index != -1)
             {
                 PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][sel_index];
-                if(pci.maxVertDist <= 0)
+                if (pci.maxVertDist <= 0)
                     tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
 
-                pci = trade.pathCmpInfos[bestNumIndex][0];
-                if (m_lastTradePath != pci.pathIndex /*&& currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount*/)
+                //pci = trade.pathCmpInfos[bestNumIndex][0];
+                //if (m_lastTradePath != pci.pathIndex /*&& currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount*/)
+                //{
+                //    if(pci.maxVertDist < 0)
+                //    {
+                //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                //    }
+                //}
+                if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
                 {
-                    if(pci.maxVertDist < 0)
+                    trade.pathCmpInfos[bestNumIndex].Sort((x, y) =>
+                    {
+                        if (x.pathValue > y.pathValue)
+                            return -1;
+                        else if (x.pathValue < y.pathValue)
+                            return 1;
+                        return 0;
+                    });
+                    pci = trade.pathCmpInfos[bestNumIndex][0];
+                    if (m_lastTradePath != pci.pathIndex)
                     {
                         tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
                     }
