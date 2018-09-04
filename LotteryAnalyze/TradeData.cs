@@ -45,7 +45,8 @@ namespace LotteryAnalyze
         public int maxMissCount;
 
         public float avgPathValue = 0;
-        
+
+        public int horzDist = 0;
         public int vertDistToMinKValue = 0;
         public int vertDistToBML = 0;
         public int vertDistToBDL = 0;
@@ -77,10 +78,11 @@ namespace LotteryAnalyze
             uponBMCount = _uponBMCount;
         }
 
-        public PathCmpInfo(int id, float v, int _uponBMCount, int _vertDistToMinKValue, int _vertDistToBML, int _vertDistToBDL)
+        public PathCmpInfo(int id, float v, int _horzDist, int _uponBMCount, int _vertDistToMinKValue, int _vertDistToBML, int _vertDistToBDL)
         {
             pathIndex = id;
             pathValue = v;
+            horzDist = _horzDist;
             uponBMCount = _uponBMCount;
             vertDistToMinKValue = _vertDistToMinKValue;
             vertDistToBML = _vertDistToBML;
@@ -334,6 +336,8 @@ namespace LotteryAnalyze
                             dbgtxt += ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString();
                         //dbgtxt += ", Up = " + pathCmpInfos[i][j].isStrongUp.ToString();
                         //dbgtxt += ", MM = " + pathCmpInfos[i][j].maxMissCount.ToString();
+                        dbgtxt += ", HD = " + pathCmpInfos[i][j].horzDist.ToString();
+                        dbgtxt += ", UBMC = " + pathCmpInfos[i][j].uponBMCount.ToString();
                         dbgtxt += ", VD2MKV = " + pathCmpInfos[i][j].vertDistToMinKValue.ToString();
                         dbgtxt += ", VD2BML = " + pathCmpInfos[i][j].vertDistToBML.ToString();
                         dbgtxt += ", VD2BDL = " + pathCmpInfos[i][j].vertDistToBDL.ToString();
@@ -1480,7 +1484,9 @@ namespace LotteryAnalyze
                             need_change_path = true;
                         if(!need_change_path && pci.maxVertDist > 0)
                             need_change_path = true;
-                        if(!need_change_path && pci.uponBMCount >= KGRAPH_LOOP_COUNT - 3)
+                        if(!need_change_path && pci.uponBMCount == 0)
+                            need_change_path = true;
+                        if (!need_change_path && pci.horzDist == 0 && pci.vertDistToBML > 0)
                             need_change_path = true;
                         if (need_change_path)
                         {
@@ -1500,11 +1506,11 @@ namespace LotteryAnalyze
             if (sel_index != -1)
             {
                 PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][sel_index];
-                float firstPV = pci.pathValue;
-                tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+                if(pci.maxVertDist <= 0)
+                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
 
                 pci = trade.pathCmpInfos[bestNumIndex][0];
-                if (m_lastTradePath != pci.pathIndex && currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
+                if (m_lastTradePath != pci.pathIndex /*&& currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount*/)
                 {
                     if(pci.maxVertDist < 0)
                     {
@@ -2658,7 +2664,7 @@ namespace LotteryAnalyze
             for (int i = 0; i < pathValues.Length; ++i)
             {
                 int horzDist = item.idGlobal - maxMissID[i];
-                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], uponAvgLineCounts[i], horzDist, vertCountFromCurToMinKValue[i], vertCountFromCurToBollMidLine[i]);
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], horzDist, uponAvgLineCounts[i], vertCountFromCurToMinKValue[i], vertCountFromCurToBollMidLine[i], vertCountFromCurToBollDownLine[i]);
                 pci.avgPathValue = pathValues[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
