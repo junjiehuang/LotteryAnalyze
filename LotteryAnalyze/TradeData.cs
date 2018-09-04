@@ -94,13 +94,19 @@ namespace LotteryAnalyze
                 if (vertDistToMinKValue < 0 && vertDistToMinKValue > vertDistToBML)
                     maxVertDist = vertDistToMinKValue;
             }
-            else
+            else if (vertDistToBML > 0)
             {
                 if (vertDistToMinKValue < 0)
+                {
                     maxVertDist = -vertDistToMinKValue;
-                if (vertDistToBDL < 0 && vertDistToBDL > vertDistToMinKValue)
-                    maxVertDist = -vertDistToBDL;
+                    if (vertDistToBDL < 0 && vertDistToBDL > vertDistToMinKValue)
+                        maxVertDist = -vertDistToBDL;
+                }
+                else
+                    maxVertDist = 0xFFFFFF;
             }
+            else
+                maxVertDist = 0;
         }
     }
 
@@ -1469,11 +1475,18 @@ namespace LotteryAnalyze
                     if(pci.pathIndex == m_lastTradePath)
                     {
                         sel_index = i;
+                        bool need_change_path = false;
                         if (Math.Abs(pci.maxVertDist) > tradeCountList.Count - 1)
+                            need_change_path = true;
+                        if(!need_change_path && pci.maxVertDist > 0)
+                            need_change_path = true;
+                        if(!need_change_path && pci.uponBMCount >= KGRAPH_LOOP_COUNT - 3)
+                            need_change_path = true;
+                        if (need_change_path)
                         {
                             m_lastTradePath = -1;
                             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
-                            if (pci0.maxVertDist < tradeCountList.Count - 1)
+                            if (pci0.maxVertDist < 0)
                             {
                                 m_lastTradePath = pci0.pathIndex;
                                 sel_index = 0;
@@ -1490,11 +1503,12 @@ namespace LotteryAnalyze
                 float firstPV = pci.pathValue;
                 tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
 
-                if(m_lastTradePath != trade.pathCmpInfos[bestNumIndex][0].pathIndex)
+                pci = trade.pathCmpInfos[bestNumIndex][0];
+                if (m_lastTradePath != pci.pathIndex && currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
                 {
-                    if(Math.Abs(trade.pathCmpInfos[bestNumIndex][0].maxVertDist) < tradeCountList.Count - 1)
+                    if(pci.maxVertDist < 0)
                     {
-                        tn.SelPath012Number(trade.pathCmpInfos[bestNumIndex][0].pathIndex, tradeCount, ref maxProbilityNums);
+                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
                     }
                 }
             }
