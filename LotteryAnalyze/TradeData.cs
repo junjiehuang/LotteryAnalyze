@@ -227,6 +227,10 @@ namespace LotteryAnalyze
                 }
             }
         }
+        public void AddProbabilityNumber(NumberCmpInfo nci)
+        {
+            tradeNumbers.Add(nci);
+        }
         public void AddProbabilityNumber(ref List<NumberCmpInfo> nums, int num)
         {
             for (int i = 0; i < nums.Count; ++i)
@@ -737,9 +741,13 @@ namespace LotteryAnalyze
             eSingleMostPosibilityNums,
             // 所有数字位都选择连续N期出号概率最高的几个数
             eMultiMostPosibilityNums,
+            // 选择某个数字位短期长期概率最好的几个数
             eSingleShortLongMostPosibilityNums,
+            // 选择几率最大的012路
             eSingleMostPosibilityPath,
 
+            // 单个数字位按所有排列顺序权重叠加筛选
+            sSinglePositionCondictionsSuperposition,
         }
         public static string[] STRATEGY_NAMES = {
             "eSinglePositionBestPath",
@@ -753,6 +761,7 @@ namespace LotteryAnalyze
             "eMultiMostPosibilityNums",
             "eSingleShortLongMostPosibilityNums",
             "eSingleMostPosibilityPath",
+            "sSinglePositionCondictionsSuperposition",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -1173,6 +1182,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eSingleMostPosibilityPath:
                     TradeSingleMostPosibilityPath(item, trade);
                     break;
+                case TradeStrategy.sSinglePositionCondictionsSuperposition:
+                    TradeSinglePositionCondictionsSuperposition(item, trade);
+                    break;
             }
 
             // 杀掉上期开出的号，为了节省开销
@@ -1517,7 +1529,8 @@ namespace LotteryAnalyze
                 //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
                 //    }
                 //}
-                if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
+
+                //if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
                 {
                     trade.pathCmpInfos[bestNumIndex].Sort((x, y) =>
                     {
@@ -1717,6 +1730,198 @@ namespace LotteryAnalyze
                 currentTradeCountIndex = 0;
                 tradeCount = tradeCountList[currentTradeCountIndex];
                 tn.tradeCount = tradeCount;
+            }
+        }
+
+        //class NumberValue
+        //{
+        //    public int number;
+        //    public float value; 
+
+        //    public NumberValue(int num, float v)
+        //    {
+        //        number = num;
+        //        value = v;
+        //    }
+        //}
+        void TradeSinglePositionCondictionsSuperposition(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            int numID = 0;
+            if (simSelNumIndex != -1)
+                numID = simSelNumIndex;
+            else
+                numID = 0;
+
+            List<NumberCmpInfo> num_lst = new List<NumberCmpInfo>();
+            for( int i = 0; i < 10; ++i)
+            {
+                NumberCmpInfo nci = new NumberCmpInfo();
+                nci.number = (SByte)i;
+                nci.rate = 0;
+                num_lst.Add(nci);
+            }
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+            {
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+                StatisticUnit su = sum.statisticUnitMap[cdt];
+                switch(cdt)
+                {
+                    case CollectDataType.eNum0:
+                        num_lst[0].rate += su.appearProbabilityShort;
+                        //num_lst[0].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum1:
+                        num_lst[1].rate += su.appearProbabilityShort;
+                        //num_lst[1].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum2:
+                        num_lst[2].rate += su.appearProbabilityShort;
+                        //num_lst[2].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum3:
+                        num_lst[3].rate += su.appearProbabilityShort;
+                        //num_lst[3].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum4:
+                        num_lst[4].rate += su.appearProbabilityShort;
+                        //num_lst[4].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum5:
+                        num_lst[5].rate += su.appearProbabilityShort;
+                        //num_lst[5].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum6:
+                        num_lst[6].rate += su.appearProbabilityShort;
+                        //num_lst[6].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum7:
+                        num_lst[7].rate += su.appearProbabilityShort;
+                        //num_lst[7].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum8:
+                        num_lst[8].rate += su.appearProbabilityShort;
+                        //num_lst[8].rate += su.appearProbabilityLong;
+                        break;
+                    case CollectDataType.eNum9:
+                        num_lst[9].rate += su.appearProbabilityShort;
+                        //num_lst[9].rate += su.appearProbabilityLong;
+                        break;
+                    //case CollectDataType.eBigNum:
+                    //    for( int j = 0; j < 9; ++j )
+                    //    {
+                    //        if(j > 5)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    //case CollectDataType.eSmallNum:
+                    //    for (int j = 0; j < 9; ++j)
+                    //    {
+                    //        if (j < 5)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    //case CollectDataType.ePrimeNum:
+                    //    for (int j = 0; j < 9; ++j)
+                    //    {
+                    //        if (j == 1 || j == 2 || j == 3 || j == 5 || j == 7)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    //case CollectDataType.eCompositeNum:
+                    //    for (int j = 0; j < 9; ++j)
+                    //    {
+                    //        if (j == 0 || j == 4 || j == 6 || j == 8 || j == 9)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    //case CollectDataType.eEvenNum:
+                    //    for (int j = 0; j < 9; ++j)
+                    //    {
+                    //        if (j % 2 == 0)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    //case CollectDataType.eOddNum:
+                    //    for (int j = 0; j < 9; ++j)
+                    //    {
+                    //        if (j % 2 == 1)
+                    //        {
+                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //        }
+                    //    }
+                    //    break;
+                    case CollectDataType.ePath0:
+                        num_lst[0].rate += su.appearProbabilityShort;
+                        num_lst[3].rate += su.appearProbabilityShort;
+                        num_lst[6].rate += su.appearProbabilityShort;
+                        num_lst[9].rate += su.appearProbabilityShort;
+                        break;
+                    case CollectDataType.ePath1:
+                        num_lst[1].rate += su.appearProbabilityShort;
+                        num_lst[4].rate += su.appearProbabilityShort;
+                        num_lst[7].rate += su.appearProbabilityShort;
+                        break;
+                    case CollectDataType.ePath2:
+                        num_lst[2].rate += su.appearProbabilityShort;
+                        num_lst[5].rate += su.appearProbabilityShort;
+                        num_lst[8].rate += su.appearProbabilityShort;
+                        break;
+                }
+            }
+
+            num_lst.Sort((x, y) =>
+            {
+                if (x.rate > y.rate)
+                    return -1;
+                else if (x.rate < y.rate)
+                    return 1;
+                return 0;
+            });
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(numID, tn);
+
+            float lastV = num_lst[0].rate;
+            int min_count = MultiTradePathCount - 1;
+            //min_count = MultiTradePathCount;
+            for ( int i = 0; i < num_lst.Count; ++i )
+            {
+                tn.AddProbabilityNumber(num_lst[i]);
+                if(i < min_count)
+                {
+                    lastV = num_lst[i].rate;
+                }
+                else
+                {
+                    if (num_lst[i].rate < lastV)
+                        break;
+                    if (i >= MultiTradePathCount)
+                        break;
+                }
             }
         }
 
