@@ -821,9 +821,9 @@ namespace LotteryAnalyze
                 //    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
                 //    item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountLong + " ; " +
-                                sum.statisticUnitMap[CollectDataType.ePath1].appearCountLong + " : " +
-                                sum.statisticUnitMap[CollectDataType.ePath2].appearCountLong;
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].longData.appearCount + " ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].longData.appearCount + " : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].longData.appearCount;
                 cell.Value = (info);
             }
         }
@@ -833,9 +833,9 @@ namespace LotteryAnalyze
             //        item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
             //        item.simData.path012CountInfoLong[ColumnSimulateSingleBuyLottery.S_INDEX][2];
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountLong + " ; " +
-                            sum.statisticUnitMap[CollectDataType.ePath1].appearCountLong + " : " +
-                            sum.statisticUnitMap[CollectDataType.ePath2].appearCountLong;
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].longData.appearCount + " ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].longData.appearCount + " : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].longData.appearCount;
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -862,9 +862,9 @@ namespace LotteryAnalyze
                 //     item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
                 //    item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityLong + "% ; " +
-                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityLong + "% : " +
-                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityLong + "%";
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].longData.appearProbability + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].longData.appearProbability + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].longData.appearProbability + "%";
                 cell.Value = (info);
             }
         }
@@ -874,9 +874,9 @@ namespace LotteryAnalyze
             //        item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
             //        item.simData.path012ProbabilityLong[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityLong + "% ; " +
-                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityLong + "% : " +
-                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityLong + "%";
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].longData.appearProbability + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].longData.appearProbability + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].longData.appearProbability + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -903,9 +903,9 @@ namespace LotteryAnalyze
                 //    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
                 //    item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountShort + " ; " +
-                                sum.statisticUnitMap[CollectDataType.ePath1].appearCountShort + " : " +
-                                sum.statisticUnitMap[CollectDataType.ePath2].appearCountShort;
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearCount + " ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearCount + " : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearCount;
                 cell.Value = (info);
             }
         }
@@ -915,9 +915,9 @@ namespace LotteryAnalyze
             //        item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + " : " +
             //        item.simData.path012CountInfoShort[ColumnSimulateSingleBuyLottery.S_INDEX][2];
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearCountShort + " ; " +
-                            sum.statisticUnitMap[CollectDataType.ePath1].appearCountShort + " : " +
-                            sum.statisticUnitMap[CollectDataType.ePath2].appearCountShort;
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearCount + " ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearCount + " : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearCount;
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -944,9 +944,9 @@ namespace LotteryAnalyze
                 //    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
                 //    item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort + "% ; " +
-                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort + "% : " +
-                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort + "%";
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbability + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbability + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbability + "%";
                 cell.Value = (info);
             }
         }
@@ -956,9 +956,9 @@ namespace LotteryAnalyze
             //        item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
             //        item.simData.path012ProbabilityShort[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort + "% ; " +
-                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort + "% : " +
-                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort + "%";
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbability + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbability + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbability + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)
@@ -985,9 +985,9 @@ namespace LotteryAnalyze
                 //    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
                 //    item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-                string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityDiffWithTheoryShort + "% ; " +
-                                sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityDiffWithTheoryShort + "% : " +
-                                sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityDiffWithTheoryShort + "%";
+                string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbabilityDiffWithTheory + "% ; " +
+                                sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbabilityDiffWithTheory + "% : " +
+                                sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbabilityDiffWithTheory + "%";
                 cell.Value = (info);
             }
         }
@@ -997,9 +997,9 @@ namespace LotteryAnalyze
             //        item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][1] + "% : " +
             //        item.simData.path012ProbabilityShortDiffWithTheory[ColumnSimulateSingleBuyLottery.S_INDEX][2] + "%";
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[ColumnSimulateSingleBuyLottery.S_INDEX];
-            string info = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityDiffWithTheoryShort + "% ; " +
-                            sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityDiffWithTheoryShort + "% : " +
-                            sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityDiffWithTheoryShort + "%";
+            string info = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbabilityDiffWithTheory + "% ; " +
+                            sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbabilityDiffWithTheory + "% : " +
+                            sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbabilityDiffWithTheory + "%";
             colValues.Add(info);
         }
         public override void SetColumnIndex(ref int startIndex, DataGridView view)

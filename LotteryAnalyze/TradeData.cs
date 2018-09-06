@@ -1692,9 +1692,9 @@ namespace LotteryAnalyze
             JudgeNumberPath(item, trade, numID, ref maxV, ref bestNumIndex, ref bestPathOnGraphConfig, ref isFinalPathStrongUp);
 
             FindAllNumberProbabilities(item, ref maxProbilityNums, false);
-            byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].appearCountShort;
-            byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].appearCountShort;
-            byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].appearCountShort;
+            byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].shortData.appearCount;
+            byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].shortData.appearCount;
+            byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].shortData.appearCount;
             int bestPathOnProbability = -1;
             if(ac0 > ac1)
             {
@@ -1777,54 +1777,45 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = sum.statisticUnitMap[cdt];
+                StaticData sd = su.fastData;
                 switch(cdt)
                 {
                     case CollectDataType.eNum0:
-                        num_lst[0].rate += su.appearProbabilityShort;
-                        //num_lst[0].rate += su.appearProbabilityLong;
+                        num_lst[0].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum1:
-                        num_lst[1].rate += su.appearProbabilityShort;
-                        //num_lst[1].rate += su.appearProbabilityLong;
+                        num_lst[1].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum2:
-                        num_lst[2].rate += su.appearProbabilityShort;
-                        //num_lst[2].rate += su.appearProbabilityLong;
+                        num_lst[2].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum3:
-                        num_lst[3].rate += su.appearProbabilityShort;
-                        //num_lst[3].rate += su.appearProbabilityLong;
+                        num_lst[3].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum4:
-                        num_lst[4].rate += su.appearProbabilityShort;
-                        //num_lst[4].rate += su.appearProbabilityLong;
+                        num_lst[4].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum5:
-                        num_lst[5].rate += su.appearProbabilityShort;
-                        //num_lst[5].rate += su.appearProbabilityLong;
+                        num_lst[5].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum6:
-                        num_lst[6].rate += su.appearProbabilityShort;
-                        //num_lst[6].rate += su.appearProbabilityLong;
+                        num_lst[6].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum7:
-                        num_lst[7].rate += su.appearProbabilityShort;
-                        //num_lst[7].rate += su.appearProbabilityLong;
+                        num_lst[7].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum8:
-                        num_lst[8].rate += su.appearProbabilityShort;
-                        //num_lst[8].rate += su.appearProbabilityLong;
+                        num_lst[8].rate += sd.appearProbability;
                         break;
                     case CollectDataType.eNum9:
-                        num_lst[9].rate += su.appearProbabilityShort;
-                        //num_lst[9].rate += su.appearProbabilityLong;
+                        num_lst[9].rate += sd.appearProbability;
                         break;
                     //case CollectDataType.eBigNum:
                     //    for( int j = 0; j < 9; ++j )
                     //    {
                     //        if(j > 5)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
@@ -1833,7 +1824,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j < 5)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
@@ -1842,7 +1833,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j == 1 || j == 2 || j == 3 || j == 5 || j == 7)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
@@ -1851,7 +1842,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j == 0 || j == 4 || j == 6 || j == 8 || j == 9)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
@@ -1860,7 +1851,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j % 2 == 0)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
@@ -1869,25 +1860,25 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j % 2 == 1)
                     //        {
-                    //            num_lst[j].rate += su.appearProbabilityShort;
+                    //            num_lst[j].rate += sd.appearProbability;
                     //        }
                     //    }
                     //    break;
                     case CollectDataType.ePath0:
-                        num_lst[0].rate += su.appearProbabilityShort;
-                        num_lst[3].rate += su.appearProbabilityShort;
-                        num_lst[6].rate += su.appearProbabilityShort;
-                        num_lst[9].rate += su.appearProbabilityShort;
+                        num_lst[0].rate += sd.appearProbability;
+                        num_lst[3].rate += sd.appearProbability;
+                        num_lst[6].rate += sd.appearProbability;
+                        num_lst[9].rate += sd.appearProbability;
                         break;
                     case CollectDataType.ePath1:
-                        num_lst[1].rate += su.appearProbabilityShort;
-                        num_lst[4].rate += su.appearProbabilityShort;
-                        num_lst[7].rate += su.appearProbabilityShort;
+                        num_lst[1].rate += sd.appearProbability;
+                        num_lst[4].rate += sd.appearProbability;
+                        num_lst[7].rate += sd.appearProbability;
                         break;
                     case CollectDataType.ePath2:
-                        num_lst[2].rate += su.appearProbabilityShort;
-                        num_lst[5].rate += su.appearProbabilityShort;
-                        num_lst[8].rate += su.appearProbabilityShort;
+                        num_lst[2].rate += sd.appearProbability;
+                        num_lst[5].rate += sd.appearProbability;
+                        num_lst[8].rate += sd.appearProbability;
                         break;
                 }
             }
@@ -2012,13 +2003,13 @@ namespace LotteryAnalyze
             }
             else
             {
-                if (suA.appearProbabilityShort > suB.appearProbabilityShort)
+                if (suA.shortData.appearProbability > suB.shortData.appearProbability)
                 {
                     curBestPath = indexA;
                     curBestV = pathValueA;
                     curBeshSU = suA;
                 }
-                else if (suA.appearProbabilityShort < suB.appearProbabilityShort)
+                else if (suA.shortData.appearProbability < suB.shortData.appearProbability)
                 {
                     curBestPath = indexB;
                     curBestV = pathValueB;
@@ -2026,13 +2017,13 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    if (suA.appearProbabilityLong > suB.appearProbabilityLong)
+                    if (suA.longData.appearProbability > suB.longData.appearProbability)
                     {
                         curBestPath = indexA;
                         curBestV = pathValueA;
                         curBeshSU = suA;
                     }
-                    else if (suA.appearProbabilityLong < suB.appearProbabilityLong)
+                    else if (suA.longData.appearProbability < suB.longData.appearProbability)
                     {
                         curBestPath = indexB;
                         curBestV = pathValueB;
@@ -2548,15 +2539,15 @@ namespace LotteryAnalyze
                     return -1;
                 else if (x.pathValue < y.pathValue)
                     return 1;
-                if (x.su.appearProbabilityShort > y.su.appearProbabilityShort)
+                if (x.su.shortData.appearProbability > y.su.shortData.appearProbability)
                     return -1;
-                else if (x.su.appearProbabilityShort < y.su.appearProbabilityShort)
+                else if (x.su.shortData.appearProbability < y.su.shortData.appearProbability)
                     return 1;
                 else
                 {
-                    if (x.su.appearProbabilityLong > y.su.appearProbabilityLong)
+                    if (x.su.longData.appearProbability > y.su.longData.appearProbability)
                         return -1;
-                    else if (x.su.appearProbabilityLong < y.su.appearProbabilityLong)
+                    else if (x.su.longData.appearProbability < y.su.longData.appearProbability)
                         return 1;
                 }
                 return 0;
@@ -3009,9 +3000,9 @@ namespace LotteryAnalyze
                 mp1.KGRAPH_CFG = (byte)kgCfgs[1];
                 mp2.KGRAPH_CFG = (byte)kgCfgs[2];
 
-                //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].appearProbabilityShort;
-                //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].appearProbabilityShort;
-                //proShort[2] = sum.statisticUnitMap[CollectDataType.ePath2].appearProbabilityShort;
+                //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbability;
+                //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbability;
+                //proShort[2] = sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbability;
                 
                 pathValues[0] = pathValues[0] * kValues[0] * proShort[0];
                 pathValues[1] = pathValues[1] * kValues[1] * proShort[1];
@@ -3122,14 +3113,14 @@ namespace LotteryAnalyze
                 else if (x.pathValue < y.pathValue)
                     return 1;
 
-                if (x.su.appearProbabilityShort > y.su.appearProbabilityShort)
+                if (x.su.shortData.appearProbability > y.su.shortData.appearProbability)
                     return -1;
-                else if (x.su.appearProbabilityShort < y.su.appearProbabilityShort)
+                else if (x.su.shortData.appearProbability < y.su.shortData.appearProbability)
                     return 1;
                 
-                if (x.su.appearProbabilityLong > y.su.appearProbabilityLong)
+                if (x.su.longData.appearProbability > y.su.longData.appearProbability)
                     return -1;
-                else if (x.su.appearProbabilityLong < y.su.appearProbabilityLong)
+                else if (x.su.longData.appearProbability < y.su.longData.appearProbability)
                     return 1;
 
                 if (x.maxMissCount < y.maxMissCount)
@@ -3156,15 +3147,15 @@ namespace LotteryAnalyze
             //        Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
             //    else
             //    {
-            //        if (su0.appearProbabilityShort > su1.appearProbabilityShort)
+            //        if (su0.shortData.appearProbability > su1.shortData.appearProbability)
             //            Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //        else if (su0.appearProbabilityShort < su1.appearProbabilityShort)
+            //        else if (su0.shortData.appearProbability < su1.shortData.appearProbability)
             //            Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
             //        else
             //        {
-            //            if (su0.appearProbabilityLong > su1.appearProbabilityLong)
+            //            if (su0.longData.appearProbability > su1.longData.appearProbability)
             //                Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //            else if (su0.appearProbabilityLong < su1.appearProbabilityLong)
+            //            else if (su0.longData.appearProbability < su1.longData.appearProbability)
             //                Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
             //        }
             //    }
@@ -3253,16 +3244,16 @@ namespace LotteryAnalyze
                     StatisticUnitMap sumBest = item.statisticInfo.allStatisticInfo[bestNumIndex];
                     CollectDataType curCDT = (CollectDataType)(1 << curBestPath);
                     StatisticUnit suBest = sum.statisticUnitMap[curCDT];
-                    if(suBest.appearProbabilityShort < curBestSU.appearProbabilityShort)
+                    if(suBest.shortData.appearProbability < curBestSU.shortData.appearProbability)
                     {
                         bestPath = curBestPath;
                         bestNumIndex = numIndex;
                         maxV = curBestV;
                         isFinalPathStrongUp = isStrongUp[curBestPath];
                     }
-                    else if(suBest.appearProbabilityShort == curBestSU.appearProbabilityShort)
+                    else if(suBest.shortData.appearProbability == curBestSU.shortData.appearProbability)
                     {
-                        if (suBest.appearProbabilityLong < curBestSU.appearProbabilityLong)
+                        if (suBest.longData.appearProbability < curBestSU.longData.appearProbability)
                         {
                             bestPath = curBestPath;
                             bestNumIndex = numIndex;
@@ -3309,7 +3300,7 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
-                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].appearCountLong : sum.statisticUnitMap[cdt].appearCountShort;
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].longData.appearCount : sum.statisticUnitMap[cdt].shortData.appearCount;
                     info.rate = info.appearCount * 100 / total;
                     info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
                 }
@@ -3334,7 +3325,7 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
-                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].appearCountLong : sum.statisticUnitMap[cdt].appearCountShort;
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].longData.appearCount : sum.statisticUnitMap[cdt].shortData.appearCount;
                     info.rate = info.appearCount * 100 / total;
                     info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
                 }
@@ -3354,8 +3345,8 @@ namespace LotteryAnalyze
                 {
                     NumberCmpInfo info = new NumberCmpInfo();
                     info.number = (SByte)(i - startIndex);
-                    info.rate = sum.statisticUnitMap[cdt].appearProbabilityLong;
-                    info.largerThanTheoryProbability = sum.statisticUnitMap[cdt].appearProbabilityLong > GraphDataManager.GetTheoryProbability(cdt);
+                    info.rate = sum.statisticUnitMap[cdt].longData.appearProbability;
+                    info.largerThanTheoryProbability = sum.statisticUnitMap[cdt].longData.appearProbability > GraphDataManager.GetTheoryProbability(cdt);
 
                     if (nums.Count == 0)
                     {
@@ -3366,7 +3357,7 @@ namespace LotteryAnalyze
                         bool hasInsert = false;
                         for( int j = 0; j < nums.Count; ++j )
                         {
-                            if(sum.statisticUnitMap[cdt].appearProbabilityLong > nums[j].rate)
+                            if(sum.statisticUnitMap[cdt].longData.appearProbability > nums[j].rate)
                             {
                                 nums.Insert(j, info);
                                 hasInsert = true;

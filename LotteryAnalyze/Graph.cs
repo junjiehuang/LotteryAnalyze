@@ -1952,7 +1952,7 @@ namespace LotteryAnalyze
             {
                 DataItem item = dm.FindDataItem(i);
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-                float rH = sum.statisticUnitMap[cdt].appearProbabilityShort / 100 * maxHeight;
+                float rH = sum.statisticUnitMap[cdt].shortData.appearProbability / 100 * maxHeight;
                 float rT = bottom - rH;
                 float x = i * gridScaleW + halfGridW;
                 x = StandToCanvas(x, true);
