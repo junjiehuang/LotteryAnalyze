@@ -78,6 +78,12 @@ namespace LotteryAnalyze
             uponBMCount = _uponBMCount;
         }
 
+        public PathCmpInfo(int id, float v)
+        {
+            pathIndex = id;
+            pathValue = v;
+        }
+
         public PathCmpInfo(int id, float v, int _horzDist, int _uponBMCount, int _vertDistToMinKValue, int _vertDistToBML, int _vertDistToBDL)
         {
             pathIndex = id;
@@ -1473,80 +1479,97 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
 
-            int sel_index = -1;
-            if (m_lastTradePath == -1)
+            trade.pathCmpInfos[bestNumIndex].Sort(
+            (x, y) =>
             {
-                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
-                if (pci.maxVertDist < tradeCountList.Count - 1)
-                {
-                    m_lastTradePath = pci.pathIndex;
-                    sel_index = 0;
-                }
-            }
-            else
-            {
-                for( int i = 0; i < trade.pathCmpInfos[bestNumIndex].Count; ++ i)
-                {
-                    PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][i];
-                    if(pci.pathIndex == m_lastTradePath)
-                    {
-                        sel_index = i;
-                        bool need_change_path = false;
-                        if (Math.Abs(pci.maxVertDist) > tradeCountList.Count - 1)
-                            need_change_path = true;
-                        if(!need_change_path && pci.maxVertDist > 0)
-                            need_change_path = true;
-                        if(!need_change_path && pci.uponBMCount == 0)
-                            need_change_path = true;
-                        if (!need_change_path && pci.horzDist == 0 && pci.vertDistToBML > 0)
-                            need_change_path = true;
-                        if (need_change_path)
-                        {
-                            m_lastTradePath = -1;
-                            PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
-                            if (pci0.maxVertDist < 0)
-                            {
-                                m_lastTradePath = pci0.pathIndex;
-                                sel_index = 0;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
+                if (x.avgPathValue > y.avgPathValue)
+                    return -1;
+                else if (x.avgPathValue < y.avgPathValue)
+                    return 1;
+                return 0;
+            });
+            PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+            tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
 
-            if (sel_index != -1)
-            {
-                PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][sel_index];
-                if (pci.maxVertDist <= 0)
-                    tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            //int sel_index = -1;
+            //if (m_lastTradePath == -1)
+            //{
+            //    PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+            //    if (pci.maxVertDist < tradeCountList.Count - 1)
+            //    {
+            //        m_lastTradePath = pci.pathIndex;
+            //        sel_index = 0;
+            //    }
+            //}
+            //else
+            //{
+            //    trade.pathCmpInfos[bestNumIndex].Sort(
+            //    (x, y) =>
+            //    {
+            //        if (x.avgPathValue > y.avgPathValue)
+            //            return -1;
+            //        else if (x.avgPathValue < y.avgPathValue)
+            //            return 1;
+            //        if (x.pathValue > y.pathValue)
+            //            return -1;
+            //        else if (x.pathValue < y.pathValue)
+            //            return 1;
+            //        return 0;
+            //    });
 
-                //pci = trade.pathCmpInfos[bestNumIndex][0];
-                //if (m_lastTradePath != pci.pathIndex /*&& currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount*/)
-                //{
-                //    if(pci.maxVertDist < 0)
-                //    {
-                //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
-                //    }
-                //}
+            //    for( int i = 0; i < trade.pathCmpInfos[bestNumIndex].Count; ++ i)
+            //    {
+            //        PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][i];
+            //        if(pci.pathIndex == m_lastTradePath)
+            //        {
+            //            sel_index = i;
+            //            bool need_change_path = false;
+            //            if (Math.Abs(pci.maxVertDist) > tradeCountList.Count - 1)
+            //                need_change_path = true;
+            //            if (!need_change_path && pci.maxVertDist > 0)
+            //                need_change_path = true;
+            //            if (!need_change_path && pci.uponBMCount == 0)
+            //                need_change_path = true;
+            //            if (!need_change_path && pci.horzDist == 0 && pci.vertDistToBML > 0)
+            //                need_change_path = true;
+            //            if (need_change_path)
+            //            {
+            //                m_lastTradePath = -1;
+            //                PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
+            //                if (pci0.maxVertDist < 0)
+            //                {
+            //                    m_lastTradePath = pci0.pathIndex;
+            //                    sel_index = 0;
+            //                }
+            //            }
+            //            break;
+            //        }
+            //    }
+            //}
 
-                //if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
-                {
-                    trade.pathCmpInfos[bestNumIndex].Sort((x, y) =>
-                    {
-                        if (x.pathValue > y.pathValue)
-                            return -1;
-                        else if (x.pathValue < y.pathValue)
-                            return 1;
-                        return 0;
-                    });
-                    pci = trade.pathCmpInfos[bestNumIndex][0];
-                    if (m_lastTradePath != pci.pathIndex)
-                    {
-                        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
-                    }
-                }
-            }
+            //if (sel_index != -1)
+            //{
+            //    PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][sel_index];
+            //    if (pci.maxVertDist <= 0)
+            //        tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+
+            //    //if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
+            //    {
+            //        trade.pathCmpInfos[bestNumIndex].Sort((x, y) =>
+            //        {
+            //            if (x.pathValue > y.pathValue)
+            //                return -1;
+            //            else if (x.pathValue < y.pathValue)
+            //                return 1;
+            //            return 0;
+            //        });
+            //        pci = trade.pathCmpInfos[bestNumIndex][0];
+            //        if (m_lastTradePath != pci.pathIndex)
+            //        {
+            //            tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            //        }
+            //    }
+            //}
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -1778,44 +1801,46 @@ namespace LotteryAnalyze
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = sum.statisticUnitMap[cdt];
                 StaticData sd = su.fastData;
+                float v = sd.appearProbability;
                 switch(cdt)
                 {
                     case CollectDataType.eNum0:
-                        num_lst[0].rate += sd.appearProbability;
+                        num_lst[0].rate += v;
                         break;
                     case CollectDataType.eNum1:
-                        num_lst[1].rate += sd.appearProbability;
+                        num_lst[1].rate += v;
                         break;
                     case CollectDataType.eNum2:
-                        num_lst[2].rate += sd.appearProbability;
+                        num_lst[2].rate += v;
                         break;
                     case CollectDataType.eNum3:
-                        num_lst[3].rate += sd.appearProbability;
+                        num_lst[3].rate += v;
                         break;
                     case CollectDataType.eNum4:
-                        num_lst[4].rate += sd.appearProbability;
+                        num_lst[4].rate += v;
                         break;
                     case CollectDataType.eNum5:
-                        num_lst[5].rate += sd.appearProbability;
+                        num_lst[5].rate += v;
                         break;
                     case CollectDataType.eNum6:
-                        num_lst[6].rate += sd.appearProbability;
+                        num_lst[6].rate += v;
                         break;
                     case CollectDataType.eNum7:
-                        num_lst[7].rate += sd.appearProbability;
+                        num_lst[7].rate += v;
                         break;
                     case CollectDataType.eNum8:
-                        num_lst[8].rate += sd.appearProbability;
+                        num_lst[8].rate += v;
                         break;
                     case CollectDataType.eNum9:
-                        num_lst[9].rate += sd.appearProbability;
+                        num_lst[9].rate += v;
                         break;
+
                     //case CollectDataType.eBigNum:
                     //    for( int j = 0; j < 9; ++j )
                     //    {
                     //        if(j > 5)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
@@ -1824,7 +1849,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j < 5)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
@@ -1833,7 +1858,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j == 1 || j == 2 || j == 3 || j == 5 || j == 7)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
@@ -1842,7 +1867,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j == 0 || j == 4 || j == 6 || j == 8 || j == 9)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
@@ -1851,7 +1876,7 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j % 2 == 0)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
@@ -1860,25 +1885,25 @@ namespace LotteryAnalyze
                     //    {
                     //        if (j % 2 == 1)
                     //        {
-                    //            num_lst[j].rate += sd.appearProbability;
+                    //            num_lst[j].rate += v;
                     //        }
                     //    }
                     //    break;
                     case CollectDataType.ePath0:
-                        num_lst[0].rate += sd.appearProbability;
-                        num_lst[3].rate += sd.appearProbability;
-                        num_lst[6].rate += sd.appearProbability;
-                        num_lst[9].rate += sd.appearProbability;
+                        num_lst[0].rate += v;
+                        num_lst[3].rate += v;
+                        num_lst[6].rate += v;
+                        num_lst[9].rate += v;
                         break;
                     case CollectDataType.ePath1:
-                        num_lst[1].rate += sd.appearProbability;
-                        num_lst[4].rate += sd.appearProbability;
-                        num_lst[7].rate += sd.appearProbability;
+                        num_lst[1].rate += v;
+                        num_lst[4].rate += v;
+                        num_lst[7].rate += v;
                         break;
                     case CollectDataType.ePath2:
-                        num_lst[2].rate += sd.appearProbability;
-                        num_lst[5].rate += sd.appearProbability;
-                        num_lst[8].rate += sd.appearProbability;
+                        num_lst[2].rate += v;
+                        num_lst[5].rate += v;
+                        num_lst[8].rate += v;
                         break;
                 }
             }
@@ -2842,86 +2867,128 @@ namespace LotteryAnalyze
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)
         {
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             float[] pathValues = new float[] { 0, 0, 0, };
-            int[] maxMissCounts = new int[3] { 0, 0, 0, };
-            int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
-            int[] maxMissID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
-            int[] minKValueID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
-            int[] vertCountFromCurToMinKValue = new int[] { 0, 0, 0, };
-            int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
-            int[] vertCountFromCurToBollDownLine = new int[] { 0, 0, 0, };
-            int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
-            KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
-            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
-            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
-
-            // 计算012路的K线图形态
-            kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0,
-                ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0],
-                ref maxMissID[0], ref minKValueID[0], ref vertCountFromCurToMinKValue[0], ref vertCountFromCurToBollMidLine[0], ref vertCountFromCurToBollDownLine[0]);
-            kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1,
-                ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
-                ref maxMissID[1], ref minKValueID[1], ref vertCountFromCurToMinKValue[1], ref vertCountFromCurToBollMidLine[1], ref vertCountFromCurToBollDownLine[1]);
-            kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2,
-                ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
-                ref maxMissID[2], ref minKValueID[2], ref vertCountFromCurToMinKValue[2], ref vertCountFromCurToBollMidLine[2], ref vertCountFromCurToBollDownLine[2]);
-
-            pathValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
-            pathValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
-            pathValues[2] = GetKGraphConfigValue(kgCfgs[2], belowAvgLineCounts[2], uponAvgLineCounts[2]);
-
+            pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.appearProbabilityDiffWithTheory;
+            pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.appearProbabilityDiffWithTheory;
+            pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.appearProbabilityDiffWithTheory;
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
-                int horzDist = item.idGlobal - maxMissID[i];
-                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], horzDist, uponAvgLineCounts[i], vertCountFromCurToMinKValue[i], vertCountFromCurToBollMidLine[i], vertCountFromCurToBollDownLine[i]);
-                pci.avgPathValue = pathValues[i];
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i]);
+                pci.avgPathValue = 0;
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
-            int valid_count = 1;
+            int loop = 0;
             int lastID = historyTradeDatas.Count - 1;
-            while (lastID >= 0)
+            for (; loop < 5; ++loop)
             {
-                ++valid_count;
-                TradeDataOneStar ltrade = historyTradeDatas[lastID] as TradeDataOneStar;
-                for (int i = 0; i < pathValues.Length; ++i)
-                {
-                    PathCmpInfo lpci = ltrade.pathCmpInfos[numIndex][i];
-                    PathCmpInfo cpci = trade.pathCmpInfos[numIndex][lpci.pathIndex];
-                    cpci.avgPathValue += lpci.pathValue;
-                }
-                ++valid_count;
-                --lastID;
-                if (valid_count == 5)
-                {
+                if (lastID - loop < 0)
                     break;
-                }
+                TradeDataOneStar prev = historyTradeDatas[lastID - loop] as TradeDataOneStar;
+                prev.pathCmpInfos[numIndex].Sort((x, y) =>
+                {
+                    if (x.pathValue > y.pathValue)
+                        return -1;
+                    else if (x.pathValue < y.pathValue)
+                        return 1;
+                    return 0;
+                });
+                int bestID = prev.pathCmpInfos[numIndex][0].pathIndex;
+                trade.pathCmpInfos[numIndex][bestID].avgPathValue += 1;
             }
-            for (int i = 0; i < pathValues.Length; ++i)
+
+            trade.pathCmpInfos[numIndex].Sort(
+                (x, y) =>
             {
-                trade.pathCmpInfos[numIndex][i].avgPathValue /= valid_count;
-            }
-
-            trade.pathCmpInfos[numIndex].Sort((x, y) =>
-            {
-                if (x.maxVertDist < y.maxVertDist)
-                    return -1;
-                else if(x.maxVertDist > y.maxVertDist)
-                    return 1;
-
-                if (x.avgPathValue > y.avgPathValue)
-                    return -1;
-                else if (x.avgPathValue < y.avgPathValue)
-                    return 1;
-
                 if (x.pathValue > y.pathValue)
                     return -1;
                 else if (x.pathValue < y.pathValue)
                     return 1;
                 return 0;
             });
+            trade.pathCmpInfos[numIndex][0].avgPathValue += 1;
+
+            //float[] pathValues = new float[] { 0, 0, 0, };
+            //int[] maxMissCounts = new int[3] { 0, 0, 0, };
+            //int[] uponAvgLineCounts = new int[3] { 0, 0, 0 };
+            //int[] maxMissID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
+            //int[] minKValueID = new int[] { item.idGlobal, item.idGlobal, item.idGlobal, };
+            //int[] vertCountFromCurToMinKValue = new int[] { 0, 0, 0, };
+            //int[] vertCountFromCurToBollMidLine = new int[] { 0, 0, 0, };
+            //int[] vertCountFromCurToBollDownLine = new int[] { 0, 0, 0, };
+            //int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
+            //KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
+            //KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            //KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            //KDataDict kdd = kddc.GetKDataDict(item);
+            //BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+
+            //// 计算012路的K线图形态
+            //kgCfgs[0] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath0,
+            //    ref belowAvgLineCounts[0], ref uponAvgLineCounts[0], ref maxMissCounts[0],
+            //    ref maxMissID[0], ref minKValueID[0], ref vertCountFromCurToMinKValue[0], ref vertCountFromCurToBollMidLine[0], ref vertCountFromCurToBollDownLine[0]);
+            //kgCfgs[1] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath1,
+            //    ref belowAvgLineCounts[1], ref uponAvgLineCounts[1], ref maxMissCounts[1],
+            //    ref maxMissID[1], ref minKValueID[1], ref vertCountFromCurToMinKValue[1], ref vertCountFromCurToBollMidLine[1], ref vertCountFromCurToBollDownLine[1]);
+            //kgCfgs[2] = CheckKGraphConfig(item, numIndex, kdd, bpm, CollectDataType.ePath2,
+            //    ref belowAvgLineCounts[2], ref uponAvgLineCounts[2], ref maxMissCounts[2],
+            //    ref maxMissID[2], ref minKValueID[2], ref vertCountFromCurToMinKValue[2], ref vertCountFromCurToBollMidLine[2], ref vertCountFromCurToBollDownLine[2]);
+
+            //pathValues[0] = GetKGraphConfigValue(kgCfgs[0], belowAvgLineCounts[0], uponAvgLineCounts[0]);
+            //pathValues[1] = GetKGraphConfigValue(kgCfgs[1], belowAvgLineCounts[1], uponAvgLineCounts[1]);
+            //pathValues[2] = GetKGraphConfigValue(kgCfgs[2], belowAvgLineCounts[2], uponAvgLineCounts[2]);
+
+            //trade.pathCmpInfos[numIndex].Clear();
+            //for (int i = 0; i < pathValues.Length; ++i)
+            //{
+            //    int horzDist = item.idGlobal - maxMissID[i];
+            //    PathCmpInfo pci = new PathCmpInfo(i, pathValues[i], horzDist, uponAvgLineCounts[i], vertCountFromCurToMinKValue[i], vertCountFromCurToBollMidLine[i], vertCountFromCurToBollDownLine[i]);
+            //    pci.avgPathValue = pathValues[i];
+            //    trade.pathCmpInfos[numIndex].Add(pci);
+            //}
+            //int valid_count = 1;
+            //int lastID = historyTradeDatas.Count - 1;
+            //while (lastID >= 0)
+            //{
+            //    ++valid_count;
+            //    TradeDataOneStar ltrade = historyTradeDatas[lastID] as TradeDataOneStar;
+            //    for (int i = 0; i < pathValues.Length; ++i)
+            //    {
+            //        PathCmpInfo lpci = ltrade.pathCmpInfos[numIndex][i];
+            //        PathCmpInfo cpci = trade.pathCmpInfos[numIndex][lpci.pathIndex];
+            //        cpci.avgPathValue += lpci.pathValue;
+            //    }
+            //    ++valid_count;
+            //    --lastID;
+            //    if (valid_count == 5)
+            //    {
+            //        break;
+            //    }
+            //}
+            //for (int i = 0; i < pathValues.Length; ++i)
+            //{
+            //    trade.pathCmpInfos[numIndex][i].avgPathValue /= valid_count;
+            //}
+
+            //trade.pathCmpInfos[numIndex].Sort((x, y) =>
+            //{
+            //    if (x.maxVertDist < y.maxVertDist)
+            //        return -1;
+            //    else if(x.maxVertDist > y.maxVertDist)
+            //        return 1;
+
+            //    if (x.avgPathValue > y.avgPathValue)
+            //        return -1;
+            //    else if (x.avgPathValue < y.avgPathValue)
+            //        return 1;
+
+            //    if (x.pathValue > y.pathValue)
+            //        return -1;
+            //    else if (x.pathValue < y.pathValue)
+            //        return 1;
+            //    return 0;
+            //});
         }
 
         void CalcPathValue(DataItem item, int numIndex, ref bool[] isPathStrongUp, out int[] uponAvgLineCounts, out float[] pathValues, out MACDLineWaveConfig[] mlCfgs, out MACDBarConfig[] mbCfgs, out KGraphConfig[] kgCfgs, out int[] maxMissCounts)
