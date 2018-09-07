@@ -808,7 +808,7 @@ namespace LotteryAnalyze
         {
             get { return curTestTradeItem; }
         }
-        bool pauseAutoTrade = true;
+        bool pauseAutoTrade = false;
         bool needGetLatestItem = false;
         public List<int> tradeCountList = new List<int>();
         public int defaultTradeCount = 1;
@@ -1087,7 +1087,7 @@ namespace LotteryAnalyze
         {
             waitingTradeDatas.Clear();
             historyTradeDatas.Clear();
-            pauseAutoTrade = true;
+            pauseAutoTrade = false;
             needGetLatestItem = false;
             curTestTradeItem = null;
             currentTradeCountIndex = -1;
@@ -1490,6 +1490,24 @@ namespace LotteryAnalyze
             });
             PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
             tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            int lastSelPathID = pci.pathIndex;
+
+            if (currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
+            {
+                trade.pathCmpInfos[bestNumIndex].Sort(
+                (x, y) =>
+                {
+                    if (x.pathValue > y.pathValue)
+                        return -1;
+                    else if (x.pathValue < y.pathValue)
+                        return 1;
+                    return 0;
+                });
+                if(trade.pathCmpInfos[bestNumIndex][0].pathIndex != lastSelPathID)
+                {
+                    tn.SelPath012Number(trade.pathCmpInfos[bestNumIndex][0].pathIndex, tradeCount, ref maxProbilityNums);
+                }
+            }
 
             //int sel_index = -1;
             //if (m_lastTradePath == -1)
