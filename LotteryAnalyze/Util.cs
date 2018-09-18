@@ -787,42 +787,59 @@ namespace LotteryAnalyze
                 validCount = mcDates.Count;
                 if (validCount > 0)
                 {
-                    string dateStr = mcDates[0].Groups[0].ToString().Split('-')[1];
-                    int dateStartID = int.Parse(dateStr);
-                    dateStr = mcDates[validCount-1].Groups[0].ToString().Split('-')[1];
-                    int dateEndID = int.Parse(dateStr);
-                    
-                    for (int i = 1; i <= 120; ++i)
+                    string[] lst = new string[120];
+
+                    for( int i = 0; i < validCount; ++i )
                     {
-                        if (i < dateStartID || i > dateEndID)
+                        string dateStr = mcDates[i].Groups[0].ToString().Split('-')[1];
+                        int dateID = int.Parse(dateStr);
+                        string numStr = mcNumbers[i].Groups[0].ToString();
+
+                        lst[dateID - 1] = dateStr + " " + numStr + "\n";
+                    }
+
+                    for( int i = 0; i < lst.Length; ++i )
+                    {
+                        if( string.IsNullOrEmpty(lst[i]) )
                         {
-                            if (i < 10)
+                            int index = i + 1;
+                            if (index < 10)
                                 lotteryData += "00";
-                            else if (i < 100)
+                            else if (index < 100)
                                 lotteryData += "0";
-                            lotteryData += i.ToString() + " -\n";
+                            lotteryData += index.ToString() + " -\n";
                         }
                         else
                         {
-                            int real_index = i - dateStartID;
-                            dateStr = mcDates[real_index].Groups[0].ToString().Split('-')[1];
-                            int dateID = int.Parse(dateStr);
-                            lotteryData += dateStr;
-                            lotteryData += " " + mcNumbers[real_index].Groups[0].ToString() + "\n";
+                            lotteryData += lst[i];
                         }
                     }
+
+                    //string dateStr = mcDates[0].Groups[0].ToString().Split('-')[1];
+                    //int dateStartID = int.Parse(dateStr);
+                    //dateStr = mcDates[validCount-1].Groups[0].ToString().Split('-')[1];
+                    //int dateEndID = int.Parse(dateStr);
+
+                    //for (int i = 1; i <= 120; ++i)
+                    //{
+                    //    if (i < dateStartID || i > dateEndID)
+                    //    {
+                    //        if (i < 10)
+                    //            lotteryData += "00";
+                    //        else if (i < 100)
+                    //            lotteryData += "0";
+                    //        lotteryData += i.ToString() + " -\n";
+                    //    }
+                    //    else
+                    //    {
+                    //        int real_index = i - dateStartID;
+                    //        dateStr = mcDates[real_index].Groups[0].ToString().Split('-')[1];
+                    //        int dateID = int.Parse(dateStr);
+                    //        lotteryData += dateStr;
+                    //        lotteryData += " " + mcNumbers[real_index].Groups[0].ToString() + "\n";
+                    //    }
+                    //}
                 }
-                //if (i < 120)
-                //{
-                //    for (; i < 120; ++i)
-                //    {
-                //        if (i < 9)
-                //            lotteryData += "00";
-                //        else if (i < 99)
-                //            lotteryData += "0";
-                //        lotteryData += (i + 1).ToString() + " -\n";
-                //    }
-                //}
             }
             else
             {
