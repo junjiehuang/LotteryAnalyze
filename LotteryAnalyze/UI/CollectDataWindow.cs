@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Timers;
+using static LotteryAnalyze.AutoUpdateUtil;
 
 namespace LotteryAnalyze.UI
 {
@@ -31,6 +32,14 @@ namespace LotteryAnalyze.UI
 
             dateTimePickerStartDate.Value = curDate;
             dateTimePickerEndDate.Value = curDate;
+
+            List<string> dataArr = new List<string>();
+            for(DataSourceType i = DataSourceType.e360; i < DataSourceType.eMax; ++i)
+            {
+                dataArr.Add(i.ToString());
+            }
+            comboBoxDataSource.DataSource = dataArr;
+            comboBoxDataSource.SelectedIndex = (int)AutoUpdateUtil.CURRENT_DATA_SOURCE;
 
             updateTimer = new System.Windows.Forms.Timer();
             updateTimer.Interval = 30;
@@ -141,6 +150,11 @@ namespace LotteryAnalyze.UI
             progressBarCollectDatas.Value = 0;
             jobUnFinishLst.Clear();
             textBoxCmd.Text = "";
+        }
+
+        private void comboBoxDataSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AutoUpdateUtil.CURRENT_DATA_SOURCE = (DataSourceType)comboBoxDataSource.SelectedIndex;
         }
     }
 }

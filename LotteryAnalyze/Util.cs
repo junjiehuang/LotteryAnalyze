@@ -608,6 +608,17 @@ namespace LotteryAnalyze
             GBK,
         };
 
+        // 数据源
+        public enum DataSourceType
+        {
+            e360 = 0,
+            e163 = 1,
+
+            eMax,
+        }
+
+        public static DataSourceType CURRENT_DATA_SOURCE = DataSourceType.e163;
+
         /// <summary>
         /// 自动获取当天数据
         /// </summary>
@@ -646,32 +657,36 @@ namespace LotteryAnalyze
 
         public static string combineUrlName(int y, int m, int d, bool newUrl)
         {
-#if USE_163_URL
-            string url = S_163_NEW_DATE_URL + y;
-            if (m < 10)
-                url += "0";
-            url += m;
-            if (d < 10)
-                url += "0";
-            url += d + ".html";
-#else
-            string url = S_NEW_DATE_URL;
-            if(!newUrl)
-                url = S_OLD_DATE_URL;
-            url += y + "-";
-            if (m < 10)
-                url += "0";
-            url += m + "-";
-            if (d < 10)
-                url += "0";
-            url += d + "_" + y + "-";
-            if (m < 10)
-                url += "0";
-            url += m + "-";
-            if (d < 10)
-                url += "0";
-            url += d;
-#endif
+            string url = string.Empty;
+            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            {
+                url = S_163_NEW_DATE_URL + y;
+                if (m < 10)
+                    url += "0";
+                url += m;
+                if (d < 10)
+                    url += "0";
+                url += d + ".html";
+            }
+            else
+            {
+                url = S_NEW_DATE_URL;
+                if (!newUrl)
+                    url = S_OLD_DATE_URL;
+                url += y + "-";
+                if (m < 10)
+                    url += "0";
+                url += m + "-";
+                if (d < 10)
+                    url += "0";
+                url += d + "_" + y + "-";
+                if (m < 10)
+                    url += "0";
+                url += m + "-";
+                if (d < 10)
+                    url += "0";
+                url += d;
+            }
             return url;
         }
 
@@ -718,21 +733,25 @@ namespace LotteryAnalyze
 
         public static int FetchData(DateTime date, ref string error)
         {
+            int dataCount = 0;
             string filename = combineFileName(date.Year, date.Month, date.Day);
-#if USE_163_URL
-            string url = combineUrlName(date.Year, date.Month, date.Day, true);
-            int dataCount = FetchData(true, filename, url, ref error);
-#else
-            // 先按旧版的网页数据拉取
-            string url = combineUrlName(date.Year, date.Month, date.Day, false);
-            int dataCount = FetchData(false, filename, url, ref error);
-            // 如果拉取到的数据是空的，就按照新版的网页数据来拉取
-            if(dataCount == 0)
+            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
             {
-                url = combineUrlName(date.Year, date.Month, date.Day, true);
+                string url = combineUrlName(date.Year, date.Month, date.Day, true);
                 dataCount = FetchData(true, filename, url, ref error);
             }
-#endif
+            else
+            {             
+                // 先按旧版的网页数据拉取
+                string url = combineUrlName(date.Year, date.Month, date.Day, false);
+                dataCount = FetchData(false, filename, url, ref error);
+                // 如果拉取到的数据是空的，就按照新版的网页数据来拉取
+                if (dataCount == 0)
+                {
+                    url = combineUrlName(date.Year, date.Month, date.Day, true);
+                    dataCount = FetchData(true, filename, url, ref error);
+                }
+            }
             return dataCount;
         }
 
@@ -741,12 +760,10 @@ namespace LotteryAnalyze
         static string strRegexD = @"(?<=<td[^>]*>[\s]*?)([\S]*)(?=[\s]*?</td>)";
         static string strRegexDate = @"(?<=<td class='tdbg_1' >[\s]*?)([\S]*)(?=[\s]*?</td>)";
         static string strRegexNumber = @"(?<=<td[^>]*><strong class='num'>[\s]*?)([\S]*)(?=[\s]*?</strong></td>)";
-        static string strRegex163 = @"(?<=<data-win-number= >[\s]*?)([\S]*)(?=[\s]*?</td>)";
         static Regex regexR = new Regex(strRegexR);
         static Regex regexD = new Regex(strRegexD);
         static Regex regexDate = new Regex(strRegexDate);
         static Regex regexNumber = new Regex(strRegexNumber);
-        static Regex regex163 = new Regex(strRegex163);
 
         public static int FetchData(bool newUrl, string fileName, string webUrl, ref string error)
         {
@@ -755,9 +772,10 @@ namespace LotteryAnalyze
             int validCount = 0;
             // load web page
             ECType t = ECType.Default;
-#if USE_163_URL
-            t = ECType.UTF8;
-#endif
+            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            {
+                t = ECType.UTF8;
+            }
             WebRequest request = WebRequest.Create(webUrl);
             HttpWebResponse response = null;
             try
@@ -802,19 +820,92 @@ namespace LotteryAnalyze
 
             string lotteryData = "";
 
-#if USE_163_URL
-            //strWebContent = strWebContent.Replace('\"', '\'');
-            MatchCollection mcs = regex163.Matches(strWebContent);
-            validCount = mcs.Count;
-            if (validCount > 0)
+            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
             {
-                string[] lst = new string[120];
-                for( int i = 0; i < validCount; ++i )
+                AnalyzeBy163(strWebContent, ref lotteryData, ref validCount);
+            }
+            else
+            {
+                AnalyzeBy360(strWebContent, ref lotteryData, ref validCount, newUrl);
+            }
+
+            //Console.WriteLine("=> " + fileName);
+            //Console.WriteLine(lotteryData);
+
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            //开始写入
+            sw.Write(lotteryData);
+            //sw.Write(strWebContent);
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+            return validCount;
+        }
+
+        static void AnalyzeBy163(string strWebContent, ref string lotteryData, ref int validCount)
+        {
+            string[] lst = new string[120];
+            string startStr = "data-win-number=";
+            string endStr = "</td>";
+            int index = strWebContent.IndexOf(startStr);
+            while (index != -1)
+            {
+                int endIndex = strWebContent.IndexOf(endStr);
+                if (endIndex == -1)
+                    break;
+                string subStr = strWebContent.Substring(index, endIndex - index);
+                string[] strs = subStr.Split('\'');
+                if (strs.Length > 2)
                 {
-                    Console.WriteLine(i + " - " + mcs[i].Groups[0].ToString());
+                    string numStr = strs[1].Replace(" ", "");
+                    string dateStr = null;
+                    strs = strs[2].Split('>');
+                    if (strs.Length > 1)
+                    {
+                        dateStr = strs[strs.Length - 1];
+                    }
+
+                    int dateID = int.Parse(dateStr) - 1;
+                    string info = dateStr + " " + numStr;
+                    if (string.IsNullOrEmpty(numStr))
+                        info += "-\n";
+                    else
+                        info += "\n";
+                    lst[dateID] = info;
+                }
+                strWebContent = strWebContent.Substring(endIndex);
+                index = strWebContent.IndexOf(startStr);
+                if (index == -1)
+                    break;
+                strWebContent = strWebContent.Substring(index);
+                index = 0;
+            }
+
+            validCount = 0;
+            for (int i = 0; i < lst.Length; ++i)
+            {
+                if (string.IsNullOrEmpty(lst[i]))
+                {
+                    index = i + 1;
+                    if (index < 10)
+                        lotteryData += "00";
+                    else if (index < 100)
+                        lotteryData += "0";
+                    lotteryData += index.ToString() + " -\n";
+                }
+                else
+                {
+                    lotteryData += lst[i];
+                    ++validCount;
                 }
             }
-#else
+        }
+
+        static void AnalyzeBy360(string strWebContent, ref string lotteryData, ref int validCount, bool newUrl)
+        {
             if (newUrl)
             {
                 // 匹配日期
@@ -830,7 +921,7 @@ namespace LotteryAnalyze
                 {
                     string[] lst = new string[120];
 
-                    for( int i = 0; i < validCount; ++i )
+                    for (int i = 0; i < validCount; ++i)
                     {
                         string dateStr = mcDates[i].Groups[0].ToString().Split('-')[1];
                         int dateID = int.Parse(dateStr);
@@ -839,9 +930,9 @@ namespace LotteryAnalyze
                         lst[dateID - 1] = dateStr + " " + numStr + "\n";
                     }
 
-                    for( int i = 0; i < lst.Length; ++i )
+                    for (int i = 0; i < lst.Length; ++i)
                     {
-                        if( string.IsNullOrEmpty(lst[i]) )
+                        if (string.IsNullOrEmpty(lst[i]))
                         {
                             int index = i + 1;
                             if (index < 10)
@@ -863,60 +954,43 @@ namespace LotteryAnalyze
                 HtmlNodeCollection collection = htmlDocument.DocumentNode.SelectSingleNode("html/body").ChildNodes;
                 foreach (HtmlNode wrapNode in collection)
                 {
-                    if (wrapNode.Name == "div" && wrapNode.GetAttributeValue("class", "") == "wrap")
+                    if (wrapNode.Name != "div" || wrapNode.GetAttributeValue("class", "") != "wrap")
+                        continue;
+                    foreach (HtmlNode histTabNode in wrapNode.ChildNodes)
                     {
-                        foreach (HtmlNode histTabNode in wrapNode.ChildNodes)
+                        if (histTabNode.GetAttributeValue("class", "") != "history-tab")
+                            continue;
+                        MatchCollection mcR = regexR.Matches(histTabNode.InnerHtml); //执行匹配
+                        int totalCount = 120;
+                        foreach (Match mr in mcR)
                         {
-                            if (histTabNode.GetAttributeValue("class", "") == "history-tab")
+                            MatchCollection mcD = regexD.Matches(mr.Groups[0].ToString()); //执行匹配                                                                
+                            for (int i = 0; i < mcD.Count; i++)
                             {
-                                MatchCollection mcR = regexR.Matches(histTabNode.InnerHtml); //执行匹配
-                                int totalCount = 120;
-                                foreach (Match mr in mcR)
+                                if (totalCount > 0 && Util.IsNumStr(mcD[i].Value) && mcD[i].Value.Length == 3)
                                 {
-                                    MatchCollection mcD = regexD.Matches(mr.Groups[0].ToString()); //执行匹配                                                                
-                                    for (int i = 0; i < mcD.Count; i++)
+                                    lotteryData += mcD[i].Value + " ";
+                                    ++i;
+                                    if (Util.IsNumStr(mcD[i].Value))
                                     {
-                                        if (totalCount > 0 && Util.IsNumStr(mcD[i].Value) && mcD[i].Value.Length == 3)
-                                        {
-                                            lotteryData += mcD[i].Value + " ";
-                                            ++i;
-                                            if (Util.IsNumStr(mcD[i].Value))
-                                            {
-                                                lotteryData += mcD[i].Value;
-                                                ++validCount;
-                                            }
-                                            else
-                                                lotteryData += "-";
-                                            lotteryData += "\n";
-                                            --totalCount;
-                                            if (totalCount == 0)
-                                                break;
-                                        }
+                                        lotteryData += mcD[i].Value;
+                                        ++validCount;
                                     }
+                                    else
+                                        lotteryData += "-";
+                                    lotteryData += "\n";
+                                    --totalCount;
+                                    if (totalCount == 0)
+                                        break;
                                 }
                             }
                         }
                     }
                 }
             }
-#endif
-
-            //Console.WriteLine("=> " + fileName);
-            //Console.WriteLine(lotteryData);
-
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            StreamWriter sw = new StreamWriter(fs);
-            //开始写入
-            sw.Write(lotteryData);
-            //sw.Write(strWebContent);
-            //清空缓冲区
-            sw.Flush();
-            //关闭流
-            sw.Close();
-            fs.Close();
-            return validCount;
         }
     }
+
 
     // 枚举窗体
     public static class WindowsEnumerator

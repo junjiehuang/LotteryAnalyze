@@ -42,6 +42,8 @@
             this.textBoxCmd = new System.Windows.Forms.TextBox();
             this.progressBarCollectDatas = new System.Windows.Forms.ProgressBar();
             this.buttonReFetchFailedDatas = new System.Windows.Forms.Button();
+            this.comboBoxDataSource = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -162,11 +164,31 @@
             this.buttonReFetchFailedDatas.UseVisualStyleBackColor = true;
             this.buttonReFetchFailedDatas.Click += new System.EventHandler(this.buttonReFetchFailedDatas_Click);
             // 
+            // comboBoxDataSource
+            // 
+            this.comboBoxDataSource.FormattingEnabled = true;
+            this.comboBoxDataSource.Location = new System.Drawing.Point(473, 104);
+            this.comboBoxDataSource.Name = "comboBoxDataSource";
+            this.comboBoxDataSource.Size = new System.Drawing.Size(121, 20);
+            this.comboBoxDataSource.TabIndex = 14;
+            this.comboBoxDataSource.SelectedIndexChanged += new System.EventHandler(this.comboBoxDataSource_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(420, 109);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(47, 12);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "数据源:";
+            // 
             // CollectDataWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 346);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.comboBoxDataSource);
             this.Controls.Add(this.buttonReFetchFailedDatas);
             this.Controls.Add(this.progressBarCollectDatas);
             this.Controls.Add(this.textBoxCmd);
@@ -206,5 +228,7 @@
         private System.Windows.Forms.TextBox textBoxCmd;
         private System.Windows.Forms.ProgressBar progressBarCollectDatas;
         private System.Windows.Forms.Button buttonReFetchFailedDatas;
+        private System.Windows.Forms.ComboBox comboBoxDataSource;
+        private System.Windows.Forms.Label label3;
     }
 }
