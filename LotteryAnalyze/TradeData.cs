@@ -1271,7 +1271,8 @@ namespace LotteryAnalyze
                 if (res[1].pathValue > 0)
                 {
                     float rate = Math.Abs(res[0].pathValue - res[1].pathValue) / res[0].pathValue;
-                    if (rate < 0.1f || currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
+                    if (//rate < 0.1f || 
+                        currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
                         tn.SelPath012Number(res[1].pathIndex, tradeCount, ref maxProbilityNums);
                 }
                 trade.tradeInfo.Add(bestNumIndex, tn);
@@ -1389,7 +1390,7 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
 
-            if (currentTradeCountIndex >= tradeCountList.Count - 3)
+            if (currentTradeCountIndex >= tradeCountList.Count - MultiTradePathCount)
             {
                 float lastPathValue = 0;
                 for (int i = 0; i < 2; ++i)
