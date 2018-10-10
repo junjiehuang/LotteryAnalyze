@@ -21,6 +21,8 @@ namespace LotteryAnalyze
         eTradeGraph,
         // 出号率曲线
         eAppearenceGraph,
+        // 遗漏图
+        eMissCountGraph,
     }
 
     public enum AuxLineType
@@ -1746,24 +1748,19 @@ namespace LotteryAnalyze
     // 出号率曲线图
     class GraphAppearence : GraphBase
     {
-        
-        SolidBrush redBrush = new SolidBrush(Color.Red);
-        SolidBrush tagBrush = new SolidBrush(Color.White);
-        SolidBrush greenBrush = new SolidBrush(Color.Green);
-
-        Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
-        Font tagFont = new Font(FontFamily.GenericSerif, 12);
-
-        Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
-        Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
-
+        public bool autoAllign = false;
         public bool onlyShowSelectCDTLine = true;
         public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
 
-        DataItem hoverItem;
-        int selectDataIndex;
-
-        public bool autoAllign = false;
+        protected SolidBrush redBrush = new SolidBrush(Color.Red);
+        protected SolidBrush tagBrush = new SolidBrush(Color.White);
+        protected SolidBrush greenBrush = new SolidBrush(Color.Green);
+        protected Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+        protected Font tagFont = new Font(FontFamily.GenericSerif, 12);
+        protected Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
+        protected Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
+        protected DataItem hoverItem;
+        protected int selectDataIndex;        
 
         public GraphAppearence()
         {
@@ -1785,13 +1782,12 @@ namespace LotteryAnalyze
             cdtLineShowStates[cdt] = v;
         }
 
-        Brush GetBrush(CollectDataType cdt)
+        protected Brush GetBrush(CollectDataType cdt)
         {
             Color col = GraphDataManager.GetCdtColor(cdt);
             return GetBrush(col);
         }
-
-        Brush GetBrush(Color col)
+        protected Brush GetBrush(Color col)
         {
             if (brushes.ContainsKey(col))
                 return brushes[col];
@@ -1802,12 +1798,12 @@ namespace LotteryAnalyze
                 return brush;
             }
         }
-        Pen GetLinePen(CollectDataType cdt)
+        protected Pen GetLinePen(CollectDataType cdt)
         {
             Color col = GraphDataManager.GetCdtColor(cdt);
             return GetLinePen(col);
         }
-        Pen GetLinePen(Color col)
+        protected Pen GetLinePen(Color col)
         {
             if (pens.ContainsKey(col))
                 return pens[col];
@@ -1977,7 +1973,255 @@ namespace LotteryAnalyze
         }
     }
 
-#endregion
+    class GraphMissCount : GraphAppearence//GraphBase
+    {
+        int maxMissCount = 10;
+        //SolidBrush redBrush = new SolidBrush(Color.Red);
+        //SolidBrush tagBrush = new SolidBrush(Color.White);
+        //SolidBrush greenBrush = new SolidBrush(Color.Green);
+
+        //Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+        //Font tagFont = new Font(FontFamily.GenericSerif, 12);
+        //Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
+        //Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
+
+        //public bool onlyShowSelectCDTLine = true;
+        //public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
+
+        //DataItem hoverItem;
+        //int selectDataIndex;
+        //public bool autoAllign = false;
+
+        //int maxMissCount = 10;
+
+        //public GraphMissCount()
+        //{
+        //    selectDataIndex = -1;
+        //    gridScaleW = 10;
+
+        //    for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+        //    {
+        //        cdtLineShowStates.Add(GraphDataManager.S_CDT_LIST[i], false);
+        //    }
+        //}
+
+        //public bool GetCDTLineShowState(CollectDataType cdt)
+        //{
+        //    return cdtLineShowStates[cdt];
+        //}
+        //public void SetCDTLineShowState(CollectDataType cdt, bool v)
+        //{
+        //    cdtLineShowStates[cdt] = v;
+        //}
+        //public int SelectDataItem(Point mouseRelPos)
+        //{
+        //    DataManager dm = DataManager.GetInst();
+        //    selectDataIndex = -1;
+        //    Point standMousePos = CanvasToStand(mouseRelPos);
+        //    int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+        //    if (mouseHoverID >= dm.GetAllDataItemCount())
+        //        mouseHoverID = -1;
+        //    selectDataIndex = mouseHoverID;
+        //    return selectDataIndex;
+        //}
+        //public void UnselectDataItem()
+        //{
+        //    selectDataIndex = -1;
+        //}
+
+        //Brush GetBrush(CollectDataType cdt)
+        //{
+        //    Color col = GraphDataManager.GetCdtColor(cdt);
+        //    return GetBrush(col);
+        //}
+        //Brush GetBrush(Color col)
+        //{
+        //    if (brushes.ContainsKey(col))
+        //        return brushes[col];
+        //    else
+        //    {
+        //        SolidBrush brush = new SolidBrush(col);
+        //        brushes.Add(col, brush);
+        //        return brush;
+        //    }
+        //}
+        //Pen GetLinePen(CollectDataType cdt)
+        //{
+        //    Color col = GraphDataManager.GetCdtColor(cdt);
+        //    return GetLinePen(col);
+        //}
+        //Pen GetLinePen(Color col)
+        //{
+        //    if (pens.ContainsKey(col))
+        //        return pens[col];
+        //    else
+        //    {
+        //        Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, col, 1);
+        //        pens.Add(col, pen);
+        //        return pen;
+        //    }
+        //}
+
+        public GraphMissCount() : base()
+        {
+            //selectDataIndex = -1;
+            //gridScaleW = 10;
+
+            //for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+            //{
+            //    cdtLineShowStates.Add(GraphDataManager.S_CDT_LIST[i], false);
+            //}
+        }
+
+        //public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
+        //{
+        //    return true;
+        //}
+        //public override void MoveGraph(float dx, float dy)
+        //{
+        //    canvasOffset.X += dx;
+        //    canvasOffset.Y += dy;
+        //    if (canvasOffset.X < 0)
+        //        canvasOffset.X = 0;
+        //}
+
+        //public override void ResetGraphPosition()
+        //{
+        //}
+
+        public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        {
+            hoverItem = null;
+            bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
+            float halfSize = gridScaleW * 0.2f;
+            if (halfSize < 4)
+                halfSize = 4;
+            float fullSize = halfSize * 2;
+            float halfWinH = winH * 0.5f;
+            float halfGridW = gridScaleW * 0.5f;
+            TradeDataManager tdm = TradeDataManager.Instance;
+            DataManager dm = DataManager.GetInst();
+
+            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            if (endIndex > dm.GetAllDataItemCount())
+                endIndex = dm.GetAllDataItemCount();
+
+            float top = winH * 0.1f;
+            float bottom = winH * 0.9f;
+            float maxHeight = bottom - top;
+            float prevY = 0;
+            float prevX = 0;
+            bool hasChoose = false;
+
+            if (onlyShowSelectCDTLine)
+            {
+                DrawSingleMissCountLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+
+                //float tp = GraphDataManager.GetTheoryProbability(cdt);
+                //float tY = bottom - (bottom - top) * tp / 100;
+                //g.DrawLine(GetLinePen(cdt), 0, tY, winW, tY);
+            }
+            else
+            {
+                var etor = cdtLineShowStates.GetEnumerator();
+                while (etor.MoveNext())
+                {
+                    CollectDataType type = etor.Current.Key;
+                    if (etor.Current.Value)
+                    {
+                        DrawSingleMissCountLine(g, numIndex, startIndex, endIndex, type, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+                    }
+                }
+            }
+
+            g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+            g.DrawLine(grayDotLinePen, 0, top, winW, top);
+            g.DrawLine(grayDotLinePen, 0, bottom, winW, bottom);
+            if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
+            {
+                //float v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
+                float gridH = maxHeight / maxMissCount;
+                int mouseMissCount = (int)((bottom - mouseRelPos.Y) / gridH);
+                g.DrawString(mouseMissCount.ToString(), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
+            }
+
+            if (hoverItem != null)
+            {
+                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "]";
+                g.DrawString(info, tagFont, tagBrush, 5, 5);
+            }
+
+            if (selectDataIndex != -1)
+            {
+                Pen pen = GetLinePen(Color.Yellow);
+                float left = selectDataIndex * gridScaleW;
+                left = StandToCanvas(left, true);
+                float right = left + gridScaleW;
+                g.DrawLine(pen, left, 0, left, winH);
+                g.DrawLine(pen, right, 0, right, winH);
+            }
+
+
+        }
+        //public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
+        //{
+        //}
+        //public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
+        //{
+        //    if (needSelect)
+        //        selectDataIndex = index;
+        //    else
+        //        selectDataIndex = -1;
+        //    canvasOffset.X = index * gridScaleW + xOffset;
+        //    autoAllign = true;
+        //}
+
+        void DrawSingleMissCountLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
+        {
+            float gridH = maxHeight / maxMissCount;
+            float prevY = 0;
+            float prevX = 0;
+            DataManager dm = DataManager.GetInst();
+            Brush brush = GetBrush(cdt);
+            Pen pen = GetLinePen(cdt);
+            for (int i = startIndex; i < endIndex; ++i)
+            {
+                DataItem item = dm.FindDataItem(i);
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+                int curMissCount = sum.statisticUnitMap[cdt].missCount;
+                if (maxMissCount < curMissCount)
+                    maxMissCount = curMissCount;
+
+                float rH = curMissCount * gridH;
+                float rT = bottom - rH;
+                float x = i * gridScaleW + halfGridW;
+                x = StandToCanvas(x, true);
+                g.FillRectangle(brush, x - halfSize, rT - halfSize, fullSize, fullSize);
+                if (i > startIndex)
+                {
+                    g.DrawLine(pen, x, rT, prevX, prevY);
+                }
+                prevX = x;
+                prevY = rT;
+
+                float left = x - halfGridW;
+                float right = x + halfGridW;
+                if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+                {
+                    hoverItem = item;
+                    g.DrawLine(grayDotLinePen, left, 0, left, winH);
+                    g.DrawLine(grayDotLinePen, right, 0, right, winH);
+                    hasChoose = true;
+                }
+            }
+        }
+
+    }
+
+    #endregion
 
     // 图表管理器
     class GraphManager
@@ -1997,6 +2241,7 @@ namespace LotteryAnalyze
         public GraphKCurve kvalueGraph;
         public GraphTrade tradeGraph;
         public GraphAppearence appearenceGraph;
+        public GraphMissCount missCountGraph;
         public int endShowDataItemIndex = -1;
 
         public GraphManager()
@@ -2005,10 +2250,12 @@ namespace LotteryAnalyze
             kvalueGraph = new GraphKCurve(); kvalueGraph.parent = this;
             tradeGraph = new GraphTrade(); tradeGraph.parent = this;
             appearenceGraph = new GraphAppearence(); appearenceGraph.parent = this;
+            missCountGraph = new GraphMissCount(); missCountGraph.parent = this;
             sGraphMap.Add(GraphType.eKCurveGraph, kvalueGraph);
             sGraphMap.Add(GraphType.eBarGraph, barGraph);
             sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
             sGraphMap.Add(GraphType.eAppearenceGraph, appearenceGraph);
+            sGraphMap.Add(GraphType.eMissCountGraph, missCountGraph);
         }
 
         public void OnTradeCompleted()

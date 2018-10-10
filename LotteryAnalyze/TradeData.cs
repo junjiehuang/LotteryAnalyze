@@ -740,6 +740,8 @@ namespace LotteryAnalyze
             eSinglePositionSmallestMissCountPath,
             // 选择某个数值位012路顶低区间在交易次数范围内的号码
             eSinglePositionPathOnArea,
+            // 选择某个数值位012路遗漏图面积最小的那一路的号码
+            eSinglePositionSmallestMissCountArea,
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
 
@@ -762,6 +764,7 @@ namespace LotteryAnalyze
             "eSinglePositionPathsUponSpecValue",
             "eSinglePositionSmallestMissCountPath",
             "eSinglePositionPathOnArea",
+            "eSinglePositionSmallestMissCountArea",
             "eMultiNumPath",
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
@@ -1172,6 +1175,9 @@ namespace LotteryAnalyze
                     break;
                 case TradeStrategy.eSinglePositionPathOnArea:
                     TradeSingleSinglePositionPathOnArea(item, trade);
+                    break;
+                case TradeStrategy.eSinglePositionSmallestMissCountArea:
+                    TradeSinglePositionSmallestMissCountArea(item, trade);
                     break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
@@ -1589,6 +1595,57 @@ namespace LotteryAnalyze
             //        }
             //    }
             //}
+        }
+
+
+
+        void TradeSinglePositionSmallestMissCountArea(DataItem item, TradeDataOneStar trade)
+        {
+            int bestNumIndex = 0;
+            if (simSelNumIndex != -1)
+                bestNumIndex = simSelNumIndex;
+
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            CalcPathMissCountArea(item, trade, bestNumIndex);
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            trade.tradeInfo.Add(bestNumIndex, tn);
+            FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
+
+            trade.pathCmpInfos[bestNumIndex].Sort(
+            (x, y) =>
+            {
+                if (x.pathValue < y.pathValue)
+                    return -1;
+                else if (x.pathValue < y.pathValue)
+                    return 1;
+                else if (x.maxMissCount < y.maxMissCount)
+                    return -1;
+                else if (x.maxMissCount > y.maxMissCount)
+                    return 1;
+                return 0;
+            });
+            PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
+            tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
+            int lastSelPathID = pci.pathIndex;
+
+            if (currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount)
+            {
+                tn.SelPath012Number(trade.pathCmpInfos[bestNumIndex][1].pathIndex, tradeCount, ref maxProbilityNums);
+            }
         }
 
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
@@ -2882,6 +2939,43 @@ namespace LotteryAnalyze
                         return 1;
                 }
             });
+        }
+
+        void CalcPathMissCountArea(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            float[] pathValues = new float[] { 0, 0, 0, };
+            int[] missCount = new int[] { 0, 0, 0, };
+
+            DataItem curItem = item;
+            int loopCount = 5;
+            while(loopCount >= 0)
+            {
+                DataItem prevItem = curItem.parent.GetPrevItem(curItem);
+                if (prevItem == null)
+                    break;
+                StatisticUnitMap cSUM = item.statisticInfo.allStatisticInfo[numIndex];
+                StatisticUnitMap pSUM = prevItem.statisticInfo.allStatisticInfo[numIndex];
+                pathValues[0] += (cSUM.statisticUnitMap[CollectDataType.ePath0].missCount + pSUM.statisticUnitMap[CollectDataType.ePath0].missCount) * 0.5f;
+                pathValues[1] += (cSUM.statisticUnitMap[CollectDataType.ePath1].missCount + pSUM.statisticUnitMap[CollectDataType.ePath1].missCount) * 0.5f;
+                pathValues[2] += (cSUM.statisticUnitMap[CollectDataType.ePath2].missCount + pSUM.statisticUnitMap[CollectDataType.ePath2].missCount) * 0.5f;
+                if(curItem == item)
+                {
+                    missCount[0] = cSUM.statisticUnitMap[CollectDataType.ePath0].missCount;
+                    missCount[1] = cSUM.statisticUnitMap[CollectDataType.ePath1].missCount;
+                    missCount[2] = cSUM.statisticUnitMap[CollectDataType.ePath2].missCount;
+                }
+                --loopCount;
+                curItem = prevItem;
+            }
+
+            trade.pathCmpInfos[numIndex].Clear();
+            for (int i = 0; i < pathValues.Length; ++i)
+            {
+                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i]);
+                pci.maxMissCount = missCount[i];
+                trade.pathCmpInfos[numIndex].Add(pci);
+            }
         }
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)

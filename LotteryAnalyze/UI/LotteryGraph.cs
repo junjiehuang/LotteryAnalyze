@@ -118,6 +118,8 @@ namespace LotteryAnalyze.UI
             TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)(selID);
 
             checkBoxShowSingleLine.Checked = graphMgr.appearenceGraph.onlyShowSelectCDTLine;
+            checkBoxMissCountShowSingleLine.Checked = graphMgr.missCountGraph.onlyShowSelectCDTLine;
+
             int Y = 10;
             int X = 10;
             int half_size = groupBoxCDTShowSetting.Size.Width / 2;
@@ -141,23 +143,63 @@ namespace LotteryAnalyze.UI
                 chk.Text = GraphDataManager.S_CDT_TAG_LIST[i];
                 chk.Location = new Point(X, Y);
                 chk.Size = new Size(half_size - colorBoxSize - 10, colorBoxSize);
-                chk.CheckedChanged += chk_CheckedChanged;
+                chk.CheckedChanged += chk_CheckedChangedAppearence;
                 groupBoxCDTShowSetting.Controls.Add(chk);
 
                 chk.Checked = graphMgr.appearenceGraph.GetCDTLineShowState(cdt);
+            }
+
+            Y = 10;
+            X = 10;
+            half_size = groupBoxMissCountCDTShowSetting.Size.Width / 2;
+            colorBoxSize = 18;
+            gap = 2;
+            for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+            {
+                X = (i % 2) * half_size + 10;
+                Y = (i / 2) * (colorBoxSize + gap) + 20;
+                Button btn = new Button();
+                btn.Size = new Size(colorBoxSize, colorBoxSize);
+                btn.Location = new Point(X, Y);
+                btn.Enabled = false;
+                btn.BackColor = GraphDataManager.S_CDT_COLOR_LIST[i];
+                groupBoxMissCountCDTShowSetting.Controls.Add(btn);
+
+                X += 10 + colorBoxSize;
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+                CheckBox chk = new CheckBox();
+                chk.Tag = cdt;
+                chk.Text = GraphDataManager.S_CDT_TAG_LIST[i];
+                chk.Location = new Point(X, Y);
+                chk.Size = new Size(half_size - colorBoxSize - 10, colorBoxSize);
+                chk.CheckedChanged += chk_CheckedChangedMissCount;
+                groupBoxMissCountCDTShowSetting.Controls.Add(chk);
+
+                chk.Checked = graphMgr.missCountGraph.GetCDTLineShowState(cdt);
             }
 
             this.KeyPreview = true;
             FormMain.AddWindow(this);
         }
 
-        void chk_CheckedChanged(object sender, EventArgs e)
+        void chk_CheckedChangedAppearence(object sender, EventArgs e)
         {
             CheckBox ckb = sender as CheckBox;
             CollectDataType cdt = (CollectDataType)(ckb.Tag);
             graphMgr.appearenceGraph.SetCDTLineShowState(cdt, ckb.Checked);
 
-            if(graphMgr.appearenceGraph.onlyShowSelectCDTLine == false)
+            if (graphMgr.appearenceGraph.onlyShowSelectCDTLine == false)
+            {
+                Invalidate(true);
+            }
+        }
+        void chk_CheckedChangedMissCount(object sender, EventArgs e)
+        {
+            CheckBox ckb = sender as CheckBox;
+            CollectDataType cdt = (CollectDataType)(ckb.Tag);
+            graphMgr.missCountGraph.SetCDTLineShowState(cdt, ckb.Checked);
+
+            if (graphMgr.missCountGraph.onlyShowSelectCDTLine == false)
             {
                 Invalidate(true);
             }
@@ -345,7 +387,12 @@ namespace LotteryAnalyze.UI
                     upPanelMousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
-
+                }
+                else if(graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+                {
+                    upPanelMousePosLastDrag = e.Location;
+                    graphMgr.MoveGraph(dx, dy);
+                    needUpdate = true;
                 }
             }
             if (needUpdate)
@@ -401,6 +448,28 @@ namespace LotteryAnalyze.UI
                     else
                     {
                         graphMgr.appearenceGraph.UnselectDataItem();
+                        graphMgr.kvalueGraph.UnSelectData();
+                    }
+                }
+                else if(graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+                {
+                    int selID = graphMgr.missCountGraph.SelectDataItem(e.Location);
+                    if (selID != -1)
+                    {
+                        // 滚动到屏幕中间
+                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+                        int xOffset = 0;
+                        if (selID * graphMgr.kvalueGraph.gridScaleW > checkW)
+                            xOffset = -checkW;
+                        else
+                            xOffset = -(int)(selID * graphMgr.kvalueGraph.gridScaleW);
+
+                        graphMgr.kvalueGraph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+                        FormMain.Instance.SelectDataItem(selID);
+                    }
+                    else
+                    {
+                        graphMgr.missCountGraph.UnselectDataItem();
                         graphMgr.kvalueGraph.UnSelectData();
                     }
                 }
@@ -1067,6 +1136,22 @@ namespace LotteryAnalyze.UI
                     this.panelUp.ClientSize.Height,
                     true, xOffSet);
             }
+            else if(graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+            {
+                graphMgr.missCountGraph.autoAllign = true;
+                TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
+                index = latestTradedItem.targetLotteryItem.idGlobal;
+                int xOffSet = 0;
+                if (index * graphMgr.missCountGraph.gridScaleW > checkW)
+                    xOffSet = -checkW;
+                else
+                    xOffSet = -(int)(index * graphMgr.missCountGraph.gridScaleW);
+                graphMgr.missCountGraph.ScrollToData(
+                    index,
+                    this.panelUp.ClientSize.Width,
+                    this.panelUp.ClientSize.Height,
+                    true, xOffSet);
+            }
             trackBarTradeData.Value = trackBarTradeData.Maximum;
             this.Invalidate(true);
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
@@ -1168,6 +1253,11 @@ namespace LotteryAnalyze.UI
         private void checkBoxShowSingleLine_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.appearenceGraph.onlyShowSelectCDTLine = checkBoxShowSingleLine.Checked;
+        }
+
+        private void checkBoxMissCountShowSingleLine_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.missCountGraph.onlyShowSelectCDTLine = checkBoxMissCountShowSingleLine.Checked;
         }
     }
 }
