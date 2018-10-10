@@ -1750,6 +1750,7 @@ namespace LotteryAnalyze
     {
         public bool autoAllign = false;
         public bool onlyShowSelectCDTLine = true;
+        public bool showMissCountArea = false;
         public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
 
         protected SolidBrush redBrush = new SolidBrush(Color.Red);
@@ -1976,6 +1977,7 @@ namespace LotteryAnalyze
     class GraphMissCount : GraphAppearence//GraphBase
     {
         int maxMissCount = 10;
+        float maxMissCountArea = 10;
         //SolidBrush redBrush = new SolidBrush(Color.Red);
         //SolidBrush tagBrush = new SolidBrush(Color.White);
         //SolidBrush greenBrush = new SolidBrush(Color.Green);
@@ -2143,7 +2145,7 @@ namespace LotteryAnalyze
             if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
             {
                 //float v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
-                float gridH = maxHeight / maxMissCount;
+                float gridH = maxHeight / (showMissCountArea ? maxMissCountArea : maxMissCount);
                 int mouseMissCount = (int)((bottom - mouseRelPos.Y) / gridH);
                 g.DrawString(mouseMissCount.ToString(), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
             }
@@ -2181,7 +2183,11 @@ namespace LotteryAnalyze
 
         void DrawSingleMissCountLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
         {
-            float gridH = maxHeight / maxMissCount;
+            float gridH = 1;
+            if (showMissCountArea == false)
+                gridH = maxHeight / maxMissCount;
+            else
+                gridH = maxHeight / maxMissCountArea;
             float prevY = 0;
             float prevX = 0;
             DataManager dm = DataManager.GetInst();
@@ -2191,11 +2197,24 @@ namespace LotteryAnalyze
             {
                 DataItem item = dm.FindDataItem(i);
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-                int curMissCount = sum.statisticUnitMap[cdt].missCount;
-                if (maxMissCount < curMissCount)
-                    maxMissCount = curMissCount;
 
-                float rH = curMissCount * gridH;
+                float CUR = 1;
+                if (showMissCountArea == false)
+                {
+                    int curMissCount = sum.statisticUnitMap[cdt].missCount;
+                    if (maxMissCount < curMissCount)
+                        maxMissCount = curMissCount;
+                    CUR = curMissCount;
+                }
+                else
+                {
+                    float curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                    if (maxMissCountArea < curMissCountArea)
+                        maxMissCountArea = curMissCountArea;
+                    CUR = curMissCountArea;
+                }
+
+                float rH = CUR * gridH;
                 float rT = bottom - rH;
                 float x = i * gridScaleW + halfGridW;
                 x = StandToCanvas(x, true);

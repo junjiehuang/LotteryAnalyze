@@ -2947,27 +2947,35 @@ namespace LotteryAnalyze
             float[] pathValues = new float[] { 0, 0, 0, };
             int[] missCount = new int[] { 0, 0, 0, };
 
-            DataItem curItem = item;
-            int loopCount = 5;
-            while(loopCount >= 0)
-            {
-                DataItem prevItem = curItem.parent.GetPrevItem(curItem);
-                if (prevItem == null)
-                    break;
-                StatisticUnitMap cSUM = item.statisticInfo.allStatisticInfo[numIndex];
-                StatisticUnitMap pSUM = prevItem.statisticInfo.allStatisticInfo[numIndex];
-                pathValues[0] += (cSUM.statisticUnitMap[CollectDataType.ePath0].missCount + pSUM.statisticUnitMap[CollectDataType.ePath0].missCount) * 0.5f;
-                pathValues[1] += (cSUM.statisticUnitMap[CollectDataType.ePath1].missCount + pSUM.statisticUnitMap[CollectDataType.ePath1].missCount) * 0.5f;
-                pathValues[2] += (cSUM.statisticUnitMap[CollectDataType.ePath2].missCount + pSUM.statisticUnitMap[CollectDataType.ePath2].missCount) * 0.5f;
-                if(curItem == item)
-                {
-                    missCount[0] = cSUM.statisticUnitMap[CollectDataType.ePath0].missCount;
-                    missCount[1] = cSUM.statisticUnitMap[CollectDataType.ePath1].missCount;
-                    missCount[2] = cSUM.statisticUnitMap[CollectDataType.ePath2].missCount;
-                }
-                --loopCount;
-                curItem = prevItem;
-            }
+            //DataItem curItem = item;
+            //int loopCount = 5;
+            //while(loopCount >= 0)
+            //{
+            //    DataItem prevItem = curItem.parent.GetPrevItem(curItem);
+            //    if (prevItem == null)
+            //        break;
+            //    StatisticUnitMap cSUM = item.statisticInfo.allStatisticInfo[numIndex];
+            //    StatisticUnitMap pSUM = prevItem.statisticInfo.allStatisticInfo[numIndex];
+            //    pathValues[0] += (cSUM.statisticUnitMap[CollectDataType.ePath0].missCount + pSUM.statisticUnitMap[CollectDataType.ePath0].missCount) * 0.5f;
+            //    pathValues[1] += (cSUM.statisticUnitMap[CollectDataType.ePath1].missCount + pSUM.statisticUnitMap[CollectDataType.ePath1].missCount) * 0.5f;
+            //    pathValues[2] += (cSUM.statisticUnitMap[CollectDataType.ePath2].missCount + pSUM.statisticUnitMap[CollectDataType.ePath2].missCount) * 0.5f;
+            //    if(curItem == item)
+            //    {
+            //        missCount[0] = cSUM.statisticUnitMap[CollectDataType.ePath0].missCount;
+            //        missCount[1] = cSUM.statisticUnitMap[CollectDataType.ePath1].missCount;
+            //        missCount[2] = cSUM.statisticUnitMap[CollectDataType.ePath2].missCount;
+            //    }
+            //    --loopCount;
+            //    curItem = prevItem;
+            //}
+
+            pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
+            pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
+            pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+
+            missCount[0] = sum.statisticUnitMap[CollectDataType.ePath0].missCount;
+            missCount[1] = sum.statisticUnitMap[CollectDataType.ePath1].missCount;
+            missCount[2] = sum.statisticUnitMap[CollectDataType.ePath2].missCount;
 
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)

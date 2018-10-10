@@ -11,6 +11,7 @@ namespace LotteryAnalyze
 
     public class StaticData
     {
+        public float missCountArea;
         // 统计出现该统计类型数据的次数
         public Byte appearCount;
         // 统计出现该统计类型数据的百分比
@@ -29,18 +30,6 @@ namespace LotteryAnalyze
         public StaticData fastData = new StaticData();
         public StaticData shortData = new StaticData();
         public StaticData longData = new StaticData();
-        //// 统计短期内出现该统计类型数据的次数
-        //public Byte appearCountShort = 0;
-        //// 统计长期内出现该统计类型数据的次数
-        //public Byte appearCountLong = 0;
-        //// 统计短期内出现该统计类型数据的百分比
-        //public float appearProbabilityShort = 0;
-        //// 统计长期内出现该统计类型数据的百分比
-        //public float appearProbabilityLong = 0;
-        //// 统计短期内出现该统计类型数据的百分比与理论概率的差值
-        //public float appearProbabilityDiffWithTheoryShort = 0;
-        //// 统计长期内出现该统计类型数据的百分比与理论概率的差值
-        //public float appearProbabilityDiffWithTheoryLong = 0;
     }
 
     // 记录某个数字位的所有类型的统计信息
@@ -459,6 +448,47 @@ namespace LotteryAnalyze
             for (int i = 0; i < 5; ++i)
             {
                 allStatisticInfo[i].CollectProbability();
+            }
+
+            CollectMissCountArea();
+        }
+
+        void CollectMissCountArea()
+        {
+            int loopCount = 0;
+            DataItem cItem = lotteryData;
+            while ( cItem != null )
+            {
+                DataItem pItem = cItem.parent.GetPrevItem(cItem);
+                if (pItem == null)
+                    break;
+                for( int i = 0; i < 5; ++i )
+                {
+                    StatisticUnitMap sumC = cItem.statisticInfo.allStatisticInfo[i];
+                    StatisticUnitMap sumP = pItem.statisticInfo.allStatisticInfo[i];
+                    for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                    {
+                        CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                        StatisticUnit suC = sumC.statisticUnitMap[cdt];
+                        StatisticUnit suP = sumP.statisticUnitMap[cdt];
+                        float subArea = (suC.missCount + suP.missCount) * 0.5f;
+                        if (loopCount < FAST_COUNT)
+                        {
+                            allStatisticInfo[i].statisticUnitMap[cdt].fastData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].fastData.missCountArea + subArea;
+                        }
+                        if (loopCount < SHOR_COUNT)
+                        {
+                            allStatisticInfo[i].statisticUnitMap[cdt].shortData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].shortData.missCountArea + subArea;
+                        }
+                        if (loopCount < LONG_COUNT)
+                        {
+                            allStatisticInfo[i].statisticUnitMap[cdt].longData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].longData.missCountArea + subArea;
+                        }
+                    }
+                }
+                ++loopCount;
+                if (loopCount == LONG_COUNT)
+                    break;
             }
         }
     }

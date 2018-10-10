@@ -119,6 +119,7 @@ namespace LotteryAnalyze.UI
 
             checkBoxShowSingleLine.Checked = graphMgr.appearenceGraph.onlyShowSelectCDTLine;
             checkBoxMissCountShowSingleLine.Checked = graphMgr.missCountGraph.onlyShowSelectCDTLine;
+            checkBoxShowMissCountArea.Checked = graphMgr.missCountGraph.showMissCountArea;
 
             int Y = 10;
             int X = 10;
@@ -536,10 +537,18 @@ namespace LotteryAnalyze.UI
                             xOffset = -(int)(kdataID * graphMgr.appearenceGraph.gridScaleW);
 
                         graphMgr.appearenceGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+
+                        xOffset = 0;
+                        if (kdataID * graphMgr.missCountGraph.gridScaleW > checkW)
+                            xOffset = -checkW;
+                        else
+                            xOffset = -(int)(kdataID * graphMgr.missCountGraph.gridScaleW);
+                        graphMgr.missCountGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
                     }
                     else
                     {
                         graphMgr.appearenceGraph.UnselectDataItem();
+                        graphMgr.missCountGraph.UnselectDataItem();
                     }
                 }
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
@@ -1253,11 +1262,19 @@ namespace LotteryAnalyze.UI
         private void checkBoxShowSingleLine_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.appearenceGraph.onlyShowSelectCDTLine = checkBoxShowSingleLine.Checked;
+            this.Invalidate(true);
         }
 
         private void checkBoxMissCountShowSingleLine_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.missCountGraph.onlyShowSelectCDTLine = checkBoxMissCountShowSingleLine.Checked;
+            this.Invalidate(true);
+        }
+
+        private void checkBoxShowMissCountArea_CheckedChanged(object sender, EventArgs e)
+        {
+            graphMgr.missCountGraph.showMissCountArea = checkBoxShowMissCountArea.Checked;
+            this.Invalidate(true);
         }
     }
 }
