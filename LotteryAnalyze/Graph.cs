@@ -1750,7 +1750,6 @@ namespace LotteryAnalyze
     {
         public bool autoAllign = false;
         public bool onlyShowSelectCDTLine = true;
-        public bool showMissCountArea = false;
         public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
 
         protected SolidBrush redBrush = new SolidBrush(Color.Red);
@@ -1974,122 +1973,45 @@ namespace LotteryAnalyze
         }
     }
 
-    class GraphMissCount : GraphAppearence//GraphBase
+    class GraphMissCount : GraphAppearence
     {
+        public enum MissCountType
+        {
+            eMissCountValue,
+            eMissCountAreaFast,
+            eMissCountAreaShort,
+            eMissCountAreaLong,
+        }
+        public static string[] MissCountTypeStrs = new string[]
+        {
+            "遗漏值",
+            "统计5期的遗漏面积",
+            "统计10期的遗漏面积",
+            "统计30期的遗漏面积",
+        };
+        MissCountType _missCountType = MissCountType.eMissCountValue;
+        public MissCountType missCountType
+        {
+            get
+            {
+                return _missCountType;
+            }
+            set
+            {
+                _missCountType = value;
+                if (_missCountType == MissCountType.eMissCountValue)
+                    maxMissCount = 10;
+                else
+                    maxMissCountArea = 10;
+            }
+        }
+
         int maxMissCount = 10;
         float maxMissCountArea = 10;
-        //SolidBrush redBrush = new SolidBrush(Color.Red);
-        //SolidBrush tagBrush = new SolidBrush(Color.White);
-        //SolidBrush greenBrush = new SolidBrush(Color.Green);
-
-        //Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
-        //Font tagFont = new Font(FontFamily.GenericSerif, 12);
-        //Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
-        //Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
-
-        //public bool onlyShowSelectCDTLine = true;
-        //public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
-
-        //DataItem hoverItem;
-        //int selectDataIndex;
-        //public bool autoAllign = false;
-
-        //int maxMissCount = 10;
-
-        //public GraphMissCount()
-        //{
-        //    selectDataIndex = -1;
-        //    gridScaleW = 10;
-
-        //    for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
-        //    {
-        //        cdtLineShowStates.Add(GraphDataManager.S_CDT_LIST[i], false);
-        //    }
-        //}
-
-        //public bool GetCDTLineShowState(CollectDataType cdt)
-        //{
-        //    return cdtLineShowStates[cdt];
-        //}
-        //public void SetCDTLineShowState(CollectDataType cdt, bool v)
-        //{
-        //    cdtLineShowStates[cdt] = v;
-        //}
-        //public int SelectDataItem(Point mouseRelPos)
-        //{
-        //    DataManager dm = DataManager.GetInst();
-        //    selectDataIndex = -1;
-        //    Point standMousePos = CanvasToStand(mouseRelPos);
-        //    int mouseHoverID = (int)(standMousePos.X / gridScaleW);
-        //    if (mouseHoverID >= dm.GetAllDataItemCount())
-        //        mouseHoverID = -1;
-        //    selectDataIndex = mouseHoverID;
-        //    return selectDataIndex;
-        //}
-        //public void UnselectDataItem()
-        //{
-        //    selectDataIndex = -1;
-        //}
-
-        //Brush GetBrush(CollectDataType cdt)
-        //{
-        //    Color col = GraphDataManager.GetCdtColor(cdt);
-        //    return GetBrush(col);
-        //}
-        //Brush GetBrush(Color col)
-        //{
-        //    if (brushes.ContainsKey(col))
-        //        return brushes[col];
-        //    else
-        //    {
-        //        SolidBrush brush = new SolidBrush(col);
-        //        brushes.Add(col, brush);
-        //        return brush;
-        //    }
-        //}
-        //Pen GetLinePen(CollectDataType cdt)
-        //{
-        //    Color col = GraphDataManager.GetCdtColor(cdt);
-        //    return GetLinePen(col);
-        //}
-        //Pen GetLinePen(Color col)
-        //{
-        //    if (pens.ContainsKey(col))
-        //        return pens[col];
-        //    else
-        //    {
-        //        Pen pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, col, 1);
-        //        pens.Add(col, pen);
-        //        return pen;
-        //    }
-        //}
 
         public GraphMissCount() : base()
         {
-            //selectDataIndex = -1;
-            //gridScaleW = 10;
-
-            //for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
-            //{
-            //    cdtLineShowStates.Add(GraphDataManager.S_CDT_LIST[i], false);
-            //}
         }
-
-        //public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
-        //{
-        //    return true;
-        //}
-        //public override void MoveGraph(float dx, float dy)
-        //{
-        //    canvasOffset.X += dx;
-        //    canvasOffset.Y += dy;
-        //    if (canvasOffset.X < 0)
-        //        canvasOffset.X = 0;
-        //}
-
-        //public override void ResetGraphPosition()
-        //{
-        //}
 
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
@@ -2144,8 +2066,7 @@ namespace LotteryAnalyze
             g.DrawLine(grayDotLinePen, 0, bottom, winW, bottom);
             if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
             {
-                //float v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
-                float gridH = maxHeight / (showMissCountArea ? maxMissCountArea : maxMissCount);
+                float gridH = maxHeight / (missCountType != MissCountType.eMissCountValue ? maxMissCountArea : maxMissCount);
                 int mouseMissCount = (int)((bottom - mouseRelPos.Y) / gridH);
                 g.DrawString(mouseMissCount.ToString(), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
             }
@@ -2165,26 +2086,12 @@ namespace LotteryAnalyze
                 g.DrawLine(pen, left, 0, left, winH);
                 g.DrawLine(pen, right, 0, right, winH);
             }
-
-
         }
-        //public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
-        //{
-        //}
-        //public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
-        //{
-        //    if (needSelect)
-        //        selectDataIndex = index;
-        //    else
-        //        selectDataIndex = -1;
-        //    canvasOffset.X = index * gridScaleW + xOffset;
-        //    autoAllign = true;
-        //}
 
         void DrawSingleMissCountLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
         {
             float gridH = 1;
-            if (showMissCountArea == false)
+            if (missCountType == MissCountType.eMissCountValue)
                 gridH = maxHeight / maxMissCount;
             else
                 gridH = maxHeight / maxMissCountArea;
@@ -2199,7 +2106,7 @@ namespace LotteryAnalyze
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
 
                 float CUR = 1;
-                if (showMissCountArea == false)
+                if (missCountType == MissCountType.eMissCountValue)
                 {
                     int curMissCount = sum.statisticUnitMap[cdt].missCount;
                     if (maxMissCount < curMissCount)
@@ -2208,7 +2115,14 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    float curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                    float curMissCountArea = 0;
+                    if (missCountType == MissCountType.eMissCountAreaFast)
+                        curMissCountArea = sum.statisticUnitMap[cdt].fastData.missCountArea;
+                    else if (missCountType == MissCountType.eMissCountAreaShort)
+                        curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                    else if (missCountType == MissCountType.eMissCountAreaLong)
+                        curMissCountArea = sum.statisticUnitMap[cdt].longData.missCountArea;
+
                     if (maxMissCountArea < curMissCountArea)
                         maxMissCountArea = curMissCountArea;
                     CUR = curMissCountArea;

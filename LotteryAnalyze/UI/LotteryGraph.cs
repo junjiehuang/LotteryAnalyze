@@ -119,7 +119,10 @@ namespace LotteryAnalyze.UI
 
             checkBoxShowSingleLine.Checked = graphMgr.appearenceGraph.onlyShowSelectCDTLine;
             checkBoxMissCountShowSingleLine.Checked = graphMgr.missCountGraph.onlyShowSelectCDTLine;
-            checkBoxShowMissCountArea.Checked = graphMgr.missCountGraph.showMissCountArea;
+
+            int selMissCountType = (int)graphMgr.missCountGraph.missCountType;
+            comboBoxMissCountType.DataSource = GraphMissCount.MissCountTypeStrs;
+            comboBoxMissCountType.SelectedIndex = selMissCountType;
 
             int Y = 10;
             int X = 10;
@@ -1270,10 +1273,10 @@ namespace LotteryAnalyze.UI
             graphMgr.missCountGraph.onlyShowSelectCDTLine = checkBoxMissCountShowSingleLine.Checked;
             this.Invalidate(true);
         }
-
-        private void checkBoxShowMissCountArea_CheckedChanged(object sender, EventArgs e)
+        
+        private void comboBoxMissCountType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            graphMgr.missCountGraph.showMissCountArea = checkBoxShowMissCountArea.Checked;
+            graphMgr.missCountGraph.missCountType = (GraphMissCount.MissCountType)comboBoxMissCountType.SelectedIndex;
             this.Invalidate(true);
         }
     }
