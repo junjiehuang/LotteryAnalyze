@@ -2067,8 +2067,8 @@ namespace LotteryAnalyze
             if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
             {
                 float gridH = maxHeight / (missCountType != MissCountType.eMissCountValue ? maxMissCountArea : maxMissCount);
-                int mouseMissCount = (int)((bottom - mouseRelPos.Y) / gridH);
-                g.DrawString(mouseMissCount.ToString(), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
+                float mouseMissCount = ((bottom - mouseRelPos.Y) / gridH);
+                g.DrawString(mouseMissCount.ToString("f1"), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
             }
 
             if (hoverItem != null)

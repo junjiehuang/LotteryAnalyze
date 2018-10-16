@@ -1630,7 +1630,7 @@ namespace LotteryAnalyze
             {
                 if (x.pathValue < y.pathValue)
                     return -1;
-                else if (x.pathValue < y.pathValue)
+                else if (x.pathValue > y.pathValue)
                     return 1;
                 else if (x.maxMissCount < y.maxMissCount)
                     return -1;
