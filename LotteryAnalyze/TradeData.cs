@@ -2977,11 +2977,12 @@ namespace LotteryAnalyze
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
-                    if (x.avgPathValue < y.avgPathValue)
-                        return -1;
-                    else if (x.avgPathValue > y.avgPathValue)
-                        return 1;
-                    else if (x.pathValue < y.pathValue)
+                    //if (x.avgPathValue < y.avgPathValue)
+                    //    return -1;
+                    //else if (x.avgPathValue > y.avgPathValue)
+                    //    return 1;
+                    //else 
+                    if (x.pathValue < y.pathValue)
                         return -1;
                     else if (x.pathValue > y.pathValue)
                         return 1;
