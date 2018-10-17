@@ -2073,7 +2073,32 @@ namespace LotteryAnalyze
 
             if (hoverItem != null)
             {
-                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "]";
+                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] ";
+                StatisticUnitMap sum = hoverItem.statisticInfo.allStatisticInfo[numIndex];
+                if(missCountType == MissCountType.eMissCountValue)
+                {
+                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].missCount + 
+                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].missCount + 
+                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].missCount + "]";
+                }
+                else if (missCountType == MissCountType.eMissCountAreaFast)
+                {
+                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea +
+                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea +
+                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea + "]";
+                }
+                else if (missCountType == MissCountType.eMissCountAreaShort)
+                {
+                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.missCountArea +
+                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.missCountArea +
+                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.missCountArea + "]";
+                }
+                else if (missCountType == MissCountType.eMissCountAreaLong)
+                {
+                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.missCountArea +
+                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.missCountArea +
+                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.missCountArea + "]";
+                }
                 g.DrawString(info, tagFont, tagBrush, 5, 5);
             }
 

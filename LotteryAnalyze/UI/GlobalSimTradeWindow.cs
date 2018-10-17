@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Configuration;
+using System.IO;
 
 namespace LotteryAnalyze.UI
 {
@@ -422,6 +423,11 @@ namespace LotteryAnalyze.UI
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if(updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer.Dispose();
+            }
             TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
             TradeDataManager.Instance.longWrongTradeCallBack -= OnLongWrongTrade;
 
@@ -536,6 +542,36 @@ namespace LotteryAnalyze.UI
         private void checkBoxKillLastNumber_CheckedChanged(object sender, EventArgs e)
         {
             TradeDataManager.Instance.killLastNumber = checkBoxKillLastNumber.Checked;
+        }
+
+        private void exportResultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fileName = "..\\tools\\模拟结果.xml";
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
+            string info = "<LongMissTradeInfos>\n";
+            foreach(TreeNode node in treeViewLongWrongTradeInfos.Nodes)
+            {
+                info += "\t<" + node.Text + ">\n";
+
+                foreach(TreeNode subNode in node.Nodes)
+                {
+                    info += "\t\t<detail>" + subNode.Text + "</detail>\n";
+                }
+
+                info += "\t</" + node.Text + ">\n";
+            }
+            info += "</LongMissTradeInfos>\n";
+
+            //开始写入
+            sw.Write(info);
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+
         }
     }
 }

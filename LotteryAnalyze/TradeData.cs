@@ -338,6 +338,7 @@ namespace LotteryAnalyze
                     for(int j = 0; j < pathCmpInfos[i].Count; ++j)
                     {
                         dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue;
+                        dbgtxt += ", AvgP = " + pathCmpInfos[i][j].avgPathValue.ToString();
                         if (pathCmpInfos[i][j].kGraphCfg != TradeDataManager.KGraphConfig.eNone)
                             dbgtxt += ", K = " + pathCmpInfos[i][j].kGraphCfg.ToString();
                         if (pathCmpInfos[i][j].macdLineCfg != TradeDataManager.MACDLineWaveConfig.eNone)
@@ -1625,19 +1626,7 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
 
-            trade.pathCmpInfos[bestNumIndex].Sort(
-            (x, y) =>
-            {
-                if (x.pathValue < y.pathValue)
-                    return -1;
-                else if (x.pathValue > y.pathValue)
-                    return 1;
-                else if (x.maxMissCount < y.maxMissCount)
-                    return -1;
-                else if (x.maxMissCount > y.maxMissCount)
-                    return 1;
-                return 0;
-            });
+
             PathCmpInfo pci = trade.pathCmpInfos[bestNumIndex][0];
             tn.SelPath012Number(pci.pathIndex, tradeCount, ref maxProbilityNums);
             int lastSelPathID = pci.pathIndex;
@@ -2945,45 +2934,63 @@ namespace LotteryAnalyze
         {
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             float[] pathValues = new float[] { 0, 0, 0, };
-            int[] missCount = new int[] { 0, 0, 0, };
+            float[] norPathValues = new float[] { 0, 0, 0, };
+            int[] maxMissCount = new int[] { 0, 0, 0, };
 
-            //DataItem curItem = item;
-            //int loopCount = 5;
-            //while(loopCount >= 0)
-            //{
-            //    DataItem prevItem = curItem.parent.GetPrevItem(curItem);
-            //    if (prevItem == null)
-            //        break;
-            //    StatisticUnitMap cSUM = item.statisticInfo.allStatisticInfo[numIndex];
-            //    StatisticUnitMap pSUM = prevItem.statisticInfo.allStatisticInfo[numIndex];
-            //    pathValues[0] += (cSUM.statisticUnitMap[CollectDataType.ePath0].missCount + pSUM.statisticUnitMap[CollectDataType.ePath0].missCount) * 0.5f;
-            //    pathValues[1] += (cSUM.statisticUnitMap[CollectDataType.ePath1].missCount + pSUM.statisticUnitMap[CollectDataType.ePath1].missCount) * 0.5f;
-            //    pathValues[2] += (cSUM.statisticUnitMap[CollectDataType.ePath2].missCount + pSUM.statisticUnitMap[CollectDataType.ePath2].missCount) * 0.5f;
-            //    if(curItem == item)
-            //    {
-            //        missCount[0] = cSUM.statisticUnitMap[CollectDataType.ePath0].missCount;
-            //        missCount[1] = cSUM.statisticUnitMap[CollectDataType.ePath1].missCount;
-            //        missCount[2] = cSUM.statisticUnitMap[CollectDataType.ePath2].missCount;
-            //    }
-            //    --loopCount;
-            //    curItem = prevItem;
-            //}
+            int validCount = 0;
+            int loop = 5;
+            DataItem cItem = item;
+            while( cItem != null && loop > 0 )
+            {
+                StatisticUnitMap csum = cItem.statisticInfo.allStatisticInfo[numIndex];
+                int m0 = csum.statisticUnitMap[CollectDataType.ePath0].missCount;
+                int m1 = csum.statisticUnitMap[CollectDataType.ePath1].missCount;
+                int m2 = csum.statisticUnitMap[CollectDataType.ePath2].missCount;
+                if (maxMissCount[0] < m0) maxMissCount[0] = m0;
+                if (maxMissCount[1] < m1) maxMissCount[1] = m1;
+                if (maxMissCount[2] < m2) maxMissCount[2] = m2;
+                norPathValues[0] = norPathValues[0] + csum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
+                norPathValues[1] = norPathValues[1] + csum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
+                norPathValues[2] = norPathValues[2] + csum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+                cItem = cItem.parent.GetPrevItem(cItem);
+                --loop;
+                ++validCount;
+            }
 
             pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
             pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
             pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
-
-            missCount[0] = sum.statisticUnitMap[CollectDataType.ePath0].missCount;
-            missCount[1] = sum.statisticUnitMap[CollectDataType.ePath1].missCount;
-            missCount[2] = sum.statisticUnitMap[CollectDataType.ePath2].missCount;
+            float total = pathValues[0] + pathValues[1] + pathValues[2];
+            norPathValues[0] = norPathValues[0] / validCount;
+            norPathValues[1] = norPathValues[1] / validCount;
+            norPathValues[2] = norPathValues[2] / validCount;
 
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
                 PathCmpInfo pci = new PathCmpInfo(i, pathValues[i]);
-                pci.maxMissCount = missCount[i];
+                pci.maxMissCount = maxMissCount[i];
+                pci.avgPathValue = norPathValues[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
+
+            trade.pathCmpInfos[numIndex].Sort(
+                (x, y) =>
+                {
+                    if (x.avgPathValue < y.avgPathValue)
+                        return -1;
+                    else if (x.avgPathValue > y.avgPathValue)
+                        return 1;
+                    else if (x.pathValue < y.pathValue)
+                        return -1;
+                    else if (x.pathValue > y.pathValue)
+                        return 1;
+                    else if (x.maxMissCount < y.maxMissCount)
+                        return -1;
+                    else if (x.maxMissCount > y.maxMissCount)
+                        return 1;
+                    return 0;
+                });
         }
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)

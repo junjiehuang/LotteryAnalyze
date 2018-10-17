@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,6 +51,7 @@
             this.comboBoxTradeStrategy = new System.Windows.Forms.ComboBox();
             this.checkBoxForceTradeByMaxNumCount = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.checkBoxKillLastNumber = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
             this.textBoxMultiPathTradeCount = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -70,7 +72,8 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.checkBoxKillLastNumber = new System.Windows.Forms.CheckBox();
+            this.contextMenuStripSimulationResultTree = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exportResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -80,6 +83,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.contextMenuStripSimulationResultTree.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -337,6 +341,17 @@
             this.splitContainer1.SplitterDistance = 263;
             this.splitContainer1.TabIndex = 24;
             // 
+            // checkBoxKillLastNumber
+            // 
+            this.checkBoxKillLastNumber.AutoSize = true;
+            this.checkBoxKillLastNumber.Location = new System.Drawing.Point(3, 304);
+            this.checkBoxKillLastNumber.Name = "checkBoxKillLastNumber";
+            this.checkBoxKillLastNumber.Size = new System.Drawing.Size(108, 16);
+            this.checkBoxKillLastNumber.TabIndex = 38;
+            this.checkBoxKillLastNumber.Text = "是否杀上期号码";
+            this.checkBoxKillLastNumber.UseVisualStyleBackColor = true;
+            this.checkBoxKillLastNumber.CheckedChanged += new System.EventHandler(this.checkBoxKillLastNumber_CheckedChanged);
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
@@ -501,7 +516,7 @@
             this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
             this.textBoxCmd.MinimumSize = new System.Drawing.Size(20, 20);
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(214, 378);
+            this.textBoxCmd.Size = new System.Drawing.Size(214, 361);
             this.textBoxCmd.TabIndex = 0;
             // 
             // treeViewLongWrongTradeInfos
@@ -509,9 +524,10 @@
             this.treeViewLongWrongTradeInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewLongWrongTradeInfos.ContextMenuStrip = this.contextMenuStripSimulationResultTree;
             this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
             this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 379);
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 361);
             this.treeViewLongWrongTradeInfos.TabIndex = 12;
             this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
             // 
@@ -545,16 +561,19 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // checkBoxKillLastNumber
+            // contextMenuStripSimulationResultTree
             // 
-            this.checkBoxKillLastNumber.AutoSize = true;
-            this.checkBoxKillLastNumber.Location = new System.Drawing.Point(3, 304);
-            this.checkBoxKillLastNumber.Name = "checkBoxKillLastNumber";
-            this.checkBoxKillLastNumber.Size = new System.Drawing.Size(108, 16);
-            this.checkBoxKillLastNumber.TabIndex = 38;
-            this.checkBoxKillLastNumber.Text = "是否杀上期号码";
-            this.checkBoxKillLastNumber.UseVisualStyleBackColor = true;
-            this.checkBoxKillLastNumber.CheckedChanged += new System.EventHandler(this.checkBoxKillLastNumber_CheckedChanged);
+            this.contextMenuStripSimulationResultTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportResultToolStripMenuItem});
+            this.contextMenuStripSimulationResultTree.Name = "contextMenuStripSimulationResultTree";
+            this.contextMenuStripSimulationResultTree.Size = new System.Drawing.Size(153, 48);
+            // 
+            // exportResultToolStripMenuItem
+            // 
+            this.exportResultToolStripMenuItem.Name = "exportResultToolStripMenuItem";
+            this.exportResultToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportResultToolStripMenuItem.Text = "导出结果";
+            this.exportResultToolStripMenuItem.Click += new System.EventHandler(this.exportResultToolStripMenuItem_Click);
             // 
             // GlobalSimTradeWindow
             // 
@@ -579,6 +598,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.contextMenuStripSimulationResultTree.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -629,5 +649,7 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textBoxMultiPathTradeCount;
         private System.Windows.Forms.CheckBox checkBoxKillLastNumber;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripSimulationResultTree;
+        private System.Windows.Forms.ToolStripMenuItem exportResultToolStripMenuItem;
     }
 }
