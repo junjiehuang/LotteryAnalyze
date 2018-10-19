@@ -69,11 +69,13 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textBoxCmd = new System.Windows.Forms.WebBrowser();
             this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
+            this.contextMenuStripSimulationResultTree = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exportResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.contextMenuStripSimulationResultTree = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exportResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label16 = new System.Windows.Forms.Label();
+            this.textBoxRefreshTime = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -119,7 +121,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(74, 71);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(186, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(146, 21);
             this.textBoxStartMoney.TabIndex = 3;
             // 
             // textBoxTradeCountLst
@@ -128,7 +130,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxTradeCountLst.Location = new System.Drawing.Point(74, 93);
             this.textBoxTradeCountLst.Name = "textBoxTradeCountLst";
-            this.textBoxTradeCountLst.Size = new System.Drawing.Size(186, 21);
+            this.textBoxTradeCountLst.Size = new System.Drawing.Size(146, 21);
             this.textBoxTradeCountLst.TabIndex = 4;
             // 
             // textBoxDayCountPerBatch
@@ -137,7 +139,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDayCountPerBatch.Location = new System.Drawing.Point(74, 48);
             this.textBoxDayCountPerBatch.Name = "textBoxDayCountPerBatch";
-            this.textBoxDayCountPerBatch.Size = new System.Drawing.Size(186, 21);
+            this.textBoxDayCountPerBatch.Size = new System.Drawing.Size(146, 21);
             this.textBoxDayCountPerBatch.TabIndex = 5;
             // 
             // buttonStart
@@ -152,7 +154,7 @@
             // 
             // buttonPauseResume
             // 
-            this.buttonPauseResume.Location = new System.Drawing.Point(84, 3);
+            this.buttonPauseResume.Location = new System.Drawing.Point(80, 3);
             this.buttonPauseResume.Name = "buttonPauseResume";
             this.buttonPauseResume.Size = new System.Drawing.Size(75, 23);
             this.buttonPauseResume.TabIndex = 7;
@@ -162,7 +164,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(165, 3);
+            this.buttonStop.Location = new System.Drawing.Point(158, 3);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 8;
@@ -176,7 +178,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarCurrent.Location = new System.Drawing.Point(75, 404);
             this.progressBarCurrent.Name = "progressBarCurrent";
-            this.progressBarCurrent.Size = new System.Drawing.Size(634, 23);
+            this.progressBarCurrent.Size = new System.Drawing.Size(696, 23);
             this.progressBarCurrent.TabIndex = 11;
             // 
             // progressBarTotal
@@ -185,7 +187,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarTotal.Location = new System.Drawing.Point(75, 434);
             this.progressBarTotal.Name = "progressBarTotal";
-            this.progressBarTotal.Size = new System.Drawing.Size(634, 23);
+            this.progressBarTotal.Size = new System.Drawing.Size(696, 23);
             this.progressBarTotal.TabIndex = 12;
             // 
             // checkBoxSpecNumIndex
@@ -206,7 +208,7 @@
             this.comboBoxSpecNumIndex.FormattingEnabled = true;
             this.comboBoxSpecNumIndex.Location = new System.Drawing.Point(74, 139);
             this.comboBoxSpecNumIndex.Name = "comboBoxSpecNumIndex";
-            this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(186, 20);
+            this.comboBoxSpecNumIndex.Size = new System.Drawing.Size(146, 20);
             this.comboBoxSpecNumIndex.TabIndex = 14;
             this.comboBoxSpecNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpecNumIndex_SelectedIndexChanged);
             // 
@@ -244,7 +246,7 @@
             this.textBoxStartDate.Location = new System.Drawing.Point(74, 3);
             this.textBoxStartDate.Name = "textBoxStartDate";
             this.textBoxStartDate.ReadOnly = true;
-            this.textBoxStartDate.Size = new System.Drawing.Size(186, 21);
+            this.textBoxStartDate.Size = new System.Drawing.Size(146, 21);
             this.textBoxStartDate.TabIndex = 18;
             // 
             // textBoxEndDate
@@ -254,7 +256,7 @@
             this.textBoxEndDate.Location = new System.Drawing.Point(74, 26);
             this.textBoxEndDate.Name = "textBoxEndDate";
             this.textBoxEndDate.ReadOnly = true;
-            this.textBoxEndDate.Size = new System.Drawing.Size(186, 21);
+            this.textBoxEndDate.Size = new System.Drawing.Size(146, 21);
             this.textBoxEndDate.TabIndex = 19;
             // 
             // label7
@@ -273,7 +275,7 @@
             this.comboBoxTradeStrategy.FormattingEnabled = true;
             this.comboBoxTradeStrategy.Location = new System.Drawing.Point(74, 184);
             this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
-            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(186, 20);
+            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(146, 20);
             this.comboBoxTradeStrategy.TabIndex = 20;
             this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
             // 
@@ -332,13 +334,15 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.textBoxRefreshTime);
+            this.splitContainer1.Panel2.Controls.Add(this.label16);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.buttonDebugSetting);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStop);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPauseResume);
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
-            this.splitContainer1.Size = new System.Drawing.Size(704, 394);
-            this.splitContainer1.SplitterDistance = 263;
+            this.splitContainer1.Size = new System.Drawing.Size(766, 394);
+            this.splitContainer1.SplitterDistance = 223;
             this.splitContainer1.TabIndex = 24;
             // 
             // checkBoxKillLastNumber
@@ -367,7 +371,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiPathTradeCount.Location = new System.Drawing.Point(98, 277);
             this.textBoxMultiPathTradeCount.Name = "textBoxMultiPathTradeCount";
-            this.textBoxMultiPathTradeCount.Size = new System.Drawing.Size(162, 21);
+            this.textBoxMultiPathTradeCount.Size = new System.Drawing.Size(122, 21);
             this.textBoxMultiPathTradeCount.TabIndex = 37;
             this.textBoxMultiPathTradeCount.TextChanged += new System.EventHandler(this.textBoxMultiPathTradeCount_TextChanged);
             // 
@@ -386,7 +390,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxUponValue.Location = new System.Drawing.Point(74, 206);
             this.textBoxUponValue.Name = "textBoxUponValue";
-            this.textBoxUponValue.Size = new System.Drawing.Size(186, 21);
+            this.textBoxUponValue.Size = new System.Drawing.Size(146, 21);
             this.textBoxUponValue.TabIndex = 35;
             this.textBoxUponValue.TextChanged += new System.EventHandler(this.textBoxUponValue_TextChanged);
             // 
@@ -415,7 +419,7 @@
             this.trackBarRiskControl.Location = new System.Drawing.Point(127, 251);
             this.trackBarRiskControl.Maximum = 100;
             this.trackBarRiskControl.Name = "trackBarRiskControl";
-            this.trackBarRiskControl.Size = new System.Drawing.Size(133, 23);
+            this.trackBarRiskControl.Size = new System.Drawing.Size(93, 23);
             this.trackBarRiskControl.TabIndex = 31;
             this.trackBarRiskControl.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarRiskControl.Scroll += new System.EventHandler(this.trackBarRiskControl_Scroll);
@@ -437,7 +441,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStrongUpStartIndex.Location = new System.Drawing.Point(74, 116);
             this.textBoxStrongUpStartIndex.Name = "textBoxStrongUpStartIndex";
-            this.textBoxStrongUpStartIndex.Size = new System.Drawing.Size(186, 21);
+            this.textBoxStrongUpStartIndex.Size = new System.Drawing.Size(146, 21);
             this.textBoxStrongUpStartIndex.TabIndex = 29;
             this.textBoxStrongUpStartIndex.TextChanged += new System.EventHandler(this.textBoxStrongUpStartIndex_TextChanged);
             // 
@@ -457,7 +461,7 @@
             this.comboBoxOnNoMoney.FormattingEnabled = true;
             this.comboBoxOnNoMoney.Location = new System.Drawing.Point(74, 229);
             this.comboBoxOnNoMoney.Name = "comboBoxOnNoMoney";
-            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(186, 20);
+            this.comboBoxOnNoMoney.Size = new System.Drawing.Size(146, 20);
             this.comboBoxOnNoMoney.TabIndex = 26;
             this.comboBoxOnNoMoney.SelectedIndexChanged += new System.EventHandler(this.comboBoxOnNoMoney_SelectedIndexChanged);
             // 
@@ -485,7 +489,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMaxNumCount.Location = new System.Drawing.Point(74, 161);
             this.textBoxMaxNumCount.Name = "textBoxMaxNumCount";
-            this.textBoxMaxNumCount.Size = new System.Drawing.Size(186, 21);
+            this.textBoxMaxNumCount.Size = new System.Drawing.Size(146, 21);
             this.textBoxMaxNumCount.TabIndex = 25;
             this.textBoxMaxNumCount.TextChanged += new System.EventHandler(this.textBoxMaxNumCount_TextChanged);
             // 
@@ -504,8 +508,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
-            this.splitContainer2.Size = new System.Drawing.Size(434, 375);
-            this.splitContainer2.SplitterDistance = 217;
+            this.splitContainer2.Size = new System.Drawing.Size(536, 375);
+            this.splitContainer2.SplitterDistance = 268;
             this.splitContainer2.TabIndex = 13;
             // 
             // textBoxCmd
@@ -516,7 +520,7 @@
             this.textBoxCmd.Location = new System.Drawing.Point(0, 3);
             this.textBoxCmd.MinimumSize = new System.Drawing.Size(20, 20);
             this.textBoxCmd.Name = "textBoxCmd";
-            this.textBoxCmd.Size = new System.Drawing.Size(214, 361);
+            this.textBoxCmd.Size = new System.Drawing.Size(265, 361);
             this.textBoxCmd.TabIndex = 0;
             // 
             // treeViewLongWrongTradeInfos
@@ -527,13 +531,27 @@
             this.treeViewLongWrongTradeInfos.ContextMenuStrip = this.contextMenuStripSimulationResultTree;
             this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
             this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(207, 361);
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(258, 361);
             this.treeViewLongWrongTradeInfos.TabIndex = 12;
             this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
             // 
+            // contextMenuStripSimulationResultTree
+            // 
+            this.contextMenuStripSimulationResultTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportResultToolStripMenuItem});
+            this.contextMenuStripSimulationResultTree.Name = "contextMenuStripSimulationResultTree";
+            this.contextMenuStripSimulationResultTree.Size = new System.Drawing.Size(125, 26);
+            // 
+            // exportResultToolStripMenuItem
+            // 
+            this.exportResultToolStripMenuItem.Name = "exportResultToolStripMenuItem";
+            this.exportResultToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.exportResultToolStripMenuItem.Text = "导出结果";
+            this.exportResultToolStripMenuItem.Click += new System.EventHandler(this.exportResultToolStripMenuItem_Click);
+            // 
             // buttonDebugSetting
             // 
-            this.buttonDebugSetting.Location = new System.Drawing.Point(246, 3);
+            this.buttonDebugSetting.Location = new System.Drawing.Point(237, 3);
             this.buttonDebugSetting.Name = "buttonDebugSetting";
             this.buttonDebugSetting.Size = new System.Drawing.Size(75, 23);
             this.buttonDebugSetting.TabIndex = 11;
@@ -561,25 +579,28 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // contextMenuStripSimulationResultTree
+            // label16
             // 
-            this.contextMenuStripSimulationResultTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportResultToolStripMenuItem});
-            this.contextMenuStripSimulationResultTree.Name = "contextMenuStripSimulationResultTree";
-            this.contextMenuStripSimulationResultTree.Size = new System.Drawing.Size(153, 48);
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(318, 8);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(65, 12);
+            this.label16.TabIndex = 14;
+            this.label16.Text = "刷新时间：";
             // 
-            // exportResultToolStripMenuItem
+            // textBoxRefreshTime
             // 
-            this.exportResultToolStripMenuItem.Name = "exportResultToolStripMenuItem";
-            this.exportResultToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exportResultToolStripMenuItem.Text = "导出结果";
-            this.exportResultToolStripMenuItem.Click += new System.EventHandler(this.exportResultToolStripMenuItem_Click);
+            this.textBoxRefreshTime.Location = new System.Drawing.Point(389, 5);
+            this.textBoxRefreshTime.Name = "textBoxRefreshTime";
+            this.textBoxRefreshTime.Size = new System.Drawing.Size(100, 21);
+            this.textBoxRefreshTime.TabIndex = 15;
+            this.textBoxRefreshTime.TextChanged += new System.EventHandler(this.textBoxRefreshTime_TextChanged);
             // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(714, 462);
+            this.ClientSize = new System.Drawing.Size(776, 462);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.splitContainer1);
@@ -591,6 +612,7 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRiskControl)).EndInit();
@@ -651,5 +673,7 @@
         private System.Windows.Forms.CheckBox checkBoxKillLastNumber;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripSimulationResultTree;
         private System.Windows.Forms.ToolStripMenuItem exportResultToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxRefreshTime;
+        private System.Windows.Forms.Label label16;
     }
 }

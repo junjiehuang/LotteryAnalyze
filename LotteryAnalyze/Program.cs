@@ -12,6 +12,32 @@ namespace LotteryAnalyze
     static class Program
     {
         static public FormMain mainForm = null;
+        static DateTime START_TIME;
+        static double lastTime;
+        static double deltaTime = 0;
+        static double timeSinceStartUp = 0;
+
+        static public double TimeSinceStartUp
+        {
+            get { return timeSinceStartUp; }
+        }
+        static public double DeltaTime
+        {
+            get { return deltaTime; }
+        }
+
+        static List<UpdaterBase> sWindowLst = new List<UpdaterBase>();
+        static public void AddUpdater(UpdaterBase win)
+        {
+            if (sWindowLst.Contains(win))
+                return;
+            sWindowLst.Add(win);
+        }
+        static public void RemoveUpdater(UpdaterBase win)
+        {
+            sWindowLst.Remove(win);
+        }
+
 
         /// <summary>
         /// The main entry point for the application.
@@ -19,6 +45,7 @@ namespace LotteryAnalyze
         [STAThread]
         static void Main()
         {
+            START_TIME = System.DateTime.Now;
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
@@ -37,11 +64,10 @@ namespace LotteryAnalyze
 
                 while (mainForm.Created)
                 {
-                    if (mainForm.WindowState == FormWindowState.Minimized)
-                        System.Threading.Thread.Sleep(300);
-                    else
-                        System.Threading.Thread.Sleep(0);
-
+                    //if (mainForm.WindowState == FormWindowState.Minimized)
+                    //    System.Threading.Thread.Sleep(300);
+                    //else
+                    //    System.Threading.Thread.Sleep(0);
                     Update();
                     Application.DoEvents();
                 }
@@ -51,11 +77,31 @@ namespace LotteryAnalyze
         static void Init()
         {
         }
+
         static void Update()
         {
+            ProcTime();
             TradeDataManager.Instance.Update();
-
+            BatchTradeSimulator.Instance.Update();
             Simulator.UpdateSimulate();
+            ProcUpdaters();
+        }
+
+        static void ProcTime()
+        {
+            lastTime = timeSinceStartUp;
+            DateTime curTime = System.DateTime.Now;
+            TimeSpan ts = curTime.Subtract(START_TIME);
+            timeSinceStartUp = ts.TotalSeconds;
+            deltaTime = timeSinceStartUp - lastTime;
+        }
+
+        static void ProcUpdaters()
+        {
+            for (int i = 0; i < sWindowLst.Count; ++i)
+            {
+                sWindowLst[i].OnUpdate();
+            }
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

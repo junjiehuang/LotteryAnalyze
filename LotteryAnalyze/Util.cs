@@ -1253,4 +1253,10 @@ namespace LotteryAnalyze
         public static extern bool Beep(int frequency, int duration);
     }
 
+
+    public interface UpdaterBase
+    {
+        void OnUpdate();
+    }
+
 }

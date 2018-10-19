@@ -2933,12 +2933,12 @@ namespace LotteryAnalyze
         void CalcPathMissCountArea(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-            float[] pathValues = new float[] { 0, 0, 0, };
-            float[] norPathValues = new float[] { 0, 0, 0, };
+            float[] missCountAreas = new float[] { 0, 0, 0, };
+            float[] avgMissCountAreas = new float[] { 0, 0, 0, };
             int[] maxMissCount = new int[] { 0, 0, 0, };
 
             int validCount = 0;
-            int loop = 5;
+            int loop = LotteryStatisticInfo.FAST_COUNT;
             DataItem cItem = item;
             while( cItem != null && loop > 0 )
             {
@@ -2949,28 +2949,28 @@ namespace LotteryAnalyze
                 if (maxMissCount[0] < m0) maxMissCount[0] = m0;
                 if (maxMissCount[1] < m1) maxMissCount[1] = m1;
                 if (maxMissCount[2] < m2) maxMissCount[2] = m2;
-                norPathValues[0] = norPathValues[0] + csum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
-                norPathValues[1] = norPathValues[1] + csum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
-                norPathValues[2] = norPathValues[2] + csum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+                avgMissCountAreas[0] = avgMissCountAreas[0] + csum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
+                avgMissCountAreas[1] = avgMissCountAreas[1] + csum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
+                avgMissCountAreas[2] = avgMissCountAreas[2] + csum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
                 cItem = cItem.parent.GetPrevItem(cItem);
                 --loop;
                 ++validCount;
             }
 
-            pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
-            pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
-            pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
-            float total = pathValues[0] + pathValues[1] + pathValues[2];
-            norPathValues[0] = norPathValues[0] / validCount;
-            norPathValues[1] = norPathValues[1] / validCount;
-            norPathValues[2] = norPathValues[2] / validCount;
+            missCountAreas[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
+            missCountAreas[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
+            missCountAreas[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+            float total = missCountAreas[0] + missCountAreas[1] + missCountAreas[2];
+            avgMissCountAreas[0] = avgMissCountAreas[0] / validCount;
+            avgMissCountAreas[1] = avgMissCountAreas[1] / validCount;
+            avgMissCountAreas[2] = avgMissCountAreas[2] / validCount;
 
             trade.pathCmpInfos[numIndex].Clear();
-            for (int i = 0; i < pathValues.Length; ++i)
+            for (int i = 0; i < missCountAreas.Length; ++i)
             {
-                PathCmpInfo pci = new PathCmpInfo(i, pathValues[i]);
+                PathCmpInfo pci = new PathCmpInfo(i, missCountAreas[i]);
                 pci.maxMissCount = maxMissCount[i];
-                pci.avgPathValue = norPathValues[i];
+                pci.avgPathValue = avgMissCountAreas[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 

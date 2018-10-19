@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace LotteryAnalyze.UI
 {
-    public partial class LotteryGraph : Form
+    public partial class LotteryGraph : Form, UpdaterBase
     {
         static List<LotteryGraph> instLst = new List<LotteryGraph>();
 
@@ -29,7 +29,9 @@ namespace LotteryAnalyze.UI
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
         static Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
         Pen curUpdatePen;
-        System.Windows.Forms.Timer updateTimer;
+        //System.Windows.Forms.Timer updateTimer;
+        int updateInterval = 500;
+        double updateCountDown = 0;
 
         #region ctor and common
 
@@ -93,10 +95,13 @@ namespace LotteryAnalyze.UI
             comboBoxOperations.SelectedIndex = (int)graphMgr.kvalueGraph.auxOperationIndex;
             checkBoxShowAuxLines.Checked = graphMgr.kvalueGraph.enableAuxiliaryLine;
 
-            updateTimer = new Timer();
-            updateTimer.Interval = 500;
-            updateTimer.Tick += UpdateTimer_Tick;
-            updateTimer.Start();
+            updateInterval = 500;
+            //updateTimer = new Timer();
+            //updateTimer.Interval = updateInterval;
+            //updateTimer.Tick += UpdateTimer_Tick;
+            //updateTimer.Start();
+            updateCountDown = 0;
+            textBoxRefreshTimeLength.Text = updateInterval.ToString();
             curUpdatePen = redPen;
 
             comboBoxTradeNumIndex.DataSource = KDataDictContainer.C_TAGS;
@@ -184,6 +189,7 @@ namespace LotteryAnalyze.UI
 
             this.KeyPreview = true;
             FormMain.AddWindow(this);
+            Program.AddUpdater(this);
         }
 
         void chk_CheckedChangedAppearence(object sender, EventArgs e)
@@ -223,13 +229,26 @@ namespace LotteryAnalyze.UI
             }
         }
 
+        public virtual void OnUpdate()
+        {
+            if (updateCountDown <= 0)
+            {
+                UpdateTimer_Tick(null, null);
+                updateCountDown = (double)updateInterval / 1000.0;
+            }
+            else
+            {
+                updateCountDown -= Program.DeltaTime;
+            }
+        }
+
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             trackBarKData.Minimum = 0;
             trackBarKData.Maximum = GraphDataManager.KGDC.DataLength();
             trackBarTradeData.Minimum = 0;
             trackBarTradeData.Maximum = TradeDataManager.Instance.historyTradeDatas.Count;
-            if(hasNewDataUpdate)
+            if (hasNewDataUpdate)
             {
                 if (curUpdatePen == redPen || curUpdatePen == yellowPen)
                     curUpdatePen = greenPen;
@@ -237,7 +256,6 @@ namespace LotteryAnalyze.UI
                     curUpdatePen = redPen;
                 else
                     curUpdatePen = redPen;
-                Invalidate(true);
             }
             else if (TradeDataManager.Instance.IsPause())
             {
@@ -247,10 +265,12 @@ namespace LotteryAnalyze.UI
                     curUpdatePen = yellowPen;
                 else
                     curUpdatePen = redPen;
-                Invalidate(true);
             }
             else
+            {
                 curUpdatePen = redPen;
+            }
+            Invalidate(true);
         }
 
         void RefreshUI()
@@ -718,8 +738,14 @@ namespace LotteryAnalyze.UI
         #region control callbacks
         private void LotteryGraph_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //if (updateTimer != null)
+            //{
+            //    updateTimer.Stop();
+            //    updateTimer.Dispose();
+            //    updateTimer = null;
+            //}
+            Program.RemoveUpdater(this);
             TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
-
             FormMain.RemoveWindow(this);
             instLst.Remove(this);
         }
@@ -1164,12 +1190,12 @@ namespace LotteryAnalyze.UI
                     this.panelUp.ClientSize.Height,
                     true, xOffSet);
             }
-            trackBarTradeData.Value = trackBarTradeData.Maximum;
-            this.Invalidate(true);
+            trackBarTradeData.Value = trackBarTradeData.Maximum;            
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
-
             DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
             CollectBarGraphData(curItem);
+
+            //this.Invalidate(true);
         }
 
         public static void OnSelectDataItemOuter(int dataItemIndex, int tradeIndex)
@@ -1277,6 +1303,16 @@ namespace LotteryAnalyze.UI
         private void comboBoxMissCountType_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.missCountGraph.missCountType = (GraphMissCount.MissCountType)comboBoxMissCountType.SelectedIndex;
+            this.Invalidate(true);
+        }
+
+        private void textBoxRefreshTimeLength_TextChanged(object sender, EventArgs e)
+        {
+            if(int.TryParse(textBoxRefreshTimeLength.Text, out updateInterval) == false)
+                updateInterval = 50;
+            if (updateInterval < 1)
+                updateInterval = 1;
+            textBoxRefreshTimeLength.Text = updateInterval.ToString();
             this.Invalidate(true);
         }
     }

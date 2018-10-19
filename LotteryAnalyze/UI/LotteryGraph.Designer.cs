@@ -157,14 +157,16 @@ namespace LotteryAnalyze.UI
             this.groupBoxCDTShowSetting = new System.Windows.Forms.GroupBox();
             this.checkBoxShowSingleLine = new System.Windows.Forms.CheckBox();
             this.tabPageMissCount = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.comboBoxMissCountType = new System.Windows.Forms.ComboBox();
             this.groupBoxMissCountCDTShowSetting = new System.Windows.Forms.GroupBox();
             this.checkBoxMissCountShowSingleLine = new System.Windows.Forms.CheckBox();
             this.comboBoxCollectionDataType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxMissCountType = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBoxRefreshTimeLength = new System.Windows.Forms.TextBox();
             this.CreateUpAndDownPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -349,6 +351,8 @@ namespace LotteryAnalyze.UI
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.textBoxRefreshTimeLength);
+            this.splitContainer1.Panel2.Controls.Add(this.label17);
             this.splitContainer1.Panel2.Controls.Add(this.buttonClearFavoriteCharts);
             this.splitContainer1.Panel2.Controls.Add(this.buttonAddFavoriteChart);
             this.splitContainer1.Panel2.Controls.Add(this.listBoxFavoriteCharts);
@@ -514,7 +518,7 @@ namespace LotteryAnalyze.UI
             // 
             // textBoxGridScaleH
             // 
-            this.textBoxGridScaleH.Location = new System.Drawing.Point(87, 19);
+            this.textBoxGridScaleH.Location = new System.Drawing.Point(209, 1);
             this.textBoxGridScaleH.Name = "textBoxGridScaleH";
             this.textBoxGridScaleH.Size = new System.Drawing.Size(66, 21);
             this.textBoxGridScaleH.TabIndex = 10;
@@ -522,7 +526,7 @@ namespace LotteryAnalyze.UI
             // 
             // textBoxGridScaleW
             // 
-            this.textBoxGridScaleW.Location = new System.Drawing.Point(7, 19);
+            this.textBoxGridScaleW.Location = new System.Drawing.Point(129, 1);
             this.textBoxGridScaleW.Name = "textBoxGridScaleW";
             this.textBoxGridScaleW.Size = new System.Drawing.Size(67, 21);
             this.textBoxGridScaleW.TabIndex = 9;
@@ -1165,6 +1169,26 @@ namespace LotteryAnalyze.UI
             this.tabPageMissCount.Text = "遗漏图";
             this.tabPageMissCount.UseVisualStyleBackColor = true;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(3, 23);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(77, 12);
+            this.label16.TabIndex = 6;
+            this.label16.Text = "遗漏图类型：";
+            // 
+            // comboBoxMissCountType
+            // 
+            this.comboBoxMissCountType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxMissCountType.FormattingEnabled = true;
+            this.comboBoxMissCountType.Location = new System.Drawing.Point(114, 20);
+            this.comboBoxMissCountType.Name = "comboBoxMissCountType";
+            this.comboBoxMissCountType.Size = new System.Drawing.Size(200, 20);
+            this.comboBoxMissCountType.TabIndex = 5;
+            this.comboBoxMissCountType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMissCountType_SelectedIndexChanged);
+            // 
             // groupBoxMissCountCDTShowSetting
             // 
             this.groupBoxMissCountCDTShowSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1244,25 +1268,24 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // comboBoxMissCountType
+            // label17
             // 
-            this.comboBoxMissCountType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(5, 28);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(65, 12);
+            this.label17.TabIndex = 14;
+            this.label17.Text = "刷新时间：";
+            // 
+            // textBoxRefreshTimeLength
+            // 
+            this.textBoxRefreshTimeLength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxMissCountType.FormattingEnabled = true;
-            this.comboBoxMissCountType.Location = new System.Drawing.Point(114, 20);
-            this.comboBoxMissCountType.Name = "comboBoxMissCountType";
-            this.comboBoxMissCountType.Size = new System.Drawing.Size(200, 20);
-            this.comboBoxMissCountType.TabIndex = 5;
-            this.comboBoxMissCountType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMissCountType_SelectedIndexChanged);
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(3, 23);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(77, 12);
-            this.label16.TabIndex = 6;
-            this.label16.Text = "遗漏图类型：";
+            this.textBoxRefreshTimeLength.Location = new System.Drawing.Point(87, 25);
+            this.textBoxRefreshTimeLength.Name = "textBoxRefreshTimeLength";
+            this.textBoxRefreshTimeLength.Size = new System.Drawing.Size(241, 21);
+            this.textBoxRefreshTimeLength.TabIndex = 15;
+            this.textBoxRefreshTimeLength.TextChanged += new System.EventHandler(this.textBoxRefreshTimeLength_TextChanged);
             // 
             // LotteryGraph
             // 
@@ -1410,5 +1433,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.CheckBox checkBoxMissCountShowSingleLine;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ComboBox comboBoxMissCountType;
+        private System.Windows.Forms.TextBox textBoxRefreshTimeLength;
+        private System.Windows.Forms.Label label17;
     }
 }

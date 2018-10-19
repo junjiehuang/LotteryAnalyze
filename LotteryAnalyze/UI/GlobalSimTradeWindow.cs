@@ -18,15 +18,17 @@ namespace LotteryAnalyze.UI
         eStopTrade,
     }
 
-    public partial class GlobalSimTradeWindow : Form
+    public partial class GlobalSimTradeWindow : Form, UpdaterBase
     {
         static string[] OperateOnNoMoneyAR = {"无操作", "暂停交易模拟", "终止交易模拟", };
 
         static GlobalSimTradeWindow sInst;
-        System.Windows.Forms.Timer updateTimer;
+        //System.Windows.Forms.Timer updateTimer;
         int startDate = -1;
         int endDate = -1;
         bool stopTradeOnNoMoney = true;
+        int updateInterval = 500;
+        double updateCountDown = 0;
 
         public void SaveCfg()
         {
@@ -49,6 +51,7 @@ namespace LotteryAnalyze.UI
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "uponValue", TradeDataManager.Instance.uponValue);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "multiPathTradeCount", TradeDataManager.Instance.MultiTradePathCount);
             SystemCfg.Instance.CFG.WriteInt("SimTrade", "killLastNumber", checkBoxKillLastNumber.Checked ? 1 : 0);
+            SystemCfg.Instance.CFG.WriteInt("SimTrade", "procOnNegMoney", comboBoxOnNoMoney.SelectedIndex);
 
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
             textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
@@ -75,53 +78,72 @@ namespace LotteryAnalyze.UI
 
             textBoxRiskControl.Text = TradeDataManager.Instance.RiskControl.ToString();
             textBoxMultiPathTradeCount.Text = TradeDataManager.Instance.MultiTradePathCount.ToString();
+
+            int procOnNegMoney = SystemCfg.Instance.CFG.ReadInt("SimTrade", "procOnNegMoney", 0);
+            comboBoxOnNoMoney.SelectedIndex = procOnNegMoney;
         }
 
-        public GlobalSimTradeWindow()
+        public virtual void OnUpdate()
+        {
+            progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
+            progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
+
+            if (updateCountDown <= 0)
+            {
+                UpdateTimer_Tick(null, null);
+                updateCountDown = (double)updateInterval / 1000.0;
+            }
+            else
+            {
+                updateCountDown -= Program.DeltaTime;
+            }
+        }
+
+        GlobalSimTradeWindow()
         {
             InitializeComponent();
+
+            //采用双缓冲技术的控件必需的设置
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
+
+            comboBoxOnNoMoney.DataSource = OperateOnNoMoneyAR;
+            comboBoxSpecNumIndex.DataSource = KDataDictContainer.C_TAGS;
+            comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
 
             ReadCfg();
 
             int preSelIndex;
 
             textBoxStrongUpStartIndex.Text = TradeDataManager.Instance.strongUpStartTradeIndex.ToString();
-
             textBoxDayCountPerBatch.Text = BatchTradeSimulator.Instance.batch.ToString();
             textBoxStartMoney.Text = BatchTradeSimulator.Instance.startMoney.ToString();
             textBoxTradeCountLst.Text = TradeDataManager.Instance.GetTradeCountInfoStr();
-
-            preSelIndex = TradeDataManager.Instance.simSelNumIndex;
-            comboBoxSpecNumIndex.DataSource = KDataDictContainer.C_TAGS;
+            preSelIndex = TradeDataManager.Instance.simSelNumIndex;            
             comboBoxSpecNumIndex.SelectedIndex = preSelIndex;
             TradeDataManager.Instance.simSelNumIndex = preSelIndex;
             //checkBoxSpecNumIndex.Checked = TradeDataManager.Instance.simSelNumIndex != -1;
-
-            preSelIndex = (int)TradeDataManager.Instance.curTradeStrategy;
-            comboBoxTradeStrategy.DataSource = TradeDataManager.STRATEGY_NAMES;
+            preSelIndex = (int)TradeDataManager.Instance.curTradeStrategy;            
             comboBoxTradeStrategy.SelectedIndex = preSelIndex;
             TradeDataManager.Instance.curTradeStrategy = (TradeDataManager.TradeStrategy)(preSelIndex);
-
             checkBoxForceTradeByMaxNumCount.Checked = TradeDataManager.Instance.forceTradeByMaxNumCount;
             textBoxMaxNumCount.Text = TradeDataManager.Instance.maxNumCount.ToString();
-
             checkBoxKillLastNumber.Checked = TradeDataManager.Instance.killLastNumber;
-
-            //checkBoxStopOnNoMoney.Checked = stopTradeOnNoMoney;
-            comboBoxOnNoMoney.DataSource = OperateOnNoMoneyAR;
-            comboBoxOnNoMoney.SelectedIndex = 1;
-
+            //checkBoxStopOnNoMoney.Checked = stopTradeOnNoMoney;            
+            //comboBoxOnNoMoney.SelectedIndex = 1;
             trackBarRiskControl.Value = (int)(TradeDataManager.Instance.RiskControl * trackBarRiskControl.Maximum);
-
-            updateTimer = new Timer();
-            updateTimer.Interval = 10;
-            updateTimer.Tick += UpdateTimer_Tick;
-            updateTimer.Start();
+            //updateTimer = new Timer();
+            //updateTimer.Interval = 10;
+            //updateTimer.Tick += UpdateTimer_Tick;
+            //updateTimer.Start();
+            textBoxRefreshTime.Text = updateInterval.ToString();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
             TradeDataManager.Instance.longWrongTradeCallBack += OnLongWrongTrade;
 
             FormMain.AddWindow(this);
+            Program.AddUpdater(this);
         }
 
         private void OnTradeCompleted()
@@ -181,10 +203,9 @@ namespace LotteryAnalyze.UI
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            BatchTradeSimulator.Instance.Update();
-
-            progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
-            progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
+            //BatchTradeSimulator.Instance.Update();
+            //progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
+            //progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
 
             string NL = "<br>";
 
@@ -198,27 +219,33 @@ namespace LotteryAnalyze.UI
                 else
                     missStr += "<font color=\"black\">连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "#NL#</font>";
             }
-            
+
+            string info = "";
             if (BatchTradeSimulator.Instance.HasFinished())
-            {
-                string info = "";
+            {                
                 info += ("结束任务!#NL#---------------------#NL#");
+
                 info += ("[当前金额: (");
-                info += (BatchTradeSimulator.Instance.currentMoney);
+                if (BatchTradeSimulator.Instance.currentMoney > 0)
+                    info += "+";
+                info += (int)(BatchTradeSimulator.Instance.currentMoney);
                 info += (")]#NL#[最高金额: (");
-                info += (BatchTradeSimulator.Instance.maxMoney);
+                if (BatchTradeSimulator.Instance.maxMoney > 0)
+                    info += "+";
+                info += (int)(BatchTradeSimulator.Instance.maxMoney);
                 info += (")]#NL#[最低金额: (");
-                info += (BatchTradeSimulator.Instance.minMoney);
-                if(BatchTradeSimulator.Instance.currentMoney > BatchTradeSimulator.Instance.startMoney)
-                {
-                    info += (")]#NL#[盈利: (<font color=\"red\">");
-                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney) + "</font>";
-                }
-                else if(BatchTradeSimulator.Instance.currentMoney < BatchTradeSimulator.Instance.startMoney)
-                {
+                if (BatchTradeSimulator.Instance.minMoney > 0)
+                    info += "+";
+                info += (int)(BatchTradeSimulator.Instance.minMoney);
+                int delta = (int)(BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);
+                if (delta > 0)
+                    info += (")]#NL#[盈利: (<font color=\"red\">+");
+                else if (delta < 0)
                     info += (")]#NL#[亏损: (<font color=\"green\">");
-                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney) + "</font>";
-                }
+                else
+                    info += (")]#NL#[平衡: (<font color=\"white\">");
+                info += delta + "</font>";
+
                 info += (")]#NL#---------------------#NL#");
                 info += ("[总的次数: ");
                 info += (BatchTradeSimulator.Instance.totalCount);
@@ -232,29 +259,13 @@ namespace LotteryAnalyze.UI
 
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
-
-                try
-                {
-                    if (info.CompareTo(textBoxCmd.DocumentText) != 0)
-                    {
-                        Point scrollpos = textBoxCmd.AutoScrollOffset;
-                        textBoxCmd.DocumentText = info;
-                        textBoxCmd.AutoScrollOffset = scrollpos;
-                    }
-                }
-                catch(Exception exp)
-                {
-                    
-                }
-                //textBoxCmd.Text = info + missStr;
             }
             else if (BatchTradeSimulator.Instance.HasJob())
             {
                 DataItem fItem = DataManager.GetInst().GetFirstItem();
                 DataItem lItem = DataManager.GetInst().GetLatestItem();
                 DataItem cItem = TradeDataManager.Instance.GetLatestTradedDataItem();
-
-                string info = "";
+                
                 info += ("[当前进度: ");
                 info += (progressBarCurrent.Value);
                 info += ("%] [总进度: ");
@@ -270,22 +281,25 @@ namespace LotteryAnalyze.UI
                     info += (cItem.idTag);
                     info += ("]#NL#---------------------#NL#");
                 }
-                info += ("[当前金额: (");
-                info += (BatchTradeSimulator.Instance.currentMoney);
+
+                info += (int)(BatchTradeSimulator.Instance.currentMoney);
                 info += (")]#NL#[最高金额: (");
-                info += (BatchTradeSimulator.Instance.maxMoney);
+                if (BatchTradeSimulator.Instance.maxMoney > 0)
+                    info += "+";
+                info += (int)(BatchTradeSimulator.Instance.maxMoney);
                 info += (")]#NL#[最低金额: (");
-                info += (BatchTradeSimulator.Instance.minMoney);
-                if (BatchTradeSimulator.Instance.currentMoney > BatchTradeSimulator.Instance.startMoney)
-                {
-                    info += (")]#NL#[盈利: (<font color=\"red\">");
-                    info += (BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney) + "</font>";
-                }
-                else if (BatchTradeSimulator.Instance.currentMoney < BatchTradeSimulator.Instance.startMoney)
-                {
+                if (BatchTradeSimulator.Instance.minMoney > 0)
+                    info += "+";
+                info += (int)(BatchTradeSimulator.Instance.minMoney);
+                int delta = (int)(BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);
+                if (delta > 0)
+                    info += (")]#NL#[盈利: (<font color=\"red\">+");
+                else if (delta < 0)
                     info += (")]#NL#[亏损: (<font color=\"green\">");
-                    info += (-BatchTradeSimulator.Instance.currentMoney + BatchTradeSimulator.Instance.startMoney) + "</font>";
-                }
+                else
+                    info += (")]#NL#[平衡: (<font color=\"white\">");
+                info += delta + "</font>";
+
                 info += (")]#NL#---------------------#NL#");
                 info += ("[总的次数: ");
                 info += (BatchTradeSimulator.Instance.totalCount);
@@ -299,32 +313,22 @@ namespace LotteryAnalyze.UI
 
                 info = "<font size=2>" + info + missStr + "</font>";
                 info = info.Replace("#NL#", NL);
-                //textBoxCmd.Text = info;
-                try
-                {
-                    if (info.CompareTo(textBoxCmd.DocumentText) != 0)
-                    {
-                        Point scrollpos = textBoxCmd.AutoScrollOffset;
-                        textBoxCmd.DocumentText = info;
-                        textBoxCmd.AutoScrollOffset = scrollpos;
-                    }
-                }
-                catch (Exception exp)
-                {
-
-                }
-                info = null;
             }
-            else
-                textBoxCmd.Text = "";
 
-            //if(TradeDataManager.Instance.currentMoney <= 0)
-            //{
-            //    if (comboBoxOnNoMoney.SelectedIndex == 1)
-            //        Pause();
-            //    else if(comboBoxOnNoMoney.SelectedIndex == 2)
-            //        Stop();
-            //}
+            try
+            {
+                if (info.CompareTo(textBoxCmd.DocumentText) != 0)
+                {
+                    Point scrollpos = textBoxCmd.AutoScrollOffset;
+                    textBoxCmd.DocumentText = info;
+                    textBoxCmd.AutoScrollOffset = scrollpos;
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.ToString());
+            }
+            info = null;
 
             if (BatchTradeSimulator.Instance.IsPause())
             {
@@ -336,6 +340,7 @@ namespace LotteryAnalyze.UI
                 buttonPauseResume.Text = "暂停";
                 buttonPauseResume.BackColor = Color.Yellow;
             }
+            this.Invalidate(true);
         }
 
         public static void Open()
@@ -423,15 +428,16 @@ namespace LotteryAnalyze.UI
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if(updateTimer != null)
-            {
-                updateTimer.Stop();
-                updateTimer.Dispose();
-            }
+            //if(updateTimer != null)
+            //{
+            //    updateTimer.Stop();
+            //    updateTimer.Dispose();
+            //}
             TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
             TradeDataManager.Instance.longWrongTradeCallBack -= OnLongWrongTrade;
 
             FormMain.RemoveWindow(this);
+            Program.RemoveUpdater(this);
 
             BatchTradeSimulator.Instance.Stop();
             sInst = null;
@@ -568,6 +574,7 @@ namespace LotteryAnalyze.UI
             info += "\t<uponValue>" + TradeDataManager.Instance.uponValue + "</uponValue>\n";
             info += "\t<MultiTradePathCount>" + TradeDataManager.Instance.MultiTradePathCount + "</MultiTradePathCount>\n";
             info += "\t<killLastNumber>" + checkBoxKillLastNumber.Checked + "</killLastNumber>\n";
+            info += "\t<procOnNegMoney>" + comboBoxOnNoMoney.SelectedIndex + "</procOnNegMoney>\n";
             info += "</TradeStrategy>\n";
 
             info += "<Simple>\n";
@@ -620,6 +627,16 @@ namespace LotteryAnalyze.UI
             //关闭流
             sw.Close();
             fs.Close();
+        }
+
+        private void textBoxRefreshTime_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(textBoxRefreshTime.Text, out updateInterval) == false)
+                updateInterval = 50;
+            if (updateInterval < 1)
+                updateInterval = 1;
+            textBoxRefreshTime.Text = updateInterval.ToString();
+            this.Invalidate(true);
         }
     }
 }
