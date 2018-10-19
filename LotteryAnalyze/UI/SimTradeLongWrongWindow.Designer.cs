@@ -33,6 +33,7 @@
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStep = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
+            this.buttonPause = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // treeViewLongWrongInfo
@@ -42,7 +43,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongInfo.Location = new System.Drawing.Point(2, 3);
             this.treeViewLongWrongInfo.Name = "treeViewLongWrongInfo";
-            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(372, 257);
+            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(404, 257);
             this.treeViewLongWrongInfo.TabIndex = 0;
             // 
             // buttonLoadLongWrongInfo
@@ -73,6 +74,7 @@
             this.buttonStep.TabIndex = 3;
             this.buttonStep.Text = "单步";
             this.buttonStep.UseVisualStyleBackColor = true;
+            this.buttonStep.Click += new System.EventHandler(this.buttonStep_Click);
             // 
             // buttonStop
             // 
@@ -84,11 +86,22 @@
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
+            // buttonPause
+            // 
+            this.buttonPause.Location = new System.Drawing.Point(326, 266);
+            this.buttonPause.Name = "buttonPause";
+            this.buttonPause.Size = new System.Drawing.Size(75, 23);
+            this.buttonPause.TabIndex = 5;
+            this.buttonPause.Text = "暂停";
+            this.buttonPause.UseVisualStyleBackColor = true;
+            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
+            // 
             // SimTradeLongWrongWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(377, 296);
+            this.ClientSize = new System.Drawing.Size(409, 296);
+            this.Controls.Add(this.buttonPause);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonStep);
             this.Controls.Add(this.buttonStart);
@@ -108,5 +121,6 @@
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Button buttonStep;
         private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.Button buttonPause;
     }
 }

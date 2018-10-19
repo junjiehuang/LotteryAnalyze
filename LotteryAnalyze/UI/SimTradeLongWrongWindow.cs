@@ -15,7 +15,7 @@ namespace LotteryAnalyze.UI
         static SimTradeLongWrongWindow sInst;
         TreeNode curParentNode = null;
         TreeNode curSubNode = null;
-        bool isStep = false;
+        bool isPause = false;
         double updateInterval = 0.5;
         double updateCountDown = 0;
 
@@ -36,6 +36,8 @@ namespace LotteryAnalyze.UI
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
+
+            buttonPause.Text = isPause ? "恢复" : "暂停";
 
             FormMain.AddWindow(this);
             Program.AddUpdater(this);
@@ -88,7 +90,8 @@ namespace LotteryAnalyze.UI
             curParentNode = treeViewLongWrongInfo.Nodes[0];
             curSubNode = curParentNode.Nodes[0];
             treeViewLongWrongInfo.SelectedNode = curSubNode;
-
+            isPause = false;
+            buttonPause.Text = isPause ? "恢复" : "暂停";
             PrepareSim();
         }
 
@@ -121,6 +124,8 @@ namespace LotteryAnalyze.UI
         {
             GlobalSimTradeWindow.Instance.DoStop();
             BatchTradeSimulator.Instance.Stop();
+            isPause = false;
+            buttonPause.Text = isPause ? "恢复" : "暂停";
         }
 
         void Step()
@@ -158,7 +163,8 @@ namespace LotteryAnalyze.UI
                 updateCountDown = updateInterval;
                 if (BatchTradeSimulator.Instance.HasFinished())
                 {
-                    Step();
+                    if(isPause == false)
+                        Step();
                 }
             }
             else
@@ -187,6 +193,35 @@ namespace LotteryAnalyze.UI
         private void buttonStop_Click(object sender, EventArgs e)
         {
             Stop();
+        }
+
+        private void buttonPause_Click(object sender, EventArgs e)
+        {
+            isPause = !isPause;
+            buttonPause.Text = isPause ? "恢复" : "暂停";
+        }
+
+        private void buttonStep_Click(object sender, EventArgs e)
+        {
+            if(BatchTradeSimulator.Instance.IsSimulating == false)
+            {
+                Start();
+                isPause = true;
+                buttonPause.Text = isPause ? "恢复" : "暂停";
+            }
+            else if (BatchTradeSimulator.Instance.HasFinished())
+            {
+                if (curSubNode == null)
+                {
+                    Start();
+                    isPause = true;
+                    buttonPause.Text = isPause ? "恢复" : "暂停";
+                }
+                else
+                {
+                    Step();
+                }
+            }
         }
     }
 }
