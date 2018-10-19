@@ -146,6 +146,23 @@ namespace LotteryAnalyze
             }
         }
 
+        public int GetDateIndex(string dateStr)
+        {
+            for( int i = 0; i < listViewFileList.Items.Count; ++i )
+            {
+                if (listViewFileList.Items[i].Name == dateStr)
+                    return i;
+            }
+            return -1;
+        }
+
+        public int GetDateTag(int index)
+        {
+            if (index >= 0 && index < listViewFileList.Items.Count)
+                return (int)listViewFileList.Items[index].Tag;
+            return -1;
+        }
+
         void RefreshDataView()
         {
             DataManager dataMgr = DataManager.GetInst();
@@ -570,7 +587,16 @@ namespace LotteryAnalyze
 
         private void globalSimTradeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UI.GlobalSimTradeWindow.Open();
+            //UI.GlobalSimTradeWindow.Open();
+            int startDate = -1, endDate = -1;
+            if (listViewFileList.Items.Count > 0)
+            {
+                startDate = (int)listViewFileList.Items[0].Tag;
+                endDate = (int)listViewFileList.Items[listViewFileList.Items.Count - 1].Tag;
+                BatchTradeSimulator.Instance.Stop();
+                GlobalSimTradeWindow.SetSimStartDateAndEndDate(startDate, endDate);
+                LotteryGraph.Open(false);
+            }
         }
 
         private void tradeCalculaterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -622,6 +648,11 @@ namespace LotteryAnalyze
                 updateTimer.Stop();
                 updateTimer = null;
             }
+        }
+
+        private void openSimTradeLongWrongWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SimTradeLongWrongWindow.Open();
         }
     }
 }

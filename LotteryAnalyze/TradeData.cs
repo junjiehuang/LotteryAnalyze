@@ -33,14 +33,16 @@ namespace LotteryAnalyze
 
     public class PathCmpInfo
     {
+        public Dictionary<string, object> paramMap = new Dictionary<string, object>();
         public int pathIndex;
+        public StatisticUnit su;
+
         public float pathValue;
         public int uponBMCount;
         public TradeDataManager.MACDLineWaveConfig macdLineCfg;
         public TradeDataManager.MACDBarConfig macdBarCfg;
         public TradeDataManager.KGraphConfig kGraphCfg;
-
-        public StatisticUnit su;
+        
         public bool isStrongUp;
         public int maxMissCount;
 
@@ -51,6 +53,12 @@ namespace LotteryAnalyze
         public int vertDistToBML = 0;
         public int vertDistToBDL = 0;
         public int maxVertDist = 0;
+
+        public PathCmpInfo(int _id, StatisticUnit _su)
+        {
+            pathIndex = _id;
+            su = _su;
+        }
 
         public PathCmpInfo(int id, float v, int _uponBMCount, 
             TradeDataManager.MACDLineWaveConfig lineCFG,
@@ -306,6 +314,10 @@ namespace LotteryAnalyze
     // 一星交易数据
     public class TradeDataOneStar : TradeDataBase
     {
+        static Type IT = typeof(int);
+        static Type FT = typeof(float);
+        static Type BT = typeof(bool);
+
         public static float SingleTradeCost = 1;
         public static float SingleTradeReward = 9.8f;
 
@@ -313,6 +325,19 @@ namespace LotteryAnalyze
 
 #if TRADE_DBG
         public List<List<PathCmpInfo>> pathCmpInfos = new List<List<PathCmpInfo>>();
+        public int FindIndex(int numindex, int pathIndex)
+        {
+            if (numindex < 0 || numindex >= pathCmpInfos.Count)
+                return -1;
+            if (pathIndex < 0 || pathIndex >= pathCmpInfos[numindex].Count)
+                return -1;
+            for( int i = 0; i < pathCmpInfos[numindex].Count; ++ i )
+            {
+                if (pathCmpInfos[numindex][i].pathIndex == pathIndex)
+                    return i;
+            }
+            return -1;
+        }
 #endif
 
         public TradeDataOneStar()
@@ -331,30 +356,37 @@ namespace LotteryAnalyze
         {
 #if TRADE_DBG
             string dbgtxt = "";
-            for(int i = 0; i < pathCmpInfos.Count; ++i)
+            List<PathCmpInfo> pcis = null;
+            PathCmpInfo pci = null;
+            for (int i = 0; i < pathCmpInfos.Count; ++i)
             {
-                if(pathCmpInfos[i].Count > 0)
+                pcis = pathCmpInfos[i];
+                for (int j = 0; j < pcis.Count; ++j)
                 {
-                    for(int j = 0; j < pathCmpInfos[i].Count; ++j)
+                    pci = pcis[j];
+                    dbgtxt += "[" + pci.pathIndex + "] ";
+                    var etor = pci.paramMap.GetEnumerator();
+                    while(etor.MoveNext())
                     {
-                        dbgtxt += "[" + pathCmpInfos[i][j].pathIndex + " = " + pathCmpInfos[i][j].pathValue;
-                        dbgtxt += ", AvgP = " + pathCmpInfos[i][j].avgPathValue.ToString();
-                        if (pathCmpInfos[i][j].kGraphCfg != TradeDataManager.KGraphConfig.eNone)
-                            dbgtxt += ", K = " + pathCmpInfos[i][j].kGraphCfg.ToString();
-                        if (pathCmpInfos[i][j].macdLineCfg != TradeDataManager.MACDLineWaveConfig.eNone)
-                            dbgtxt += ", L = " + pathCmpInfos[i][j].macdLineCfg.ToString();
-                        if (pathCmpInfos[i][j].macdBarCfg != TradeDataManager.MACDBarConfig.eNone)
-                            dbgtxt += ", B = " + pathCmpInfos[i][j].macdBarCfg.ToString();
-                        //dbgtxt += ", Up = " + pathCmpInfos[i][j].isStrongUp.ToString();
-                        //dbgtxt += ", MM = " + pathCmpInfos[i][j].maxMissCount.ToString();
-                        dbgtxt += ", HD = " + pathCmpInfos[i][j].horzDist.ToString();
-                        dbgtxt += ", UBMC = " + pathCmpInfos[i][j].uponBMCount.ToString();
-                        dbgtxt += ", VD2MKV = " + pathCmpInfos[i][j].vertDistToMinKValue.ToString();
-                        dbgtxt += ", VD2BML = " + pathCmpInfos[i][j].vertDistToBML.ToString();
-                        dbgtxt += ", VD2BDL = " + pathCmpInfos[i][j].vertDistToBDL.ToString();
-                        dbgtxt += ", MaxVD = " + pathCmpInfos[i][j].maxVertDist.ToString();
-                        dbgtxt += "]\n";
+                        dbgtxt += etor.Current.Key + "=" + etor.Current.Value + ", ";
                     }
+                    dbgtxt += "\n";
+                    //dbgtxt += "[" + pci.pathIndex + " = " + pci.pathValue;
+                    //dbgtxt += ", AvgP = " + pci.avgPathValue.ToString();
+                    //if (pci.kGraphCfg != TradeDataManager.KGraphConfig.eNone)
+                    //    dbgtxt += ", K = " + pci.kGraphCfg.ToString();
+                    //if (pci.macdLineCfg != TradeDataManager.MACDLineWaveConfig.eNone)
+                    //    dbgtxt += ", L = " + pci.macdLineCfg.ToString();
+                    //if (pci.macdBarCfg != TradeDataManager.MACDBarConfig.eNone)
+                    //    dbgtxt += ", B = " + pci.macdBarCfg.ToString();
+                    //dbgtxt += ", HD = " + pci.horzDist.ToString();
+                    //dbgtxt += ", UBMC = " + pci.uponBMCount.ToString();
+                    //dbgtxt += ", VD2MKV = " + pci.vertDistToMinKValue.ToString();
+                    //dbgtxt += ", VD2BML = " + pci.vertDistToBML.ToString();
+                    //dbgtxt += ", VD2BDL = " + pci.vertDistToBDL.ToString();
+                    //dbgtxt += ", MaxVD = " + pci.maxVertDist.ToString();
+                    //dbgtxt += "]\n";
+
                 }
             }
             return dbgtxt;
@@ -924,6 +956,13 @@ namespace LotteryAnalyze
         {
             if (historyTradeDatas.Count > 0)
                 return historyTradeDatas[historyTradeDatas.Count - 1].targetLotteryItem;
+            return null;
+        }
+
+        public TradeDataBase GetLatestTradeData()
+        {
+            if (historyTradeDatas.Count > 0)
+                return historyTradeDatas[historyTradeDatas.Count - 1];
             return null;
         }
 
@@ -2933,9 +2972,11 @@ namespace LotteryAnalyze
         void CalcPathMissCountArea(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2 ,};
             float[] missCountAreas = new float[] { 0, 0, 0, };
             float[] avgMissCountAreas = new float[] { 0, 0, 0, };
             int[] maxMissCount = new int[] { 0, 0, 0, };
+            int[] missCount = new int[] { 0, 0, 0, };
 
             int validCount = 0;
             int loop = LotteryStatisticInfo.FAST_COUNT;
@@ -2943,23 +2984,22 @@ namespace LotteryAnalyze
             while( cItem != null && loop > 0 )
             {
                 StatisticUnitMap csum = cItem.statisticInfo.allStatisticInfo[numIndex];
-                int m0 = csum.statisticUnitMap[CollectDataType.ePath0].missCount;
-                int m1 = csum.statisticUnitMap[CollectDataType.ePath1].missCount;
-                int m2 = csum.statisticUnitMap[CollectDataType.ePath2].missCount;
-                if (maxMissCount[0] < m0) maxMissCount[0] = m0;
-                if (maxMissCount[1] < m1) maxMissCount[1] = m1;
-                if (maxMissCount[2] < m2) maxMissCount[2] = m2;
-                avgMissCountAreas[0] = avgMissCountAreas[0] + csum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
-                avgMissCountAreas[1] = avgMissCountAreas[1] + csum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
-                avgMissCountAreas[2] = avgMissCountAreas[2] + csum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+                for( int i = 0; i < cdts.Length; ++i )
+                {
+                    int m = csum.statisticUnitMap[cdts[i]].missCount;
+                    if (maxMissCount[i] < m)
+                        maxMissCount[i] = m;
+                    avgMissCountAreas[i] = avgMissCountAreas[i] + csum.statisticUnitMap[cdts[i]].fastData.missCountArea;
+                }
                 cItem = cItem.parent.GetPrevItem(cItem);
                 --loop;
                 ++validCount;
             }
-
-            missCountAreas[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea;
-            missCountAreas[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea;
-            missCountAreas[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea;
+            for (int i = 0; i < cdts.Length; ++i)
+            {
+                missCount[i] = sum.statisticUnitMap[cdts[i]].missCount;
+                missCountAreas[i] = sum.statisticUnitMap[cdts[i]].fastData.missCountArea;
+            }
             float total = missCountAreas[0] + missCountAreas[1] + missCountAreas[2];
             avgMissCountAreas[0] = avgMissCountAreas[0] / validCount;
             avgMissCountAreas[1] = avgMissCountAreas[1] / validCount;
@@ -2968,30 +3008,45 @@ namespace LotteryAnalyze
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < missCountAreas.Length; ++i)
             {
-                PathCmpInfo pci = new PathCmpInfo(i, missCountAreas[i]);
-                pci.maxMissCount = maxMissCount[i];
-                pci.avgPathValue = avgMissCountAreas[i];
+                PathCmpInfo pci = new PathCmpInfo(i, sum.statisticUnitMap[cdts[i]]);
+                pci.paramMap["missCountAreas"] = missCountAreas[i];                
+                pci.paramMap["avgMissCountAreas"] = avgMissCountAreas[i];
+                pci.paramMap["maxMissCount"] = maxMissCount[i];
+                pci.paramMap["missCount"] = missCount[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
-                    //if (x.avgPathValue < y.avgPathValue)
-                    //    return -1;
-                    //else if (x.avgPathValue > y.avgPathValue)
-                    //    return 1;
-                    //else 
-                    if (x.pathValue < y.pathValue)
+                    if ((float)x.paramMap["missCountAreas"] < (float)y.paramMap["missCountAreas"])
                         return -1;
-                    else if (x.pathValue > y.pathValue)
+                    else if ((float)x.paramMap["missCountAreas"] > (float)y.paramMap["missCountAreas"])
                         return 1;
-                    else if (x.maxMissCount < y.maxMissCount)
+                    else if ((int)x.paramMap["maxMissCount"] < (int)y.paramMap["maxMissCount"])
                         return -1;
-                    else if (x.maxMissCount > y.maxMissCount)
+                    else if ((int)x.paramMap["maxMissCount"] > (int)y.paramMap["maxMissCount"])
                         return 1;
                     return 0;
                 });
+
+            TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
+            if(lastTrade != null)
+            {
+                int lastTradePath = lastTrade.pathCmpInfos[numIndex][0].pathIndex;
+                if(trade.pathCmpInfos[numIndex][0].pathIndex != lastTradePath)
+                {
+                    int curIndex = trade.FindIndex(numIndex, lastTradePath);
+                    PathCmpInfo pci = trade.pathCmpInfos[numIndex][curIndex];
+                    if (pci.maxMissCount < LotteryStatisticInfo.FAST_COUNT)
+                    {
+                        PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
+                        trade.pathCmpInfos[numIndex][0] = pci;
+                        trade.pathCmpInfos[numIndex][curIndex] = tmp;
+                    }
+                }
+            }
+
         }
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)

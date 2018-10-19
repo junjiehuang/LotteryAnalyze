@@ -1,3 +1,4 @@
+<root>
 <TradeStrategy>
 	<batch>10</batch>
 	<startMoney>2000</startMoney>
@@ -26,61 +27,61 @@
 	<UnTradeCount>90</UnTradeCount>
 </Simple>
 <TradeBeief>
-	<MissCount count=1>29235</MissCount>
-	<MissCount count=2>17963</MissCount>
-	<MissCount count=3>12329</MissCount>
-	<MissCount count=4>8304</MissCount>
-	<MissCount count=5>5459</MissCount>
-	<MissCount count=6>3528</MissCount>
-	<MissCount count=7>2368</MissCount>
-	<MissCount count=8>1609</MissCount>
-	<MissCount count=9>1007</MissCount>
-	<MissCount count=10>676</MissCount>
-	<MissCount count=11>423</MissCount>
-	<MissCount count=12>303</MissCount>
-	<MissCount count=13>180</MissCount>
-	<MissCount count=14>127</MissCount>
-	<MissCount count=15>74</MissCount>
-	<MissCount count=16>49</MissCount>
-	<MissCount count=17>42</MissCount>
-	<MissCount count=18>19</MissCount>
-	<MissCount count=19>14</MissCount>
-	<MissCount count=20>10</MissCount>
-	<MissCount count=21>11</MissCount>
-	<MissCount count=22>6</MissCount>
-	<MissCount count=23>2</MissCount>
-	<MissCount count=24>1</MissCount>
-	<MissCount count=26>1</MissCount>
-	<MissCount count=27>1</MissCount>
-	<MissCount count=28>2</MissCount>
+	<MissCount count="1">29235</MissCount>
+	<MissCount count="2">17963</MissCount>
+	<MissCount count="3">12329</MissCount>
+	<MissCount count="4">8304</MissCount>
+	<MissCount count="5">5459</MissCount>
+	<MissCount count="6">3528</MissCount>
+	<MissCount count="7">2368</MissCount>
+	<MissCount count="8">1609</MissCount>
+	<MissCount count="9">1007</MissCount>
+	<MissCount count="10">676</MissCount>
+	<MissCount count="11">423</MissCount>
+	<MissCount count="12">303</MissCount>
+	<MissCount count="13">180</MissCount>
+	<MissCount count="14">127</MissCount>
+	<MissCount count="15">74</MissCount>
+	<MissCount count="16">49</MissCount>
+	<MissCount count="17">42</MissCount>
+	<MissCount count="18">19</MissCount>
+	<MissCount count="19">14</MissCount>
+	<MissCount count="20">10</MissCount>
+	<MissCount count="21">11</MissCount>
+	<MissCount count="22">6</MissCount>
+	<MissCount count="23">2</MissCount>
+	<MissCount count="24">1</MissCount>
+	<MissCount count="26">1</MissCount>
+	<MissCount count="27">1</MissCount>
+	<MissCount count="28">2</MissCount>
 </TradeBeief>
 <LongMissTradeInfos>
-	<28_2>
+	<trade name="28_2">
 		<detail>20100930-063,20100930-091,31888</detail>
 		<detail>20110526-049,20110526-077,59590</detail>
-	</28_2>
-	<27_1>
+	</trade>
+	<trade name="27_1">
 		<detail>20130707-112,20130708-019,150536</detail>
-	</27_1>
-	<26_1>
+	</trade>
+	<trade name="26_1">
 		<detail>20140825-054,20140825-080,199148</detail>
-	</26_1>
-	<24_1>
+	</trade>
+	<trade name="24_1">
 		<detail>20150514-120,20150515-024,229548</detail>
-	</24_1>
-	<23_2>
+	</trade>
+	<trade name="23_2">
 		<detail>20110209-055,20110209-078,46874</detail>
 		<detail>20130530-047,20130530-070,145907</detail>
-	</23_2>
-	<22_6>
+	</trade>
+	<trade name="22_6">
 		<detail>20110713-039,20110713-061,65334</detail>
 		<detail>20110908-026,20110908-048,72161</detail>
 		<detail>20120205-086,20120205-108,89249</detail>
 		<detail>20120509-039,20120509-061,100427</detail>
 		<detail>20140214-021,20140214-043,176097</detail>
 		<detail>20170123-070,20170123-092,302651</detail>
-	</22_6>
-	<21_11>
+	</trade>
+	<trade name="21_11">
 		<detail>20101128-062,20101128-083,38960</detail>
 		<detail>20110308-110,20110309-011,50164</detail>
 		<detail>20110717-067,20110717-088,65841</detail>
@@ -92,8 +93,8 @@
 		<detail>20170119-081,20170119-102,302181</detail>
 		<detail>20170815-034,20170815-055,326251</detail>
 		<detail>20180117-069,20180117-090,344807</detail>
-	</21_11>
-	<20_10>
+	</trade>
+	<trade name="20_10">
 		<detail>20120826-020,20120826-040,113482</detail>
 		<detail>20130520-081,20130520-101,144738</detail>
 		<detail>20130902-115,20130903-015,157363</detail>
@@ -104,8 +105,8 @@
 		<detail>20170804-025,20170804-045,324921</detail>
 		<detail>20171130-060,20171130-080,339106</detail>
 		<detail>20180915-095,20180915-115,372128</detail>
-	</20_10>
-	<19_14>
+	</trade>
+	<trade name="19_14">
 		<detail>20100530-050,20100530-069,17106</detail>
 		<detail>20110518-117,20110519-016,58689</detail>
 		<detail>20110922-018,20110922-037,73830</detail>
@@ -120,8 +121,8 @@
 		<detail>20171012-086,20171012-105,333251</detail>
 		<detail>20180326-074,20180326-093,351962</detail>
 		<detail>20180912-085,20180912-104,371761</detail>
-	</19_14>
-	<18_19>
+	</trade>
+	<trade name="18_19">
 		<detail>20100130-082,20100130-100,3578</detail>
 		<detail>20100720-012,20100720-030,23187</detail>
 		<detail>20110501-094,20110501-112,56625</detail>
@@ -141,8 +142,8 @@
 		<detail>20181007-045,20181007-063,374617</detail>
 		<detail>20181007-086,20181007-104,374658</detail>
 		<detail>20181012-109,20181013-008,375275</detail>
-	</18_19>
-	<17_42>
+	</trade>
+	<trade name="17_42">
 		<detail>20100730-055,20100730-072,24429</detail>
 		<detail>20101008-003,20101008-020,32777</detail>
 		<detail>20101012-076,20101012-093,33330</detail>
@@ -185,8 +186,8 @@
 		<detail>20171206-068,20171206-085,339831</detail>
 		<detail>20180114-051,20180114-068,344425</detail>
 		<detail>20180929-071,20180929-088,373754</detail>
-	</17_42>
-	<16_49>
+	</trade>
+	<trade name="16_49">
 		<detail>20100309-102,20100309-118,7315</detail>
 		<detail>20100310-119,20100311-015,7452</detail>
 		<detail>20100424-067,20100424-083,12800</detail>
@@ -236,8 +237,8 @@
 		<detail>20180119-095,20180119-111,345068</detail>
 		<detail>20180329-082,20180329-098,352327</detail>
 		<detail>20180708-117,20180709-013,364482</detail>
-	</16_49>
-	<15_74>
+	</trade>
+	<trade name="15_74">
 		<detail>20100525-014,20100525-029,16466</detail>
 		<detail>20100721-098,20100721-113,23390</detail>
 		<detail>20100818-094,20100818-109,26746</detail>
@@ -312,5 +313,6 @@
 		<detail>20180803-017,20180803-032,367381</detail>
 		<detail>20180810-120,20180811-015,368324</detail>
 		<detail>20180928-086,20180928-101,373648</detail>
-	</15_74>
+	</trade>
 </LongMissTradeInfos>
+</root>

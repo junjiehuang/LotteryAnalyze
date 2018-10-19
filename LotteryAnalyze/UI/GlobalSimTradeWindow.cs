@@ -159,7 +159,7 @@ namespace LotteryAnalyze.UI
                 if (comboBoxOnNoMoney.SelectedIndex == 1)
                     Pause();
                 else if (comboBoxOnNoMoney.SelectedIndex == 2)
-                    Stop();
+                    DoStop();
             }
         }
 
@@ -350,6 +350,11 @@ namespace LotteryAnalyze.UI
             sInst.Show();
         }
 
+        public static GlobalSimTradeWindow Instance
+        {
+            get { return sInst; }
+        }
+
         public static void SetSimStartDateAndEndDate(int _startDate, int _endDate)
         {
             if (sInst == null)
@@ -365,6 +370,28 @@ namespace LotteryAnalyze.UI
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
+        {
+            DoStart();
+        }
+
+        private void buttonPauseResume_Click(object sender, EventArgs e)
+        {
+            if (BatchTradeSimulator.Instance.IsPause())
+            {
+                Resume();
+            }
+            else
+            {
+                Pause();
+            }
+        }
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            DoStop();
+        }
+
+        public void DoStart()
         {
             BatchTradeSimulator.Instance.batch = int.Parse(textBoxDayCountPerBatch.Text);
             BatchTradeSimulator.Instance.startMoney = float.Parse(textBoxStartMoney.Text);
@@ -387,23 +414,6 @@ namespace LotteryAnalyze.UI
             SaveCfg();
         }
 
-        private void buttonPauseResume_Click(object sender, EventArgs e)
-        {
-            if (BatchTradeSimulator.Instance.IsPause())
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
-
-        private void buttonStop_Click(object sender, EventArgs e)
-        {
-            Stop();
-        }
-
         void Pause()
         {
             BatchTradeSimulator.Instance.Pause();
@@ -416,7 +426,7 @@ namespace LotteryAnalyze.UI
             //buttonPauseResume.Text = "暂停";
         }
 
-        void Stop()
+        public void DoStop()
         {
             BatchTradeSimulator.Instance.Stop();
             textBoxDayCountPerBatch.Enabled = true;
@@ -556,7 +566,7 @@ namespace LotteryAnalyze.UI
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
-            string info = "";
+            string info = "<root>\n";
 
             string tradeCountLstStr = TradeDataManager.Instance.GetTradeCountInfoStr();
             info += "<TradeStrategy>\n";
@@ -602,23 +612,24 @@ namespace LotteryAnalyze.UI
             info += "<TradeBeief>\n";
             foreach (int key in keys)
             {
-                info += "\t<MissCount count=" + key + ">" + BatchTradeSimulator.Instance.tradeMissInfo[key] + "</MissCount>\n";
+                info += "\t<MissCount count=\"" + key + "\">" + BatchTradeSimulator.Instance.tradeMissInfo[key] + "</MissCount>\n";
             }
             info += "</TradeBeief>\n";
 
             info += "<LongMissTradeInfos>\n";
             foreach(TreeNode node in treeViewLongWrongTradeInfos.Nodes)
             {
-                info += "\t<" + node.Text + ">\n";
+                info += "\t<trade name=\n" + node.Text + "\">\n";
 
                 foreach(TreeNode subNode in node.Nodes)
                 {
                     info += "\t\t<detail>" + subNode.Text + "</detail>\n";
                 }
 
-                info += "\t</" + node.Text + ">\n";
+                info += "\t</trade>\n";
             }
             info += "</LongMissTradeInfos>\n";
+            info += "</root>";
 
             //开始写入
             sw.Write(info);

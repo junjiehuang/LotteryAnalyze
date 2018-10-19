@@ -103,6 +103,12 @@
     <Compile Include="UI\LotteryGraph.Designer.cs">
       <DependentUpon>LotteryGraph.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\SimTradeLongWrongWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SimTradeLongWrongWindow.Designer.cs">
+      <DependentUpon>SimTradeLongWrongWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TradeCalculater.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\LotteryGraph.resx">
       <DependentUpon>LotteryGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SimTradeLongWrongWindow.resx">
+      <DependentUpon>SimTradeLongWrongWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TradeCalculater.resx">
       <DependentUpon>TradeCalculater.cs</DependentUpon>
