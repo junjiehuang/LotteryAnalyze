@@ -16,8 +16,11 @@ namespace LotteryAnalyze.UI
         TreeNode curParentNode = null;
         TreeNode curSubNode = null;
         bool isPause = false;
+        bool startSim = false;
         double updateInterval = 0.5;
         double updateCountDown = 0;
+        List<TreeNode> lostMoneyNodes = new List<TreeNode>();
+        float moneyEarnOrLost = 0;
 
 
         public static void Open()
@@ -71,10 +74,12 @@ namespace LotteryAnalyze.UI
                         name = att.Value;
                 }
                 TreeNode pTN = new TreeNode(name);
+                pTN.Name = name;
                 treeViewLongWrongInfo.Nodes.Add(pTN);
                 foreach (XmlNode node in subNode.ChildNodes)
                 {
                     TreeNode sTN = new TreeNode(node.InnerXml);
+                    sTN.Name = node.InnerXml;
                     string[] strs = node.InnerXml.Split(',');
                     strs = strs[0].Split('-');
                     sTN.Tag = strs[0];
@@ -84,13 +89,16 @@ namespace LotteryAnalyze.UI
         }
 
         void Start()
-        {
+        {            
+            lostMoneyNodes.Clear();
             if (treeViewLongWrongInfo.Nodes.Count == 0)
                 return;
             curParentNode = treeViewLongWrongInfo.Nodes[0];
             curSubNode = curParentNode.Nodes[0];
             treeViewLongWrongInfo.SelectedNode = curSubNode;
             isPause = false;
+            startSim = true;
+            moneyEarnOrLost = 0;
             buttonPause.Text = isPause ? "恢复" : "暂停";
             PrepareSim();
         }
@@ -125,11 +133,17 @@ namespace LotteryAnalyze.UI
             GlobalSimTradeWindow.Instance.DoStop();
             BatchTradeSimulator.Instance.Stop();
             isPause = false;
+            startSim = false;
             buttonPause.Text = isPause ? "恢复" : "暂停";
+
+            DialogResult dr = MessageBox.Show((moneyEarnOrLost > 0 ? "盈利：" : "亏损：") + moneyEarnOrLost, "模拟结果", MessageBoxButtons.OKCancel);
         }
 
         void Step()
         {
+            if (curParentNode == null)
+                return;
+
             if(curSubNode == curParentNode.LastNode)
             {
                 int pindex = treeViewLongWrongInfo.Nodes.IndexOf(curParentNode);
@@ -138,6 +152,7 @@ namespace LotteryAnalyze.UI
                     curParentNode = null;
                     curSubNode = null;
                     treeViewLongWrongInfo.SelectedNode = null;
+                    Stop();
                     return;
                 }
                 else
@@ -158,12 +173,26 @@ namespace LotteryAnalyze.UI
 
         public void OnUpdate()
         {
+            if (treeViewLongWrongInfo.Nodes.Count == 0)
+                return;
+
             if (updateCountDown <= 0)
             {
                 updateCountDown = updateInterval;
                 if (BatchTradeSimulator.Instance.HasFinished())
                 {
-                    if(isPause == false)
+                    if (curSubNode != null)
+                    {
+                        float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
+                        curSubNode.Text = curSubNode.Name + ", " + delta;
+                        moneyEarnOrLost += delta;
+                        if (delta > 0 && lostMoneyNodes.Contains(curSubNode) == false)
+                        {
+                            lostMoneyNodes.Add(curSubNode);
+                        }
+                    }
+
+                    if (isPause == false)
                         Step();
                 }
             }
@@ -219,8 +248,34 @@ namespace LotteryAnalyze.UI
                 }
                 else
                 {
+                    if (curSubNode != null)
+                    {
+                        float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
+                        curSubNode.Text = curSubNode.Name + ", " + delta;
+                        moneyEarnOrLost += delta;
+                        if (delta > 0 && lostMoneyNodes.Contains(curSubNode) == false)
+                        {
+                            lostMoneyNodes.Add(curSubNode);
+                        }
+                    }
+
                     Step();
                 }
+            }
+        }
+
+        private void buttonClearEarnNode_Click(object sender, EventArgs e)
+        {
+            for( int i = 0; i < lostMoneyNodes.Count; ++i )
+            {
+                lostMoneyNodes[i].Remove();
+            }
+            lostMoneyNodes.Clear();
+            for( int i = treeViewLongWrongInfo.Nodes.Count - 1; i >= 0; --i )
+            {
+                TreeNode pn = treeViewLongWrongInfo.Nodes[i];
+                if (pn.Nodes.Count == 0)
+                    pn.Remove();
             }
         }
     }

@@ -86,6 +86,9 @@ namespace LotteryAnalyze
 #endif
             DataGridViewColumnManager.ReassignColumns(dataGridViewLotteryDatas);
             AddWindow(this);
+
+            // 默认开发窗口后直接导入数据
+            importFilesToolStripMenuItem_Click(null, null);
         }
 
         public KillType GetCurSelectedKillType()

@@ -129,6 +129,10 @@ namespace LotteryAnalyze.UI
             comboBoxMissCountType.DataSource = GraphMissCount.MissCountTypeStrs;
             comboBoxMissCountType.SelectedIndex = selMissCountType;
 
+            int selAppearenceType = (int)graphMgr.appearenceGraph.AppearenceCycleType;
+            comboBoxAppearenceType.DataSource = GraphAppearence.AppearenceTypeStrs;
+            comboBoxAppearenceType.SelectedIndex = selAppearenceType;
+
             int Y = 10;
             int X = 10;
             int half_size = groupBoxCDTShowSetting.Size.Width / 2;
@@ -1313,6 +1317,12 @@ namespace LotteryAnalyze.UI
             if (updateInterval < 1)
                 updateInterval = 1;
             textBoxRefreshTimeLength.Text = updateInterval.ToString();
+            this.Invalidate(true);
+        }
+
+        private void comboBoxAppearenceType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            graphMgr.appearenceGraph.AppearenceCycleType = (GraphAppearence.AppearenceType)comboBoxAppearenceType.SelectedIndex;
             this.Invalidate(true);
         }
     }

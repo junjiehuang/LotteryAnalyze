@@ -66,6 +66,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxMaxNumCount = new System.Windows.Forms.TextBox();
+            this.textBoxRefreshTime = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textBoxCmd = new System.Windows.Forms.WebBrowser();
             this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
@@ -74,8 +76,9 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.textBoxRefreshTime = new System.Windows.Forms.TextBox();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.treeViewMissCountInfo = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -86,6 +89,10 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.contextMenuStripSimulationResultTree.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -493,6 +500,23 @@
             this.textBoxMaxNumCount.TabIndex = 25;
             this.textBoxMaxNumCount.TextChanged += new System.EventHandler(this.textBoxMaxNumCount_TextChanged);
             // 
+            // textBoxRefreshTime
+            // 
+            this.textBoxRefreshTime.Location = new System.Drawing.Point(389, 5);
+            this.textBoxRefreshTime.Name = "textBoxRefreshTime";
+            this.textBoxRefreshTime.Size = new System.Drawing.Size(100, 21);
+            this.textBoxRefreshTime.TabIndex = 15;
+            this.textBoxRefreshTime.TextChanged += new System.EventHandler(this.textBoxRefreshTime_TextChanged);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(318, 8);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(65, 12);
+            this.label16.TabIndex = 14;
+            this.label16.Text = "刷新时间：";
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -507,7 +531,8 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Panel2.Controls.Add(this.splitter1);
             this.splitContainer2.Size = new System.Drawing.Size(536, 375);
             this.splitContainer2.SplitterDistance = 268;
             this.splitContainer2.TabIndex = 13;
@@ -529,9 +554,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongTradeInfos.ContextMenuStrip = this.contextMenuStripSimulationResultTree;
-            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 3);
+            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(0, 2);
             this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(258, 361);
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(261, 178);
             this.treeViewLongWrongTradeInfos.TabIndex = 12;
             this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
             // 
@@ -579,22 +604,44 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
-            // label16
+            // splitter1
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(318, 8);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(65, 12);
-            this.label16.TabIndex = 14;
-            this.label16.Text = "刷新时间：";
+            this.splitter1.Location = new System.Drawing.Point(0, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(3, 375);
+            this.splitter1.TabIndex = 13;
+            this.splitter1.TabStop = false;
             // 
-            // textBoxRefreshTime
+            // splitContainer3
             // 
-            this.textBoxRefreshTime.Location = new System.Drawing.Point(389, 5);
-            this.textBoxRefreshTime.Name = "textBoxRefreshTime";
-            this.textBoxRefreshTime.Size = new System.Drawing.Size(100, 21);
-            this.textBoxRefreshTime.TabIndex = 15;
-            this.textBoxRefreshTime.TextChanged += new System.EventHandler(this.textBoxRefreshTime_TextChanged);
+            this.splitContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer3.Location = new System.Drawing.Point(3, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.treeViewLongWrongTradeInfos);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.treeViewMissCountInfo);
+            this.splitContainer3.Size = new System.Drawing.Size(261, 367);
+            this.splitContainer3.SplitterDistance = 183;
+            this.splitContainer3.TabIndex = 14;
+            // 
+            // treeViewMissCountInfo
+            // 
+            this.treeViewMissCountInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewMissCountInfo.ContextMenuStrip = this.contextMenuStripSimulationResultTree;
+            this.treeViewMissCountInfo.Location = new System.Drawing.Point(0, 3);
+            this.treeViewMissCountInfo.Name = "treeViewMissCountInfo";
+            this.treeViewMissCountInfo.Size = new System.Drawing.Size(261, 177);
+            this.treeViewMissCountInfo.TabIndex = 13;
             // 
             // GlobalSimTradeWindow
             // 
@@ -621,6 +668,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.contextMenuStripSimulationResultTree.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -675,5 +726,8 @@
         private System.Windows.Forms.ToolStripMenuItem exportResultToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxRefreshTime;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.TreeView treeViewMissCountInfo;
+        private System.Windows.Forms.Splitter splitter1;
     }
 }

@@ -478,7 +478,7 @@ namespace LotteryAnalyze
                     if (autoAllign)
                     {
                         float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
-                        if(selectKDataIndex >= 0)
+                        if(selectKDataIndex >= 0 && selectKDataIndex < kddc.dataLst.Count)
                             endY = kddc.dataLst[selectKDataIndex].dataDict[cdt].KValue * gridScaleH;
                         float relEY = StandToCanvas(endY, false);
                         bool isEYOut = relEY < 0 || relEY > winH;
@@ -1760,7 +1760,27 @@ namespace LotteryAnalyze
         protected Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
         protected Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
         protected DataItem hoverItem;
-        protected int selectDataIndex;        
+        protected int selectDataIndex;
+
+        public enum AppearenceType
+        {
+            eAppearenceFast,
+            eAppearenceShort,
+            eAppearenceLong,
+        }
+        public static string[] AppearenceTypeStrs = new string[]
+        {
+            "统计5期的出号率",
+            "统计10期的出号率",
+            "统计30期的出号率",
+        };
+        AppearenceType appearenceType = AppearenceType.eAppearenceShort;
+        public AppearenceType AppearenceCycleType
+        {
+            get { return appearenceType; }
+            set { appearenceType = value; }
+        }
+
 
         public GraphAppearence()
         {
@@ -1948,7 +1968,20 @@ namespace LotteryAnalyze
             {
                 DataItem item = dm.FindDataItem(i);
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
-                float rH = sum.statisticUnitMap[cdt].shortData.appearProbability / 100 * maxHeight;
+                float apr = 0;
+                switch(appearenceType)
+                {
+                    case AppearenceType.eAppearenceFast:
+                        apr = sum.statisticUnitMap[cdt].fastData.appearProbability;
+                        break;
+                    case AppearenceType.eAppearenceShort:
+                        apr = sum.statisticUnitMap[cdt].shortData.appearProbability;
+                        break;
+                    case AppearenceType.eAppearenceLong:
+                        apr = sum.statisticUnitMap[cdt].longData.appearProbability;
+                        break;
+                }
+                float rH = apr / 100 * maxHeight;
                 float rT = bottom - rH;
                 float x = i * gridScaleW + halfGridW;
                 x = StandToCanvas(x, true);

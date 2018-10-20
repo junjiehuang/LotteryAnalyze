@@ -11,6 +11,9 @@ namespace LotteryAnalyze
 
     public class StaticData
     {
+        // 统计之前出现的最大遗漏值
+        public int prevMaxMissCount;
+        // 统计遗漏面积
         public float missCountArea;
         // 统计出现该统计类型数据的次数
         public Byte appearCount;
@@ -18,6 +21,7 @@ namespace LotteryAnalyze
         public float appearProbability;
         // 统计出现该统计类型数据的百分比与理论概率的差值
         public float appearProbabilityDiffWithTheory;
+
     }
 
     // 针对指定类型的统计信息
@@ -454,7 +458,20 @@ namespace LotteryAnalyze
         }
 
         void CollectMissCountArea()
-        {
+        {            
+            for( int i = 0; i < 5; ++i )
+            {
+                StatisticUnitMap sumME = allStatisticInfo[i];
+                for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                    StatisticUnit su = sumME.statisticUnitMap[cdt];
+                    su.fastData.prevMaxMissCount = su.missCount;
+                    su.shortData.prevMaxMissCount = su.missCount;
+                    su.longData.prevMaxMissCount = su.missCount;
+                }
+            }
+
             int loopCount = 0;
             DataItem cItem = lotteryData;
             while ( cItem != null )
@@ -464,6 +481,7 @@ namespace LotteryAnalyze
                     break;
                 for( int i = 0; i < 5; ++i )
                 {
+                    StatisticUnitMap sumME = allStatisticInfo[i];
                     StatisticUnitMap sumC = cItem.statisticInfo.allStatisticInfo[i];
                     StatisticUnitMap sumP = pItem.statisticInfo.allStatisticInfo[i];
                     for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
@@ -471,21 +489,29 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
                         StatisticUnit suC = sumC.statisticUnitMap[cdt];
                         StatisticUnit suP = sumP.statisticUnitMap[cdt];
+                        StatisticUnit suM = sumME.statisticUnitMap[cdt];
                         float subArea = (suC.missCount + suP.missCount) * 0.5f;
                         if (loopCount < FAST_COUNT)
                         {
-                            allStatisticInfo[i].statisticUnitMap[cdt].fastData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].fastData.missCountArea + subArea;
+                            suM.fastData.missCountArea += subArea;
+                            if(suM.fastData.prevMaxMissCount < suP.missCount)
+                                suM.fastData.prevMaxMissCount = suP.missCount;
                         }
                         if (loopCount < SHOR_COUNT)
                         {
-                            allStatisticInfo[i].statisticUnitMap[cdt].shortData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].shortData.missCountArea + subArea;
+                            suM.shortData.missCountArea += subArea;
+                            if (suM.shortData.prevMaxMissCount < suP.missCount)
+                                suM.shortData.prevMaxMissCount = suP.missCount;
                         }
                         if (loopCount < LONG_COUNT)
                         {
-                            allStatisticInfo[i].statisticUnitMap[cdt].longData.missCountArea = allStatisticInfo[i].statisticUnitMap[cdt].longData.missCountArea + subArea;
+                            suM.longData.missCountArea += subArea;
+                            if (suM.longData.prevMaxMissCount < suP.missCount)
+                                suM.longData.prevMaxMissCount = suP.missCount;
                         }
                     }
                 }
+                cItem = pItem;
                 ++loopCount;
                 if (loopCount == LONG_COUNT)
                     break;

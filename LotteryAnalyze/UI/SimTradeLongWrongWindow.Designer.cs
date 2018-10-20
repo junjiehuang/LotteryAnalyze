@@ -34,6 +34,7 @@
             this.buttonStep = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonPause = new System.Windows.Forms.Button();
+            this.buttonClearEarnNode = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // treeViewLongWrongInfo
@@ -43,7 +44,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongInfo.Location = new System.Drawing.Point(2, 3);
             this.treeViewLongWrongInfo.Name = "treeViewLongWrongInfo";
-            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(404, 257);
+            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(489, 257);
             this.treeViewLongWrongInfo.TabIndex = 0;
             // 
             // buttonLoadLongWrongInfo
@@ -96,11 +97,22 @@
             this.buttonPause.UseVisualStyleBackColor = true;
             this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
             // 
+            // buttonClearEarnNode
+            // 
+            this.buttonClearEarnNode.Location = new System.Drawing.Point(407, 266);
+            this.buttonClearEarnNode.Name = "buttonClearEarnNode";
+            this.buttonClearEarnNode.Size = new System.Drawing.Size(84, 23);
+            this.buttonClearEarnNode.TabIndex = 6;
+            this.buttonClearEarnNode.Text = "清除通过的";
+            this.buttonClearEarnNode.UseVisualStyleBackColor = true;
+            this.buttonClearEarnNode.Click += new System.EventHandler(this.buttonClearEarnNode_Click);
+            // 
             // SimTradeLongWrongWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(409, 296);
+            this.ClientSize = new System.Drawing.Size(494, 296);
+            this.Controls.Add(this.buttonClearEarnNode);
             this.Controls.Add(this.buttonPause);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonStep);
@@ -122,5 +134,6 @@
         private System.Windows.Forms.Button buttonStep;
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonPause;
+        private System.Windows.Forms.Button buttonClearEarnNode;
     }
 }
