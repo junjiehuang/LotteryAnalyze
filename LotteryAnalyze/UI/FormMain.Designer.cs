@@ -79,6 +79,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.simTradeSelectDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openSimTradeLongWrongWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.setWndAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -117,7 +118,7 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.openSimTradeLongWrongWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAnalyzeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -381,12 +382,13 @@
             this.toolStripSeparator4,
             this.simTradeSelectDatasToolStripMenuItem,
             this.globalSimTradeToolStripMenuItem,
+            this.openAnalyzeWindowToolStripMenuItem,
             this.openSimTradeLongWrongWindowToolStripMenuItem,
             this.tradeCalculaterToolStripMenuItem,
             this.toolStripSeparator5,
             this.setWndAlphaToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(209, 386);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(209, 408);
             // 
             // getLatestDataToolStripMenuItem
             // 
@@ -491,6 +493,13 @@
             this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
             this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
+            // 
+            // openSimTradeLongWrongWindowToolStripMenuItem
+            // 
+            this.openSimTradeLongWrongWindowToolStripMenuItem.Name = "openSimTradeLongWrongWindowToolStripMenuItem";
+            this.openSimTradeLongWrongWindowToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openSimTradeLongWrongWindowToolStripMenuItem.Text = "打开指定交易器";
+            this.openSimTradeLongWrongWindowToolStripMenuItem.Click += new System.EventHandler(this.openSimTradeLongWrongWindowToolStripMenuItem_Click);
             // 
             // tradeCalculaterToolStripMenuItem
             // 
@@ -981,12 +990,12 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // openSimTradeLongWrongWindowToolStripMenuItem
+            // openAnalyzeWindowToolStripMenuItem
             // 
-            this.openSimTradeLongWrongWindowToolStripMenuItem.Name = "openSimTradeLongWrongWindowToolStripMenuItem";
-            this.openSimTradeLongWrongWindowToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.openSimTradeLongWrongWindowToolStripMenuItem.Text = "打开指定交易器";
-            this.openSimTradeLongWrongWindowToolStripMenuItem.Click += new System.EventHandler(this.openSimTradeLongWrongWindowToolStripMenuItem_Click);
+            this.openAnalyzeWindowToolStripMenuItem.Name = "openAnalyzeWindowToolStripMenuItem";
+            this.openAnalyzeWindowToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openAnalyzeWindowToolStripMenuItem.Text = "打开分析界面";
+            this.openAnalyzeWindowToolStripMenuItem.Click += new System.EventHandler(this.openAnalyzeWindowToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -1110,6 +1119,7 @@
         private System.Windows.Forms.ToolStripMenuItem simTradeSelectDatasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopAutoUpdateLatestDatasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSimTradeLongWrongWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openAnalyzeWindowToolStripMenuItem;
     }
 }
 

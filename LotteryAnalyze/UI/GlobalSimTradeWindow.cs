@@ -30,6 +30,11 @@ namespace LotteryAnalyze.UI
         int updateInterval = 500;
         double updateCountDown = 0;
 
+        Dictionary<int, List<string>> tradeWrongCountTagsMap = new Dictionary<int, List<string>>();
+        Dictionary<int, TreeNode> tradeWrongCountTreeNodeMap = new Dictionary<int, TreeNode>();
+        Dictionary<string, TreeNode> tagTreeNodeMap = new Dictionary<string, TreeNode>();
+        bool needRefreshTree = false;
+
         public void SaveCfg()
         {
             if (checkBoxSpecNumIndex.Checked == false)
@@ -163,42 +168,57 @@ namespace LotteryAnalyze.UI
             }
         }
 
+
         private void OnLongWrongTrade(LongWrongTradeInfo info)
         {
-            TreeNode parNode = null;
-            for (int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
+            needRefreshTree = true;
+            List<string> lst = null;
+            if (tradeWrongCountTagsMap.ContainsKey(info.count))
             {
-                TreeNode node = treeViewLongWrongTradeInfos.Nodes[i];
-                if((int)(node.Tag) == info.count)
-                {
-                    parNode = node;
-                    break;
-                }
+                lst = tradeWrongCountTagsMap[info.count];
             }
-            if(parNode == null)
+            else
             {
-                parNode = new TreeNode();
-                parNode.Tag = info.count;
-                parNode.Text = info.count.ToString();
+                lst = new List<string>();
+                tradeWrongCountTagsMap[info.count] = lst;
+            }
+            string txt = info.startDataItemTag + "," + info.endDataItemTag + "," + info.tradeID;
+            lst.Add(txt);
 
-                bool hasAdd = false;
-                for(int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
-                {
-                    int cc = (int)(treeViewLongWrongTradeInfos.Nodes[i].Tag);
-                    if(cc < info.count)
-                    {
-                        treeViewLongWrongTradeInfos.Nodes.Insert(i, parNode);
-                        hasAdd = true;
-                        break;
-                    }
-                }
-                if(!hasAdd)
-                    treeViewLongWrongTradeInfos.Nodes.Add(parNode);
-            }
-            TreeNode cNode = new TreeNode();
-            cNode.Text = info.startDataItemTag + "," + info.endDataItemTag + "," + info.tradeID;
-            parNode.Nodes.Add(cNode);
-            parNode.Text = info.count + "_" + parNode.Nodes.Count;
+            //TreeNode parNode = null;
+            //for (int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
+            //{
+            //    TreeNode node = treeViewLongWrongTradeInfos.Nodes[i];
+            //    if((int)(node.Tag) == info.count)
+            //    {
+            //        parNode = node;
+            //        break;
+            //    }
+            //}
+            //if(parNode == null)
+            //{
+            //    parNode = new TreeNode();
+            //    parNode.Tag = info.count;
+            //    parNode.Text = info.count.ToString();
+
+            //    bool hasAdd = false;
+            //    for(int i = 0; i < treeViewLongWrongTradeInfos.Nodes.Count; ++i)
+            //    {
+            //        int cc = (int)(treeViewLongWrongTradeInfos.Nodes[i].Tag);
+            //        if(cc < info.count)
+            //        {
+            //            treeViewLongWrongTradeInfos.Nodes.Insert(i, parNode);
+            //            hasAdd = true;
+            //            break;
+            //        }
+            //    }
+            //    if(!hasAdd)
+            //        treeViewLongWrongTradeInfos.Nodes.Add(parNode);
+            //}
+            //TreeNode cNode = new TreeNode();
+            //cNode.Text = info.startDataItemTag + "," + info.endDataItemTag + "," + info.tradeID;
+            //parNode.Nodes.Add(cNode);
+            //parNode.Text = info.count + "_" + parNode.Nodes.Count;
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -340,7 +360,54 @@ namespace LotteryAnalyze.UI
                 buttonPauseResume.Text = "暂停";
                 buttonPauseResume.BackColor = Color.Yellow;
             }
+
+            RefreshTree();
             this.Invalidate(true);
+        }
+
+        void RefreshTree()
+        {
+            if (needRefreshTree == false)
+                return;
+            
+            foreach (int key in tradeWrongCountTagsMap.Keys)
+            {
+                List<string> tags = tradeWrongCountTagsMap[key];
+                TreeNode pN = null;
+                if(tradeWrongCountTreeNodeMap.ContainsKey(key))
+                {
+                    pN = tradeWrongCountTreeNodeMap[key];
+                }
+                else
+                {
+                    pN = new TreeNode();
+                    bool insert = false;
+                    for( int j = 0; j < treeViewLongWrongTradeInfos.Nodes.Count; ++j)
+                    {
+                        if((int)(treeViewLongWrongTradeInfos.Nodes[j].Tag) < key)
+                        {
+                            treeViewLongWrongTradeInfos.Nodes.Insert(j, pN);
+                            insert = true;
+                            break;
+                        }
+                    }
+                    if(insert == false)
+                        treeViewLongWrongTradeInfos.Nodes.Add(pN);
+                    tradeWrongCountTreeNodeMap[key] = pN;
+                    pN.Tag = key;
+                }
+                pN.Text = key + "-" + tags.Count;
+
+                for ( int i = 0; i < tags.Count; ++i )
+                {
+                    if (tagTreeNodeMap.ContainsKey(tags[i]))
+                        continue;
+                    TreeNode pS = new TreeNode(tags[i]);
+                    pN.Nodes.Add(pS);
+                    tagTreeNodeMap[tags[i]] = pS;
+                }
+            }
+            needRefreshTree = false;
         }
 
         public static void Open()
@@ -410,6 +477,10 @@ namespace LotteryAnalyze.UI
 
             textBoxStartDate.Text = startDate.ToString();
             textBoxEndDate.Text = endDate.ToString();
+            tradeWrongCountTagsMap.Clear();
+            treeViewLongWrongTradeInfos.Nodes.Clear();
+            tradeWrongCountTreeNodeMap.Clear();
+            tagTreeNodeMap.Clear();
 
             SaveCfg();
         }
@@ -423,7 +494,6 @@ namespace LotteryAnalyze.UI
         void Resume()
         {
             BatchTradeSimulator.Instance.Resume();
-            //buttonPauseResume.Text = "暂停";
         }
 
         public void DoStop()
@@ -432,8 +502,6 @@ namespace LotteryAnalyze.UI
             textBoxDayCountPerBatch.Enabled = true;
             textBoxStartMoney.Enabled = true;
             textBoxTradeCountLst.Enabled = true;
-
-            treeViewLongWrongTradeInfos.Nodes.Clear();
         }
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -617,13 +685,17 @@ namespace LotteryAnalyze.UI
             info += "</TradeBeief>\n";
 
             info += "<LongMissTradeInfos>\n";
-            foreach(TreeNode node in treeViewLongWrongTradeInfos.Nodes)
+            //foreach(TreeNode node in treeViewLongWrongTradeInfos.Nodes)
+            foreach( int key in tradeWrongCountTagsMap.Keys )
             {
-                info += "\t<trade name=\n" + node.Text + "\">\n";
+                List<string> tags = tradeWrongCountTagsMap[key];
 
-                foreach(TreeNode subNode in node.Nodes)
+                info += "\t<trade name=\"" + key + "-" + tags.Count + "\">\n";
+
+                //foreach(TreeNode subNode in node.Nodes)
+                for( int i = 0; i < tags.Count; ++i )
                 {
-                    info += "\t\t<detail>" + subNode.Text + "</detail>\n";
+                    info += "\t\t<detail>" + tags[i] + "</detail>\n";
                 }
 
                 info += "\t</trade>\n";

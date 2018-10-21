@@ -69,6 +69,12 @@
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />
     <Compile Include="TradeData.cs" />
+    <Compile Include="UI\AnalyzeInfoCollectWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AnalyzeInfoCollectWindow.Designer.cs">
+      <DependentUpon>AnalyzeInfoCollectWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\CollectDataWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +134,9 @@
       <DependentUpon>TradeWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <EmbeddedResource Include="UI\AnalyzeInfoCollectWindow.resx">
+      <DependentUpon>AnalyzeInfoCollectWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\CollectDataWindow.resx">
       <DependentUpon>CollectDataWindow.cs</DependentUpon>
       <SubType>Designer</SubType>

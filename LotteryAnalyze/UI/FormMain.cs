@@ -657,5 +657,10 @@ namespace LotteryAnalyze
         {
             SimTradeLongWrongWindow.Open();
         }
+
+        private void openAnalyzeWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AnalyzeInfoCollectWindow.Open();
+        }
     }
 }

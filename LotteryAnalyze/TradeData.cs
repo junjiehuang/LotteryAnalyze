@@ -3027,9 +3027,13 @@ namespace LotteryAnalyze
             float[] appearenceRateFastPRV = new float[] { 0, 0, 0, };
             float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
             float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
+            int[] maxMissCount = new int[] { 0, 0, 0, };
+            int[] curMissCount = new int[] { 0, 0, 0, };
             for (int i = 0; i < cdts.Length; ++i)
             {
                 CollectDataType cdt = cdts[i];
+                maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
+                curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
                 appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
                 appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
                 if (sumPRV != null)
@@ -3043,6 +3047,8 @@ namespace LotteryAnalyze
             for (int i = 0; i < cdts.Length; ++i)
             {
                 PathCmpInfo pci = new PathCmpInfo(i, sumCUR.statisticUnitMap[cdts[i]]);
+                pci.paramMap["maxMissCount"] = maxMissCount[i];
+                pci.paramMap["curMissCount"] = curMissCount[i];
                 pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
                 pci.paramMap["curRateF"] = appearenceRateFastCUR[i];
                 pci.paramMap["detRateF"] = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
@@ -3056,33 +3062,48 @@ namespace LotteryAnalyze
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
-                    //if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
-                    //    return -1;
-                    //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
-                    //    return 1;
-
-                    //if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
-                    //    return -1;
-                    //if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
-                    //    return 1;
-
-                    if ((float)x.paramMap["curRateS"] > (float)y.paramMap["curRateS"])
+                    if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
                         return -1;
-                    if ((float)x.paramMap["curRateS"] < (float)y.paramMap["curRateS"])
+                    if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
+                        return 1;
+                    if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
+                        return -1;
+                    if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
                         return 1;
 
-                    //if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
+                    //if ((float)x.paramMap["curRateS"] > (float)y.paramMap["curRateS"])
                     //    return -1;
-                    //if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
+                    //if ((float)x.paramMap["curRateS"] < (float)y.paramMap["curRateS"])
                     //    return 1;
-
-                    if ((float)x.paramMap["detRateS"] > 0 && (float)y.paramMap["detRateS"] <= 0)
-                        return -1;
-                    if ((float)x.paramMap["detRateS"] <= 0 && (float)y.paramMap["detRateS"] > 0)
-                        return 1;
-
+                    //if ((float)x.paramMap["detRateS"] > 0 && (float)y.paramMap["detRateS"] <= 0)
+                    //    return -1;
+                    //if ((float)x.paramMap["detRateS"] <= 0 && (float)y.paramMap["detRateS"] > 0)
+                    //    return 1;
                     return 0;
                 });
+
+            if (CurrentTradeCountIndex != 0)
+            {
+                //int MAX_MISS_COUNT_TOR = 7;
+                TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
+                if (lastTrade != null)
+                {
+                    PathCmpInfo lastPCI = lastTrade.pathCmpInfos[numIndex][0];
+                    int lastTradePath = lastPCI.pathIndex;
+                    if (trade.pathCmpInfos[numIndex][0].pathIndex != lastTradePath)
+                    {
+                        int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
+                        PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
+                        //if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR &&
+                        //    (int)lastPathCurPCI.paramMap["curMissCount"] < MAX_MISS_COUNT_TOR)
+                        {
+                            PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
+                            trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
+                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                        }
+                    }
+                }
+            }
         }
 
         void CalcPathMissCountArea(DataItem item, TradeDataOneStar trade, int numIndex)
