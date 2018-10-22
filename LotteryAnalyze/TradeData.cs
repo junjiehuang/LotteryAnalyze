@@ -1272,17 +1272,20 @@ namespace LotteryAnalyze
             int bestNumIndex = -1;
             int bestPath = -1;
             bool isFinalPathStrongUp = false;
+            //if (simSelNumIndex == -1)
+            //{
+            //    for (int i = 0; i < 5; ++i)
+            //    {
+            //        JudgeNumberPath(item, trade, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
+            //    }
+            //}
+            //else
+            //{
+            //    JudgeNumberPath(item, trade, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
+            //}
             if (simSelNumIndex == -1)
-            {
-                for (int i = 0; i < 5; ++i)
-                {
-                    JudgeNumberPath(item, trade, i, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
-                }
-            }
-            else
-            {
-                JudgeNumberPath(item, trade, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
-            }
+                simSelNumIndex = 0;
+            JudgeNumberPath(item, trade, simSelNumIndex, ref maxV, ref bestNumIndex, ref bestPath, ref isFinalPathStrongUp);
 
             if (bestNumIndex >= 0 && bestPath >= 0)
             {
@@ -3082,6 +3085,11 @@ namespace LotteryAnalyze
                     return 0;
                 });
 
+            CheckAndKeepSamePath(trade,numIndex);
+        }
+
+        void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex)
+        {
             if (CurrentTradeCountIndex != 0)
             {
                 //int MAX_MISS_COUNT_TOR = 7;
@@ -3208,42 +3216,9 @@ namespace LotteryAnalyze
                     return 0;
                 });
 
-            TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
-            if (lastTrade != null)
-            {
-                PathCmpInfo lastPCI = lastTrade.pathCmpInfos[numIndex][0];
-                int lastTradePath = lastPCI.pathIndex;
-                if (trade.pathCmpInfos[numIndex][0].pathIndex != lastTradePath)
-                {
-                    int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
-                    PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
-                    if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR)
-                    //if((int)lastPCI.paramMap["CFG"] > 0 && (int)lastPathCurPCI.paramMap["CFG"] > 0)
-                    {
-                        PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
-                        trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
-                        trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
-                    }
-                }
-            }
+            CheckAndKeepSamePath(trade, numIndex);
         }
-
-        int CalcMACDType(PathCmpInfo pci)
-        {
-            // 快线是否高于慢线
-            bool isXGC = (float)pci.paramMap["DEA"] < (float)pci.paramMap["DIF"];
-            // 慢线在0轴上方
-            bool isXU = (float)pci.paramMap["DEA"] > 0;
-            // 动能轴
-            bool isXBU = (float)pci.paramMap["BAR"] > 0;
-            if (isXGC && isXU)
-            {
-                if (isXBU)
-                    return 1;
-                return 2;
-            }
-            return 0;
-        }
+        
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)
         {
@@ -3586,97 +3561,6 @@ namespace LotteryAnalyze
             curBestSU = trade.pathCmpInfos[numIndex][0].su;
             curBestV = trade.pathCmpInfos[numIndex][0].pathValue;
 
-            //if (onlyTradeOnStrongUpPath == false || (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2] == false))
-            //{
-            //    if (pathValues[0] > pathValues[1])
-            //        Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //    else if (pathValues[0] < pathValues[1])
-            //        Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //    else
-            //    {
-            //        if (su0.shortData.appearProbability > su1.shortData.appearProbability)
-            //            Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //        else if (su0.shortData.appearProbability < su1.shortData.appearProbability)
-            //            Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //        else
-            //        {
-            //            if (su0.longData.appearProbability > su1.longData.appearProbability)
-            //                Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //            else if (su0.longData.appearProbability < su1.longData.appearProbability)
-            //                Check(su1, su2, pathValues[1], pathValues[2], 1, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //        }
-            //    }
-            //}
-            //else if (isStrongUp[0] && isStrongUp[1] == false && isStrongUp[2] == false)
-            //{
-            //    curBestPath = 0;
-            //    curBestV = pathValues[0];
-            //    curBestSU = su0;
-            //}
-            //else if (isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2] == false)
-            //{
-            //    curBestPath = 1;
-            //    curBestV = pathValues[1];
-            //    curBestSU = su1;
-            //}
-            //else if (isStrongUp[0] == false && isStrongUp[1] == false && isStrongUp[2])
-            //{
-            //    curBestPath = 2;
-            //    curBestV = pathValues[2];
-            //    curBestSU = su2;
-            //}
-            //else if (isStrongUp[0] && isStrongUp[1] && isStrongUp[2] == false)
-            //{
-            //    if (pathValues[0] > pathValues[1])
-            //    {
-            //        curBestPath = 0;
-            //        curBestV = pathValues[0];
-            //        curBestSU = su0;
-            //    }
-            //    else if (pathValues[0] < pathValues[1])
-            //    {
-            //        curBestPath = 1;
-            //        curBestV = pathValues[1];
-            //        curBestSU = su1;
-            //    }
-            //    else
-            //        Check(su0, su1, pathValues[0], pathValues[1], 0, 1, ref curBestV, ref curBestPath, ref curBestSU);
-            //}
-            //else if (isStrongUp[0] == false && isStrongUp[1] && isStrongUp[2])
-            //{
-            //    if (pathValues[2] > pathValues[1])
-            //    {
-            //        curBestPath = 2;
-            //        curBestV = pathValues[2];
-            //        curBestSU = su2;
-            //    }
-            //    else if (pathValues[2] < pathValues[1])
-            //    {
-            //        curBestPath = 1;
-            //        curBestV = pathValues[1];
-            //        curBestSU = su1;
-            //    }
-            //    else
-            //        Check(su2, su1, pathValues[2], pathValues[1], 2, 1, ref curBestV, ref curBestPath, ref curBestSU);
-            //}
-            //else if (isStrongUp[0] && isStrongUp[1] == false && isStrongUp[2])
-            //{
-            //    if (pathValues[0] > pathValues[2])
-            //    {
-            //        curBestPath = 0;
-            //        curBestV = pathValues[0];
-            //        curBestSU = su0;
-            //    }
-            //    else if (pathValues[0] < pathValues[2])
-            //    {
-            //        curBestPath = 2;
-            //        curBestV = pathValues[2];
-            //        curBestSU = su2;
-            //    }
-            //    else
-            //        Check(su0, su2, pathValues[0], pathValues[2], 0, 2, ref curBestV, ref curBestPath, ref curBestSU);
-            //}
-
             if (curBestPath != -1 && curBestV > 0)
             {
                 if(curBestV > maxV)
@@ -3709,6 +3593,8 @@ namespace LotteryAnalyze
                         }
                     }
                 }
+
+                //CheckAndKeepSamePath(trade, numIndex);
             }
         }
 
