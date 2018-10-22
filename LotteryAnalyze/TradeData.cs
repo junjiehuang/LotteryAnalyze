@@ -3028,37 +3028,46 @@ namespace LotteryAnalyze
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             float[] appearenceRateFastCUR = new float[] { 0, 0, 0, };
             float[] appearenceRateFastPRV = new float[] { 0, 0, 0, };
-            float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
-            float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
-            int[] maxMissCount = new int[] { 0, 0, 0, };
-            int[] curMissCount = new int[] { 0, 0, 0, };
+            //float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
+            //float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
+            //int[] maxMissCount = new int[] { 0, 0, 0, };
+            //int[] curMissCount = new int[] { 0, 0, 0, };
             for (int i = 0; i < cdts.Length; ++i)
             {
                 CollectDataType cdt = cdts[i];
-                maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
-                curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
+                //maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
+                //curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
                 appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
-                appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
+                //appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
                 if (sumPRV != null)
                 {
                     appearenceRateFastPRV[i] = sumPRV.statisticUnitMap[cdt].fastData.appearProbability;
-                    appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].shortData.appearProbability;
+                    //appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].shortData.appearProbability;
                 }
             }
+
+            float[] count2BUs = new float[] { 0, 0, 0, };
+            float[] count2BMs = new float[] { 0, 0, 0, };
+            float[] count2BDs = new float[] { 0, 0, 0, };
+            int[] count2LIM = new int[] { 0, 0, 0, };
+            CalcKValueDistToBolleanLine(item, numIndex, cdts, ref count2BUs, ref count2BMs, ref count2BDs, ref count2LIM);
 
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < cdts.Length; ++i)
             {
                 PathCmpInfo pci = new PathCmpInfo(i, sumCUR.statisticUnitMap[cdts[i]]);
-                pci.paramMap["maxMissCount"] = maxMissCount[i];
-                pci.paramMap["curMissCount"] = curMissCount[i];
-                pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
+                //pci.paramMap["maxMissCount"] = maxMissCount[i];
+                //pci.paramMap["curMissCount"] = curMissCount[i];
+                //pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
                 pci.paramMap["curRateF"] = appearenceRateFastCUR[i];
                 pci.paramMap["detRateF"] = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
-
-                pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
-                pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
-                pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
+                //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
+                //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
+                //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
+                pci.paramMap["count2LIM"] = count2LIM[i];
+                pci.paramMap["count2BUs"] = count2BUs[i];
+                pci.paramMap["count2BMs"] = count2BMs[i];
+                pci.paramMap["count2BDs"] = count2BDs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
@@ -3074,14 +3083,10 @@ namespace LotteryAnalyze
                     if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
                         return 1;
 
-                    //if ((float)x.paramMap["curRateS"] > (float)y.paramMap["curRateS"])
-                    //    return -1;
-                    //if ((float)x.paramMap["curRateS"] < (float)y.paramMap["curRateS"])
-                    //    return 1;
-                    //if ((float)x.paramMap["detRateS"] > 0 && (float)y.paramMap["detRateS"] <= 0)
-                    //    return -1;
-                    //if ((float)x.paramMap["detRateS"] <= 0 && (float)y.paramMap["detRateS"] > 0)
-                    //    return 1;
+                    if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
+                        return -1;
+                    if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
+                        return 1;
                     return 0;
                 });
 
@@ -3092,7 +3097,8 @@ namespace LotteryAnalyze
         {
             if (CurrentTradeCountIndex != 0)
             {
-                //int MAX_MISS_COUNT_TOR = 7;
+                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
+                
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
                 {
@@ -3102,10 +3108,16 @@ namespace LotteryAnalyze
                     {
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
+
+                        if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
+                        {
+                            int count = (int)lastPathCurPCI.paramMap["count2LIM"];
+                            if (count + CurrentTradeCountIndex > tradeCountList.Count)
+                                return;
+                        }
                         //if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR &&
                         //    (int)lastPathCurPCI.paramMap["curMissCount"] < MAX_MISS_COUNT_TOR)
                         {
-                            PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
                             trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
                             trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
                         }
@@ -3219,6 +3231,47 @@ namespace LotteryAnalyze
             CheckAndKeepSamePath(trade, numIndex);
         }
         
+        void CalcKValueDistToBolleanLine(DataItem item, int numIndex, CollectDataType[] cds, ref float[] count2BUs, ref float[] count2BMs, ref float[] count2BDs, ref int[] count2LIM)
+        {
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            for( int i = 0; i < cds.Length; ++i )
+            {
+                CalcKValueDistToBolleanLine(kdd, bpm, cds[i], ref count2BUs[i], ref count2BMs[i], ref count2BDs[i]);
+                if (count2BUs[i] < 0)
+                {
+                    count2LIM[i] = (int)Math.Ceiling(Math.Abs(count2BUs[i]));
+                }
+                else if (count2BMs[i] < 0)
+                {
+                    count2LIM[i] = (int)Math.Ceiling(Math.Abs(count2BMs[i]));
+                }
+                else if (count2BDs[i] < 0)
+                {
+                    count2LIM[i] = (int)Math.Ceiling(Math.Abs(count2BDs[i]));
+                }
+                else
+                {
+                    count2LIM[i] = 0xFFFF;
+                }
+            }
+        }
+
+        void CalcKValueDistToBolleanLine(KDataDict kdd, BollinPointMap bpm, CollectDataType cdt, ref float count2BU, ref float count2BM, ref float count2BD)
+        {
+
+            KData kd = kdd.GetData(cdt, false);
+            BollinPoint bp = bpm.GetData(cdt, false);
+            float dist2bu = kd.RelateDistTo(bp.upValue);
+            float dist2bm = kd.RelateDistTo(bp.midValue);
+            float dist2bd = kd.RelateDistTo(bp.downValue);
+            float missheight = GraphDataManager.GetMissRelLength(cdt);
+            count2BU = dist2bu / missheight;
+            count2BM = dist2bm / missheight;
+            count2BD = dist2bd / missheight;
+        }
 
         void CalcPaths(DataItem item, int numIndex, TradeDataOneStar trade)
         {
