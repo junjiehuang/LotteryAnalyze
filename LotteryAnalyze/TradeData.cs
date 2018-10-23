@@ -3109,12 +3109,12 @@ namespace LotteryAnalyze
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
 
-                        if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
-                        {
-                            int count = (int)lastPathCurPCI.paramMap["count2LIM"];
-                            if (count + CurrentTradeCountIndex > tradeCountList.Count)
-                                return;
-                        }
+                        //if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
+                        //{
+                        //    int count = (int)lastPathCurPCI.paramMap["count2LIM"];
+                        //    if (count + CurrentTradeCountIndex > tradeCountList.Count)
+                        //        return;
+                        //}
                         //if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR &&
                         //    (int)lastPathCurPCI.paramMap["curMissCount"] < MAX_MISS_COUNT_TOR)
                         {

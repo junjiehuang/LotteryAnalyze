@@ -49,6 +49,21 @@ namespace LotteryAnalyze.UI
         void LoadPatch()
         {
             string fileName = "..\\tools\\模拟结果.xml";
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "sim result files|*.xml";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.InitialDirectory = "..\\tools\\";// System.Environment.CurrentDirectory;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                fileName = openFileDialog.FileName;
+            }
+            else
+            {
+                return;
+            }
+            
             XmlDocument x = new XmlDocument();
             try
             {

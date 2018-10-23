@@ -631,76 +631,99 @@ namespace LotteryAnalyze.UI
         private void exportResultToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string fileName = "..\\tools\\模拟结果.xml";
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "sim result files|*.xml";
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.InitialDirectory = "..\\tools\\";// System.Environment.CurrentDirectory;
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                fileName = saveFileDialog.FileName;
+            }
+            else
+            {
+                return;
+            }
+
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
             string info = "<root>\n";
 
             string tradeCountLstStr = TradeDataManager.Instance.GetTradeCountInfoStr();
-            info += "<TradeStrategy>\n";
-            info += "\t<batch>" + BatchTradeSimulator.Instance.batch + "</batch>\n";
-            info += "\t<startMoney>" + BatchTradeSimulator.Instance.startMoney + "</startMoney>\n";
-            info += "\t<tradeCountLstStr>" + tradeCountLstStr + "</tradeCountLstStr>\n";
-            info += "\t<strongUpStartIndex>" + TradeDataManager.Instance.strongUpStartTradeIndex + "</strongUpStartIndex>\n";
-            info += "\t<simSelNumIndex>" + TradeDataManager.Instance.simSelNumIndex + "</simSelNumIndex>\n";
-            info += "\t<curTradeStrategy>" + TradeDataManager.Instance.curTradeStrategy + "</curTradeStrategy>\n";
-            info += "\t<forceTradeByMaxNumCount>" + TradeDataManager.Instance.forceTradeByMaxNumCount + "</forceTradeByMaxNumCount>\n";
-            info += "\t<maxNumCount>" + TradeDataManager.Instance.maxNumCount + "</maxNumCount>\n";
-            info += "\t<specNumIndex>" + checkBoxSpecNumIndex.Checked + "</specNumIndex>\n";
-            info += "\t<onlyTradeOnStrongUpPath>" + checkBoxOnTradeOnStrongUpPath.Checked + "</onlyTradeOnStrongUpPath>\n";
-            info += "\t<riskControl>" + TradeDataManager.Instance.RiskControl + "</riskControl>\n";
-            info += "\t<uponValue>" + TradeDataManager.Instance.uponValue + "</uponValue>\n";
-            info += "\t<MultiTradePathCount>" + TradeDataManager.Instance.MultiTradePathCount + "</MultiTradePathCount>\n";
-            info += "\t<killLastNumber>" + checkBoxKillLastNumber.Checked + "</killLastNumber>\n";
-            info += "\t<procOnNegMoney>" + comboBoxOnNoMoney.SelectedIndex + "</procOnNegMoney>\n";
-            info += "</TradeStrategy>\n";
+            info += "\t<TradeStrategy>\n";
+            info += "\t\t<batch>" + BatchTradeSimulator.Instance.batch + "</batch>\n";
+            info += "\t\t<startMoney>" + BatchTradeSimulator.Instance.startMoney + "</startMoney>\n";
+            info += "\t\t<tradeCountLstStr>" + tradeCountLstStr + "</tradeCountLstStr>\n";
+            info += "\t\t<strongUpStartIndex>" + TradeDataManager.Instance.strongUpStartTradeIndex + "</strongUpStartIndex>\n";
+            info += "\t\t<simSelNumIndex>" + TradeDataManager.Instance.simSelNumIndex + "</simSelNumIndex>\n";
+            info += "\t\t<curTradeStrategy>" + TradeDataManager.Instance.curTradeStrategy + "</curTradeStrategy>\n";
+            info += "\t\t<forceTradeByMaxNumCount>" + TradeDataManager.Instance.forceTradeByMaxNumCount + "</forceTradeByMaxNumCount>\n";
+            info += "\t\t<maxNumCount>" + TradeDataManager.Instance.maxNumCount + "</maxNumCount>\n";
+            info += "\t\t<specNumIndex>" + checkBoxSpecNumIndex.Checked + "</specNumIndex>\n";
+            info += "\t\t<onlyTradeOnStrongUpPath>" + checkBoxOnTradeOnStrongUpPath.Checked + "</onlyTradeOnStrongUpPath>\n";
+            info += "\t\t<riskControl>" + TradeDataManager.Instance.RiskControl + "</riskControl>\n";
+            info += "\t\t<uponValue>" + TradeDataManager.Instance.uponValue + "</uponValue>\n";
+            info += "\t\t<MultiTradePathCount>" + TradeDataManager.Instance.MultiTradePathCount + "</MultiTradePathCount>\n";
+            info += "\t\t<killLastNumber>" + checkBoxKillLastNumber.Checked + "</killLastNumber>\n";
+            info += "\t\t<procOnNegMoney>" + comboBoxOnNoMoney.SelectedIndex + "</procOnNegMoney>\n";
+            info += "\t</TradeStrategy>\n";
 
-            info += "<Simple>\n";
-            info += "\t<StartMoney>" + BatchTradeSimulator.Instance.startMoney + "</StartMoney>\n";
-            info += "\t<CurrentMoney>" + BatchTradeSimulator.Instance.currentMoney + "</CurrentMoney>\n";
-            info += "\t<MaxMoney>" + BatchTradeSimulator.Instance.maxMoney + "</MaxMoney>\n";
-            info += "\t<MinMoney>" + BatchTradeSimulator.Instance.minMoney + "</MinMoney>\n";
+            info += "\t<Simple>\n";
+            info += "\t\t<StartMoney>" + BatchTradeSimulator.Instance.startMoney + "</StartMoney>\n";
+            info += "\t\t<CurrentMoney>" + BatchTradeSimulator.Instance.currentMoney + "</CurrentMoney>\n";
+            info += "\t\t<MaxMoney>" + BatchTradeSimulator.Instance.maxMoney + "</MaxMoney>\n";
+            info += "\t\t<MinMoney>" + BatchTradeSimulator.Instance.minMoney + "</MinMoney>\n";
             float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
             if (delta > 0)
             {
-                info += "\t<EarnMoney>" + delta + "</EarnMoney>\n";
+                info += "\t\t<EarnMoney>" + delta + "</EarnMoney>\n";
             }
             else if (BatchTradeSimulator.Instance.currentMoney < BatchTradeSimulator.Instance.startMoney)
             {
-                info += "\t<LostMoney>" + delta + "</LostMoney>\n";
+                info += "\t\t<LostMoney>" + delta + "</LostMoney>\n";
             }
-            info += "\t<TradeTotalCount>" + BatchTradeSimulator.Instance.totalCount + "</TradeTotalCount>\n";
-            info += "\t<TradeRightCount>" + BatchTradeSimulator.Instance.tradeRightCount + "</TradeRightCount>\n";
-            info += "\t<TradeWrongCount>" + BatchTradeSimulator.Instance.tradeWrongCount + "</TradeWrongCount>\n";
-            info += "\t<UnTradeCount>" + BatchTradeSimulator.Instance.untradeCount + "</UnTradeCount>\n";
-            info += "</Simple>\n";
+            info += "\t\t<TradeTotalCount>" + BatchTradeSimulator.Instance.totalCount + "</TradeTotalCount>\n";
+            info += "\t\t<TradeRightCount>" + BatchTradeSimulator.Instance.tradeRightCount + "</TradeRightCount>\n";
+            info += "\t\t<TradeWrongCount>" + BatchTradeSimulator.Instance.tradeWrongCount + "</TradeWrongCount>\n";
+            info += "\t\t<UnTradeCount>" + BatchTradeSimulator.Instance.untradeCount + "</UnTradeCount>\n";
+            info += "\t</Simple>\n";
 
             List<int> keys = BatchTradeSimulator.Instance.tradeMissInfo.Keys.ToList<int>();
             keys.Sort();
-            info += "<TradeBeief>\n";
+            info += "\t<TradeBeief>\n";
             foreach (int key in keys)
             {
-                info += "\t<MissCount count=\"" + key + "\">" + BatchTradeSimulator.Instance.tradeMissInfo[key] + "</MissCount>\n";
+                info += "\t\t<MissCount count=\"" + key + "\">" + BatchTradeSimulator.Instance.tradeMissInfo[key] + "</MissCount>\n";
             }
-            info += "</TradeBeief>\n";
+            info += "\t</TradeBeief>\n";
 
-            info += "<LongMissTradeInfos>\n";
+            info += "\t<LongMissTradeInfos>\n";
             //foreach(TreeNode node in treeViewLongWrongTradeInfos.Nodes)
-            foreach( int key in tradeWrongCountTagsMap.Keys )
+            List<int> tagKeys = new List<int>();
+            tagKeys.AddRange(tradeWrongCountTagsMap.Keys);
+            tagKeys.Sort((x, y) =>
+            {
+                if (x > y)
+                    return -1;
+                return 1;
+            });
+            foreach ( int key in tagKeys)
             {
                 List<string> tags = tradeWrongCountTagsMap[key];
 
-                info += "\t<trade name=\"" + key + "-" + tags.Count + "\">\n";
+                info += "\t\t<trade name=\"" + key + "-" + tags.Count + "\">\n";
 
                 //foreach(TreeNode subNode in node.Nodes)
                 for( int i = 0; i < tags.Count; ++i )
                 {
-                    info += "\t\t<detail>" + tags[i] + "</detail>\n";
+                    info += "\t\t\t<detail>" + tags[i] + "</detail>\n";
                 }
 
-                info += "\t</trade>\n";
+                info += "\t\t</trade>\n";
             }
-            info += "</LongMissTradeInfos>\n";
+            info += "\t</LongMissTradeInfos>\n";
             info += "</root>";
 
             //开始写入
