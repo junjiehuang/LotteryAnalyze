@@ -3031,12 +3031,12 @@ namespace LotteryAnalyze
             //float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
             //float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
             //int[] maxMissCount = new int[] { 0, 0, 0, };
-            //int[] curMissCount = new int[] { 0, 0, 0, };
+            int[] curMissCount = new int[] { 0, 0, 0, };
             for (int i = 0; i < cdts.Length; ++i)
             {
                 CollectDataType cdt = cdts[i];
                 //maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
-                //curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
+                curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
                 appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
                 //appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
                 if (sumPRV != null)
@@ -3057,7 +3057,7 @@ namespace LotteryAnalyze
             {
                 PathCmpInfo pci = new PathCmpInfo(i, sumCUR.statisticUnitMap[cdts[i]]);
                 //pci.paramMap["maxMissCount"] = maxMissCount[i];
-                //pci.paramMap["curMissCount"] = curMissCount[i];
+                pci.paramMap["curMissCount"] = curMissCount[i];
                 //pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
                 pci.paramMap["curRateF"] = appearenceRateFastCUR[i];
                 pci.paramMap["detRateF"] = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
@@ -3109,12 +3109,31 @@ namespace LotteryAnalyze
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
 
-                        //if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
-                        //{
-                        //    int count = (int)lastPathCurPCI.paramMap["count2LIM"];
-                        //    if (count + CurrentTradeCountIndex > tradeCountList.Count)
-                        //        return;
-                        //}
+                        if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
+                        {
+                            int count = (int)lastPathCurPCI.paramMap["count2LIM"];
+                            if (count == 0xFFFF)
+                                return;
+                        }
+                        if( lastPathCurPCI.paramMap.ContainsKey("count2BMs") &&
+                            lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
+                        {
+                            float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
+                            int curMissCount = (int)lastPathCurPCI.paramMap["curMissCount"];
+                            if (count2BMs > 1 && curMissCount > 4)
+                            {
+                                TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
+                                if (startTrade != null)
+                                {
+                                    if(startTrade.pathCmpInfos[numIndex][0].pathIndex == lastTradePath)
+                                    {
+                                        float count2BUs = (float)lastPathCurPCI.paramMap["count2BUs"];
+                                        if (count2BUs < 1f)
+                                            return;
+                                    }
+                                }
+                            }
+                        }
                         //if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR &&
                         //    (int)lastPathCurPCI.paramMap["curMissCount"] < MAX_MISS_COUNT_TOR)
                         {
