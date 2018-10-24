@@ -3149,7 +3149,7 @@ namespace LotteryAnalyze
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataPrevSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(prevKV) / missHeight;
-                                if (willMissCount > 2 && minKV - prevKV > 2 && curMissCount > 4)
+                                if (willMissCount > 2 && minKV - kd.KValue > 2 && curMissCount > 4)
                                     return;
                             }
                             if(hasNextKV)
@@ -3157,19 +3157,19 @@ namespace LotteryAnalyze
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataNextSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(nextKV) / missHeight;
-                                if (willMissCount > 2 && minKV - nextKV > 2 && curMissCount > 4)
+                                if (willMissCount > 2 && minKV - kd.KValue > 2 && curMissCount > 4)
                                 {
                                     return;
                                 }
                             }
                         }
 
-                        if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
-                        {
-                            int count = (int)lastPathCurPCI.paramMap["count2LIM"];
-                            if (count == 0xFFFF)
-                                return;
-                        }
+                        //if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
+                        //{
+                        //    int count = (int)lastPathCurPCI.paramMap["count2LIM"];
+                        //    if (count == 0xFFFF)
+                        //        return;
+                        //}
                         if( lastPathCurPCI.paramMap.ContainsKey("count2BMs") )
                         {
                             float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
