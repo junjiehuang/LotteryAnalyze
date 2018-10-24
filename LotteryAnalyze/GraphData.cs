@@ -1500,6 +1500,30 @@ namespace LotteryAnalyze
                     }
                 }
             }
+
+            public void GetKValue(int x, out bool hasPrev, out float prevKV, out bool hasNext, out float nextKV)
+            {
+                hasPrev = (dataPrevSharp != null && dataSharp != null);
+                hasNext = (dataNextSharp != null && dataSharp != null);
+                prevKV = 0;
+                nextKV = 0;
+                if (hasPrev)
+                {
+                    float x2 = dataPrevSharp.index;
+                    float x1 = dataSharp.index;
+                    float y2 = dataPrevSharp.KValue;
+                    float y1 = dataSharp.KValue;
+                    prevKV = (x * (y2 - y1) / (x2 - x1)) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+                }
+                if (hasNext)
+                {
+                    float x2 = dataNextSharp.index;
+                    float x1 = dataSharp.index;
+                    float y2 = dataNextSharp.KValue;
+                    float y1 = dataSharp.KValue;
+                    prevKV = (x * (y2 - y1) / (x2 - x1)) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+                }
+            }
         }
 
         public class SingleAuxLineInfo
@@ -1513,7 +1537,7 @@ namespace LotteryAnalyze
                 downLineData.Reset();
             }
 
-            public void CheckData(KData kd, int endKDIndex)
+            public void CheckData(KData kd, int endKDIndex, int numID)
             {
                 if (kd.index == endKDIndex)
                     return;
@@ -1645,7 +1669,7 @@ namespace LotteryAnalyze
                     {
                         KData kd = kdd.GetData(cdt, false);
                         SingleAuxLineInfo sali = GetSingleAuxLineInfo(numID, cdt);
-                        sali.CheckData(kd, curKDataIndex);
+                        sali.CheckData(kd, curKDataIndex, numID);
                     }
 
                     --kdID;

@@ -1195,7 +1195,7 @@ namespace LotteryAnalyze
             
 
             // 自动计算辅助线
-            autoAnalyzeTool.Analyze(item.idGlobal, KGRAPH_LOOP_COUNT);
+            autoAnalyzeTool.Analyze(item.idGlobal);
 
             TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
             trade.lastDateItem = item;
@@ -3093,21 +3093,76 @@ namespace LotteryAnalyze
             CheckAndKeepSamePath(trade,numIndex);
         }
 
+        CollectDataType GetPathCDT(int i)
+        {
+            switch(i)
+            {
+                case 0: return CollectDataType.ePath0;
+                case 1: return CollectDataType.ePath1;
+                case 2: return CollectDataType.ePath2;
+            }
+            return CollectDataType.eNone;
+        }
+
         void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex)
         {
             if (CurrentTradeCountIndex != 0)
             {
-                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
+                // 当前这次交易优先级最高的PathCmpInfo
+                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];                
                 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
                 {
+                    // 找出上一次交易优先级最高的PathCmpInfo
                     PathCmpInfo lastPCI = lastTrade.pathCmpInfos[numIndex][0];
                     int lastTradePath = lastPCI.pathIndex;
-                    if (trade.pathCmpInfos[numIndex][0].pathIndex != lastTradePath)
+                    // 如果2次交易不是选择的同一路
+                    if (tmp.pathIndex != lastTradePath)
                     {
+                        // 找到上一次交易所选择的那一路在这次交易中的PathCmpInfo
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
+                        // 计算这一路的遗漏值
+                        int curMissCount = -1;
+                        if(lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
+                            curMissCount = (int)lastPathCurPCI.paramMap["curMissCount"];
+
+                        // 取这一路的通道线工具
+                        CollectDataType cdt = GetPathCDT(lastPathCurPCI.pathIndex);
+                        AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+                        if(sali.downLineData.valid)
+                        {
+                            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+                            KDataDict kdd = kddc.GetKDataDict(trade.lastDateItem);
+                            KData kd = kdd.GetData(cdt, false); 
+                            float missHeight = GraphDataManager.GetMissRelLength(cdt);
+
+                            bool hasPrevKV, hasNextKV;
+                            float prevKV, nextKV;
+                            // 计算当前期在下通道线上的K值
+                            sali.downLineData.GetKValue(trade.lastDateItem.idGlobal, out hasPrevKV, out prevKV, out hasNextKV, out nextKV );
+                            // 下前通道线
+                            if (hasPrevKV)
+                            {
+                                float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataPrevSharp.DownValue);
+                                // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
+                                float willMissCount = kd.RelateDistTo(prevKV) / missHeight;
+                                if (willMissCount > 2 && minKV - prevKV > 2 && curMissCount > 4)
+                                    return;
+                            }
+                            if(hasNextKV)
+                            {
+                                float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataNextSharp.DownValue);
+                                // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
+                                float willMissCount = kd.RelateDistTo(nextKV) / missHeight;
+                                if (willMissCount > 2 && minKV - nextKV > 2 && curMissCount > 4)
+                                {
+                                    return;
+                                }
+                            }
+                        }
 
                         if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
                         {
@@ -3115,11 +3170,9 @@ namespace LotteryAnalyze
                             if (count == 0xFFFF)
                                 return;
                         }
-                        if( lastPathCurPCI.paramMap.ContainsKey("count2BMs") &&
-                            lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
+                        if( lastPathCurPCI.paramMap.ContainsKey("count2BMs") )
                         {
                             float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
-                            int curMissCount = (int)lastPathCurPCI.paramMap["curMissCount"];
                             if (count2BMs > 1 && curMissCount > 4)
                             {
                                 TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
@@ -3127,7 +3180,7 @@ namespace LotteryAnalyze
                                 {
                                     if(startTrade.pathCmpInfos[numIndex][0].pathIndex == lastTradePath)
                                     {
-                                        float count2BUs = (float)lastPathCurPCI.paramMap["count2BUs"];
+                                        float count2BUs = (float)startTrade.pathCmpInfos[numIndex][0].paramMap["count2BUs"];
                                         if (count2BUs < 1f)
                                             return;
                                     }

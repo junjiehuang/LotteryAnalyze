@@ -207,7 +207,7 @@ namespace LotteryAnalyze.UI
                         }
                     }
 
-                    if (isPause == false)
+                    if (isPause == false && startSim == true)
                         Step();
                 }
             }
