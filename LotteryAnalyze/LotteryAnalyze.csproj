@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="DataGridViewColumnManager.cs" />
     <Compile Include="DataItem.cs" />
+    <Compile Include="GlobalSetting.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphUtil.cs" />

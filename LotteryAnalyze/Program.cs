@@ -69,13 +69,21 @@ namespace LotteryAnalyze
                     //else
                     //    System.Threading.Thread.Sleep(0);
                     Update();
+                    GlobalSetting.SaveCfg();
                     Application.DoEvents();
                 }
+
+                Quit();
             }
         }
 
         static void Init()
         {
+        }
+
+        static void Quit()
+        {
+            GlobalSetting.SaveCfg();
         }
 
         static void Update()

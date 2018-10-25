@@ -1191,8 +1191,7 @@ namespace LotteryAnalyze
                 TradeDataManager.Instance.debugInfo.Hit(continueTradeMissCount))
             {
                 TradeDataManager.Instance.PauseAutoTradeJob();
-            }
-            
+            }            
 
             // 自动计算辅助线
             autoAnalyzeTool.Analyze(item.idGlobal);
@@ -3140,16 +3139,18 @@ namespace LotteryAnalyze
                             float missHeight = GraphDataManager.GetMissRelLength(cdt);
 
                             bool hasPrevKV, hasNextKV;
-                            float prevKV, nextKV;
+                            float prevKV, nextKV, prevSlope, nextSlope;
                             // 计算当前期在下通道线上的K值
-                            sali.downLineData.GetKValue(trade.lastDateItem.idGlobal, out hasPrevKV, out prevKV, out hasNextKV, out nextKV );
+                            sali.downLineData.GetKValue(trade.lastDateItem.idGlobal, out hasPrevKV, out prevKV, out prevSlope, out hasNextKV, out nextKV, out nextSlope );
                             // 下前通道线
                             if (hasPrevKV)
                             {
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataPrevSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(prevKV) / missHeight;
-                                if (willMissCount > 2 && minKV - kd.KValue > 2 && curMissCount > 4)
+                                if ((willMissCount > 2 || (prevSlope >= 0 && minKV - kd.KValue > 2))
+                                    //&& minKV - kd.KValue > 2 
+                                    && curMissCount > 4)
                                     return;
                             }
                             if(hasNextKV)
@@ -3157,7 +3158,9 @@ namespace LotteryAnalyze
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataNextSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(nextKV) / missHeight;
-                                if (willMissCount > 2 && minKV - kd.KValue > 2 && curMissCount > 4)
+                                if ((willMissCount > 2 || (nextSlope >= 0 && minKV - kd.KValue > 2))
+                                    //&& minKV - kd.KValue > 2 
+                                    && curMissCount > 4)
                                 {
                                     return;
                                 }
@@ -3255,7 +3258,7 @@ namespace LotteryAnalyze
                 pci.paramMap["missCountAreas"] = missCountAreas[i];                
                 //pci.paramMap["avgMissCountAreas"] = avgMissCountAreas[i];
                 pci.paramMap["maxMissCount"] = maxMissCount[i];
-                pci.paramMap["missCount"] = missCount[i];
+                pci.paramMap["curMissCount"] = missCount[i];
                 //MACDPoint mp = macdPM.GetData(cdts[i], false);
                 //pci.paramMap["DEA"] = mp.DEA;
                 //pci.paramMap["DIF"] = mp.DIF;

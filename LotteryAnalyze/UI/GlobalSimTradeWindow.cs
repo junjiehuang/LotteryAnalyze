@@ -27,7 +27,7 @@ namespace LotteryAnalyze.UI
         int startDate = -1;
         int endDate = -1;
         bool stopTradeOnNoMoney = true;
-        int updateInterval = 500;
+        //int updateInterval = 1500;
         double updateCountDown = 0;
 
         Dictionary<int, List<string>> tradeWrongCountTagsMap = new Dictionary<int, List<string>>();
@@ -96,7 +96,7 @@ namespace LotteryAnalyze.UI
             if (updateCountDown <= 0)
             {
                 UpdateTimer_Tick(null, null);
-                updateCountDown = (double)updateInterval / 1000.0;
+                updateCountDown = (double)GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL / 1000.0;
             }
             else
             {
@@ -142,7 +142,7 @@ namespace LotteryAnalyze.UI
             //updateTimer.Interval = 10;
             //updateTimer.Tick += UpdateTimer_Tick;
             //updateTimer.Start();
-            textBoxRefreshTime.Text = updateInterval.ToString();
+            textBoxRefreshTime.Text = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL.ToString();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
             TradeDataManager.Instance.longWrongTradeCallBack += OnLongWrongTrade;
@@ -737,11 +737,11 @@ namespace LotteryAnalyze.UI
 
         private void textBoxRefreshTime_TextChanged(object sender, EventArgs e)
         {
-            if (int.TryParse(textBoxRefreshTime.Text, out updateInterval) == false)
-                updateInterval = 50;
-            if (updateInterval < 1)
-                updateInterval = 1;
-            textBoxRefreshTime.Text = updateInterval.ToString();
+            if (int.TryParse(textBoxRefreshTime.Text, out GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL) == false)
+                GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 50;
+            if (GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL < 1)
+                GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 1;
+            textBoxRefreshTime.Text = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL.ToString();
             this.Invalidate(true);
         }
     }

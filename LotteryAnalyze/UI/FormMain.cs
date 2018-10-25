@@ -14,13 +14,12 @@ namespace LotteryAnalyze
 {
     public partial class FormMain : Form
     {
-        public static float OPACITY = 1;
         static List<Form> AllWindows = new List<Form>();
         public static void AddWindow(Form wnd)
         {
             if (AllWindows.Contains(wnd) == false)
                 AllWindows.Add(wnd);
-            wnd.Opacity = OPACITY;
+            wnd.Opacity = GlobalSetting.G_WINDOW_OPACITY;
         }
         public static void RemoveWindow(Form wnd)
         {
@@ -30,7 +29,7 @@ namespace LotteryAnalyze
         {
             for( int i = 0; i < AllWindows.Count; ++i )
             {
-                AllWindows[i].Opacity = OPACITY;
+                AllWindows[i].Opacity = GlobalSetting.G_WINDOW_OPACITY;
             }
         }
 
@@ -617,7 +616,7 @@ namespace LotteryAnalyze
 
         private void toolStripTextBoxAlpha_Click(object sender, EventArgs e)
         {
-            OPACITY = float.Parse(toolStripTextBoxAlpha.Text);
+            GlobalSetting.G_WINDOW_OPACITY = float.Parse(toolStripTextBoxAlpha.Text);
             ApplyOpacityToAllWindows();
         }
 
@@ -638,7 +637,7 @@ namespace LotteryAnalyze
         {
             if (string.IsNullOrEmpty(toolStripTextBoxAlpha.Text))
                 return;
-            if (float.TryParse(toolStripTextBoxAlpha.Text, out OPACITY))
+            if (float.TryParse(toolStripTextBoxAlpha.Text, out GlobalSetting.G_WINDOW_OPACITY))
             {
                 ApplyOpacityToAllWindows();
             }

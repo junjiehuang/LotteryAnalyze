@@ -1501,19 +1501,22 @@ namespace LotteryAnalyze
                 }
             }
 
-            public void GetKValue(int x, out bool hasPrev, out float prevKV, out bool hasNext, out float nextKV)
+            public void GetKValue(int x, 
+                out bool hasPrev, out float prevKV, out float prevSlope, 
+                out bool hasNext, out float nextKV, out float nextSlope)
             {
                 hasPrev = (dataPrevSharp != null && dataSharp != null);
                 hasNext = (dataNextSharp != null && dataSharp != null);
-                prevKV = 0;
-                nextKV = 0;
+                prevKV = nextKV = 0;
+                prevSlope = nextSlope = 0;
                 if (hasPrev)
                 {
                     float x2 = dataPrevSharp.index;
                     float x1 = dataSharp.index;
                     float y2 = dataPrevSharp.KValue;
                     float y1 = dataSharp.KValue;
-                    prevKV = (x * (y2 - y1) / (x2 - x1)) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+                    prevSlope = (y2 - y1) / (x2 - x1);
+                    prevKV = (x * prevSlope) + ((y1 * x2 - y2 * x1) / (x2 - x1));
                 }
                 if (hasNext)
                 {
@@ -1521,7 +1524,8 @@ namespace LotteryAnalyze
                     float x1 = dataSharp.index;
                     float y2 = dataNextSharp.KValue;
                     float y1 = dataSharp.KValue;
-                    prevKV = (x * (y2 - y1) / (x2 - x1)) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+                    nextSlope = (y2 - y1) / (x2 - x1);
+                    nextKV = (x * nextSlope) + ((y1 * x2 - y2 * x1) / (x2 - x1));
                 }
             }
         }
@@ -1596,6 +1600,84 @@ namespace LotteryAnalyze
                     }
                 }
             }
+
+            public void CheckDataFast(KDataDictContainer kddc, CollectDataType cdt, int numIndex, int maxKDataID, ref int curKDataID, ref int loopCount, ref int prevMissCount)
+            {
+                if(maxKDataID == curKDataID)
+                {
+                    --loopCount;
+                    --curKDataID;
+                    prevMissCount = 0;
+                    return;
+                }
+                KDataDict kddC = kddc.dataLst[curKDataID];
+                KData kdCurrent = kddC.GetData(cdt, false);
+                KData kdNext = kdCurrent.GetNextKData();
+                int missCount = kdCurrent.parent.startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+
+                // 当前K值上升
+                if (kdCurrent.HitValue > kdCurrent.MissValue)
+                {
+                    // 下一个K值是下降，表明当前K值可能是一个波峰
+                    if (kdNext != null && kdNext.HitValue < kdNext.MissValue && prevMissCount > 1)
+                    {
+                        // 当前没有波峰
+                        if (upLineData.dataSharp == null)
+                        {
+                            // 记录该K值为波峰
+                            upLineData.dataSharp = kdCurrent;
+                        }
+                        // 如果当前K值高于波峰的K值
+                        else if (kdCurrent.KValue > upLineData.dataSharp.KValue)
+                        {
+                            // 把当前的波峰K值放到候选列表中
+                            upLineData.candictDatas.Add(upLineData.dataSharp);
+                            // 设置当前K值为波峰
+                            upLineData.dataSharp = kdCurrent;
+                        }
+                        // 把当前的K值放到候选列表中
+                        else
+                            upLineData.candictDatas.Add(kdCurrent);
+                    }
+                }
+                // 当前K值下降
+                else if (kdCurrent.HitValue < kdCurrent.MissValue)
+                {
+                    // 下一个K值上升，表明当前K值可能是一个波谷
+                    if (kdNext != null && kdNext.HitValue > kdNext.MissValue && missCount > 1)
+                    {
+                        // 当前没有波谷
+                        if (downLineData.dataSharp == null)
+                        {
+                            // 记录该K值为波谷
+                            downLineData.dataSharp = kdCurrent;
+                        }
+                        // 如果当前K值低于波谷的K值
+                        else if (kdCurrent.KValue < downLineData.dataSharp.KValue)
+                        {
+                            // 把当前的波谷K值放到候选列表中
+                            downLineData.candictDatas.Add(downLineData.dataSharp);
+                            // 设置当前K值为波谷
+                            downLineData.dataSharp = kdCurrent;
+                        }
+                        // 把当前的K值放到候选列表中
+                        else
+                            downLineData.candictDatas.Add(kdCurrent);
+                    }
+                }                
+                if (missCount > 0)
+                {
+                    curKDataID -= missCount;
+                    loopCount -= missCount;
+                }
+                else
+                {
+                    --loopCount;
+                    --curKDataID;
+                }
+                prevMissCount = missCount;
+            }
+
             public void CheckValid()
             {
                 upLineData.CalcSecondPoint(true);
@@ -1678,13 +1760,37 @@ namespace LotteryAnalyze
             }
         }
 
+        void ProcessCheckFast(int curKDataIndex, int loopCount)
+        {
+            // 遍历每个数字位
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                // 取K值映射表
+                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+
+                for( int cdtID = 0; cdtID < GraphDataManager.S_CDT_LIST.Count; ++cdtID)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[cdtID];
+                    int loop = loopCount;
+                    int kdID = curKDataIndex;
+                    int prevMissCount = 0;
+                    SingleAuxLineInfo sali = GetSingleAuxLineInfo(numID, cdt);
+
+                    while (loop >= 0 && kdID >= 0)
+                    {
+                        sali.CheckDataFast(kddc, cdt, numID, curKDataIndex, ref kdID, ref loop, ref prevMissCount);
+                    }
+                }
+            }
+        }
+
         public void Analyze(int curKDataIndex, int loopCount = C_ANALYZE_LOOP_COUNT)
         {
             //int loopCount = C_ANALYZE_LOOP_COUNT;
             if (curKDataIndex < 2)
                 return;
             Reset();
-            ProcessCheck(curKDataIndex, loopCount);
+            ProcessCheckFast(curKDataIndex, loopCount);
             FinalCheckValid();
         }
 

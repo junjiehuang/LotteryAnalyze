@@ -30,7 +30,7 @@ namespace LotteryAnalyze.UI
         static Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
         Pen curUpdatePen;
         //System.Windows.Forms.Timer updateTimer;
-        int updateInterval = 500;
+        //int updateInterval = 1500;
         double updateCountDown = 0;
 
         #region ctor and common
@@ -94,14 +94,13 @@ namespace LotteryAnalyze.UI
             comboBoxOperations.DataSource = GraphKCurve.S_AUX_LINE_OPERATIONS;
             comboBoxOperations.SelectedIndex = (int)graphMgr.kvalueGraph.auxOperationIndex;
             checkBoxShowAuxLines.Checked = graphMgr.kvalueGraph.enableAuxiliaryLine;
-
-            updateInterval = 500;
+            
             //updateTimer = new Timer();
             //updateTimer.Interval = updateInterval;
             //updateTimer.Tick += UpdateTimer_Tick;
             //updateTimer.Start();
             updateCountDown = 0;
-            textBoxRefreshTimeLength.Text = updateInterval.ToString();
+            textBoxRefreshTimeLength.Text = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL.ToString();
             curUpdatePen = redPen;
 
             comboBoxTradeNumIndex.DataSource = KDataDictContainer.C_TAGS;
@@ -238,7 +237,7 @@ namespace LotteryAnalyze.UI
             if (updateCountDown <= 0)
             {
                 UpdateTimer_Tick(null, null);
-                updateCountDown = (double)updateInterval / 1000.0;
+                updateCountDown = (double)GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL / 1000.0;
             }
             else
             {
@@ -1312,11 +1311,11 @@ namespace LotteryAnalyze.UI
 
         private void textBoxRefreshTimeLength_TextChanged(object sender, EventArgs e)
         {
-            if(int.TryParse(textBoxRefreshTimeLength.Text, out updateInterval) == false)
-                updateInterval = 50;
-            if (updateInterval < 1)
-                updateInterval = 1;
-            textBoxRefreshTimeLength.Text = updateInterval.ToString();
+            if(int.TryParse(textBoxRefreshTimeLength.Text, out GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL) == false)
+                GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = 50;
+            if (GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL < 10)
+                GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = 10;
+            textBoxRefreshTimeLength.Text = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL.ToString();
             this.Invalidate(true);
         }
 
