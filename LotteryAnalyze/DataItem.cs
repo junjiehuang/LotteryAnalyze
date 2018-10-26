@@ -17,6 +17,8 @@ namespace LotteryAnalyze
         public float missCountArea;
         // 统计出现该统计类型数据的次数
         public Byte appearCount;
+        // 统计没有出现该统计类型数据的次数
+        public Byte disappearCount;
         // 统计出现该统计类型数据的百分比
         public float appearProbability;
         // 统计出现该统计类型数据的百分比与理论概率的差值
@@ -214,6 +216,23 @@ namespace LotteryAnalyze
                 }
             }
         }
+
+        void CollectCount(StatisticUnit su, bool isAppear, bool onFast, bool onShort, bool onLong)
+        {
+            if (isAppear)
+            {
+                if (onFast) su.fastData.appearCount++;
+                if (onShort) su.shortData.appearCount++;
+                if (onLong) su.longData.appearCount++;
+            }
+            else
+            {
+                if (onFast) su.fastData.disappearCount++;
+                if (onShort) su.shortData.disappearCount++;
+                if (onLong) su.longData.disappearCount++;
+            }
+        }
+
         public void CollectCount(DataItem cmpItem, int numIndex, bool onFast, bool onShort, bool onLong)
         {
             if (cmpItem == null)
@@ -223,158 +242,62 @@ namespace LotteryAnalyze
                 switch (su.cdt)
                 {
                     case CollectDataType.ePath0:
-                        if (cmpItem.path012OfEachSingle[numIndex] == 0)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 0, onFast, onShort, onLong);
                         break;
                     case CollectDataType.ePath1:
-                        if (cmpItem.path012OfEachSingle[numIndex] == 1)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 1, onFast, onShort, onLong);
                         break;
                     case CollectDataType.ePath2:
-                        if (cmpItem.path012OfEachSingle[numIndex] == 2)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 2, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eBigNum:
-                        if (cmpItem.bigOfEachSingle[numIndex])
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex], onFast, onShort, onLong);
                         break;
                     case CollectDataType.eSmallNum:
-                        if (cmpItem.bigOfEachSingle[numIndex] == false)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex] == false, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eOddNum:
-                        if (cmpItem.oddOfEachSingle[numIndex])
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex], onFast, onShort, onLong);
                         break;
                     case CollectDataType.eEvenNum:
-                        if (cmpItem.oddOfEachSingle[numIndex] == false)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex] == false, onFast, onShort, onLong);
                         break;
                     case CollectDataType.ePrimeNum:
-                        if (cmpItem.primeOfEachSingle[numIndex])
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex], onFast, onShort, onLong);
                         break;
                     case CollectDataType.eCompositeNum:
-                        if (cmpItem.primeOfEachSingle[numIndex] == false)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex] == false, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum0:
-                        if (cmpItem.fiveNumLst[numIndex] == 0)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 0, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum1:
-                        if (cmpItem.fiveNumLst[numIndex] == 1)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 1, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum2:
-                        if (cmpItem.fiveNumLst[numIndex] == 2)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 2, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum3:
-                        if (cmpItem.fiveNumLst[numIndex] == 3)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 3, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum4:
-                        if (cmpItem.fiveNumLst[numIndex] == 4)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 4, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum5:
-                        if (cmpItem.fiveNumLst[numIndex] == 5)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 5, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum6:
-                        if (cmpItem.fiveNumLst[numIndex] == 6)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 6, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum7:
-                        if (cmpItem.fiveNumLst[numIndex] == 7)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 7, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum8:
-                        if (cmpItem.fiveNumLst[numIndex] == 8)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 8, onFast, onShort, onLong);
                         break;
                     case CollectDataType.eNum9:
-                        if (cmpItem.fiveNumLst[numIndex] == 9)
-                        {
-                            if (onFast) su.fastData.appearCount++;
-                            if (onShort) su.shortData.appearCount++;
-                            if (onLong) su.longData.appearCount++;
-                        }
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 9, onFast, onShort, onLong);
                         break;
-
                 }
             }
         }
@@ -424,12 +347,12 @@ namespace LotteryAnalyze
         {
             if (lotteryData == null)
                 return;
-            DataItem curItem = lotteryData.parent.GetPrevItem(lotteryData);
+            DataItem prevItem = lotteryData.parent.GetPrevItem(lotteryData);
             for (int i = 0; i < 5; ++i)
             {
-                allStatisticInfo[i].CollectMissCount(curItem, i);
+                allStatisticInfo[i].CollectMissCount(prevItem, i);
             }
-            curItem = lotteryData;
+            DataItem curItem = lotteryData;
             validLongCount = 0;
             while (curItem != null && validLongCount < LONG_COUNT)
             {

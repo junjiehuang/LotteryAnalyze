@@ -1767,12 +1767,18 @@ namespace LotteryAnalyze
             eAppearenceFast,
             eAppearenceShort,
             eAppearenceLong,
+            eAppearCountFast,
+            eAppearCountShort,
+            eAppearCountLong,
         }
         public static string[] AppearenceTypeStrs = new string[]
         {
             "统计5期的出号率",
             "统计10期的出号率",
             "统计30期的出号率",
+            "统计5期的出号个数",
+            "统计10期的出号个数",
+            "统计30期的出号个数",
         };
         AppearenceType appearenceType = AppearenceType.eAppearenceShort;
         public AppearenceType AppearenceCycleType
@@ -1921,7 +1927,15 @@ namespace LotteryAnalyze
             g.DrawLine(grayDotLinePen, 0, bottom, winW, bottom);
             if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
             {
-                float v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
+                float v = 0;
+                if(appearenceType < AppearenceType.eAppearCountFast)
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
+                else if(appearenceType == AppearenceType.eAppearCountFast)
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.FAST_COUNT;
+                else if (appearenceType == AppearenceType.eAppearCountShort)
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SHOR_COUNT;
+                else if (appearenceType == AppearenceType.eAppearCountLong)
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.LONG_COUNT;
                 g.DrawString(v.ToString("f2") + "%", tagFont, tagBrush, winW - 60, mouseRelPos.Y );
             }
 
@@ -1980,6 +1994,15 @@ namespace LotteryAnalyze
                     case AppearenceType.eAppearenceLong:
                         apr = sum.statisticUnitMap[cdt].longData.appearProbability;
                         break;
+                    case AppearenceType.eAppearCountFast:
+                        apr = sum.statisticUnitMap[cdt].fastData.appearCount * 100 / LotteryStatisticInfo.FAST_COUNT;
+                        break;
+                    case AppearenceType.eAppearCountShort:
+                        apr = sum.statisticUnitMap[cdt].shortData.appearCount * 100 / LotteryStatisticInfo.SHOR_COUNT;
+                        break;
+                    case AppearenceType.eAppearCountLong:
+                        apr = sum.statisticUnitMap[cdt].longData.appearCount * 100 / LotteryStatisticInfo.LONG_COUNT;
+                        break;
                 }
                 float rH = apr / 100 * maxHeight;
                 float rT = bottom - rH;
@@ -2014,6 +2037,9 @@ namespace LotteryAnalyze
             eMissCountAreaFast,
             eMissCountAreaShort,
             eMissCountAreaLong,
+            eMissCountFast,
+            eMissCountShort,
+            eMissCountLong,
         }
         public static string[] MissCountTypeStrs = new string[]
         {
@@ -2021,6 +2047,9 @@ namespace LotteryAnalyze
             "统计5期的遗漏面积",
             "统计10期的遗漏面积",
             "统计30期的遗漏面积",
+            "统计5期的遗漏数",
+            "统计10期的遗漏数",
+            "统计30期的遗漏数",
         };
         MissCountType _missCountType = MissCountType.eMissCountValue;
         public MissCountType missCountType
@@ -2032,7 +2061,13 @@ namespace LotteryAnalyze
             set
             {
                 _missCountType = value;
-                if (_missCountType == MissCountType.eMissCountValue)
+                if (_missCountType == MissCountType.eMissCountFast)
+                    maxMissCount = LotteryStatisticInfo.FAST_COUNT;
+                else if (_missCountType == MissCountType.eMissCountShort)
+                    maxMissCount = LotteryStatisticInfo.SHOR_COUNT;
+                else if (_missCountType == MissCountType.eMissCountLong)
+                    maxMissCount = LotteryStatisticInfo.LONG_COUNT;
+                else if (_missCountType == MissCountType.eMissCountValue)
                     maxMissCount = 10;
                 else
                     maxMissCountArea = 10;
@@ -2108,30 +2143,58 @@ namespace LotteryAnalyze
             {
                 string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] ";
                 StatisticUnitMap sum = hoverItem.statisticInfo.allStatisticInfo[numIndex];
-                if(missCountType == MissCountType.eMissCountValue)
+                switch (missCountType)
                 {
-                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].missCount + 
-                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].missCount + 
-                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].missCount + "]";
-                }
-                else if (missCountType == MissCountType.eMissCountAreaFast)
-                {
-                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea +
-                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea +
-                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea + "]";
-                }
-                else if (missCountType == MissCountType.eMissCountAreaShort)
-                {
-                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.missCountArea +
-                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.missCountArea +
-                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.missCountArea + "]";
-                }
-                else if (missCountType == MissCountType.eMissCountAreaLong)
-                {
-                    info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.missCountArea +
-                        "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.missCountArea +
-                        "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.missCountArea + "]";
-                }
+                    case MissCountType.eMissCountValue:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].missCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].missCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].missCount + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountAreaFast:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountAreaShort:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.missCountArea + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountAreaLong:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.missCountArea + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountFast:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.disappearCount + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountShort:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.disappearCount + "]";
+                        }
+                        break;
+                    case MissCountType.eMissCountLong:
+                        {
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.disappearCount + "]";
+                        }
+                        break;
+            }
                 g.DrawString(info, tagFont, tagBrush, 5, 5);
             }
 
@@ -2149,7 +2212,10 @@ namespace LotteryAnalyze
         void DrawSingleMissCountLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
         {
             float gridH = 1;
-            if (missCountType == MissCountType.eMissCountValue)
+            if (missCountType == MissCountType.eMissCountValue ||
+                missCountType == MissCountType.eMissCountFast ||
+                missCountType == MissCountType.eMissCountShort ||
+                missCountType == MissCountType.eMissCountLong)
                 gridH = maxHeight / maxMissCount;
             else
                 gridH = maxHeight / maxMissCountArea;
@@ -2170,6 +2236,18 @@ namespace LotteryAnalyze
                     if (maxMissCount < curMissCount)
                         maxMissCount = curMissCount;
                     CUR = curMissCount;
+                }
+                else if(missCountType == MissCountType.eMissCountFast)
+                {
+                    CUR = sum.statisticUnitMap[cdt].fastData.disappearCount;
+                }
+                else if (missCountType == MissCountType.eMissCountShort)
+                {
+                    CUR = sum.statisticUnitMap[cdt].shortData.disappearCount;
+                }
+                else if (missCountType == MissCountType.eMissCountLong)
+                {
+                    CUR = sum.statisticUnitMap[cdt].longData.disappearCount;
                 }
                 else
                 {
