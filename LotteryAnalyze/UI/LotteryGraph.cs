@@ -14,7 +14,7 @@ namespace LotteryAnalyze.UI
     {
         static List<LotteryGraph> instLst = new List<LotteryGraph>();
 
-        GraphManager graphMgr = new GraphManager();
+        GraphManager graphMgr = null;
         int numberIndex = 0;        
         int curCDTIndex = 0;
         CollectDataType curCDT = CollectDataType.eNone;
@@ -56,6 +56,7 @@ namespace LotteryAnalyze.UI
 
         public LotteryGraph()
         {
+            graphMgr = new GraphManager(this);
             instLst.Add(this);
             InitializeComponent();
             

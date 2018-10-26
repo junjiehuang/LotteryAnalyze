@@ -1,5 +1,6 @@
 ﻿#define TRADE_DBG
 
+using LotteryAnalyze.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -452,6 +453,12 @@ namespace LotteryAnalyze
         {
             BeforeDraw();
 
+            int beforeID = preViewDataIndex;
+            if (enableAuxiliaryLine)
+            {
+                DrawAutoAuxTools(g, winW, winH, numIndex, cdt);
+            }
+
             preViewDataIndex = -1;
             lastValue = 0;
             if (canvasOffset.Y == 0 && canvasOffset.X == 0)
@@ -564,7 +571,12 @@ namespace LotteryAnalyze
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
-                g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
+                //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
+            }
+
+            if(enableAuxiliaryLine && preViewDataIndex != beforeID)
+            {
+                parent.MakeWindowRepaint();
             }
             EndDraw(g);
         }
@@ -1019,8 +1031,11 @@ namespace LotteryAnalyze
                 Point pt = StandToCanvas(selAuxLine.keyPoints[selAuxLinePointIndex]);
                 g.DrawRectangle(selAuxLine.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
+        }
 
-            if(preViewDataIndex != -1)
+        void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
+        {
+            if (preViewDataIndex != -1)
             {
                 TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
                 DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
@@ -1035,22 +1050,20 @@ namespace LotteryAnalyze
         {
             if (autoAnalyzeTool == null)
                 return;
-
-            AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
-            if (sali.upLineData.valid)
-                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
-            if (sali.downLineData.valid)
-                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePen);
-
             if (preViewDataIndex != -1)
             {
                 float ex = preViewDataIndex * gridScaleW;
-                float width = autoAnalyzeTool.ANALYZE_SAMPLE_COUNT * gridScaleW;
+                float width = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT * gridScaleW;
                 float sx = ex - width;
                 ex = StandToCanvas(ex, true);
                 sx = StandToCanvas(sx, true);
                 g.FillRectangle(previewAnalyzeToolBrush, sx, 0, width, winH);
             }
+            AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+            if (sali.upLineData.valid)
+                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
+            if (sali.downLineData.valid)
+                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePen);
         }
 
         void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen)
@@ -1365,7 +1378,7 @@ namespace LotteryAnalyze
 
             if (TradeDataManager.Instance.autoAnalyzeTool != null)
             {
-                int startID = endIndex - AutoAnalyzeTool.C_ANALYZE_LOOP_COUNT;
+                int startID = endIndex - GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 if (startID < 0)
                     startID = 0;
                 float x = StandToCanvas( startID * gridScaleW, true );
@@ -2324,9 +2337,11 @@ namespace LotteryAnalyze
         public GraphAppearence appearenceGraph;
         public GraphMissCount missCountGraph;
         public int endShowDataItemIndex = -1;
+        LotteryGraph window;
 
-        public GraphManager()
+        public GraphManager(LotteryGraph _window)
         {
+            window = _window;
             barGraph = new GraphBar(); barGraph.parent = this;
             kvalueGraph = new GraphKCurve(); kvalueGraph.parent = this;
             tradeGraph = new GraphTrade(); tradeGraph.parent = this;
@@ -2337,6 +2352,11 @@ namespace LotteryAnalyze
             sGraphMap.Add(GraphType.eTradeGraph, tradeGraph);
             sGraphMap.Add(GraphType.eAppearenceGraph, appearenceGraph);
             sGraphMap.Add(GraphType.eMissCountGraph, missCountGraph);
+        }
+
+        public void MakeWindowRepaint()
+        {
+            window.Invalidate(true);
         }
 
         public void OnTradeCompleted()
