@@ -397,6 +397,7 @@ namespace LotteryAnalyze
         Pen redDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Red, 1);
         Pen cyanDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Cyan, 1);
 
+        SolidBrush previewAnalyzeToolBrush = new SolidBrush(Color.FromArgb(200, 80, 80, 80));
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
@@ -1022,23 +1023,34 @@ namespace LotteryAnalyze
             if(preViewDataIndex != -1)
             {
                 TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
-                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt);
+                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
             }
             else
             {
-                DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt);
+                DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt, -1);
             }
         }
 
-        void DrawAutoAuxTools(AutoAnalyzeTool autoAnalyzeTool, Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
+        void DrawAutoAuxTools(AutoAnalyzeTool autoAnalyzeTool, Graphics g, int winW, int winH, int numIndex, CollectDataType cdt, int preViewDataIndex)
         {
             if (autoAnalyzeTool == null)
                 return;
+
             AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
             if (sali.upLineData.valid)
                 DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
             if (sali.downLineData.valid)
                 DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePen);
+
+            if (preViewDataIndex != -1)
+            {
+                float ex = preViewDataIndex * gridScaleW;
+                float width = autoAnalyzeTool.ANALYZE_SAMPLE_COUNT * gridScaleW;
+                float sx = ex - width;
+                ex = StandToCanvas(ex, true);
+                sx = StandToCanvas(sx, true);
+                g.FillRectangle(previewAnalyzeToolBrush, sx, 0, width, winH);
+            }
         }
 
         void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen)
@@ -2037,9 +2049,9 @@ namespace LotteryAnalyze
             eMissCountAreaFast,
             eMissCountAreaShort,
             eMissCountAreaLong,
-            eMissCountFast,
-            eMissCountShort,
-            eMissCountLong,
+            eDisappearCountFast,
+            eDisappearCountShort,
+            eDisappearCountLong,
         }
         public static string[] MissCountTypeStrs = new string[]
         {
@@ -2061,11 +2073,11 @@ namespace LotteryAnalyze
             set
             {
                 _missCountType = value;
-                if (_missCountType == MissCountType.eMissCountFast)
+                if (_missCountType == MissCountType.eDisappearCountFast)
                     maxMissCount = LotteryStatisticInfo.FAST_COUNT;
-                else if (_missCountType == MissCountType.eMissCountShort)
+                else if (_missCountType == MissCountType.eDisappearCountShort)
                     maxMissCount = LotteryStatisticInfo.SHOR_COUNT;
-                else if (_missCountType == MissCountType.eMissCountLong)
+                else if (_missCountType == MissCountType.eDisappearCountLong)
                     maxMissCount = LotteryStatisticInfo.LONG_COUNT;
                 else if (_missCountType == MissCountType.eMissCountValue)
                     maxMissCount = 10;
@@ -2173,21 +2185,21 @@ namespace LotteryAnalyze
                                 "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.missCountArea + "]";
                         }
                         break;
-                    case MissCountType.eMissCountFast:
+                    case MissCountType.eDisappearCountFast:
                         {
                             info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.disappearCount +
                                 "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.disappearCount +
                                 "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.disappearCount + "]";
                         }
                         break;
-                    case MissCountType.eMissCountShort:
+                    case MissCountType.eDisappearCountShort:
                         {
                             info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.disappearCount +
                                 "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.disappearCount +
                                 "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.disappearCount + "]";
                         }
                         break;
-                    case MissCountType.eMissCountLong:
+                    case MissCountType.eDisappearCountLong:
                         {
                             info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.disappearCount +
                                 "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.disappearCount +
@@ -2213,9 +2225,9 @@ namespace LotteryAnalyze
         {
             float gridH = 1;
             if (missCountType == MissCountType.eMissCountValue ||
-                missCountType == MissCountType.eMissCountFast ||
-                missCountType == MissCountType.eMissCountShort ||
-                missCountType == MissCountType.eMissCountLong)
+                missCountType == MissCountType.eDisappearCountFast ||
+                missCountType == MissCountType.eDisappearCountShort ||
+                missCountType == MissCountType.eDisappearCountLong)
                 gridH = maxHeight / maxMissCount;
             else
                 gridH = maxHeight / maxMissCountArea;
@@ -2237,15 +2249,15 @@ namespace LotteryAnalyze
                         maxMissCount = curMissCount;
                     CUR = curMissCount;
                 }
-                else if(missCountType == MissCountType.eMissCountFast)
+                else if(missCountType == MissCountType.eDisappearCountFast)
                 {
                     CUR = sum.statisticUnitMap[cdt].fastData.disappearCount;
                 }
-                else if (missCountType == MissCountType.eMissCountShort)
+                else if (missCountType == MissCountType.eDisappearCountShort)
                 {
                     CUR = sum.statisticUnitMap[cdt].shortData.disappearCount;
                 }
-                else if (missCountType == MissCountType.eMissCountLong)
+                else if (missCountType == MissCountType.eDisappearCountLong)
                 {
                     CUR = sum.statisticUnitMap[cdt].longData.disappearCount;
                 }
