@@ -1133,6 +1133,16 @@ namespace LotteryAnalyze
             return res;
         }
 
+        public bool ReadBool(string section, string name, bool def)
+        {
+            StringBuilder vRetSb = new StringBuilder(2048);
+            GetPrivateProfileString(section, name, def.ToString(), vRetSb, 2048, this.m_FileName);
+            bool res = def;
+            if (bool.TryParse(vRetSb.ToString(), out res) == false)
+                res = def;
+            return res;
+        }
+
         /// <summary>
         /// [扩展]读取string字符串
         /// </summary>
@@ -1163,6 +1173,11 @@ namespace LotteryAnalyze
         {
 
             WritePrivateProfileString(section, name, Ival.ToString(), this.m_FileName);
+        }
+
+        public void WriteBool(string section, string name, bool val)
+        {
+            WritePrivateProfileString(section, name, val.ToString(), this.m_FileName);
         }
 
         /// <summary>

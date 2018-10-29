@@ -1194,7 +1194,8 @@ namespace LotteryAnalyze
             }            
 
             // 自动计算辅助线
-            autoAnalyzeTool.Analyze(item.idGlobal);
+            if(GlobalSetting.G_EANBLE_ANALYZE_TOOL)
+                autoAnalyzeTool.Analyze(item.idGlobal);
 
             TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
             trade.lastDateItem = item;
@@ -3105,6 +3106,8 @@ namespace LotteryAnalyze
 
         void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex)
         {
+            if (GlobalSetting.G_ENABLE_CheckAndKeepSamePath == false)
+                return;
             if (CurrentTradeCountIndex != 0)
             {
                 // 当前这次交易优先级最高的PathCmpInfo
@@ -3130,7 +3133,8 @@ namespace LotteryAnalyze
                         // 取这一路的通道线工具
                         CollectDataType cdt = GetPathCDT(lastPathCurPCI.pathIndex);
                         AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
-                        if(sali.downLineData.valid)
+                        if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL
+                            && sali.downLineData.valid)
                         {
                             KGraphDataContainer kgdc = GraphDataManager.KGDC;
                             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
@@ -3173,7 +3177,8 @@ namespace LotteryAnalyze
                         //    if (count == 0xFFFF)
                         //        return;
                         //}
-                        if( lastPathCurPCI.paramMap.ContainsKey("count2BMs") )
+                        if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
+                            && lastPathCurPCI.paramMap.ContainsKey("count2BMs") )
                         {
                             float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
                             if (count2BMs > 1 && curMissCount > 4)
