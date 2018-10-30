@@ -39,7 +39,7 @@ namespace LotteryAnalyze.UI
                 dataArr.Add(i.ToString());
             }
             comboBoxDataSource.DataSource = dataArr;
-            comboBoxDataSource.SelectedIndex = (int)AutoUpdateUtil.CURRENT_DATA_SOURCE;
+            comboBoxDataSource.SelectedIndex = (int)GlobalSetting.G_DATA_SOURCE_TYPE;
 
             updateTimer = new System.Windows.Forms.Timer();
             updateTimer.Interval = 30;
@@ -154,7 +154,7 @@ namespace LotteryAnalyze.UI
 
         private void comboBoxDataSource_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AutoUpdateUtil.CURRENT_DATA_SOURCE = (DataSourceType)comboBoxDataSource.SelectedIndex;
+            GlobalSetting.G_DATA_SOURCE_TYPE = (DataSourceType)comboBoxDataSource.SelectedIndex;
         }
     }
 }

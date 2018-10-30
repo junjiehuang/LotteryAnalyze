@@ -17,6 +17,11 @@ namespace LotteryAnalyze
         public static bool G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = true;
         public static bool G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = true;
 
+        public static float G_ONE_STARE_TRADE_COST = 1.0f;
+        public static float G_ONE_STARE_TRADE_REWARD = 9.8f;
+
+        public static AutoUpdateUtil.DataSourceType G_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
+
         static IniFile cfg = null;
 
         static GlobalSetting()
@@ -35,6 +40,10 @@ namespace LotteryAnalyze
             G_ENABLE_CheckAndKeepSamePath = cfg.ReadBool("GlobalSetting", "CheckAndKeepSamePath", true);
             G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = cfg.ReadBool("GlobalSetting", "EnableSamePathCheckByAnalyzeTool", true);
             G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = cfg.ReadBool("GlobalSetting", "EnableSamePathCheckByBooleanLine", true);
+            G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 0);
+
+            G_ONE_STARE_TRADE_COST = cfg.ReadFloat("GlobalSetting", "OneStartTradeCost", 1);
+            G_ONE_STARE_TRADE_REWARD = cfg.ReadFloat("GlobalSetting", "OneStartTradeReward", 9.8f);
         }
 
         public static void SaveCfg()
@@ -47,6 +56,10 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "CheckAndKeepSamePath", G_ENABLE_CheckAndKeepSamePath);
             cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByAnalyzeTool", G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL);
             cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByBooleanLine", G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE);
+            cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
+
+            cfg.WriteFloat("GlobalSetting", "OneStartTradeCost", G_ONE_STARE_TRADE_COST);
+            cfg.WriteFloat("GlobalSetting", "OneStartTradeReward", G_ONE_STARE_TRADE_REWARD);
         }
     }
 }

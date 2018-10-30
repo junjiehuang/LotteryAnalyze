@@ -1,0 +1,98 @@
+<root>
+	<TradeStrategy>
+		<batch>10</batch>
+		<startMoney>2000</startMoney>
+		<tradeCountLstStr>1,2,4,8,16,32,64,100,180,340,550,950,1600,2710,4600</tradeCountLstStr>
+		<strongUpStartIndex>30</strongUpStartIndex>
+		<simSelNumIndex>0</simSelNumIndex>
+		<curTradeStrategy>eSinglePositionPathByAppearencePosibility</curTradeStrategy>
+		<forceTradeByMaxNumCount>False</forceTradeByMaxNumCount>
+		<maxNumCount>5</maxNumCount>
+		<specNumIndex>True</specNumIndex>
+		<onlyTradeOnStrongUpPath>False</onlyTradeOnStrongUpPath>
+		<riskControl>0</riskControl>
+		<uponValue>10</uponValue>
+		<MultiTradePathCount>0</MultiTradePathCount>
+		<killLastNumber>False</killLastNumber>
+		<procOnNegMoney>0</procOnNegMoney>
+	</TradeStrategy>
+	<Simple>
+		<StartMoney>2000</StartMoney>
+		<CurrentMoney>40906.25</CurrentMoney>
+		<MaxMoney>184009.6</MaxMoney>
+		<MinMoney>-101033.7</MinMoney>
+		<EarnMoney>38906.25</EarnMoney>
+		<TradeTotalCount>34589</TradeTotalCount>
+		<TradeRightCount>12084</TradeRightCount>
+		<TradeWrongCount>22485</TradeWrongCount>
+		<UnTradeCount>20</UnTradeCount>
+	</Simple>
+	<TradeBeief>
+		<MissCount count="1">2771</MissCount>
+		<MissCount count="2">1785</MissCount>
+		<MissCount count="3">1159</MissCount>
+		<MissCount count="4">709</MissCount>
+		<MissCount count="5">462</MissCount>
+		<MissCount count="6">318</MissCount>
+		<MissCount count="7">191</MissCount>
+		<MissCount count="8">143</MissCount>
+		<MissCount count="9">90</MissCount>
+		<MissCount count="10">57</MissCount>
+		<MissCount count="11">43</MissCount>
+		<MissCount count="12">29</MissCount>
+		<MissCount count="13">22</MissCount>
+		<MissCount count="14">11</MissCount>
+		<MissCount count="15">12</MissCount>
+		<MissCount count="16">4</MissCount>
+		<MissCount count="17">3</MissCount>
+		<MissCount count="18">2</MissCount>
+		<MissCount count="19">2</MissCount>
+		<MissCount count="21">1</MissCount>
+		<MissCount count="22">1</MissCount>
+		<MissCount count="26">1</MissCount>
+	</TradeBeief>
+	<LongMissTradeInfos>
+		<trade name="26-1">
+			<detail>20180128-030,20180128-056,3737</detail>
+		</trade>
+		<trade name="22-1">
+			<detail>20180923-054,20180923-076,30698</detail>
+		</trade>
+		<trade name="21-1">
+			<detail>20180926-012,20180926-033,31011</detail>
+		</trade>
+		<trade name="19-2">
+			<detail>20180303-050,20180303-069,6845</detail>
+			<detail>20180701-040,20180701-059,21235</detail>
+		</trade>
+		<trade name="18-2">
+			<detail>20180901-085,20180901-103,28292</detail>
+			<detail>20180914-117,20180915-016,29697</detail>
+		</trade>
+		<trade name="17-3">
+			<detail>20180110-082,20180110-099,1643</detail>
+			<detail>20180403-081,20180403-098,10594</detail>
+			<detail>20181005-105,20181006-003,32107</detail>
+		</trade>
+		<trade name="16-4">
+			<detail>20180504-026,20180504-042,14258</detail>
+			<detail>20180525-118,20180526-014,16870</detail>
+			<detail>20180811-094,20180811-110,26086</detail>
+			<detail>20181024-039,20181024-055,34302</detail>
+		</trade>
+		<trade name="15-12">
+			<detail>20180116-026,20180116-041,2305</detail>
+			<detail>20180118-115,20180119-010,2634</detail>
+			<detail>20180211-020,20180211-035,5373</detail>
+			<detail>20180302-065,20180302-080,6736</detail>
+			<detail>20180317-041,20180317-056,8512</detail>
+			<detail>20180402-066,20180402-081,10457</detail>
+			<detail>20180412-048,20180412-063,11639</detail>
+			<detail>20180516-023,20180516-038,15694</detail>
+			<detail>20180725-029,20180725-044,23980</detail>
+			<detail>20180830-029,20180830-044,27995</detail>
+			<detail>20180906-105,20180907-002,28824</detail>
+			<detail>20181017-069,20181017-084,33496</detail>
+		</trade>
+	</LongMissTradeInfos>
+</root>

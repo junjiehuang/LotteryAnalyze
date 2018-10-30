@@ -617,7 +617,7 @@ namespace LotteryAnalyze
             eMax,
         }
 
-        public static DataSourceType CURRENT_DATA_SOURCE = DataSourceType.e163;
+        //public static DataSourceType CURRENT_DATA_SOURCE = DataSourceType.e163;
 
         /// <summary>
         /// 自动获取当天数据
@@ -658,7 +658,7 @@ namespace LotteryAnalyze
         public static string combineUrlName(int y, int m, int d, bool newUrl)
         {
             string url = string.Empty;
-            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 url = S_163_NEW_DATE_URL + y;
                 if (m < 10)
@@ -735,7 +735,7 @@ namespace LotteryAnalyze
         {
             int dataCount = 0;
             string filename = combineFileName(date.Year, date.Month, date.Day);
-            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 string url = combineUrlName(date.Year, date.Month, date.Day, true);
                 dataCount = FetchData(true, filename, url, ref error);
@@ -772,7 +772,7 @@ namespace LotteryAnalyze
             int validCount = 0;
             // load web page
             ECType t = ECType.Default;
-            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 t = ECType.UTF8;
             }
@@ -820,7 +820,7 @@ namespace LotteryAnalyze
 
             string lotteryData = "";
 
-            if (CURRENT_DATA_SOURCE == DataSourceType.e163)
+            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 AnalyzeBy163(strWebContent, ref lotteryData, ref validCount);
             }
