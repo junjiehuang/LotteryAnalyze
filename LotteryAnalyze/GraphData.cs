@@ -1499,23 +1499,37 @@ namespace LotteryAnalyze
                     }
                 }
             }
-
-            public void GetKValue(int x, 
-                out bool hasPrev, out float prevKV, out float prevSlope, 
-                out bool hasNext, out float nextKV, out float nextSlope)
+            
+        
+            public void GetKValue(int x, float y, float k,
+                out bool hasPrev, out float prevKV, out float prevSlope, out bool hasPrevHitPt, out float prevHitPt,
+                out bool hasNext, out float nextKV, out float nextSlope, out bool hasNextHitPt, out float nextHitPt)
             {
-                hasPrev = (dataPrevSharp != null && dataSharp != null);
-                hasNext = (dataNextSharp != null && dataSharp != null);
-                prevKV = nextKV = 0;
+                hasPrev = hasPrevHitPt = (dataPrevSharp != null && dataSharp != null);
+                hasNext = hasNextHitPt = (dataNextSharp != null && dataSharp != null);
+                prevKV = nextKV = prevHitPt = nextHitPt = 0;
                 prevSlope = nextSlope = 0;
+                float b = y - k * x;
                 if (hasPrev)
                 {
                     float x2 = dataPrevSharp.index;
                     float x1 = dataSharp.index;
                     float y2 = dataPrevSharp.KValue;
                     float y1 = dataSharp.KValue;
-                    prevSlope = (y2 - y1) / (x2 - x1);
+                    float K = (y2 - y1) / (x2 - x1);
+                    float B = (y1 * x2 - y2 * x1) / (x2 - x1);
+                    prevSlope = K;
                     prevKV = (x * prevSlope) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+
+                    if(k != K)
+                    {
+                        hasPrevHitPt = true;
+                        prevHitPt = (b - B) / (k - K);
+                    }
+                    else
+                    {
+                        hasPrevHitPt = false;
+                    }
                 }
                 if (hasNext)
                 {
@@ -1523,8 +1537,20 @@ namespace LotteryAnalyze
                     float x1 = dataSharp.index;
                     float y2 = dataNextSharp.KValue;
                     float y1 = dataSharp.KValue;
-                    nextSlope = (y2 - y1) / (x2 - x1);
+                    float K = (y2 - y1) / (x2 - x1);
+                    float B = (y1 * x2 - y2 * x1) / (x2 - x1);
+                    nextSlope = K;
                     nextKV = (x * nextSlope) + ((y1 * x2 - y2 * x1) / (x2 - x1));
+
+                    if (k != K)
+                    {
+                        hasNextHitPt = true;
+                        nextHitPt = (b - B) / (k - K);
+                    }
+                    else
+                    {
+                        hasNextHitPt = false;
+                    }
                 }
             }
         }
@@ -1766,6 +1792,8 @@ namespace LotteryAnalyze
             {
                 // 取K值映射表
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                if (kddc.dataLst.Count <= curKDataIndex)
+                    continue;
 
                 for( int cdtID = 0; cdtID < GraphDataManager.S_CDT_LIST.Count; ++cdtID)
                 {
