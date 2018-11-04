@@ -1502,12 +1502,14 @@ namespace LotteryAnalyze
             
         
             public void GetKValue(int x, float y, float k,
-                out bool hasPrev, out float prevKV, out float prevSlope, out bool hasPrevHitPt, out float prevHitPt,
-                out bool hasNext, out float nextKV, out float nextSlope, out bool hasNextHitPt, out float nextHitPt)
+                out bool hasPrev, out float prevKV, out float prevSlope, 
+                out bool hasPrevHitPt, out float prevHitPtX, out float prevHitPtY,
+                out bool hasNext, out float nextKV, out float nextSlope, 
+                out bool hasNextHitPt, out float nextHitPtX, out float nextHitPtY)
             {
                 hasPrev = hasPrevHitPt = (dataPrevSharp != null && dataSharp != null);
                 hasNext = hasNextHitPt = (dataNextSharp != null && dataSharp != null);
-                prevKV = nextKV = prevHitPt = nextHitPt = 0;
+                prevKV = nextKV = prevHitPtX = nextHitPtX = prevHitPtY = nextHitPtY = 0;
                 prevSlope = nextSlope = 0;
                 float b = y - k * x;
                 if (hasPrev)
@@ -1524,7 +1526,8 @@ namespace LotteryAnalyze
                     if(k != K)
                     {
                         hasPrevHitPt = true;
-                        prevHitPt = (b - B) / (k - K);
+                        prevHitPtX = (b - B) / (K - k);
+                        prevHitPtY = k * prevHitPtX + b;
                     }
                     else
                     {
@@ -1545,7 +1548,8 @@ namespace LotteryAnalyze
                     if (k != K)
                     {
                         hasNextHitPt = true;
-                        nextHitPt = (b - B) / (k - K);
+                        nextHitPtX = (b - B) / (K - k);
+                        nextHitPtY = k * nextHitPtX + b;
                     }
                     else
                     {

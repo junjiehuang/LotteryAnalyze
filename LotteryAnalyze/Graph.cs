@@ -375,6 +375,7 @@ namespace LotteryAnalyze
         int preViewDataIndex = -1;
         float selDataPtX = -1;
 
+        Font redFont, greenFont;
         Font selDataFont;
         Font auxFont;
         Font rulerFont;
@@ -1039,6 +1040,83 @@ namespace LotteryAnalyze
             {
                 TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
                 DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
+
+                AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.curPreviewAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+                if(sali.downLineData.valid)
+                {
+                    KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                    KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+                    KDataDict kdd = kddc.dataLst[preViewDataIndex];
+                    KData kd = kdd.GetData(cdt, false);
+                    float missHeight = GraphDataManager.GetMissRelLength(cdt);
+
+                    bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
+                    float prevKV, nextKV, prevSlope, nextSlope;
+                    float prevHitPtX, prevHitPtY, nextHitPtX, nextHitPtY;
+
+                    int testID = preViewDataIndex + 1;
+                    float kdX = testID * gridScaleW;
+                    float kdY = kd.UpValue * gridScaleH;
+                    kdX = StandToCanvas(kdX, true);
+                    kdY = StandToCanvas(kdY, false);
+
+                    float lblX = winW - 100;
+                    float lblY = 20;
+                    float lblH = 20;
+
+                    // 计算当前期在下通道线上的K值
+                    sali.downLineData.GetKValue(testID, kd.UpValue, -missHeight,
+                        out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPtX, out prevHitPtY,
+                        out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPtX, out nextHitPtY);
+                    if( hasPrevKV)
+                    {
+                        float prevY = prevKV * gridScaleH;
+                        prevY = StandToCanvas(prevY, false);
+                        g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)prevY - 5, 10, 10));
+                        g.DrawLine(redLinePen, kdX, kdY, kdX, prevY);
+
+                        g.DrawLine(redLinePen, kdX, prevY, lblX, lblY);
+                        g.DrawString(((prevKV - kd.KValue)/missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
+                        lblY += lblH;
+                    }
+                    if(hasNextKV)
+                    {
+                        float nextY = nextKV * gridScaleH;
+                        nextY = StandToCanvas(nextY, false);
+                        g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)nextY - 5, 10, 10));
+                        g.DrawLine(redLinePen, kdX, kdY, kdX, nextY);
+
+                        g.DrawLine(redLinePen, kdX, nextY, lblX, lblY);
+                        g.DrawString(((nextKV - kd.KValue)/missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
+                        lblY += lblH;
+                    }
+                    if(hasPrevHitPt)
+                    {
+                        float prevX = prevHitPtX * gridScaleW;
+                        float prevY = prevHitPtY * gridScaleH;
+                        prevX = StandToCanvas(prevX, true);
+                        prevY = StandToCanvas(prevY, false);
+                        g.DrawRectangle(greenLinePen, new Rectangle((int)prevX - 5, (int)prevY - 5, 10, 10));
+                        g.DrawLine(greenLinePen, kdX, kdY, prevX, prevY);
+
+                        g.DrawLine(greenLinePen, prevX, prevY, lblX, lblY);
+                        g.DrawString(((prevHitPtY - kd.KValue)/missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
+                        lblY += lblH;
+                    }
+                    if (hasNextHitPt)
+                    {
+                        float nextX = nextHitPtX * gridScaleW;
+                        float nextY = nextHitPtY * gridScaleH;
+                        nextX = StandToCanvas(nextX, true);
+                        nextY = StandToCanvas(nextY, false);
+                        g.DrawRectangle(greenLinePen, new Rectangle((int)nextX - 5, (int)nextY - 5, 10, 10));
+                        g.DrawLine(greenLinePen, kdX, kdY, nextX, nextY);
+
+                        g.DrawLine(greenLinePen, nextX, nextY, lblX, lblY);
+                        g.DrawString(((nextHitPtY - kd.KValue) / missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
+                        lblY += lblH;
+                    }
+                }
             }
             else
             {
@@ -1052,7 +1130,7 @@ namespace LotteryAnalyze
                 return;
             if (preViewDataIndex != -1)
             {
-                float ex = preViewDataIndex * gridScaleW;
+                float ex = (preViewDataIndex + 1) * gridScaleW;
                 float width = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT * gridScaleW;
                 float sx = ex - width;
                 ex = StandToCanvas(ex, true);

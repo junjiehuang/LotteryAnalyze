@@ -3144,25 +3144,35 @@ namespace LotteryAnalyze
 
                             bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
                             float prevKV, nextKV, prevSlope, nextSlope;
-                            float prevHitPt, nextHitPt;
+                            float prevHitPtX, nextHitPtX, prevHitPtY, nextHitPtY;
                             // 计算当前期在下通道线上的K值
-                            sali.downLineData.GetKValue(trade.lastDateItem.idGlobal, kd.UpValue, -missHeight, 
-                                out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPt,
-                                out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPt);
+                            int testID = trade.lastDateItem.idGlobal + 1;
+                            sali.downLineData.GetKValue(testID, kd.UpValue, -missHeight, 
+                                out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPtX, out prevHitPtY,
+                                out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPtX, out nextHitPtY);
                             // 下前通道线
                             if (hasPrevKV)
                             {
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataPrevSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(prevKV) / missHeight;
-                                if ((
-                                        willMissCount > 2 
-                                        || (prevSlope >= 0 && minKV - kd.KValue > 2)
-                                        || !hasPrevHitPt
-                                        || (hasPrevHitPt && (prevHitPt - trade.lastDateItem.idGlobal) > (tradeCountList.Count - CurrentTradeCountIndex))
+                                if  (
+                                        (
+                                            willMissCount > 2
+                                            || (prevSlope >= 0 && minKV - kd.KValue > 2)
+                                            || !hasPrevHitPt
+                                            || (
+                                                    hasPrevHitPt
+                                                    &&
+                                                    (
+                                                        (prevHitPtX < testID)
+                                                        || (prevHitPtX - testID) > (tradeCountList.Count - CurrentTradeCountIndex)
+                                                    )
+                                               )
+                                        )
+                                        &&
+                                        curMissCount > 4
                                     )
-                                    && 
-                                    curMissCount > 4)
                                     return;
                             }
                             if(hasNextKV)
@@ -3170,14 +3180,23 @@ namespace LotteryAnalyze
                                 float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataNextSharp.DownValue);
                                 // 通道线上的投影点的K值在K线上方超出2个遗漏点，表示k线下穿下通道线超过2个遗漏点了
                                 float willMissCount = kd.RelateDistTo(nextKV) / missHeight;
-                                if ((
-                                        willMissCount > 2 
-                                        || (nextSlope >= 0 && minKV - kd.KValue > 2)
-                                        || !hasNextHitPt
-                                        || (hasNextHitPt && (nextHitPt - trade.lastDateItem.idGlobal) > (tradeCountList.Count - CurrentTradeCountIndex))
+                                if  (
+                                        (
+                                            willMissCount > 2
+                                            || (nextSlope >= 0 && minKV - kd.KValue > 2)
+                                            || !hasNextHitPt
+                                            || (
+                                                    hasNextHitPt
+                                                    &&
+                                                    (
+                                                        nextHitPtX < testID
+                                                        || (nextHitPtX - testID) > (tradeCountList.Count - CurrentTradeCountIndex)
+                                                    )
+                                               )
+                                         )
+                                         &&
+                                         curMissCount > 4
                                      )
-                                     && 
-                                     curMissCount > 4)
                                 {
                                     return;
                                 }
