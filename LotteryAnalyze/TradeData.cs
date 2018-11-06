@@ -3159,7 +3159,7 @@ namespace LotteryAnalyze
                                 if  (
                                         (
                                             willMissCount > 2
-                                            || (prevSlope >= 0 && minKV - kd.KValue > 2)
+                                            || (/*prevSlope >= 0 &&*/ minKV - kd.KValue > 2)
                                             || !hasPrevHitPt
                                             || (
                                                     hasPrevHitPt
@@ -3183,7 +3183,7 @@ namespace LotteryAnalyze
                                 if  (
                                         (
                                             willMissCount > 2
-                                            || (nextSlope >= 0 && minKV - kd.KValue > 2)
+                                            || (/*nextSlope >= 0 &&*/ minKV - kd.KValue > 2)
                                             || !hasNextHitPt
                                             || (
                                                     hasNextHitPt
