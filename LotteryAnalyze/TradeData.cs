@@ -3165,7 +3165,7 @@ namespace LotteryAnalyze
                                                     hasPrevHitPt
                                                     &&
                                                     (
-                                                        (prevHitPtX < testID)
+                                                        (prevHitPtX < testID - 2)
                                                         || (prevHitPtX - testID) > (tradeCountList.Count - CurrentTradeCountIndex)
                                                     )
                                                )
@@ -3189,7 +3189,7 @@ namespace LotteryAnalyze
                                                     hasNextHitPt
                                                     &&
                                                     (
-                                                        nextHitPtX < testID
+                                                        nextHitPtX < testID - 2
                                                         || (nextHitPtX - testID) > (tradeCountList.Count - CurrentTradeCountIndex)
                                                     )
                                                )
