@@ -3210,19 +3210,32 @@ namespace LotteryAnalyze
                         //        return;
                         //}
                         if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
-                            && lastPathCurPCI.paramMap.ContainsKey("count2BMs") )
+                            && lastPathCurPCI.paramMap.ContainsKey("count2BMs") 
+                            && lastTrade.INDEX > 10)
                         {
-                            float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
-                            if (count2BMs > 1 && curMissCount > 4)
+                            TradeDataOneStar t0 = GetTrade(lastTrade.INDEX - 0) as TradeDataOneStar;
+                            TradeDataOneStar t1 = GetTrade(lastTrade.INDEX - 1) as TradeDataOneStar;
+                            TradeDataOneStar t2 = GetTrade(lastTrade.INDEX - 2) as TradeDataOneStar;
+                            if (t0 != null && t1 != null && t2 != null)
                             {
-                                TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
-                                if (startTrade != null)
+                                float c2bds0 = (float)GetPathInfo(t0, numIndex, lastTradePath).paramMap["count2BDs"];
+                                float c2bds1 = (float)GetPathInfo(t1, numIndex, lastTradePath).paramMap["count2BDs"];
+                                float c2bds2 = (float)GetPathInfo(t2, numIndex, lastTradePath).paramMap["count2BDs"];
+                                if (c2bds0 < 1 && c2bds1 < 1 && c2bds2 < 1)
                                 {
-                                    if(startTrade.pathCmpInfos[numIndex][0].pathIndex == lastTradePath)
+                                    float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
+                                    if (count2BMs > 1 && curMissCount > 4)
                                     {
-                                        float count2BUs = (float)startTrade.pathCmpInfos[numIndex][0].paramMap["count2BUs"];
-                                        if (count2BUs < 1f)
-                                            return;
+                                        TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
+                                        if (startTrade != null)
+                                        {
+                                            if (startTrade.pathCmpInfos[numIndex][0].pathIndex == lastTradePath)
+                                            {
+                                                //float count2BUs = (float)startTrade.pathCmpInfos[numIndex][0].paramMap["count2BUs"];
+                                                //if (count2BUs < 1f)
+                                                return;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -3236,6 +3249,19 @@ namespace LotteryAnalyze
                     }
                 }
             }
+        }
+
+        PathCmpInfo GetPathInfo(TradeDataOneStar trade, int numIndex, int pathIndex)
+        {
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            for (int i = 0; i < pcis.Count; ++i)
+            {
+                if(pcis[i].pathIndex == pathIndex)
+                {
+                    return pcis[i];
+                }
+            }
+            return null;
         }
 
         void CalcPathMissCountArea(DataItem item, TradeDataOneStar trade, int numIndex)
