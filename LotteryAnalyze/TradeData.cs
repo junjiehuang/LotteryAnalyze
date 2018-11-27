@@ -3221,10 +3221,11 @@ namespace LotteryAnalyze
                                 float c2bds0 = (float)GetPathInfo(t0, numIndex, lastTradePath).paramMap["count2BDs"];
                                 float c2bds1 = (float)GetPathInfo(t1, numIndex, lastTradePath).paramMap["count2BDs"];
                                 float c2bds2 = (float)GetPathInfo(t2, numIndex, lastTradePath).paramMap["count2BDs"];
-                                if (c2bds0 < 1 && c2bds1 < 1 && c2bds2 < 1)
+                                if (Math.Abs(c2bds0) < 1 && Math.Abs(c2bds1) < 1 && Math.Abs(c2bds2) < 1)
                                 {
-                                    float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
-                                    if (count2BMs > 1 && curMissCount > 4)
+                                    //float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
+                                    //if (count2BMs > 1 && curMissCount > 4)
+                                    if (curMissCount > 4)
                                     {
                                         TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
                                         if (startTrade != null)
