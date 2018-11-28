@@ -3202,16 +3202,11 @@ namespace LotteryAnalyze
                                 }
                             }
                         }
-
-                        //if (lastPathCurPCI.paramMap.ContainsKey("count2LIM"))
-                        //{
-                        //    int count = (int)lastPathCurPCI.paramMap["count2LIM"];
-                        //    if (count == 0xFFFF)
-                        //        return;
-                        //}
+                        
+                        // 过滤掉连续在布林线下轨附近的012路
                         if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
-                            && lastPathCurPCI.paramMap.ContainsKey("count2BMs") 
-                            && lastTrade.INDEX > 10)
+                            && lastTrade.INDEX > 10
+                            && curMissCount > 4)
                         {
                             TradeDataOneStar t0 = GetTrade(lastTrade.INDEX - 0) as TradeDataOneStar;
                             TradeDataOneStar t1 = GetTrade(lastTrade.INDEX - 1) as TradeDataOneStar;
@@ -3221,23 +3216,10 @@ namespace LotteryAnalyze
                                 float c2bds0 = (float)GetPathInfo(t0, numIndex, lastTradePath).paramMap["count2BDs"];
                                 float c2bds1 = (float)GetPathInfo(t1, numIndex, lastTradePath).paramMap["count2BDs"];
                                 float c2bds2 = (float)GetPathInfo(t2, numIndex, lastTradePath).paramMap["count2BDs"];
+                                // 连续3期这一路都走到布林线下轨了，那么就不再坚持选择这路了
                                 if (Math.Abs(c2bds0) < 1 && Math.Abs(c2bds1) < 1 && Math.Abs(c2bds2) < 1)
                                 {
-                                    //float count2BMs = (float)lastPathCurPCI.paramMap["count2BMs"];
-                                    //if (count2BMs > 1 && curMissCount > 4)
-                                    if (curMissCount > 4)
-                                    {
-                                        TradeDataOneStar startTrade = GetTrade(lastTrade.INDEX - curMissCount) as TradeDataOneStar;
-                                        if (startTrade != null)
-                                        {
-                                            if (startTrade.pathCmpInfos[numIndex][0].pathIndex == lastTradePath)
-                                            {
-                                                //float count2BUs = (float)startTrade.pathCmpInfos[numIndex][0].paramMap["count2BUs"];
-                                                //if (count2BUs < 1f)
-                                                return;
-                                            }
-                                        }
-                                    }
+                                    return;
                                 }
                             }
                         }

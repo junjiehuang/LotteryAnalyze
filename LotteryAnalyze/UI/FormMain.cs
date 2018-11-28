@@ -637,8 +637,10 @@ namespace LotteryAnalyze
         {
             if (string.IsNullOrEmpty(toolStripTextBoxAlpha.Text))
                 return;
-            if (float.TryParse(toolStripTextBoxAlpha.Text, out GlobalSetting.G_WINDOW_OPACITY))
+            float v = 0;
+            if (float.TryParse(toolStripTextBoxAlpha.Text, out v))
             {
+                GlobalSetting.G_WINDOW_OPACITY = v;
                 ApplyOpacityToAllWindows();
             }
         }
@@ -660,6 +662,11 @@ namespace LotteryAnalyze
         private void openAnalyzeWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AnalyzeInfoCollectWindow.Open();
+        }
+
+        private void openGlobalSettingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GlobalSettingPanel.Open();
         }
     }
 }

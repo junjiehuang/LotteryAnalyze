@@ -1312,8 +1312,11 @@ namespace LotteryAnalyze.UI
 
         private void textBoxRefreshTimeLength_TextChanged(object sender, EventArgs e)
         {
-            if(int.TryParse(textBoxRefreshTimeLength.Text, out GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL) == false)
+            int v = 0;
+            if (int.TryParse(textBoxRefreshTimeLength.Text, out v) == false)
                 GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = 50;
+            else
+                GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = v;
             if (GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL < 10)
                 GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = 10;
             textBoxRefreshTimeLength.Text = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL.ToString();

@@ -737,8 +737,11 @@ namespace LotteryAnalyze.UI
 
         private void textBoxRefreshTime_TextChanged(object sender, EventArgs e)
         {
-            if (int.TryParse(textBoxRefreshTime.Text, out GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL) == false)
+            int v = 0;
+            if (int.TryParse(textBoxRefreshTime.Text, out v) == false)
                 GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 50;
+            else
+                GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = v;
             if (GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL < 1)
                 GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 1;
             textBoxRefreshTime.Text = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL.ToString();
