@@ -35,6 +35,8 @@ namespace LotteryAnalyze
         private static bool g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = true;
         [Parameter("是否开启布林通道检测")]
         private static bool g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = true;
+        [Parameter("是否开启布林下轨提升检测")]
+        private static bool g_ENABLE_BOOLEAN_DOWN_UP_CHECK = true;
         [Parameter("1注1星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
         [Parameter("1注1星交易奖金")]
@@ -160,12 +162,12 @@ namespace LotteryAnalyze
         {
             get
             {
-                return g_ONE_STARE_TRADE_COST;
+                return G_ONE_STARE_TRADE_COST1;
             }
 
             set
             {
-                g_ONE_STARE_TRADE_COST = value;
+                G_ONE_STARE_TRADE_COST1 = value;
                 HAS_MODIFY = true;
             }
         }
@@ -180,6 +182,34 @@ namespace LotteryAnalyze
             set
             {
                 g_ONE_STARE_TRADE_REWARD = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static float G_ONE_STARE_TRADE_COST1
+        {
+            get
+            {
+                return g_ONE_STARE_TRADE_COST;
+            }
+
+            set
+            {
+                g_ONE_STARE_TRADE_COST = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_ENABLE_BOOLEAN_DOWN_UP_CHECK
+        {
+            get
+            {
+                return g_ENABLE_BOOLEAN_DOWN_UP_CHECK;
+            }
+
+            set
+            {
+                g_ENABLE_BOOLEAN_DOWN_UP_CHECK = value;
                 HAS_MODIFY = true;
             }
         }
@@ -203,7 +233,7 @@ namespace LotteryAnalyze
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 0);
             G_ONE_STARE_TRADE_COST = cfg.ReadFloat("GlobalSetting", "OneStartTradeCost", 1);
             G_ONE_STARE_TRADE_REWARD = cfg.ReadFloat("GlobalSetting", "OneStartTradeReward", 9.8f);
-
+            G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             HAS_MODIFY = false;
         }
 
@@ -221,10 +251,9 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByAnalyzeTool", G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL);
             cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByBooleanLine", G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE);
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
-
             cfg.WriteFloat("GlobalSetting", "OneStartTradeCost", G_ONE_STARE_TRADE_COST);
             cfg.WriteFloat("GlobalSetting", "OneStartTradeReward", G_ONE_STARE_TRADE_REWARD);
-
+            cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             HAS_MODIFY = false;
         }
     }

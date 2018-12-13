@@ -3018,6 +3018,99 @@ namespace LotteryAnalyze
             });
         }
 
+
+        void CalcPathIfBecomeUp(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            for( int i = 0; i < cdts.Length; ++i )
+            {
+                PathCmpInfo pci = pcis[i];
+                CollectDataType cdt = cdts[i];
+                KData kd = kdd.GetData(cdt, false);
+                BollinPoint bp = bpm.GetData(cdt, false);
+                pci.paramMap["MayUpCount"] = (float)0;
+
+                int minKVIndex = kdd.index;
+                float minKV = kd.KValue;
+
+                float missheight = GraphDataManager.GetMissRelLength(cdt);
+                float rdM = kd.RelateDistTo(bp.midValue);
+                float rdD = kd.RelateDistTo(bp.downValue);
+                float cM = rdM / missheight;
+                float cD = rdD / missheight;
+                if(cM >= -1 && cD <= 0)
+                {
+                    bool findBottomPt = false;
+                    bool findLeftNearBolleanMidPt = false;
+                    bool findValidPt = false;
+
+                    DataItem pItem = item.parent.GetPrevItem(item);
+                    if (pItem == null)
+                    {
+                        continue;
+                    }
+                    StatisticUnitMap pSum = pItem.statisticInfo.allStatisticInfo[numIndex];
+                    StatisticUnit pSu = pSum.statisticUnitMap[cdt];
+
+                    int loopCount = tradeCountList.Count;
+                    if (loopCount < pSu.missCount)
+                        loopCount = pSu.missCount;
+
+                    if (pSu.missCount == 0)
+                        findValidPt = true;
+
+                    while(pItem != null && loopCount >= 0)
+                    {
+                        pSum = pItem.statisticInfo.allStatisticInfo[numIndex];
+                        pSu = pSum.statisticUnitMap[cdt];
+                        KDataDict pKDD = kddc.GetKDataDict(pItem);
+                        KData pKD = pKDD.GetData(cdt, false);
+                        BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);
+
+                        if(pKD.KValue < minKV)
+                        {
+                            minKV = pKD.KValue;
+                            minKVIndex = pKDD.index;
+                        }
+
+                        if (pSu.missCount > 0 && pKD.KValue < kd.KValue)
+                            findValidPt = true;
+
+                        float prdD = pKD.RelateDistTo(pBP.downValue) / missheight;
+                        float prdB = pKD.RelateDistTo(pBP.midValue) / missheight;
+                        if (Math.Abs(prdD) <= 1)
+                            findBottomPt = true;
+                        if (prdB <= 0)
+                            findLeftNearBolleanMidPt = true;
+
+                        pItem = pItem.parent.GetPrevItem(pItem);
+                        --loopCount;
+
+                        if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (minKVIndex == kdd.index)
+                    {
+                        pci.paramMap["MayUpCount"] = -(float)Math.Abs(cM);
+                        continue;
+                    }
+
+                    if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
+                    {
+                        pci.paramMap["MayUpCount"] = (float)Math.Abs(cM);
+                    }
+                }
+            }
+        }
+
         void CalcPathAppearence(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             DataItem prvItem = item.parent.GetPrevItem(item);
@@ -3071,9 +3164,22 @@ namespace LotteryAnalyze
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
+            if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+            {
+                CalcPathIfBecomeUp(item, trade, numIndex);
+            }
+
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
+                    if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                    {
+                        if ((float)x.paramMap["MayUpCount"] > (float)y.paramMap["MayUpCount"])
+                            return -1;
+                        if ((float)x.paramMap["MayUpCount"] < (float)y.paramMap["MayUpCount"])
+                            return 1;
+                    }
+
                     if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
                         return -1;
                     if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
@@ -3111,7 +3217,14 @@ namespace LotteryAnalyze
             if (CurrentTradeCountIndex != 0)
             {
                 // 当前这次交易优先级最高的PathCmpInfo
-                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];                
+                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];            
+                
+                // 如果当前这一路是触到布林下轨且出现回补的，就交易这一路
+                if(GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                {
+                    if ((float)tmp.paramMap["MayUpCount"] > 0)
+                        return;
+                }    
                 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
@@ -3125,10 +3238,20 @@ namespace LotteryAnalyze
                         // 找到上一次交易所选择的那一路在这次交易中的PathCmpInfo
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
+
                         // 计算这一路的遗漏值
                         int curMissCount = -1;
-                        if(lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
+                        if (lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
                             curMissCount = (int)lastPathCurPCI.paramMap["curMissCount"];
+
+                        // 如果上期选择的那一路在这一期出现继续下行，那么就不再坚持选择往期的那一路
+                        if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                        {
+                            if ((float)lastPathCurPCI.paramMap["MayUpCount"] < 0 && curMissCount > 0)
+                            {
+                                return;
+                            }
+                        }
 
                         // 取这一路的通道线工具
                         CollectDataType cdt = GetPathCDT(lastPathCurPCI.pathIndex);
