@@ -3063,7 +3063,7 @@ namespace LotteryAnalyze
 
                     if (pSu.missCount == 0)
                         findValidPt = true;
-
+                    bool hasResetLoop = false;
                     while(pItem != null && loopCount >= 0)
                     {
                         pSum = pItem.statisticInfo.allStatisticInfo[numIndex];
@@ -3090,6 +3090,12 @@ namespace LotteryAnalyze
 
                         pItem = pItem.parent.GetPrevItem(pItem);
                         --loopCount;
+
+                        if(hasResetLoop == false && loopCount < 0 && pSu.missCount > 0)
+                        {
+                            loopCount = pSu.missCount;
+                            hasResetLoop = true;
+                        }
 
                         if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
                         {
