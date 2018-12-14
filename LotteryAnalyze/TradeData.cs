@@ -3037,6 +3037,8 @@ namespace LotteryAnalyze
 
                 int minKVIndex = kdd.index;
                 float minKV = kd.KValue;
+                int maxMissCount = 0;
+                int maxMissCountIndex = item.idGlobal;
 
                 float missheight = GraphDataManager.GetMissRelLength(cdt);
                 float rdM = kd.RelateDistTo(bp.midValue);
@@ -3048,6 +3050,7 @@ namespace LotteryAnalyze
                     bool findBottomPt = false;
                     bool findLeftNearBolleanMidPt = false;
                     bool findValidPt = false;
+                    int uponBooleanMidIndex = -1;
 
                     DataItem pItem = item.parent.GetPrevItem(item);
                     if (pItem == null)
@@ -3077,6 +3080,11 @@ namespace LotteryAnalyze
                             minKV = pKD.KValue;
                             minKVIndex = pKDD.index;
                         }
+                        if(pSu.missCount > maxMissCount)
+                        {
+                            maxMissCount = pSu.missCount;
+                            maxMissCountIndex = pItem.idGlobal;
+                        }
 
                         if (pSu.missCount > 0 && pKD.KValue < kd.KValue)
                             findValidPt = true;
@@ -3087,6 +3095,10 @@ namespace LotteryAnalyze
                             findBottomPt = true;
                         if (prdB <= 0)
                             findLeftNearBolleanMidPt = true;
+                        if (prdB < 0 && uponBooleanMidIndex == -1)
+                        {
+                            uponBooleanMidIndex = pItem.idGlobal;
+                        }
 
                         pItem = pItem.parent.GetPrevItem(pItem);
                         --loopCount;
@@ -3097,13 +3109,13 @@ namespace LotteryAnalyze
                             hasResetLoop = true;
                         }
 
-                        if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
-                        {
-                            break;
-                        }
+                        //if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
+                        //{
+                        //    break;
+                        //}
                     }
 
-                    if (minKVIndex == kdd.index)
+                    if (minKVIndex == kdd.index && maxMissCount < 10)
                     {
                         pci.paramMap["MayUpCount"] = -(float)Math.Abs(cM);
                         continue;
@@ -3111,7 +3123,8 @@ namespace LotteryAnalyze
 
                     if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
                     {
-                        pci.paramMap["MayUpCount"] = (float)Math.Abs(cM);
+                        if(uponBooleanMidIndex == -1 || uponBooleanMidIndex >= tradeCountList.Count / 2)
+                            pci.paramMap["MayUpCount"] = (float)Math.Abs(cM);
                     }
                 }
             }
@@ -3201,6 +3214,18 @@ namespace LotteryAnalyze
                         return 1;
                     return 0;
                 });
+
+            if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+            {
+                if ((float)trade.pathCmpInfos[numIndex][0].paramMap["MayUpCount"] > 0 &&
+                    (float)trade.pathCmpInfos[numIndex][1].paramMap["MayUpCount"] > 0)
+                {
+                    PathCmpInfo pci = trade.pathCmpInfos[numIndex][2];
+                    trade.pathCmpInfos[numIndex].RemoveAt(2);
+                    trade.pathCmpInfos[numIndex].Insert(0, pci);
+                }
+            }
+
 
             CheckAndKeepSamePath(trade,numIndex);
         }
