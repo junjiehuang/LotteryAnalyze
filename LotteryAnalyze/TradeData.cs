@@ -3027,8 +3027,11 @@ namespace LotteryAnalyze
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            List<int> uponBMIndexs = new List<int>();
+
             for( int i = 0; i < cdts.Length; ++i )
             {
+                uponBMIndexs.Clear();
                 PathCmpInfo pci = pcis[i];
                 CollectDataType cdt = cdts[i];
                 KData kd = kdd.GetData(cdt, false);
@@ -3039,6 +3042,7 @@ namespace LotteryAnalyze
                 float minKV = kd.KValue;
                 int maxMissCount = 0;
                 int maxMissCountIndex = item.idGlobal;
+                float maxMissCountKV = 0;
 
                 float missheight = GraphDataManager.GetMissRelLength(cdt);
                 float rdM = kd.RelateDistTo(bp.midValue);
@@ -3075,15 +3079,18 @@ namespace LotteryAnalyze
                         KData pKD = pKDD.GetData(cdt, false);
                         BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);
 
+                        // 统计最小K值的那一项
                         if(pKD.KValue < minKV)
                         {
                             minKV = pKD.KValue;
-                            minKVIndex = pKDD.index;
+                            minKVIndex = pItem.idGlobal;
                         }
+                        // 统计最大遗漏的那一项
                         if(pSu.missCount > maxMissCount)
                         {
                             maxMissCount = pSu.missCount;
                             maxMissCountIndex = pItem.idGlobal;
+                            maxMissCountKV = pKD.KValue;
                         }
 
                         if (pSu.missCount > 0 && pKD.KValue < kd.KValue)
@@ -3094,7 +3101,13 @@ namespace LotteryAnalyze
                         if (Math.Abs(prdD) <= 1)
                             findBottomPt = true;
                         if (prdB <= 0)
+                        {
                             findLeftNearBolleanMidPt = true;
+                            if(prdB < 0)
+                            {
+                                uponBMIndexs.Add(pItem.idGlobal);
+                            }
+                        }
                         if (prdB < 0 && uponBooleanMidIndex == -1)
                         {
                             uponBooleanMidIndex = pItem.idGlobal;
@@ -3103,27 +3116,40 @@ namespace LotteryAnalyze
                         pItem = pItem.parent.GetPrevItem(pItem);
                         --loopCount;
 
-                        if(hasResetLoop == false && loopCount < 0 && pSu.missCount > 0)
+                        if (hasResetLoop == false && loopCount < 0 && pSu.missCount > 0)
                         {
                             loopCount = pSu.missCount;
                             hasResetLoop = true;
                         }
 
-                        //if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
-                        //{
-                        //    break;
-                        //}
+                        if (findBottomPt && findLeftNearBolleanMidPt && findValidPt)
+                        {
+                            break;
+                        }
                     }
 
-                    if (minKVIndex == kdd.index && maxMissCount < 10)
+                    bool findMidEnd = false;
+                    for( int k = 0; k < uponBMIndexs.Count; ++k )
+                    {
+                        if(uponBMIndexs[k] > maxMissCountIndex && uponBMIndexs[k] < item.idGlobal)
+                        {
+                            findMidEnd = true;
+                            break;
+                        }
+                    }
+
+                    //if ((minKVIndex == kdd.index && maxMissCount < 10) 
+                    //    ||(maxMissCountIndex < item.idGlobal && kd.KValue < maxMissCountKV))
+                    float distCount = (maxMissCountKV - kd.KValue) / missheight;
+                    if (findMidEnd || (maxMissCountIndex < item.idGlobal && distCount > 2))
                     {
                         pci.paramMap["MayUpCount"] = -(float)Math.Abs(cM);
                         continue;
                     }
 
-                    if(findBottomPt && findLeftNearBolleanMidPt && findValidPt)
+                    if (findBottomPt && findLeftNearBolleanMidPt && findValidPt && findMidEnd == false)
                     {
-                        if(uponBooleanMidIndex == -1 || uponBooleanMidIndex >= tradeCountList.Count / 2)
+                        //if(uponBooleanMidIndex == -1 || uponBooleanMidIndex >= tradeCountList.Count / 2)
                             pci.paramMap["MayUpCount"] = (float)Math.Abs(cM);
                     }
                 }
