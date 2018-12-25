@@ -3100,7 +3100,7 @@ namespace LotteryAnalyze
                         float prdB = pKD.RelateDistTo(pBP.midValue) / missheight;
                         if (Math.Abs(prdD) <= 1)
                             findBottomPt = true;
-                        if (prdB <= 0)
+                        if (prdB <= 1)
                         {
                             findLeftNearBolleanMidPt = true;
                             if(prdB < 0)
@@ -3129,9 +3129,9 @@ namespace LotteryAnalyze
                     }
 
                     bool findMidEnd = false;
-                    for( int k = 0; k < uponBMIndexs.Count; ++k )
+                    for (int k = 0; k < uponBMIndexs.Count; ++k)
                     {
-                        if(uponBMIndexs[k] > maxMissCountIndex && uponBMIndexs[k] < item.idGlobal)
+                        if (uponBMIndexs[k] > maxMissCountIndex && uponBMIndexs[k] < item.idGlobal)
                         {
                             findMidEnd = true;
                             break;
@@ -3140,8 +3140,9 @@ namespace LotteryAnalyze
 
                     //if ((minKVIndex == kdd.index && maxMissCount < 10) 
                     //    ||(maxMissCountIndex < item.idGlobal && kd.KValue < maxMissCountKV))
-                    float distCount = (maxMissCountKV - kd.KValue) / missheight;
-                    if (findMidEnd || (maxMissCountIndex < item.idGlobal && distCount > 2))
+                    float distCount = (minKV - kd.KValue) / missheight;
+                    if (/*findMidEnd || */(minKVIndex < item.idGlobal && distCount > 2)
+                        || (minKVIndex == item.idGlobal))
                     {
                         pci.paramMap["MayUpCount"] = -(float)Math.Abs(cM);
                         continue;
