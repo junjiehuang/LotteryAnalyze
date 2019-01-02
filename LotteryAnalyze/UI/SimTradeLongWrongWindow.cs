@@ -108,8 +108,25 @@ namespace LotteryAnalyze.UI
             lostMoneyNodes.Clear();
             if (treeViewLongWrongInfo.Nodes.Count == 0)
                 return;
-            curParentNode = treeViewLongWrongInfo.Nodes[0];
-            curSubNode = curParentNode.Nodes[0];
+
+            if (treeViewLongWrongInfo.SelectedNode != null)
+            {
+                if (treeViewLongWrongInfo.SelectedNode.Tag == null)
+                {
+                    curParentNode = treeViewLongWrongInfo.SelectedNode;
+                    curSubNode = curParentNode.Nodes[0];
+                }
+                else
+                {
+                    curSubNode = treeViewLongWrongInfo.SelectedNode;
+                    curParentNode = curSubNode.Parent;
+                }
+            }
+            else
+            {
+                curParentNode = treeViewLongWrongInfo.Nodes[0];
+                curSubNode = curParentNode.Nodes[0];
+            }
             treeViewLongWrongInfo.SelectedNode = curSubNode;
             isPause = false;
             startSim = true;
@@ -145,6 +162,9 @@ namespace LotteryAnalyze.UI
 
         void Stop()
         {
+            curParentNode = null;
+            curSubNode = null;
+
             GlobalSimTradeWindow.Instance.DoStop();
             BatchTradeSimulator.Instance.Stop();
             isPause = false;

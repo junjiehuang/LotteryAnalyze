@@ -3019,8 +3019,9 @@ namespace LotteryAnalyze
         }
 
 
-        void CalcPathIfBecomeUp(DataItem item, TradeDataOneStar trade, int numIndex)
+        void CalcPathIfBecomeUp(DataItem item, TradeDataOneStar trade, int numIndex, ref int mayUpPathsCount)
         {
+            mayUpPathsCount = 0;
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -3153,6 +3154,11 @@ namespace LotteryAnalyze
                         //if(uponBooleanMidIndex == -1 || uponBooleanMidIndex >= tradeCountList.Count / 2)
                             pci.paramMap["MayUpCount"] = (float)Math.Abs(cM);
                     }
+
+                    if((float)pci.paramMap["MayUpCount"] > 0)
+                    {
+                        mayUpPathsCount++;
+                    }
                 }
             }
         }
@@ -3210,9 +3216,10 @@ namespace LotteryAnalyze
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
+            int mayUpPathsCount = 0;
             if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
             {
-                CalcPathIfBecomeUp(item, trade, numIndex);
+                CalcPathIfBecomeUp(item, trade, numIndex, ref mayUpPathsCount);
             }
 
             trade.pathCmpInfos[numIndex].Sort(
@@ -3254,7 +3261,7 @@ namespace LotteryAnalyze
             }
 
 
-            CheckAndKeepSamePath(trade,numIndex);
+            CheckAndKeepSamePath(trade, numIndex, mayUpPathsCount);
         }
 
         CollectDataType GetPathCDT(int i)
@@ -3268,7 +3275,7 @@ namespace LotteryAnalyze
             return CollectDataType.eNone;
         }
 
-        void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex)
+        void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex, int mayUpPathsCount = 0)
         {
             if (GlobalSetting.G_ENABLE_CheckAndKeepSamePath == false)
                 return;
