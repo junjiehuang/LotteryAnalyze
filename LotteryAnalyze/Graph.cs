@@ -43,6 +43,8 @@ namespace LotteryAnalyze
         eCircleLine,
         // 箭头线
         eArrowLine,
+        // 测试矩形
+        eRectLine,
     }
     
     #region Aux Lines
@@ -59,6 +61,28 @@ namespace LotteryAnalyze
         public virtual Pen GetSolidPen() { return null; }
         public virtual Pen GetDotPen() { return null; }
         public virtual void SetColor(Color col) { }
+        public virtual bool HitTest(CollectDataType cdt, int numIndex, Point standMousePos, float rcHalfSize, ref int selKeyPtIndex)
+        {
+            selKeyPtIndex = -1;
+            if (this.cdt == cdt && this.numIndex == numIndex)
+            {
+                for (int j = 0; j < this.keyPoints.Count; ++j)
+                {
+                    Point pt = this.keyPoints[j];
+                    if (pt.X - rcHalfSize > standMousePos.X ||
+                        pt.X + rcHalfSize < standMousePos.X ||
+                        pt.Y - rcHalfSize > standMousePos.Y ||
+                        pt.Y + rcHalfSize < standMousePos.Y)
+                        continue;
+                    else
+                    {
+                        selKeyPtIndex = j;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
     // 水平线
     class HorzLine : AuxiliaryLine
@@ -247,7 +271,7 @@ namespace LotteryAnalyze
     // 箭头
     class ArrowLine : AuxiliaryLine
     {
-        public const int C_LINE_WIDTH = 5;
+        public const int C_LINE_WIDTH = 1;
         public static Color sOriLineColor = Color.GreenYellow;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
@@ -281,6 +305,87 @@ namespace LotteryAnalyze
             GetDotPen().Color = col;
         }
     }
+    // 测试矩形
+    class RectLine : AuxiliaryLine
+    {
+        public const int C_LINE_WIDTH = 5;
+        public static Color sOriLineColor = Color.GreenYellow;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
+        public RectLine()
+        {
+            lineType = AuxLineType.eRectLine;
+        }
+        public override Pen GetSolidPen()
+        {
+            if (solidPen == null)
+            {
+                solidPen = sOriSolidPen.Clone() as Pen;
+                solidPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                solidPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
+            }
+            return solidPen;
+        }
+        public override Pen GetDotPen()
+        {
+            if (dotPen == null)
+            {
+                dotPen = sOriDotPen.Clone() as Pen;
+                dotPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                dotPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
+            }
+            return dotPen;
+        }
+        public override void SetColor(Color col)
+        {
+            GetSolidPen().Color = col;
+            GetDotPen().Color = col;
+        }
+        public override bool HitTest(CollectDataType cdt, int numIndex, Point standMousePos, float rcHalfSize, ref int selKeyPtIndex)
+        {
+            selKeyPtIndex = -1;
+            if (this.cdt == cdt && this.numIndex == numIndex)
+            {
+                float minx = this.keyPoints[0].X;
+                float maxx = this.keyPoints[0].X;
+                float miny = this.keyPoints[0].Y;
+                float maxy = this.keyPoints[0].Y;
+
+                for (int j = 0; j < this.keyPoints.Count; ++j)
+                {
+                    Point pt = this.keyPoints[j];
+                    if (pt.X < minx)
+                        minx = pt.X;
+                    if (pt.X > maxx)
+                        maxx = pt.X;
+                    if (pt.Y < miny)
+                        miny = pt.Y;
+                    if (pt.Y > maxy)
+                        maxy = pt.Y;
+
+                    if (pt.X - rcHalfSize > standMousePos.X ||
+                        pt.X + rcHalfSize < standMousePos.X ||
+                        pt.Y - rcHalfSize > standMousePos.Y ||
+                        pt.Y + rcHalfSize < standMousePos.Y)
+                        continue;
+                    else
+                    {
+                        selKeyPtIndex = j;
+                        return true;
+                    }
+                }
+
+                if (standMousePos.X > minx && standMousePos.X < maxx &&
+                    standMousePos.Y > miny && standMousePos.Y < maxy)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
     #endregion
 
     #region Graphs
@@ -358,6 +463,7 @@ namespace LotteryAnalyze
             "画黄金分割线",
             "画圆",
             "画箭头线",
+            "画矩形",
         };
 
         public bool enableAuxiliaryLine = true;
@@ -710,24 +816,32 @@ namespace LotteryAnalyze
             for( int i = 0; i < auxiliaryLineList.Count; ++i )
             {
                 AuxiliaryLine al = auxiliaryLineList[i];
-                if (al.cdt == cdt && al.numIndex == numIndex)
+                int selPtID = -1;
+                bool sel = al.HitTest(cdt, numIndex, mouseRelPos, rcHalfSize, ref selPtID);
+                if(sel)
                 {
-                    for (int j = 0; j < al.keyPoints.Count; ++j)
-                    {
-                        Point pt = al.keyPoints[j];
-                        if (pt.X - rcHalfSize > standMousePos.X ||
-                            pt.X + rcHalfSize < standMousePos.X ||
-                            pt.Y - rcHalfSize > standMousePos.Y ||
-                            pt.Y + rcHalfSize < standMousePos.Y)
-                            continue;
-                        else
-                        {
-                            selAuxLine = al;
-                            selAuxLinePointIndex = j;
-                            return;
-                        }
-                    }
+                    selAuxLine = al;
+                    selAuxLinePointIndex = selPtID;
+                    return;
                 }
+                //if (al.cdt == cdt && al.numIndex == numIndex)
+                //{
+                //    for (int j = 0; j < al.keyPoints.Count; ++j)
+                //    {
+                //        Point pt = al.keyPoints[j];
+                //        if (pt.X - rcHalfSize > standMousePos.X ||
+                //            pt.X + rcHalfSize < standMousePos.X ||
+                //            pt.Y - rcHalfSize > standMousePos.Y ||
+                //            pt.Y + rcHalfSize < standMousePos.Y)
+                //            continue;
+                //        else
+                //        {
+                //            selAuxLine = al;
+                //            selAuxLinePointIndex = j;
+                //            return;
+                //        }
+                //    }
+                //}
             }
         }
         public void RemoveAllAuxLines()
@@ -800,6 +914,15 @@ namespace LotteryAnalyze
         public void AddArrowLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
         {
             ArrowLine line = new ArrowLine();
+            line.numIndex = numIndex;
+            line.cdt = cdt;
+            line.keyPoints.Add(CanvasToStand(p1));
+            line.keyPoints.Add(CanvasToStand(p2));
+            auxiliaryLineList.Add(line);
+        }
+        public void AddRectLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        {
+            RectLine line = new RectLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
@@ -1303,6 +1426,23 @@ namespace LotteryAnalyze
                         //g.DrawRectangle(ArrowLine.sOriSolidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                     }
                     break;
+                case AuxLineType.eRectLine:
+                    {
+                        float cx = mouseHitPts[0].X;
+                        float cy = mouseHitPts[0].Y;
+                        float ex = mouseRelPos.X;
+                        float ey = mouseRelPos.Y;
+                        ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;
+                        g.DrawLine(ArrowLine.sOriSolidPen, cx, cy, ex, ey);
+                        ArrowLine.sOriSolidPen.Width = 1;
+
+                        float sx = Math.Min(cx, ex);
+                        float sy = Math.Min(cy, ey);
+                        float bx = Math.Max(cx, ex);
+                        float by = Math.Max(cy, ey);
+                        g.DrawRectangle(ArrowLine.sOriSolidPen, sx, sy, bx - sx, by - sy);
+                    }
+                    break;
             }
         }
 
@@ -1443,6 +1583,22 @@ namespace LotteryAnalyze
                         g.DrawLine(solidPen, cx, cy, ex, ey);
                         //g.DrawRectangle(solidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
                         //g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
+                    }
+                    break;
+                case AuxLineType.eRectLine:
+                    {
+                        float cx = StandToCanvas(pts[0].X, true);
+                        float cy = StandToCanvas(pts[0].Y, false);
+                        float ex = StandToCanvas(pts[1].X, true);
+                        float ey = StandToCanvas(pts[1].Y, false);
+                        solidPen.Width = ArrowLine.C_LINE_WIDTH;
+                        g.DrawLine(solidPen, cx, cy, ex, ey);
+
+                        float sx = Math.Min(cx, ex);
+                        float sy = Math.Min(cy, ey);
+                        float bx = Math.Max(cx, ex);
+                        float by = Math.Max(cy, ey);
+                        g.DrawRectangle(ArrowLine.sOriSolidPen, sx, sy, bx - sx, by - sy);
                     }
                     break;
             }
