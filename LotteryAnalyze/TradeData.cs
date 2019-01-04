@@ -3019,6 +3019,44 @@ namespace LotteryAnalyze
         }
 
 
+        void CalcPathUpBolleanCount(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+            for (int i = 0; i < cdts.Length; ++i)
+            {
+                PathCmpInfo pci = pcis[i];
+                CollectDataType cdt = cdts[i];
+                KData kd = kdd.GetData(cdt, false);
+                BollinPoint bp = bpm.GetData(cdt, false);
+                //pci.paramMap["UpBolleanCount"] = (float)0;
+                int upCount = 0;
+                int totalCount = 0;
+                float missheight = GraphDataManager.GetMissRelLength(cdt);
+                int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
+                DataItem pItem = item;
+                while(pItem != null && loopCount > 0)
+                {
+                    ++totalCount;
+                    KDataDict pKDD = kddc.GetKDataDict(pItem);
+                    KData pKD = pKDD.GetData(cdt, false);
+                    BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);                    
+                    float rdM = pKD.RelateDistTo(pBP.midValue);
+                    if(rdM < 1)
+                    {
+                        ++upCount;
+                    }
+                    pItem = pItem.parent.GetPrevItem(pItem);
+                    --loopCount;
+                }
+                pci.paramMap["UpBolleanCount"] = upCount * 100.0f / totalCount;
+            }
+        }
+
         void CalcPathIfBecomeUp(DataItem item, TradeDataOneStar trade, int numIndex, ref int mayUpPathsCount)
         {
             mayUpPathsCount = 0;
@@ -3209,10 +3247,10 @@ namespace LotteryAnalyze
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
                 //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
                 //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
-                pci.paramMap["count2LIM"] = count2LIM[i];
-                pci.paramMap["count2BUs"] = count2BUs[i];
-                pci.paramMap["count2BMs"] = count2BMs[i];
-                pci.paramMap["count2BDs"] = count2BDs[i];
+                //pci.paramMap["count2LIM"] = count2LIM[i];
+                //pci.paramMap["count2BUs"] = count2BUs[i];
+                //pci.paramMap["count2BMs"] = count2BMs[i];
+                //pci.paramMap["count2BDs"] = count2BDs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
@@ -3220,6 +3258,11 @@ namespace LotteryAnalyze
             if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
             {
                 CalcPathIfBecomeUp(item, trade, numIndex, ref mayUpPathsCount);
+            }
+
+            if (GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
+            {
+                CalcPathUpBolleanCount(item, trade, numIndex);
             }
 
             trade.pathCmpInfos[numIndex].Sort(
@@ -3233,19 +3276,37 @@ namespace LotteryAnalyze
                             return 1;
                     }
 
+                    //if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
+                    //    return -1;
+                    //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
+                    //    return 1;
+                    //if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
+                    //    return -1;
+                    //if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
+                    //    return 1;
+
+                    if(GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
+                    {
+                        if ((float)x.paramMap["UpBolleanCount"] > (float)y.paramMap["UpBolleanCount"])
+                            return -1;
+                        if ((float)x.paramMap["UpBolleanCount"] < (float)y.paramMap["UpBolleanCount"])
+                            return 1;
+                    }
+
+                    if ((float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                        return -1;
+                    if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                        return 1;
+
                     if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
                         return -1;
                     if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
                         return 1;
-                    if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
-                        return -1;
-                    if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
-                        return 1;
 
-                    if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
-                        return -1;
-                    if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
-                        return 1;
+                    //if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
+                    //    return -1;
+                    //if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
+                    //    return 1;
                     return 0;
                 });
 

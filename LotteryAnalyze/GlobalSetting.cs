@@ -39,6 +39,8 @@ namespace LotteryAnalyze
         private static bool g_ENABLE_BOOLEAN_DOWN_UP_CHECK = true;
         [Parameter("是否开启最大出现率检测")]
         private static bool g_ENABLE_MAX_APPEARENCE_FIRST = true;
+        [Parameter("是否开启布林中轨之上数量统计")]
+        private static bool g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = true;
         [Parameter("1注1星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
         [Parameter("1注1星交易奖金")]
@@ -230,6 +232,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_ENABLE_UPBOLLEAN_COUNT_STATISTIC
+        {
+            get
+            {
+                return g_ENABLE_UPBOLLEAN_COUNT_STATISTIC;
+            }
+
+            set
+            {
+                g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -251,6 +267,7 @@ namespace LotteryAnalyze
             G_ONE_STARE_TRADE_REWARD = cfg.ReadFloat("GlobalSetting", "OneStartTradeReward", 9.8f);
             G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
+            G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
             HAS_MODIFY = false;
         }
 
@@ -272,6 +289,7 @@ namespace LotteryAnalyze
             cfg.WriteFloat("GlobalSetting", "OneStartTradeReward", G_ONE_STARE_TRADE_REWARD);
             cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
+            cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
             HAS_MODIFY = false;
         }
     }
