@@ -796,7 +796,7 @@ namespace LotteryAnalyze
             maxIndex = GraphDataManager.KGDC.DataLength();
         }
 
-        public void UpdateSelectAuxLinePoint(Point mouseRelPos)
+        public void UpdateSelectAuxLinePoint(Point mouseRelPos, int dx, int dy)
         {
             if(selAuxLine != null && selAuxLinePointIndex >= 0 && selAuxLinePointIndex < selAuxLine.keyPoints.Count)
             {
@@ -804,6 +804,15 @@ namespace LotteryAnalyze
                 if(selAuxLine.lineType == AuxLineType.eCircleLine)
                 {
                     (selAuxLine as CircleLine).CalcRect();
+                }
+            }
+            else if(selAuxLine != null && selAuxLinePointIndex == -1)
+            {
+                for( int i = 0; i < selAuxLine.keyPoints.Count; ++i )
+                {
+                    Point p = selAuxLine.keyPoints[i];
+                    p.Offset(dx, dy);
+                    selAuxLine.keyPoints[i] = p;
                 }
             }
         }
@@ -817,7 +826,7 @@ namespace LotteryAnalyze
             {
                 AuxiliaryLine al = auxiliaryLineList[i];
                 int selPtID = -1;
-                bool sel = al.HitTest(cdt, numIndex, mouseRelPos, rcHalfSize, ref selPtID);
+                bool sel = al.HitTest(cdt, numIndex, standMousePos, rcHalfSize, ref selPtID);
                 if(sel)
                 {
                     selAuxLine = al;

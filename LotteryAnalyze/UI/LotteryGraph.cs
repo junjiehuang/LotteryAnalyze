@@ -348,8 +348,8 @@ namespace LotteryAnalyze.UI
 
             g.Flush();
         }
-        
 
+        Point lastMouseMovePos = new Point();
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Location.X > panelUp.ClientSize.Width - buttonHorzExpand.ClientSize.Width && buttonHorzExpand.Visible == false)
@@ -361,7 +361,6 @@ namespace LotteryAnalyze.UI
                 buttonVertExpand.Visible = true;
             else if (buttonVertExpand.Visible)
                 buttonVertExpand.Visible = false;
-
 
             hasMouseMoveOnUpPanel = true;
             upPanelMousePosOnMove = e.Location;
@@ -392,7 +391,9 @@ namespace LotteryAnalyze.UI
                     }
                     else
                     {
-                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( upPanelMousePosOnMove );
+                        int idx = upPanelMousePosOnMove.X - lastMouseMovePos.X;
+                        int idy = upPanelMousePosOnMove.Y - lastMouseMovePos.Y;
+                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( upPanelMousePosOnMove, idx, -idy );
                     }
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
@@ -425,6 +426,8 @@ namespace LotteryAnalyze.UI
             }
             if (needUpdate)
                 this.Invalidate(true);//触发Paint事件
+
+            lastMouseMovePos = e.Location;
         }
 
         private void panelUp_MouseDown(object sender, MouseEventArgs e)
