@@ -3307,6 +3307,11 @@ namespace LotteryAnalyze
                     //    return -1;
                     //if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
                     //    return 1;
+
+                    if ((int)x.paramMap["curMissCount"] < (int)y.paramMap["curMissCount"])
+                        return -1;
+                    if ((int)x.paramMap["curMissCount"] > (int)y.paramMap["curMissCount"])
+                        return 1;
                     return 0;
                 });
 

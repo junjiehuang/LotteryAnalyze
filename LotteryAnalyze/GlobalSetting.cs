@@ -23,24 +23,25 @@ namespace LotteryAnalyze
         private static float g_WINDOW_OPACITY = 1;
         [Parameter("支撑压力线取样数")]
         private static int g_ANALYZE_TOOL_SAMPLE_COUNT = 30;
-        [Parameter("曲线图刷新率")]
+        [Parameter("曲线图刷新时间(毫秒)")]
         private static int g_LOTTERY_GRAPH_UPDATE_INTERVAL = 1500;
-        [Parameter("模拟图刷新率")]
+        [Parameter("模拟图刷新时间(毫秒)")]
         private static int g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 1500;
-        [Parameter("是否开启分析工具")]
+        [Parameter("是否开启通道线分析工具")]
         private static bool g_EANBLE_ANALYZE_TOOL = true;
         [Parameter("是否开启同路保持检测")]
-        private static bool g_ENABLE_CheckAndKeepSamePath = true;
-        [Parameter("是否开启支撑压力检测")]
+        private static bool g_ENABLE_CHECK_AND_KEEP_SAME_PATH = true;
+        [Parameter("是否开启同路支撑压力检测")]
         private static bool g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = true;
-        [Parameter("是否开启布林通道检测")]
+        [Parameter("是否开启同路布林通道检测")]
         private static bool g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = true;
         [Parameter("是否开启布林下轨提升检测")]
-        private static bool g_ENABLE_BOOLEAN_DOWN_UP_CHECK = true;
+        private static bool g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK = true;
         [Parameter("是否开启最大出现率检测")]
-        private static bool g_ENABLE_MAX_APPEARENCE_FIRST = true;
+        private static bool g_ENABLE_MAX_APPEARENCE_FIRST_CHECK = true;
         [Parameter("是否开启布林中轨之上数量统计")]
         private static bool g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = true;
+        //private static bool g_ENABLE_SAME_PATH_CHECK_MAX_DELTA_APPEAR_RATE = true;
         [Parameter("1注1星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
         [Parameter("1注1星交易奖金")]
@@ -124,12 +125,12 @@ namespace LotteryAnalyze
         {
             get
             {
-                return g_ENABLE_CheckAndKeepSamePath;
+                return g_ENABLE_CHECK_AND_KEEP_SAME_PATH;
             }
 
             set
             {
-                g_ENABLE_CheckAndKeepSamePath = value;
+                g_ENABLE_CHECK_AND_KEEP_SAME_PATH = value;
                 HAS_MODIFY = true;
             }
         }
@@ -208,12 +209,12 @@ namespace LotteryAnalyze
         {
             get
             {
-                return g_ENABLE_BOOLEAN_DOWN_UP_CHECK;
+                return g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK;
             }
 
             set
             {
-                g_ENABLE_BOOLEAN_DOWN_UP_CHECK = value;
+                g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK = value;
                 HAS_MODIFY = true;
             }
         }
@@ -222,12 +223,12 @@ namespace LotteryAnalyze
         {
             get
             {
-                return g_ENABLE_MAX_APPEARENCE_FIRST;
+                return g_ENABLE_MAX_APPEARENCE_FIRST_CHECK;
             }
 
             set
             {
-                g_ENABLE_MAX_APPEARENCE_FIRST = value;
+                g_ENABLE_MAX_APPEARENCE_FIRST_CHECK = value;
                 HAS_MODIFY = true;
             }
         }
