@@ -3247,7 +3247,7 @@ namespace LotteryAnalyze
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
                 //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
                 //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
-                //pci.paramMap["count2LIM"] = count2LIM[i];
+                pci.paramMap["count2LIM"] = count2LIM[i];
                 //pci.paramMap["count2BUs"] = count2BUs[i];
                 //pci.paramMap["count2BMs"] = count2BMs[i];
                 //pci.paramMap["count2BDs"] = count2BDs[i];
@@ -3293,20 +3293,20 @@ namespace LotteryAnalyze
                             return 1;
                     }
 
-                    if ((float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
-                        return -1;
-                    if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
-                        return 1;
-
                     if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
                         return -1;
                     if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
                         return 1;
 
-                    //if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
-                    //    return -1;
-                    //if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
-                    //    return 1;
+                    if ((float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                        return -1;
+                    if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                        return 1;
+
+                    if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
+                        return -1;
+                    if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
+                        return 1;
 
                     if ((int)x.paramMap["curMissCount"] < (int)y.paramMap["curMissCount"])
                         return -1;
