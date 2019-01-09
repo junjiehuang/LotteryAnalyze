@@ -852,7 +852,25 @@ namespace LotteryAnalyze
         }
         bool pauseAutoTrade = false;
         bool needGetLatestItem = false;
-        public List<int> tradeCountList = new List<int>();
+        //public List<int> tradeCountList = new List<int>();
+        List<int> _tradeCountList = new List<int>();
+        public List<int> tradeCountList
+        {
+            get
+            {
+                if(GlobalSetting.G_CUR_TRADE_INDEX == -1)
+                {
+                    return _tradeCountList;
+                }
+                else
+                {
+                    if(GlobalSetting.G_CUR_TRADE_INDEX >= 0 && GlobalSetting.G_CUR_TRADE_INDEX < GlobalSetting.TradeSets.Count)
+                        return GlobalSetting.TradeSets[GlobalSetting.G_CUR_TRADE_INDEX];
+                    return _tradeCountList;
+                }
+            }
+        }
+
         public int defaultTradeCount = 1;
         int currentTradeCountIndex = -1;
         public int CurrentTradeCountIndex

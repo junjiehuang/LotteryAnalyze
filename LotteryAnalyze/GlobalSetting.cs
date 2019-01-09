@@ -49,8 +49,11 @@ namespace LotteryAnalyze
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
         [Parameter("1注1星交易奖金")]
         private static float g_ONE_STARE_TRADE_REWARD = 9.8f;
+        [Parameter("选择交易策略ID")]
+        private static int g_CUR_TRADE_INDEX = -1;
         [Parameter("数据源类型")]
         public static AutoUpdateUtil.DataSourceType G_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
+
 
         public static List<string> TradeTags = new List<string>();
         public static List<List<int>> TradeSets = new List<List<int>>();
@@ -267,6 +270,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static int G_CUR_TRADE_INDEX
+        {
+            get
+            {
+                return g_CUR_TRADE_INDEX;
+            }
+
+            set
+            {
+                g_CUR_TRADE_INDEX = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -289,6 +306,7 @@ namespace LotteryAnalyze
             G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
+            G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
 
             TradeSets.Clear();
             TradeTags.Clear();
@@ -335,8 +353,9 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
+            cfg.WriteInt("TradeSets", "CurTradeIndex", G_CUR_TRADE_INDEX);
 
-            if(TradeSets.Count > 0)
+            if (TradeSets.Count > 0)
             {
                 string tradeNames = "";
                 for( int i = 0; i < TradeTags.Count; ++i )
