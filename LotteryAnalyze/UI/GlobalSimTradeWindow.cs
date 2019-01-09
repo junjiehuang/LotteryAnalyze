@@ -23,11 +23,13 @@ namespace LotteryAnalyze.UI
         static string[] OperateOnNoMoneyAR = {"无操作", "暂停交易模拟", "终止交易模拟", };
 
         static GlobalSimTradeWindow sInst;
-        //System.Windows.Forms.Timer updateTimer;
+        
         int startDate = -1;
         int endDate = -1;
         bool stopTradeOnNoMoney = true;
-        //int updateInterval = 1500;
+
+        System.Windows.Forms.Timer updateTimer;
+        int updateInterval = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL;
         double updateCountDown = 0;
 
         Dictionary<int, List<string>> tradeWrongCountTagsMap = new Dictionary<int, List<string>>();
@@ -88,22 +90,6 @@ namespace LotteryAnalyze.UI
             comboBoxOnNoMoney.SelectedIndex = procOnNegMoney;
         }
 
-        public virtual void OnUpdate()
-        {
-            progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
-            progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
-
-            if (updateCountDown <= 0)
-            {
-                UpdateTimer_Tick(null, null);
-                updateCountDown = (double)GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL / 1000.0;
-            }
-            else
-            {
-                updateCountDown -= Program.DeltaTime;
-            }
-        }
-
         GlobalSimTradeWindow()
         {
             InitializeComponent();
@@ -138,10 +124,12 @@ namespace LotteryAnalyze.UI
             //checkBoxStopOnNoMoney.Checked = stopTradeOnNoMoney;            
             //comboBoxOnNoMoney.SelectedIndex = 1;
             trackBarRiskControl.Value = (int)(TradeDataManager.Instance.RiskControl * trackBarRiskControl.Maximum);
-            //updateTimer = new Timer();
-            //updateTimer.Interval = 10;
-            //updateTimer.Tick += UpdateTimer_Tick;
-            //updateTimer.Start();
+            
+            updateTimer = new Timer();
+            updateTimer.Interval = 10;
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Start();
+
             textBoxRefreshTime.Text = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL.ToString();
 
             TradeDataManager.Instance.tradeCompletedCallBack += OnTradeCompleted;
@@ -221,20 +209,49 @@ namespace LotteryAnalyze.UI
             //parNode.Text = info.count + "_" + parNode.Nodes.Count;
         }
 
-        private void UpdateTimer_Tick(object sender, EventArgs e)
+        public virtual void OnUpdate()
         {
-            //BatchTradeSimulator.Instance.Update();
             //progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
             //progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
+
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD)
+            {
+                if (updateCountDown <= 0)
+                {
+                    UpdateImpl();
+                    //UpdateTimer_Tick(null, null);
+                    updateCountDown = (double)GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL / 1000.0;
+                }
+                else
+                {
+                    updateCountDown -= Program.DeltaTime;
+                }
+            }
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD == false)
+            {
+                BatchTradeSimulator.Instance.Update();
+
+                UpdateImpl();
+            }
+        }
+
+        private void UpdateImpl()
+        {
+            progressBarCurrent.Value = BatchTradeSimulator.Instance.GetBatchProgress();
+            progressBarTotal.Value = BatchTradeSimulator.Instance.GetMainProgress();
 
             string NL = "<br>";
 
             string missStr = "---------------------#NL#交易统计#NL#";
             List<int> keys = BatchTradeSimulator.Instance.tradeMissInfo.Keys.ToList<int>();
             keys.Sort();
-            foreach ( int key in keys)
+            foreach (int key in keys)
             {
-                if(key >= TradeDataManager.Instance.tradeCountList.Count)
+                if (key >= TradeDataManager.Instance.tradeCountList.Count)
                     missStr += "<font color=\"blue\">连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "#NL#</font>";
                 else
                     missStr += "<font color=\"black\">连错期数 = " + key + ",\t 次数 = " + BatchTradeSimulator.Instance.tradeMissInfo[key] + "#NL#</font>";
@@ -242,7 +259,7 @@ namespace LotteryAnalyze.UI
 
             string info = "";
             if (BatchTradeSimulator.Instance.HasFinished())
-            {                
+            {
                 info += ("结束任务!#NL#---------------------#NL#");
 
                 info += ("[当前金额: (");
@@ -285,7 +302,7 @@ namespace LotteryAnalyze.UI
                 DataItem fItem = DataManager.GetInst().GetFirstItem();
                 DataItem lItem = DataManager.GetInst().GetLatestItem();
                 DataItem cItem = TradeDataManager.Instance.GetLatestTradedDataItem();
-                
+
                 info += ("[当前进度: ");
                 info += (progressBarCurrent.Value);
                 info += ("%] [总进度: ");
@@ -302,6 +319,9 @@ namespace LotteryAnalyze.UI
                     info += ("]#NL#---------------------#NL#");
                 }
 
+                info += ("[当前金额: (");
+                if (BatchTradeSimulator.Instance.currentMoney > 0)
+                    info += "+";
                 info += (int)(BatchTradeSimulator.Instance.currentMoney);
                 info += (")]#NL#[最高金额: (");
                 if (BatchTradeSimulator.Instance.maxMoney > 0)
@@ -363,6 +383,7 @@ namespace LotteryAnalyze.UI
 
             RefreshTree();
             this.Invalidate(true);
+
         }
 
         void RefreshTree()
@@ -506,11 +527,11 @@ namespace LotteryAnalyze.UI
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //if(updateTimer != null)
-            //{
-            //    updateTimer.Stop();
-            //    updateTimer.Dispose();
-            //}
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer.Dispose();
+            }
             TradeDataManager.Instance.tradeCompletedCallBack -= OnTradeCompleted;
             TradeDataManager.Instance.longWrongTradeCallBack -= OnLongWrongTrade;
 

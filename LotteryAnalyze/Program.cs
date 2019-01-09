@@ -11,6 +11,8 @@ namespace LotteryAnalyze
 {
     static class Program
     {
+        static System.Windows.Forms.Timer updateTimer;
+
         static public FormMain mainForm = null;
         static DateTime START_TIME;
         static double lastTime;
@@ -56,11 +58,16 @@ namespace LotteryAnalyze
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
+            
             mainForm = new FormMain();
             {
                 mainForm.Show();
                 Init();
+
+                updateTimer = new Timer();
+                updateTimer.Interval = 1;
+                updateTimer.Tick += UpdateTimer_Tick;
+                updateTimer.Start();
 
                 while (mainForm.Created)
                 {
@@ -68,8 +75,11 @@ namespace LotteryAnalyze
                     //    System.Threading.Thread.Sleep(300);
                     //else
                     //    System.Threading.Thread.Sleep(0);
-                    Update();
-                    GlobalSetting.SaveCfg();
+
+                    if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD)
+                    {
+                        Update();
+                    }
                     Application.DoEvents();
                 }
 
@@ -86,13 +96,29 @@ namespace LotteryAnalyze
             GlobalSetting.SaveCfg();
         }
 
+        static void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (mainForm == null)
+                return;
+            if (mainForm.Created == false)
+                return;
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD == false)
+            {
+                Update();
+            }
+        }
+
         static void Update()
         {
             ProcTime();
             TradeDataManager.Instance.Update();
-            BatchTradeSimulator.Instance.Update();
-            Simulator.UpdateSimulate();
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD)
+            {                
+                BatchTradeSimulator.Instance.Update();
+                Simulator.UpdateSimulate();
+            }
             ProcUpdaters();
+            GlobalSetting.SaveCfg();
         }
 
         static void ProcTime()

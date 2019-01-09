@@ -18,6 +18,9 @@ namespace LotteryAnalyze
     class GlobalSetting
     {
         static bool HAS_MODIFY = false;
+
+        [Parameter("是否在主线程刷新")]
+        private static bool g_UPDATE_IN_MAIN_THREAD = false;
         
         [Parameter("窗口透明度")]
         private static float g_WINDOW_OPACITY = 1;
@@ -243,6 +246,20 @@ namespace LotteryAnalyze
             set
             {
                 g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_UPDATE_IN_MAIN_THREAD
+        {
+            get
+            {
+                return g_UPDATE_IN_MAIN_THREAD;
+            }
+
+            set
+            {
+                g_UPDATE_IN_MAIN_THREAD = value;
                 HAS_MODIFY = true;
             }
         }
