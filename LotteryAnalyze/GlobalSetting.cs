@@ -52,6 +52,9 @@ namespace LotteryAnalyze
         [Parameter("数据源类型")]
         public static AutoUpdateUtil.DataSourceType G_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
 
+        public static List<string> TradeTags = new List<string>();
+        public static List<List<int>> TradeSets = new List<List<int>>();
+
         static IniFile cfg = null;
 
         public static float G_WINDOW_OPACITY
@@ -286,6 +289,30 @@ namespace LotteryAnalyze
             G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
+
+            TradeSets.Clear();
+            TradeTags.Clear();
+            string tradeNames = cfg.ReadString("TradeSets", "TradeNames", "");
+            if(string.IsNullOrEmpty(tradeNames) == false)
+            {
+                string[] tags = tradeNames.Split(',');
+                for(int i = 0; i < tags.Length; ++i)
+                {
+                    TradeTags.Add(tags[i]);
+
+                    string tradeInfos = cfg.ReadString("TradeSets", tags[i], "");
+                    if(string.IsNullOrEmpty(tradeInfos) == false)
+                    {
+                        List<int> lst = new List<int>();
+                        string[] conts = tradeInfos.Split(',');
+                        for(int j = 0; j < conts.Length; ++j)
+                        {
+                            lst.Add(int.Parse(conts[j]));
+                        }
+                        TradeSets.Add(lst);
+                    }
+                }
+            }
             HAS_MODIFY = false;
         }
 
@@ -308,6 +335,27 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
+
+            if(TradeSets.Count > 0)
+            {
+                string tradeNames = "";
+                for( int i = 0; i < TradeTags.Count; ++i )
+                {
+                    string info = "";
+                    List<int> lst = TradeSets[i];
+                    for(int j = 0; j < lst.Count; ++j)
+                    {
+                        info += lst[j];
+                        if(j < lst.Count-1)
+                            info += ",";
+                    }
+                    tradeNames += TradeTags[i];
+                    if(i < TradeTags.Count -1)
+                        tradeNames += ",";
+                    cfg.WriteString("TradeSets", TradeTags[i], ("\""+info+ "\""));
+                }
+                cfg.WriteString("TradeSets", "TradeNames", ("\""+tradeNames+ "\""));
+            }
             HAS_MODIFY = false;
         }
     }

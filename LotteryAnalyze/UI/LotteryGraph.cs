@@ -29,8 +29,8 @@ namespace LotteryAnalyze.UI
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
         static Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
         Pen curUpdatePen;
-        //System.Windows.Forms.Timer updateTimer;
-        //int updateInterval = 1500;
+        System.Windows.Forms.Timer updateTimer;
+        int updateInterval = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL;
         double updateCountDown = 0;
 
         #region ctor and common
@@ -95,11 +95,12 @@ namespace LotteryAnalyze.UI
             comboBoxOperations.DataSource = GraphKCurve.S_AUX_LINE_OPERATIONS;
             comboBoxOperations.SelectedIndex = (int)graphMgr.kvalueGraph.auxOperationIndex;
             checkBoxShowAuxLines.Checked = graphMgr.kvalueGraph.enableAuxiliaryLine;
-            
-            //updateTimer = new Timer();
-            //updateTimer.Interval = updateInterval;
-            //updateTimer.Tick += UpdateTimer_Tick;
-            //updateTimer.Start();
+
+            updateTimer = new Timer();
+            updateTimer.Interval = updateInterval;
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Start();
+
             updateCountDown = 0;
             textBoxRefreshTimeLength.Text = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL.ToString();
             curUpdatePen = redPen;
@@ -235,18 +236,30 @@ namespace LotteryAnalyze.UI
 
         public virtual void OnUpdate()
         {
-            if (updateCountDown <= 0)
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD)
             {
-                UpdateTimer_Tick(null, null);
-                updateCountDown = (double)GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL / 1000.0;
-            }
-            else
-            {
-                updateCountDown -= Program.DeltaTime;
+                if (updateCountDown <= 0)
+                {
+                    //UpdateTimer_Tick(null, null);
+                    UpdateImpl();
+                    updateCountDown = (double)GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL / 1000.0;
+                }
+                else
+                {
+                    updateCountDown -= Program.DeltaTime;
+                }
             }
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD == false)
+            {
+                UpdateImpl();
+            }
+        }
+
+        private void UpdateImpl()
         {
             trackBarKData.Minimum = 0;
             trackBarKData.Maximum = GraphDataManager.KGDC.DataLength();
