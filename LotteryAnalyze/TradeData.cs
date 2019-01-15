@@ -276,7 +276,19 @@ namespace LotteryAnalyze
 
         public TradeStatus tradeStatus = TradeStatus.eWaiting;
         public TradeType tradeType = TradeType.eNone;
-        public DataItem lastDateItem = null;
+        DataItem _lastDateItem = null;
+        public DataItem lastDateItem
+        {
+            get { return _lastDateItem; }
+            set
+            {
+                _lastDateItem = value;
+                if(_lastDateItem != null)
+                {
+                    _lastDateItem.tag = this;
+                }
+            }
+        }
         public DataItem targetLotteryItem = null;
 
         public float reward = 0;
@@ -309,6 +321,8 @@ namespace LotteryAnalyze
         public virtual void Update() { }
         public virtual void GetTradeNumIndexAndPathIndex(ref int numIndex, ref int pathIndex) { }
         public virtual float CalcCost() { return 0; }
+
+        public virtual string GetTradeXML() { return ""; }
     }
 
     // 一星交易数据
@@ -339,6 +353,33 @@ namespace LotteryAnalyze
             return -1;
         }
 #endif
+
+        public override string GetTradeXML()
+        {
+            string info = "";
+            info += "\t\t\t\t<TradeData reward=\"" + reward + "\" cost=\"" + cost + "\" moneyBeforeTrade=\"" + moneyBeforeTrade +
+                "\" moneyAtferTrade=\"" + moneyAtferTrade + "\">\n";
+            info += "\t\t\t\t\t<TradeNumsInfo>\n";
+            var etor = tradeInfo.GetEnumerator();
+            while(etor.MoveNext())
+            {
+                TradeNumbers tn = etor.Current.Value;
+                info += "\t\t\t\t\t\t<TradeNums numIndex=\"" + etor.Current.Key + "\" tradeCount=\"" + tn.tradeCount + "\">\n";
+                info += "\t\t\t\t\t\t\t<TradeNumInfos>\n";
+                for(int i = 0; i < tn.tradeNumbers.Count; ++i)
+                {
+                    NumberCmpInfo nci = tn.tradeNumbers[i];
+                    info += "\t\t\t\t\t\t\t\t<TradeNum number=\"" + nci.number +
+                        "\" rate=\"" + nci.rate + 
+                        "\" appearCount=\"" + nci.appearCount + "\"/>\n";
+                }
+                info += "\t\t\t\t\t\t\t</TradeNumInfos>\n";
+                info += "\t\t\t\t\t\t</TradeNums>\n";
+            }
+            info += "\t\t\t\t\t</TradeNumsInfo>\n";
+            info += "\t\t\t\t</TradeData>\n";
+            return info;
+        }
 
         public TradeDataOneStar()
         {
@@ -557,7 +598,8 @@ namespace LotteryAnalyze
         public int tradeID = -1;
         public int count = 0;
         public string startDataItemTag;
-        public string endDataItemTag; 
+        public string endDataItemTag;
+        public List<string> tradeDatas = null; 
     }
 
     // 交易数据管理器
@@ -4228,6 +4270,35 @@ namespace LotteryAnalyze
 
         }
 
+        void RecordTradeDatas()
+        {
+            var etor = TradeDataManager.Instance.longWrongTradeInfo.GetEnumerator();
+            while(etor.MoveNext())
+            {
+                List<LongWrongTradeInfo> lst = etor.Current.Value;
+                for(int i = 0; i < lst.Count; ++i)
+                {
+                    LongWrongTradeInfo info = lst[i];
+                    if (info.tradeDatas != null && info.tradeDatas.Count > 0)
+                        continue;
+                    info.tradeDatas = new List<string>();
+                    DataItem itemS = DataManager.GetInst().GetDataItemByIdTag(info.startDataItemTag);
+                    DataItem itemE = DataManager.GetInst().GetDataItemByIdTag(info.endDataItemTag);
+                    itemS = itemS.parent.GetFirstItem();
+                    itemE = itemE.parent.GetTailItem();
+                    while(itemS != itemE)
+                    {
+                        if (itemS.tag != null)
+                        {
+                            TradeDataBase t = itemS.tag as TradeDataBase;
+                            info.tradeDatas.Add(t.GetTradeXML());
+                        }
+                        itemS = itemS.parent.GetNextItem(itemS);
+                    }
+                }
+            }
+        }
+
         public void OnOneTradeCompleted(TradeDataBase trade)
         {
             bool tradeSuccess = trade.reward > 0;
@@ -4409,6 +4480,8 @@ namespace LotteryAnalyze
 
         void DoPrepareData()
         {
+            RecordTradeDatas();
+
             if (fileIDLst.Count > lastIndex)
             {
                 if (lastIndex == -1)

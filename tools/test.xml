@@ -1,0 +1,1409 @@
+<root>
+	<TradeStrategy>
+		<batch>10</batch>
+		<startMoney>2000</startMoney>
+		<tradeCountLstStr>1,2,4,8,16,30,60,120,240,480,960,1800,3600,7200</tradeCountLstStr>
+		<strongUpStartIndex>30</strongUpStartIndex>
+		<simSelNumIndex>0</simSelNumIndex>
+		<curTradeStrategy>eSinglePositionPathByAppearencePosibility</curTradeStrategy>
+		<forceTradeByMaxNumCount>False</forceTradeByMaxNumCount>
+		<maxNumCount>5</maxNumCount>
+		<specNumIndex>True</specNumIndex>
+		<onlyTradeOnStrongUpPath>False</onlyTradeOnStrongUpPath>
+		<riskControl>0</riskControl>
+		<uponValue>10</uponValue>
+		<MultiTradePathCount>0</MultiTradePathCount>
+		<killLastNumber>False</killLastNumber>
+		<procOnNegMoney>0</procOnNegMoney>
+	</TradeStrategy>
+	<Simple>
+		<StartMoney>2000</StartMoney>
+		<CurrentMoney>-5053.947</CurrentMoney>
+		<MaxMoney>7264</MaxMoney>
+		<MinMoney>-43183.98</MinMoney>
+		<LostMoney>-7053.947</LostMoney>
+		<TradeTotalCount>1079</TradeTotalCount>
+		<TradeRightCount>359</TradeRightCount>
+		<TradeWrongCount>710</TradeWrongCount>
+		<UnTradeCount>10</UnTradeCount>
+	</Simple>
+	<TradeBeief>
+		<MissCount count="1">78</MissCount>
+		<MissCount count="2">43</MissCount>
+		<MissCount count="3">43</MissCount>
+		<MissCount count="4">25</MissCount>
+		<MissCount count="5">14</MissCount>
+		<MissCount count="6">6</MissCount>
+		<MissCount count="7">10</MissCount>
+		<MissCount count="8">7</MissCount>
+		<MissCount count="9">2</MissCount>
+		<MissCount count="10">1</MissCount>
+		<MissCount count="11">3</MissCount>
+		<MissCount count="15">1</MissCount>
+	</TradeBeief>
+	<LongMissTradeInfos>
+		<trade name="15-1">
+			<detail>20100102-014,20100102-029,147</detail>
+		</trade>
+	</LongMissTradeInfos>
+	<LongMissTradeDatas>
+		<TradeMissCount name="15">
+			<TradeDatas startDataItemTag="20100102-014" endDataItemTag="20100102-029">
+				<TradeData reward="0" cost="3" moneyBeforeTrade="6792.6" moneyAtferTrade="6789.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="6789.6" moneyAtferTrade="6783.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="6783.6" moneyAtferTrade="6771.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="6771.6" moneyAtferTrade="6747.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="48" moneyBeforeTrade="6747.6" moneyAtferTrade="6699.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="90" moneyBeforeTrade="6699.6" moneyAtferTrade="6609.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="30">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="180" moneyBeforeTrade="6609.6" moneyAtferTrade="6429.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="60">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="1176" cost="360" moneyBeforeTrade="6429.6" moneyAtferTrade="7245.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="120">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="7245.6" moneyAtferTrade="7241.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="6" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="8" moneyBeforeTrade="7241.6" moneyAtferTrade="7233.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="6" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="16" moneyBeforeTrade="7233.6" moneyAtferTrade="7217.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="6" rate="16" appearCount="0"/>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="78.4" cost="32" moneyBeforeTrade="7217.6" moneyAtferTrade="7264">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="6" rate="16" appearCount="0"/>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+								<TradeNum number="3" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="7264" moneyAtferTrade="7261">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="7261" moneyAtferTrade="7255">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="7255" moneyAtferTrade="7243">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="7243" moneyAtferTrade="7219">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="13" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="48" moneyBeforeTrade="7219" moneyAtferTrade="7171">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="90" moneyBeforeTrade="7171" moneyAtferTrade="7081">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="30">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="180" moneyBeforeTrade="7081" moneyAtferTrade="6901">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="60">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="360" moneyBeforeTrade="6901" moneyAtferTrade="6541">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="120">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="720" moneyBeforeTrade="6541" moneyAtferTrade="5821">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="240">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="1440" moneyBeforeTrade="5821" moneyAtferTrade="4381">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="480">
+							<TradeNumInfos>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="2880" moneyBeforeTrade="4381" moneyAtferTrade="1501">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="960">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="5400" moneyBeforeTrade="1501" moneyAtferTrade="-3899">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1800">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="10800" moneyBeforeTrade="-3899" moneyAtferTrade="-14699">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="3600">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="6" appearCount="0"/>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="21600" moneyBeforeTrade="-14699" moneyAtferTrade="-36299">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="7200">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="6" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+								<TradeNum number="1" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-36299" moneyAtferTrade="-36302">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="2" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-36302" moneyAtferTrade="-36288.4">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="2" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="3" moneyBeforeTrade="-36288.4" moneyAtferTrade="-36281.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-36281.6" moneyAtferTrade="-36284.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-36284.6" moneyAtferTrade="-36290.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-36290.6" moneyAtferTrade="-36302.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="-36302.6" moneyAtferTrade="-36326.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="48" moneyBeforeTrade="-36326.6" moneyAtferTrade="-36374.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="90" moneyBeforeTrade="-36374.6" moneyAtferTrade="-36464.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="30">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="180" moneyBeforeTrade="-36464.6" moneyAtferTrade="-36644.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="60">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="1176" cost="360" moneyBeforeTrade="-36644.6" moneyAtferTrade="-35828.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="120">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-35828.6" moneyAtferTrade="-35832.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="30" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+								<TradeNum number="6" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="8" moneyBeforeTrade="-35832.6" moneyAtferTrade="-35840.6">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="30" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+								<TradeNum number="6" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="39.2" cost="16" moneyBeforeTrade="-35840.6" moneyAtferTrade="-35817.4">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="30" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+								<TradeNum number="6" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35817.4" moneyAtferTrade="-35820.4">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-35820.4" moneyAtferTrade="-35806.8">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="5" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35806.8" moneyAtferTrade="-35809.8">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="16" appearCount="0"/>
+								<TradeNum number="8" rate="16" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-35809.8" moneyAtferTrade="-35796.2">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="16" appearCount="0"/>
+								<TradeNum number="8" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="3" moneyBeforeTrade="-35796.2" moneyAtferTrade="-35789.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="20" appearCount="0"/>
+								<TradeNum number="8" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35789.39" moneyAtferTrade="-35792.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="8" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-35792.39" moneyAtferTrade="-35778.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="8" rate="10" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35778.79" moneyAtferTrade="-35781.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="8" rate="13" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-35781.79" moneyAtferTrade="-35787.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="8" rate="10" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-35787.79" moneyAtferTrade="-35799.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="-35799.79" moneyAtferTrade="-35823.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="156.8" cost="48" moneyBeforeTrade="-35823.79" moneyAtferTrade="-35714.99">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="5" rate="23" appearCount="0"/>
+								<TradeNum number="2" rate="6" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="3" moneyBeforeTrade="-35714.99" moneyAtferTrade="-35708.19">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="3" moneyBeforeTrade="-35708.19" moneyAtferTrade="-35701.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35701.39" moneyAtferTrade="-35704.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-35704.39" moneyAtferTrade="-35690.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35690.79" moneyAtferTrade="-35693.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-35693.79" moneyAtferTrade="-35699.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-35699.79" moneyAtferTrade="-35711.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="78.4" cost="24" moneyBeforeTrade="-35711.79" moneyAtferTrade="-35657.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="16" appearCount="0"/>
+								<TradeNum number="4" rate="10" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35657.39" moneyAtferTrade="-35660.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-35660.39" moneyAtferTrade="-35666.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-35666.39" moneyAtferTrade="-35678.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="78.4" cost="24" moneyBeforeTrade="-35678.39" moneyAtferTrade="-35623.99">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35623.99" moneyAtferTrade="-35626.99">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="16" appearCount="0"/>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="6" moneyBeforeTrade="-35626.99" moneyAtferTrade="-35613.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="16" appearCount="0"/>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-35613.39" moneyAtferTrade="-35616.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="16" appearCount="0"/>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-35616.39" moneyAtferTrade="-35622.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="16" appearCount="0"/>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-35622.39" moneyAtferTrade="-35634.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="4" rate="16" appearCount="0"/>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="-35634.39" moneyAtferTrade="-35658.39">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="156.8" cost="48" moneyBeforeTrade="-35658.39" moneyAtferTrade="-35549.59">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="1" rate="13" appearCount="0"/>
+								<TradeNum number="4" rate="13" appearCount="0"/>
+								<TradeNum number="7" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-35549.59" moneyAtferTrade="-35553.59">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-35553.59" moneyAtferTrade="-35541.99">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-35541.99" moneyAtferTrade="-35536.19">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-35536.19" moneyAtferTrade="-35540.19">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-35540.19" moneyAtferTrade="-35528.59">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-35528.59" moneyAtferTrade="-35522.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="20" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-35522.79" moneyAtferTrade="-35526.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="20" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="8" moneyBeforeTrade="-35526.79" moneyAtferTrade="-35534.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="39.2" cost="16" moneyBeforeTrade="-35534.79" moneyAtferTrade="-35511.59">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="9" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-35511.59" moneyAtferTrade="-35505.79">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-35505.79" moneyAtferTrade="-35499.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-35499.98" moneyAtferTrade="-35503.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="8" moneyBeforeTrade="-35503.98" moneyAtferTrade="-35511.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="16" moneyBeforeTrade="-35511.98" moneyAtferTrade="-35527.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="32" moneyBeforeTrade="-35527.98" moneyAtferTrade="-35559.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="64" moneyBeforeTrade="-35559.98" moneyAtferTrade="-35623.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="16" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="120" moneyBeforeTrade="-35623.98" moneyAtferTrade="-35743.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="30">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="240" moneyBeforeTrade="-35743.98" moneyAtferTrade="-35983.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="60">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="480" moneyBeforeTrade="-35983.98" moneyAtferTrade="-36463.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="120">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="960" moneyBeforeTrade="-36463.98" moneyAtferTrade="-37423.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="240">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="1920" moneyBeforeTrade="-37423.98" moneyAtferTrade="-39343.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="480">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3840" moneyBeforeTrade="-39343.98" moneyAtferTrade="-43183.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="960">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="17640" cost="7200" moneyBeforeTrade="-43183.98" moneyAtferTrade="-32743.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1800">
+							<TradeNumInfos>
+								<TradeNum number="0" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="9" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-32743.98" moneyAtferTrade="-32746.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-32746.98" moneyAtferTrade="-32752.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-32752.98" moneyAtferTrade="-32764.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="78.4" cost="24" moneyBeforeTrade="-32764.98" moneyAtferTrade="-32710.58">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="23" appearCount="0"/>
+								<TradeNum number="5" rate="6" appearCount="0"/>
+								<TradeNum number="8" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-32710.58" moneyAtferTrade="-32714.58">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="6" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-32714.58" moneyAtferTrade="-32702.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-32702.98" moneyAtferTrade="-32706.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-32706.98" moneyAtferTrade="-32695.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="3" moneyBeforeTrade="-32695.38" moneyAtferTrade="-32698.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="6" moneyBeforeTrade="-32698.38" moneyAtferTrade="-32704.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="12" moneyBeforeTrade="-32704.38" moneyAtferTrade="-32716.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="4">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="24" moneyBeforeTrade="-32716.38" moneyAtferTrade="-32740.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="8">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="48" moneyBeforeTrade="-32740.38" moneyAtferTrade="-32788.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="16">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="294" cost="90" moneyBeforeTrade="-32788.38" moneyAtferTrade="-32584.38">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="30">
+							<TradeNumInfos>
+								<TradeNum number="2" rate="20" appearCount="0"/>
+								<TradeNum number="5" rate="10" appearCount="0"/>
+								<TradeNum number="8" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-32584.38" moneyAtferTrade="-32578.58">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="16" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-32578.58" moneyAtferTrade="-32572.78">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="20" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="3" rate="6" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-32572.78" moneyAtferTrade="-32576.78">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="16" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-32576.78" moneyAtferTrade="-32565.18">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="3" rate="10" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-32565.18" moneyAtferTrade="-32569.18">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="19.6" cost="8" moneyBeforeTrade="-32569.18" moneyAtferTrade="-32557.58">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+								<TradeNum number="0" rate="3" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-32557.58" moneyAtferTrade="-32551.78">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+								<TradeNum number="6" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-32551.78" moneyAtferTrade="-32545.98">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="9.8" cost="4" moneyBeforeTrade="-32545.98" moneyAtferTrade="-32540.18">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="16" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="6" rate="10" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="4" moneyBeforeTrade="-32540.18" moneyAtferTrade="-32544.18">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="1">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="16" appearCount="0"/>
+								<TradeNum number="6" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+				<TradeData reward="0" cost="8" moneyBeforeTrade="-32544.18" moneyAtferTrade="-32552.18">
+					<TradeNumsInfo>
+						<TradeNums numIndex="0" tradeCount="2">
+							<TradeNumInfos>
+								<TradeNum number="3" rate="16" appearCount="0"/>
+								<TradeNum number="6" rate="13" appearCount="0"/>
+								<TradeNum number="9" rate="13" appearCount="0"/>
+								<TradeNum number="0" rate="6" appearCount="0"/>
+							</TradeNumInfos>
+						</TradeNums>
+					</TradeNumsInfo>
+				</TradeData>
+			</TradeDatas>
+		</TradeMissCount>
+	</LongMissTradeDatas>
+</root>

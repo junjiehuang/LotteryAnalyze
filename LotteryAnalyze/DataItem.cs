@@ -481,6 +481,8 @@ namespace LotteryAnalyze
 
     public class DataItem
     {
+        public object tag = null;
+
         static int[] TheoryProbabilityOfPath012 = new int[3] { 40, 30, 30, };
 
         public OneDayDatas parent = null;

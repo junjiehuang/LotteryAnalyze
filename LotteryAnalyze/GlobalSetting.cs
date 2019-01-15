@@ -20,7 +20,7 @@ namespace LotteryAnalyze
         static bool HAS_MODIFY = false;
 
         [Parameter("是否在主线程刷新")]
-        private static bool g_UPDATE_IN_MAIN_THREAD = false;
+        private static bool g_UPDATE_IN_MAIN_THREAD = true;
         
         [Parameter("窗口透明度")]
         private static float g_WINDOW_OPACITY = 1;

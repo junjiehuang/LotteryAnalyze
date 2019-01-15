@@ -745,6 +745,39 @@ namespace LotteryAnalyze.UI
                 info += "\t\t</trade>\n";
             }
             info += "\t</LongMissTradeInfos>\n";
+            //开始写入
+            sw.Write(info);
+            info = "";
+
+            info += "\t<LongMissTradeDatas>\n";
+            var etor = TradeDataManager.Instance.longWrongTradeInfo.GetEnumerator();
+            while(etor.MoveNext())
+            {
+                //开始写入
+                sw.Write(info);
+                info = "";
+
+                List<LongWrongTradeInfo> lst = etor.Current.Value;
+                info += "\t\t<TradeMissCount name=\"" + etor.Current.Key + "\">\n";
+                for( int i = 0; i < lst.Count; ++i )
+                {
+                    LongWrongTradeInfo ti = lst[i];
+                    info += "\t\t\t<TradeDatas startDataItemTag=\"" + ti.startDataItemTag + "\" endDataItemTag=\"" + ti.endDataItemTag + "\">\n";
+                   
+                    for( int j = 0; j < ti.tradeDatas.Count; ++j )
+                    {
+                        info += ti.tradeDatas[j];
+                    }
+                    info += "\t\t\t</TradeDatas>\n";
+
+                    //开始写入
+                    sw.Write(info);
+                    info = "";
+                }
+                info += "\t\t</TradeMissCount>\n";
+            }
+            info += "\t</LongMissTradeDatas>\n";
+
             info += "</root>";
 
             //开始写入
