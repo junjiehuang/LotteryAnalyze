@@ -306,8 +306,9 @@ namespace LotteryAnalyze
             G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
-            G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
+            G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
 
+            G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
             TradeSets.Clear();
             TradeTags.Clear();
             string tradeNames = cfg.ReadString("TradeSets", "TradeNames", "");
@@ -353,6 +354,8 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
+            cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
+
             cfg.WriteInt("TradeSets", "CurTradeIndex", G_CUR_TRADE_INDEX);
 
             if (TradeSets.Count > 0)

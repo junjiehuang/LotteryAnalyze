@@ -32,6 +32,9 @@ namespace LotteryAnalyze.UI
 
             InitializeComponent();
 
+            this.AutoScroll = true;
+            //this.HScroll = true;
+            this.VScroll = true;
             int w = this.Size.Width / 2 - 10;
             int h = 30;
             int lx = 10;
