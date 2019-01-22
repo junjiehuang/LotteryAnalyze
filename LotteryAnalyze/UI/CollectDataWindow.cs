@@ -38,8 +38,9 @@ namespace LotteryAnalyze.UI
             {
                 dataArr.Add(i.ToString());
             }
+            int selID = (int)GlobalSetting.G_DATA_SOURCE_TYPE;
             comboBoxDataSource.DataSource = dataArr;
-            comboBoxDataSource.SelectedIndex = (int)GlobalSetting.G_DATA_SOURCE_TYPE;
+            comboBoxDataSource.SelectedIndex = selID;
 
             updateTimer = new System.Windows.Forms.Timer();
             updateTimer.Interval = 30;

@@ -38,6 +38,7 @@
             this.Name = "GlobalSettingPanel";
             this.Text = "GlobalSettingPanel";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GlobalSettingPanel_FormClosed);
+            this.Load += new System.EventHandler(this.GlobalSettingPanel_Load);
             this.ResumeLayout(false);
 
         }

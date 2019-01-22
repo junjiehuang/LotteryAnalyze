@@ -52,7 +52,9 @@ namespace LotteryAnalyze
         [Parameter("选择交易策略ID")]
         private static int g_CUR_TRADE_INDEX = -1;
         [Parameter("数据源类型")]
-        public static AutoUpdateUtil.DataSourceType G_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
+        private static AutoUpdateUtil.DataSourceType g_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
+
+
 
 
         public static List<string> TradeTags = new List<string>();
@@ -280,6 +282,20 @@ namespace LotteryAnalyze
             set
             {
                 g_CUR_TRADE_INDEX = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static AutoUpdateUtil.DataSourceType G_DATA_SOURCE_TYPE
+        {
+            get
+            {
+                return g_DATA_SOURCE_TYPE;
+            }
+
+            set
+            {
+                g_DATA_SOURCE_TYPE = value;
                 HAS_MODIFY = true;
             }
         }
