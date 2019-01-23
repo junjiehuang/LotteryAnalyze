@@ -11,8 +11,8 @@ namespace LotteryAnalyze.UI
 {
     public partial class TradeCalculater : Form
     {
-        float reward = 9.8f;
-        float cost = 1;
+        float reward = GlobalSetting.G_ONE_STARE_TRADE_REWARD;
+        float cost = GlobalSetting.G_ONE_STARE_TRADE_COST;
         int numCount = 4;
         static TradeCalculater sInst;
 

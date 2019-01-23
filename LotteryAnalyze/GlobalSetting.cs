@@ -178,12 +178,12 @@ namespace LotteryAnalyze
         {
             get
             {
-                return G_ONE_STARE_TRADE_COST1;
+                return g_ONE_STARE_TRADE_COST;
             }
 
             set
             {
-                G_ONE_STARE_TRADE_COST1 = value;
+               g_ONE_STARE_TRADE_COST = value;
                 HAS_MODIFY = true;
             }
         }
@@ -198,20 +198,6 @@ namespace LotteryAnalyze
             set
             {
                 g_ONE_STARE_TRADE_REWARD = value;
-                HAS_MODIFY = true;
-            }
-        }
-
-        public static float G_ONE_STARE_TRADE_COST1
-        {
-            get
-            {
-                return g_ONE_STARE_TRADE_COST;
-            }
-
-            set
-            {
-                g_ONE_STARE_TRADE_COST = value;
                 HAS_MODIFY = true;
             }
         }

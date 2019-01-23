@@ -24,6 +24,8 @@ namespace LotteryAnalyze.UI
         List<SByte> sSels = new List<SByte>();
         List<SByte> gSels = new List<SByte>();
 
+        List<List<Button>> pathBtns = new List<List<Button>>();
+
         GraphManager graphMgr = null;
 
 
@@ -46,7 +48,80 @@ namespace LotteryAnalyze.UI
             cbg.Add(checkBoxG0); cbg.Add(checkBoxG1); cbg.Add(checkBoxG2); cbg.Add(checkBoxG3); cbg.Add(checkBoxG4);
             cbg.Add(checkBoxG5); cbg.Add(checkBoxG6); cbg.Add(checkBoxG7); cbg.Add(checkBoxG8); cbg.Add(checkBoxG9);
 
+            pathBtns.Add(new List<Button>() { buttonW0, buttonW1, buttonW2, });
+            pathBtns.Add(new List<Button>() { buttonQ0, buttonQ1, buttonQ2, });
+            pathBtns.Add(new List<Button>() { buttonB0, buttonB1, buttonB2, });
+            pathBtns.Add(new List<Button>() { buttonS0, buttonS1, buttonS2, });
+            pathBtns.Add(new List<Button>() { buttonG0, buttonG1, buttonG2, });
+            for( int i = 0; i < pathBtns.Count; ++i )
+            {
+                for( int j = 0; j < 3; ++j )
+                {
+                    pathBtns[i][j].Tag = new Point(i, j);
+                    pathBtns[i][j].Click += new System.EventHandler(this.buttonPath_Click);
+                }
+            }
+
             FormMain.AddWindow(this);
+        }
+
+        void SetNumbers(ref List<SByte> lst, ref List<CheckBox> chkBoxLst, int path)
+        {
+            lst.Clear();
+            for(int i = 0; i < chkBoxLst.Count; ++i)
+            {
+                chkBoxLst[i].Checked = false;
+            }
+            if(path == 0)
+            {
+                lst.Add(0); lst.Add(3); lst.Add(6); lst.Add(9);
+                chkBoxLst[0].Checked = true;
+                chkBoxLst[3].Checked = true;
+                chkBoxLst[6].Checked = true;
+                chkBoxLst[9].Checked = true;
+            }
+            else if (path == 1)
+            {
+                lst.Add(1); lst.Add(4); lst.Add(7);
+                chkBoxLst[1].Checked = true;
+                chkBoxLst[4].Checked = true;
+                chkBoxLst[7].Checked = true;
+            }
+            else if (path == 2)
+            {
+                lst.Add(2); lst.Add(5); lst.Add(8);
+                chkBoxLst[2].Checked = true;
+                chkBoxLst[5].Checked = true;
+                chkBoxLst[8].Checked = true;
+            }
+        }
+
+        private void buttonPath_Click(object sender, EventArgs e)
+        {
+            if(sender is Button)
+            {
+                Point p = (Point)((sender as Button).Tag);
+                int i = p.X;
+                int j = p.Y;
+                switch( i )
+                {
+                    case 0:
+                        SetNumbers(ref wSels, ref cbw, j);
+                        break;
+                    case 1:
+                        SetNumbers(ref qSels, ref cbq, j);
+                        break;
+                    case 2:
+                        SetNumbers(ref bSels, ref cbb, j);
+                        break;
+                    case 3:
+                        SetNumbers(ref sSels, ref cbs, j);
+                        break;
+                    case 4:
+                        SetNumbers(ref gSels, ref cbg, j);
+                        break;
+                }
+            }
         }
 
         private void buttonWClear_Click(object sender, EventArgs e)
@@ -193,6 +268,8 @@ namespace LotteryAnalyze.UI
                             trade.AddSelNum(4, ref gSels, tradeCountG, ref nci);
                         }
                     }
+
+                    LotteryGraph.NotifyAllGraphsRefresh();
                 }
             }
         }
