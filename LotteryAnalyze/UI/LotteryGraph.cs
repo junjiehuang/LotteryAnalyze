@@ -1356,5 +1356,10 @@ namespace LotteryAnalyze.UI
             graphMgr.appearenceGraph.AppearenceCycleType = (GraphAppearence.AppearenceType)comboBoxAppearenceType.SelectedIndex;
             this.Invalidate(true);
         }
+
+        private void loadNextBatchDatasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

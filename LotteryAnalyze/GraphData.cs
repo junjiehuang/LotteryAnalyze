@@ -836,6 +836,19 @@ namespace LotteryAnalyze
         int macdEMALongCycle = 20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
 
+        static List<Dictionary<CollectDataType, float>> G_CUR_KVALUE_MAP = new List<Dictionary<CollectDataType, float>>();
+        public static void ResetCurKValueMap()
+        {
+            for(int i = 0; i < G_CUR_KVALUE_MAP.Count; ++i)
+            {
+                Dictionary<CollectDataType, float> dct = G_CUR_KVALUE_MAP[i];
+                foreach(CollectDataType cdt in dct.Keys)
+                {
+                    dct[cdt] = 0;
+                }
+            }
+        }
+
         public void Clear()
         {
             allKDatas.Clear();
@@ -891,10 +904,22 @@ namespace LotteryAnalyze
             }
             dataLength = allKDatas[0].dataLst.Count;
 
-            Dictionary<CollectDataType, float> valueMap = new Dictionary<CollectDataType, float>();
+            //Dictionary<CollectDataType, float> valueMap = new Dictionary<CollectDataType, float>();
+
             for (int i = 0; i < allKDatas.Count; ++i)
             {
-                valueMap.Clear();
+                Dictionary<CollectDataType, float> valueMap = null;
+                if(G_CUR_KVALUE_MAP.Count <= i)
+                {
+                    valueMap = new Dictionary<CollectDataType, float>();
+                    G_CUR_KVALUE_MAP.Add(valueMap);
+                }
+                else
+                {
+                    valueMap = G_CUR_KVALUE_MAP[i];
+                }
+
+                //valueMap.Clear();
                 KDataDictContainer kddc = allKDatas[i];
                 for (int j = 0; j < kddc.dataLst.Count; ++j)
                 {

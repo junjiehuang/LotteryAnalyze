@@ -145,6 +145,8 @@ namespace LotteryAnalyze.UI
             this.textBoxMultiCount = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPageAppearence = new System.Windows.Forms.TabPage();
+            this.label18 = new System.Windows.Forms.Label();
+            this.comboBoxAppearenceType = new System.Windows.Forms.ComboBox();
             this.groupBoxCDTShowSetting = new System.Windows.Forms.GroupBox();
             this.checkBoxShowSingleLine = new System.Windows.Forms.CheckBox();
             this.tabPageMissCount = new System.Windows.Forms.TabPage();
@@ -156,8 +158,7 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.comboBoxAppearenceType = new System.Windows.Forms.ComboBox();
+            this.loadNextBatchDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CreateUpAndDownPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -197,7 +198,8 @@ namespace LotteryAnalyze.UI
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
             this.autoAllignToolStripMenuItem,
-            this.delAllAuxLinesToolStripMenuItem});
+            this.delAllAuxLinesToolStripMenuItem,
+            this.loadNextBatchDatasToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -1145,6 +1147,26 @@ namespace LotteryAnalyze.UI
             this.tabPageAppearence.Text = "出号率图";
             this.tabPageAppearence.UseVisualStyleBackColor = true;
             // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(2, 23);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(65, 12);
+            this.label18.TabIndex = 8;
+            this.label18.Text = "统计周期：";
+            // 
+            // comboBoxAppearenceType
+            // 
+            this.comboBoxAppearenceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxAppearenceType.FormattingEnabled = true;
+            this.comboBoxAppearenceType.Location = new System.Drawing.Point(113, 20);
+            this.comboBoxAppearenceType.Name = "comboBoxAppearenceType";
+            this.comboBoxAppearenceType.Size = new System.Drawing.Size(200, 20);
+            this.comboBoxAppearenceType.TabIndex = 7;
+            this.comboBoxAppearenceType.SelectedIndexChanged += new System.EventHandler(this.comboBoxAppearenceType_SelectedIndexChanged);
+            // 
             // groupBoxCDTShowSetting
             // 
             this.groupBoxCDTShowSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1280,25 +1302,12 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // label18
+            // loadNextBatchDatasToolStripMenuItem
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(2, 23);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(65, 12);
-            this.label18.TabIndex = 8;
-            this.label18.Text = "统计周期：";
-            // 
-            // comboBoxAppearenceType
-            // 
-            this.comboBoxAppearenceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxAppearenceType.FormattingEnabled = true;
-            this.comboBoxAppearenceType.Location = new System.Drawing.Point(113, 20);
-            this.comboBoxAppearenceType.Name = "comboBoxAppearenceType";
-            this.comboBoxAppearenceType.Size = new System.Drawing.Size(200, 20);
-            this.comboBoxAppearenceType.TabIndex = 7;
-            this.comboBoxAppearenceType.SelectedIndexChanged += new System.EventHandler(this.comboBoxAppearenceType_SelectedIndexChanged);
+            this.loadNextBatchDatasToolStripMenuItem.Name = "loadNextBatchDatasToolStripMenuItem";
+            this.loadNextBatchDatasToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.loadNextBatchDatasToolStripMenuItem.Text = "读取下一批数据";
+            this.loadNextBatchDatasToolStripMenuItem.Click += new System.EventHandler(this.loadNextBatchDatasToolStripMenuItem_Click);
             // 
             // LotteryGraph
             // 
@@ -1450,5 +1459,6 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBoxAppearenceType;
+        private System.Windows.Forms.ToolStripMenuItem loadNextBatchDatasToolStripMenuItem;
     }
 }
