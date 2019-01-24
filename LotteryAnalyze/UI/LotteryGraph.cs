@@ -1359,7 +1359,14 @@ namespace LotteryAnalyze.UI
 
         private void loadNextBatchDatasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            int itemIndex = graphMgr.kvalueGraph.StartItemIndex;
+            DataItem item = DataManager.GetInst().FindDataItem(itemIndex);
+            BatchTradeSimulator.LoadNextBatchDatas();
+            if(item != null)
+            {
+                graphMgr.kvalueGraph.ScrollToData(item.idGlobal, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
+            }
+            this.Invalidate(true);
         }
     }
 }

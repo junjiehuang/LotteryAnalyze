@@ -4555,5 +4555,65 @@ namespace LotteryAnalyze
             totalCount += TradeDataManager.Instance.rightCount + TradeDataManager.Instance.wrongCount + TradeDataManager.Instance.untradeCount;
             state = SimState.ePrepareData;
         }
+
+
+        public static void LoadNextBatchDatas()
+        {
+            DataManager dataMgr = DataManager.GetInst();
+            OneDayDatas odd = null;
+            TradeDataBase trade = TradeDataManager.Instance.GetLatestTradeData();
+            if(trade != null)
+            {
+                odd = trade.lastDateItem.parent;
+            }
+            else
+            {
+                DataItem latestItem = dataMgr.GetLatestItem();
+                if (latestItem != null)
+                {
+                    odd = latestItem.parent;
+                }
+            }
+            if(odd == null)
+            {
+                return;
+            }
+            List<int> dayIDLst = new List<int>(dataMgr.mFileMetaInfo.Count);
+            foreach(int key in DataManager.GetInst().mFileMetaInfo.Keys)
+            {
+                dayIDLst.Add(key);
+            }
+            dayIDLst.Sort((x, y) =>
+            {
+                if (x < y)
+                    return -1;
+                return 1;
+            });
+            int startID = dayIDLst.IndexOf(odd.dateID);
+            int endID = startID + Instance.batch;
+            if (endID >= dayIDLst.Count)
+                endID = dayIDLst.Count - 1;
+            dataMgr.ClearDatasExcept(odd);
+            for (int i = startID + 1; i <= endID; ++i)
+            {
+                int key = dayIDLst[i];
+                dataMgr.LoadData(key);
+            }
+            dataMgr.SetDataItemsGlobalID();
+            if (dataMgr.GetAllDataItemCount() == 0)
+                return;
+            Util.CollectPath012Info(null);
+            GraphDataManager.Instance.CollectGraphDataExcept(GraphType.eKCurveGraph, odd);
+
+            if (TradeDataManager.Instance.historyTradeDatas != null)
+            {
+                for (int i = TradeDataManager.Instance.historyTradeDatas.Count - 1; i >= 0; --i)
+                {
+                    if (TradeDataManager.Instance.historyTradeDatas[i].lastDateItem.parent == odd)
+                        continue;
+                    TradeDataManager.Instance.historyTradeDatas.RemoveAt(i);
+                }
+            }
+        }
     }
 }

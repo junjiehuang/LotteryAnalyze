@@ -323,6 +323,8 @@ namespace LotteryAnalyze
     // 记录某期开奖号的所有统计信息
     public class LotteryStatisticInfo
     {
+        bool hasCollect = false;
+
         public const int LONG_COUNT = 30;
         public const int SHOR_COUNT = 10;
         public const int FAST_COUNT = 5;
@@ -345,6 +347,8 @@ namespace LotteryAnalyze
 
         public void Collect()
         {
+            if (hasCollect)
+                return;
             if (lotteryData == null)
                 return;
             DataItem prevItem = lotteryData.parent.GetPrevItem(lotteryData);
@@ -378,6 +382,8 @@ namespace LotteryAnalyze
             }
 
             CollectMissCountArea();
+
+            hasCollect = true;
         }
 
         void CollectMissCountArea()
@@ -706,6 +712,13 @@ namespace LotteryAnalyze
         {
             allDatas.Clear();
             indexs.Clear();
+        }
+
+        public void ClearDatasExcept(OneDayDatas odd)
+        {
+            ClearAllDatas();
+            indexs.Add(odd.dateID);
+            allDatas.Add(odd.dateID, odd);
         }
 
         public void AddMetaInfo(int key, string fileFullName)

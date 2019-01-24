@@ -526,6 +526,12 @@ namespace LotteryAnalyze
             set { downGraphYOffset = value; }
         }
 
+        int startItemIndex = -1;
+        public int StartItemIndex
+        {
+            get { return startItemIndex; }
+        }
+
         public GraphKCurve()
         {
             selDataFont = new Font(FontFamily.GenericSerif, 12);
@@ -588,6 +594,8 @@ namespace LotteryAnalyze
                         if (endIndex > parent.endShowDataItemIndex+1)
                             endIndex = parent.endShowDataItemIndex+1;
                     }
+
+                    startItemIndex = startIndex;
 
                     // 自动对齐
                     if (autoAllign)

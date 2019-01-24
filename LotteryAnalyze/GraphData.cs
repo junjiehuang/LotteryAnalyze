@@ -683,8 +683,7 @@ namespace LotteryAnalyze
         }
 
     }
-
-
+    
     public class KDataDictContainer
     {
         public static string[] C_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
@@ -786,6 +785,7 @@ namespace LotteryAnalyze
         public virtual int DataLength() { return 0; }
         public virtual bool HasData() { return false; }
         public virtual void CollectGraphData() { }
+        public virtual void CollectGraphDataExcept(OneDayDatas odd) { }
     }
 
     // K线图数据容器
@@ -872,7 +872,41 @@ namespace LotteryAnalyze
             CollectMACDDatas();
         }
 
-        public void CollectKDatas()
+        public override void CollectGraphDataExcept(OneDayDatas odd)
+        {
+            KDataDictContainer kddc = null;
+            for (int i = 0; i < 5; ++i)
+            {
+                if (i >= allKDatas.Count)
+                {
+                    kddc = new KDataDictContainer();
+                    kddc.numberIndex = allKDatas.Count;
+                    allKDatas.Add(kddc);
+                }
+                else
+                {
+                    kddc = allKDatas[i];
+                    List<KDataDict> lst = new List<KDataDict>();
+                    for( int j = 0; j < kddc.dataLst.Count; ++j )
+                    {
+                        if(kddc.dataLst[j].startItem.parent == odd)
+                        {
+                            kddc.dataLst[j].index = lst.Count;
+                            lst.Add(kddc.dataLst[j]);
+                        }
+                    }
+                    kddc.dataLst.Clear();
+                    kddc.dataLst.AddRange(lst);
+                }
+            }
+
+            CollectKDatas(odd);
+            CollectAvgDatas();
+            CollectBollinDatas();
+            CollectMACDDatas();
+        }
+
+        public void CollectKDatas(OneDayDatas exceptODD = null)
         {
             if (DataManager.GetInst().indexs == null) return;
             int count = DataManager.GetInst().indexs.Count;
@@ -883,6 +917,8 @@ namespace LotteryAnalyze
             {
                 int oneDayID = DataManager.GetInst().indexs[i];
                 OneDayDatas odd = DataManager.GetInst().allDatas[oneDayID];
+                if (odd == exceptODD)
+                    continue;
 
                 for (int j = 0; j < odd.datas.Count; ++j)
                 {
@@ -1423,6 +1459,12 @@ namespace LotteryAnalyze
         {
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 S_GRAPH_DATA_CONTS[gt].CollectGraphData();
+        }
+
+        public void CollectGraphDataExcept(GraphType gt, OneDayDatas odd)
+        {
+            if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
+                S_GRAPH_DATA_CONTS[gt].CollectGraphDataExcept(odd);
         }
 
         public void Clear()
