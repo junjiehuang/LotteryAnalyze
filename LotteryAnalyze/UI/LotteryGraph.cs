@@ -1366,6 +1366,7 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.ScrollToData(item.idGlobal, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
             }
+            graphMgr.endShowDataItemIndex = TradeDataManager.Instance.historyTradeDatas.Count - 1;
             this.Invalidate(true);
         }
     }
