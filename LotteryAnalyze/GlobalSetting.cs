@@ -51,6 +51,8 @@ namespace LotteryAnalyze
         private static float g_ONE_STARE_TRADE_REWARD = 9.8f;
         [Parameter("选择交易策略ID")]
         private static int g_CUR_TRADE_INDEX = -1;
+        [Parameter("每批加载多少天的数据")]
+        private static int g_DAYS_PER_BATCH = 3;
         [Parameter("数据源类型")]
         private static AutoUpdateUtil.DataSourceType g_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
 
@@ -286,6 +288,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static int G_DAYS_PER_BATCH
+        {
+            get
+            {
+                return g_DAYS_PER_BATCH;
+            }
+
+            set
+            {
+                g_DAYS_PER_BATCH = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -309,6 +325,7 @@ namespace LotteryAnalyze
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
+            G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
 
             G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
             TradeSets.Clear();
@@ -357,6 +374,7 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
+            cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
 
             cfg.WriteInt("TradeSets", "CurTradeIndex", G_CUR_TRADE_INDEX);
 
