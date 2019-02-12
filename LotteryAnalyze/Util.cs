@@ -597,6 +597,7 @@ namespace LotteryAnalyze
         static string S_163_NEW_CURRENT_URL = "http://caipiao.163.com/award/cqssc/";
         static string S_163_NEW_DATE_URL = "http://caipiao.163.com/award/cqssc/";
 
+        static string S_CAIBOW_DATE_URL = "https://www.caibow.com/kj/cqssc/";
 
         public delegate void OnCollecting(string info);
         public static OnCollecting sCallBackOnCollecting;
@@ -613,6 +614,7 @@ namespace LotteryAnalyze
         {
             e360 = 0,
             e163 = 1,
+            eCaiBow = 2,
 
             eMax,
         }
@@ -664,6 +666,16 @@ namespace LotteryAnalyze
                 if (m < 10)
                     url += "0";
                 url += m;
+                if (d < 10)
+                    url += "0";
+                url += d + ".html";
+            }
+            else if(GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
+            {
+                url = S_CAIBOW_DATE_URL + y + "-";
+                if (m < 10)
+                    url += "0";
+                url += m + "-";
                 if (d < 10)
                     url += "0";
                 url += d + ".html";
@@ -740,6 +752,11 @@ namespace LotteryAnalyze
                 string url = combineUrlName(date.Year, date.Month, date.Day, true);
                 dataCount = FetchData(true, filename, url, ref error);
             }
+            else if(GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
+            {
+                string url = combineUrlName(date.Year, date.Month, date.Day, true);
+                dataCount = FetchData(true, filename, url, ref error);
+            }
             else
             {             
                 // 先按旧版的网页数据拉取
@@ -772,7 +789,8 @@ namespace LotteryAnalyze
             int validCount = 0;
             // load web page
             ECType t = ECType.Default;
-            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
+            if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163 ||
+                GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
             {
                 t = ECType.UTF8;
             }
@@ -823,6 +841,10 @@ namespace LotteryAnalyze
             if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 AnalyzeBy163(strWebContent, ref lotteryData, ref validCount);
+            }
+            else if(GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
+            {
+                AnalyzeByCaiBow(strWebContent, ref lotteryData, ref validCount);
             }
             else
             {
@@ -902,6 +924,85 @@ namespace LotteryAnalyze
                     ++validCount;
                 }
             }
+        }
+
+        static void AnalyzeByCaiBow(string strWebContent, ref string lotteryData, ref int validCount)
+        {
+            int index = 0;
+            string[] lst = new string[120];
+            string startIndexStr = "<span class=\"w_15 mr_1 lh_34 ta_cen ds_bl fl\">";
+            int startIndexStrL = startIndexStr.Length;
+            string endStr = "</span>";
+            string startNumStr = "<span class=\"ds_ib mr5\">";
+            int startNumStrL = startNumStr.Length;
+
+            int startIndex = strWebContent.IndexOf(startIndexStr);
+            while(startIndex != -1)
+            {
+                string subStr = strWebContent.Substring(startIndex + startIndexStrL);
+                int nextStartIndex = subStr.IndexOf(startIndexStr);
+
+                if (subStr[0] >= '0' && subStr[0] <= '9')
+                {
+                    if (nextStartIndex != -1)
+                    {
+                        subStr = strWebContent.Substring(startIndex + startIndexStrL, nextStartIndex);
+                        strWebContent = strWebContent.Substring(startIndex + startIndexStrL + nextStartIndex);
+                    }
+
+                    string indexStr = subStr.Substring(0, 3);
+                    index = int.Parse(indexStr);
+                    if (index > 0)
+                    {
+                        index = index - 1;
+                        string numStr = "";
+                        int tid = subStr.IndexOf(startNumStr);
+                        if (tid != -1)
+                        {
+                            while (tid != -1)
+                            {
+                                numStr += subStr[tid + startNumStrL];
+                                subStr = subStr.Substring(tid + startNumStrL + 1);
+                                tid = subStr.IndexOf(startNumStr);
+                            }
+                            lst[index] = indexStr + " " + numStr + "\n";
+                        }
+                        else
+                        {
+                            lst[index] = indexStr + " -\n";
+                        }
+                    }
+                }
+                else
+                {
+                    strWebContent = strWebContent.Substring(startIndex + startIndexStrL + nextStartIndex);
+                }
+                startIndex = strWebContent.IndexOf(startIndexStr);
+
+                if (nextStartIndex == -1)
+                    break;
+            }
+
+            index = 0;
+            validCount = 0;
+            for (int i = 0; i < lst.Length; ++i)
+            {
+                if (string.IsNullOrEmpty(lst[i]))
+                {
+                    index = i + 1;
+                    if (index < 10)
+                        lotteryData += "00";
+                    else if (index < 100)
+                        lotteryData += "0";
+                    lotteryData += index.ToString() + " -\n";
+                }
+                else
+                {
+                    lotteryData += lst[i];
+                    ++validCount;
+                }
+            }
+
         }
 
         static void AnalyzeBy360(string strWebContent, ref string lotteryData, ref int validCount, bool newUrl)

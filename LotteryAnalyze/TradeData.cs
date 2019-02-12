@@ -3310,7 +3310,7 @@ namespace LotteryAnalyze
                 pci.paramMap["count2LIM"] = count2LIM[i];
                 //pci.paramMap["count2BUs"] = count2BUs[i];
                 //pci.paramMap["count2BMs"] = count2BMs[i];
-                //pci.paramMap["count2BDs"] = count2BDs[i];
+                pci.paramMap["count2BDs"] = count2BDs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
