@@ -552,7 +552,10 @@ namespace LotteryAnalyze
 
             int lastItemID = listViewFileList.Items.Count - 1;
             if (lastItemID > 0)
-                --lastItemID;
+            {
+                //--lastItemID;
+                lastItemID -= GlobalSetting.G_DAYS_PER_BATCH;
+            }
             if (firstODD != null)
                 lastItemID = GetFileIndex(firstODD.dateID);
 
