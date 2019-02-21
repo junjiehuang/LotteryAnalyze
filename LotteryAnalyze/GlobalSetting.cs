@@ -44,6 +44,8 @@ namespace LotteryAnalyze
         private static bool g_ENABLE_MAX_APPEARENCE_FIRST_CHECK = true;
         [Parameter("是否开启布林中轨之上数量统计")]
         private static bool g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = true;
+        [Parameter("是否开启MACD上升检测")]
+        private static bool g_ENABLE_MACD_UP_CHECK = true;
         //private static bool g_ENABLE_SAME_PATH_CHECK_MAX_DELTA_APPEAR_RATE = true;
         [Parameter("1注1星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
@@ -302,6 +304,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_ENABLE_MACD_UP_CHECK
+        {
+            get
+            {
+                return g_ENABLE_MACD_UP_CHECK;
+            }
+
+            set
+            {
+                g_ENABLE_MACD_UP_CHECK = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -324,6 +340,7 @@ namespace LotteryAnalyze
             G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
+            G_ENABLE_MACD_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableMACDUpCheck", false);
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
             G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
 
@@ -373,6 +390,7 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
+            cfg.WriteBool("GlobalSetting", "EnableMACDUpCheck", G_ENABLE_MACD_UP_CHECK);
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
             cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
 

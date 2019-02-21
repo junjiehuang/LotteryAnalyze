@@ -563,6 +563,7 @@ namespace LotteryAnalyze
     }
     public class MACDPoint
     {
+        public MACDPointMap parent;
         public float DIF = 0;
         public float DEA = 0;
         public float BAR = 0;
@@ -597,6 +598,7 @@ namespace LotteryAnalyze
             else if (createIfNotExist == false)
                 return null;
             MACDPoint data = new MACDPoint();
+            data.parent = this;
             macdpMap.Add(collectDataType, data);
             return data;
         }

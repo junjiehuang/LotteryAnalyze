@@ -3117,6 +3117,64 @@ namespace LotteryAnalyze
             }
         }
 
+        void CalcPathMacdUp(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            MACDPointMap bpm = kddc.GetMacdPointMap(kdd);
+            for (int i = 0; i < cdts.Length; ++i)
+            {
+                PathCmpInfo pci = pcis[i];
+                CollectDataType cdt = cdts[i];
+                KData kd = kdd.GetData(cdt, false);
+                MACDPoint mp = bpm.GetData(cdt, false);
+                int totalCount = 0;
+                int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
+                DataItem pItem = item;
+                MACDPoint maxMP = mp, minMP = mp;
+
+                while (pItem != null && loopCount > 0)
+                {
+                    ++totalCount;
+                    KDataDict pKDD = kddc.GetKDataDict(pItem);
+                    KData pKD = pKDD.GetData(cdt, false);
+                    MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
+
+                    if (pBP.BAR > maxMP.BAR)
+                        maxMP = pBP;
+                    if (pBP.BAR < minMP.BAR)
+                        minMP = pBP;
+
+                    pItem = pItem.parent.GetPrevItem(pItem);
+                    --loopCount;
+                }
+
+                pci.paramMap["MacdUp"] = 0f;
+                if (minMP != mp && maxMP != mp)
+                {
+                    if(minMP.parent.index < maxMP.parent.index)
+                    {
+                        pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (maxMP.BAR - minMP.BAR);
+                    }
+                    else if(minMP.parent.index > maxMP.parent.index)
+                    {
+                        pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (maxMP.BAR - minMP.BAR);
+                    }
+                }
+                else if(minMP == mp && maxMP != mp)
+                {
+                    pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (mp.parent.index - maxMP.parent.index);
+                }
+                else if(minMP != mp && maxMP == mp)
+                {
+                    pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (mp.parent.index - minMP.parent.index);
+                }
+            }
+        }
+
         void CalcPathIfBecomeUp(DataItem item, TradeDataOneStar trade, int numIndex, ref int mayUpPathsCount)
         {
             mayUpPathsCount = 0;
@@ -3325,6 +3383,11 @@ namespace LotteryAnalyze
                 CalcPathUpBolleanCount(item, trade, numIndex);
             }
 
+            if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+            {
+                CalcPathMacdUp(item, trade, numIndex);
+            }
+
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
@@ -3350,6 +3413,14 @@ namespace LotteryAnalyze
                         if ((float)x.paramMap["UpBolleanCount"] > (float)y.paramMap["UpBolleanCount"])
                             return -1;
                         if ((float)x.paramMap["UpBolleanCount"] < (float)y.paramMap["UpBolleanCount"])
+                            return 1;
+                    }
+
+                    if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    {
+                        if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
+                            return -1;
+                        if ((float)x.paramMap["MacdUp"] < (float)y.paramMap["MacdUp"])
                             return 1;
                     }
 
@@ -3427,6 +3498,16 @@ namespace LotteryAnalyze
                         {
                             return;
                         }
+                    }
+                }
+
+                // 如果这一路是MACD柱上行的，就继续交易这一路
+                if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                {
+                    if (tmp.paramMap.ContainsKey("MacdUp"))
+                    {
+                        if ((float)tmp.paramMap["MacdUp"] > 0)
+                            return;
                     }
                 }
                 
