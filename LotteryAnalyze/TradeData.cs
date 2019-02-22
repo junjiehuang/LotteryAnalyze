@@ -3119,6 +3119,8 @@ namespace LotteryAnalyze
 
         void CalcPathMacdUp(DataItem item, TradeDataOneStar trade, int numIndex)
         {
+            const int TOTAL_LIMIT_CHECK_COUNT = 3;
+
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
             KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -3135,43 +3137,86 @@ namespace LotteryAnalyze
                 int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 DataItem pItem = item;
                 MACDPoint maxMP = mp, minMP = mp;
+                int dir = 0;
+                
+                int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
 
                 while (pItem != null && loopCount > 0)
                 {
                     ++totalCount;
-                    KDataDict pKDD = kddc.GetKDataDict(pItem);
-                    KData pKD = pKDD.GetData(cdt, false);
-                    MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
 
-                    if (pBP.BAR > maxMP.BAR)
-                        maxMP = pBP;
-                    if (pBP.BAR < minMP.BAR)
-                        minMP = pBP;
+                    if (pItem != item)
+                    {
+                        KDataDict pKDD = kddc.GetKDataDict(pItem);
+                        KData pKD = pKDD.GetData(cdt, false);
+                        MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
+
+                        if(dir == 0)
+                        {
+                            if (pBP.BAR > mp.BAR)
+                                dir = -1;
+                            else if (pBP.BAR < mp.BAR)
+                                dir = 1;
+                        }
+
+                        if(dir == 1)
+                        {
+                            if (pBP.BAR < minMP.BAR)
+                            {
+                                minMP.BAR = pBP.BAR;
+                                limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
+                            }
+                            else
+                            {
+                                --limitCheckCount;
+                            }
+                        }
+                        else if(dir == -1)
+                        {
+                            if (pBP.BAR > maxMP.BAR)
+                            {
+                                maxMP.BAR = pBP.BAR;
+                                limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
+                            }
+                            else
+                            {
+                                --limitCheckCount;
+                            }
+                        }
+                    }
 
                     pItem = pItem.parent.GetPrevItem(pItem);
                     --loopCount;
                 }
 
                 pci.paramMap["MacdUp"] = 0f;
-                if (minMP != mp && maxMP != mp)
+                if(dir == 1)
                 {
-                    if(minMP.parent.index < maxMP.parent.index)
-                    {
-                        pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (maxMP.BAR - minMP.BAR);
-                    }
-                    else if(minMP.parent.index > maxMP.parent.index)
-                    {
-                        pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (maxMP.BAR - minMP.BAR);
-                    }
+                    pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR);
                 }
-                else if(minMP == mp && maxMP != mp)
+                else if(dir == -1)
                 {
-                    pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (mp.parent.index - maxMP.parent.index);
+                    pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR);
                 }
-                else if(minMP != mp && maxMP == mp)
-                {
-                    pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (mp.parent.index - minMP.parent.index);
-                }
+                //if (minMP != mp && maxMP != mp)
+                //{
+                //    if(minMP.parent.index < maxMP.parent.index)
+                //    {
+                //        pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (maxMP.BAR - minMP.BAR);
+                //    }
+                //    else if(minMP.parent.index > maxMP.parent.index)
+                //    {
+                //        pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (maxMP.BAR - minMP.BAR);
+                //    }
+                //}
+                //else if(minMP == mp && maxMP != mp)
+                //{
+                //    pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (mp.parent.index - maxMP.parent.index);
+                //}
+                //else if(minMP != mp && maxMP == mp)
+                //{
+                //    pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (mp.parent.index - minMP.parent.index);
+                //}
             }
         }
 
