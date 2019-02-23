@@ -3138,7 +3138,9 @@ namespace LotteryAnalyze
                 DataItem pItem = item;
                 MACDPoint maxMP = mp, minMP = mp;
                 int dir = 0;
-                
+
+                int dirUpCount = 0;
+                int dirDownCount = 0;
                 int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
 
                 while (pItem != null && loopCount > 0)
@@ -3154,16 +3156,36 @@ namespace LotteryAnalyze
                         if(dir == 0)
                         {
                             if (pBP.BAR > mp.BAR)
-                                dir = -1;
+                            {
+                                dirDownCount++;
+                                //dir = -1;
+                            }
                             else if (pBP.BAR < mp.BAR)
+                            {
+                                dirUpCount++;
+                                //dir = 1;
+                            }
+
+                            if(dirDownCount - dirUpCount > 3)
+                            {
+                                dir = -1;
+                            }
+                            else if(dirUpCount - dirDownCount > 3)
+                            {
                                 dir = 1;
+                            }
+
+                            if (maxMP.BAR < pBP.BAR)
+                                maxMP = pBP;
+                            if (minMP.BAR > pBP.BAR)
+                                minMP = pBP;
                         }
 
                         if(dir == 1)
                         {
                             if (pBP.BAR < minMP.BAR)
                             {
-                                minMP.BAR = pBP.BAR;
+                                minMP = pBP;
                                 limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
                             }
                             else
@@ -3175,7 +3197,7 @@ namespace LotteryAnalyze
                         {
                             if (pBP.BAR > maxMP.BAR)
                             {
-                                maxMP.BAR = pBP.BAR;
+                                maxMP = pBP;
                                 limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
                             }
                             else
@@ -3183,6 +3205,9 @@ namespace LotteryAnalyze
                                 --limitCheckCount;
                             }
                         }
+
+                        if (limitCheckCount == 0)
+                            break;
                     }
 
                     pItem = pItem.parent.GetPrevItem(pItem);
