@@ -3143,6 +3143,8 @@ namespace LotteryAnalyze
                 int dirDownCount = 0;
                 int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
 
+                int curMissCount = item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+
                 while (pItem != null && loopCount > 0)
                 {
                     ++totalCount;
@@ -3155,18 +3157,18 @@ namespace LotteryAnalyze
 
                         if(dir == 0)
                         {
-                            if (pBP.BAR > mp.BAR)
+                            bool isDown = pBP.BAR > mp.BAR;
+                            if (isDown)
                             {
                                 dirDownCount++;
-                                //dir = -1;
                             }
                             else if (pBP.BAR < mp.BAR)
                             {
                                 dirUpCount++;
-                                //dir = 1;
                             }
 
-                            if(dirDownCount - dirUpCount > 3)
+                            if(dirDownCount - dirUpCount > 3 ||
+                                (isDown && curMissCount > 3))
                             {
                                 dir = -1;
                             }
