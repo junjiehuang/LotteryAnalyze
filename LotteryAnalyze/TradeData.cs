@@ -3573,15 +3573,6 @@ namespace LotteryAnalyze
                     }
                 }
 
-                // 如果这一路是MACD柱上行的，就继续交易这一路
-                if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                {
-                    if (tmp.paramMap.ContainsKey("MacdUp"))
-                    {
-                        if ((float)tmp.paramMap["MacdUp"] > 0)
-                            return;
-                    }
-                }
                 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
@@ -3607,6 +3598,16 @@ namespace LotteryAnalyze
                             if ((float)lastPathCurPCI.paramMap["MayUpCount"] < 0 && curMissCount > 0)
                             {
                                 return;
+                            }
+                        }
+
+                        // 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
+                        if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                        {
+                            if (lastPathCurPCI.paramMap.ContainsKey("MacdUp"))
+                            {
+                                if ((float)lastPathCurPCI.paramMap["MacdUp"] > 0)
+                                    return;
                             }
                         }
 

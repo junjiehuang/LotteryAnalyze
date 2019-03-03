@@ -721,7 +721,7 @@ namespace LotteryAnalyze
                 }
                 for ( int i = startIndex; i < endIndex; ++i )
                 {
-                    DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt);
+                    DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt, i == selectKDataIndex);
                 }
 
                 if(preViewDataIndex != -1)
@@ -1116,7 +1116,7 @@ namespace LotteryAnalyze
             PushLinePts(bollinLinePenMid, px, pyM, cx, cyM);
             PushLinePts(bollinLinePenDown, px, pyD, cx, cyD);
         }
-        void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt)
+        void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt, bool drawSelectedLine)
         {
             MACDPoint mp = mpm.macdpMap[cdt];
             float standX = (mpm.index + 0.5f) * gridScaleW;            
@@ -1149,6 +1149,14 @@ namespace LotteryAnalyze
             g.FillRectangle(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
             g.DrawLine(yellowLinePen, px, pyDIF, cx, cyDIF);
             g.DrawLine(whiteLinePen, px, pyDEA, cx, cyDEA);
+
+            if(drawSelectedLine)
+            {
+                float xL = px + gridScaleW * 0.5f;
+                float xR = cx + gridScaleW * 0.5f;
+                g.DrawLine(yellowLinePen, xL, 0, xL, winH);
+                g.DrawLine(yellowLinePen, xR, 0, xR, winH);
+            }
         }
 
         void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt)
