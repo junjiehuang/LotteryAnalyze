@@ -3136,9 +3136,10 @@ namespace LotteryAnalyze
                 int totalCount = 0;
                 int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 DataItem pItem = item;
-                MACDPoint maxMP = mp, minMP = mp;
+                MACDPoint maxMP = mp, minMP = mp, lastMP = mp;
                 int dir = 0;
 
+                int dirCalc = 0;
                 int dirUpCount = 0;
                 int dirDownCount = 0;
                 int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
@@ -3155,65 +3156,92 @@ namespace LotteryAnalyze
                         KData pKD = pKDD.GetData(cdt, false);
                         MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
 
-                        if(dir == 0)
-                        {
-                            bool isDown = pBP.BAR > mp.BAR;
-                            if (isDown)
-                            {
-                                dirDownCount++;
-                            }
-                            else if (pBP.BAR < mp.BAR)
-                            {
-                                dirUpCount++;
-                            }
+                        if (maxMP.BAR < pBP.BAR)
+                            maxMP = pBP;
+                        if (minMP.BAR > pBP.BAR)
+                            minMP = pBP;
 
-                            if(dirDownCount - dirUpCount > 3 ||
-                                (isDown && curMissCount > 3))
-                            {
-                                dir = -1;
-                            }
-                            else if(dirUpCount - dirDownCount > 3)
-                            {
-                                dir = 1;
-                            }
 
-                            if (maxMP.BAR < pBP.BAR)
-                                maxMP = pBP;
-                            if (minMP.BAR > pBP.BAR)
-                                minMP = pBP;
-                        }
+                        //if(dir == 0)
+                        //{
+                        //    //bool isDown = pBP.BAR > mp.BAR;
+                        //    //if (isDown)
+                        //    //{
+                        //    //    dirDownCount++;
+                        //    //}
+                        //    //else if (pBP.BAR < mp.BAR)
+                        //    //{
+                        //    //    dirUpCount++;
+                        //    //}
+                        //    if (pBP.BAR > lastMP.BAR)
+                        //        dirCalc--;
+                        //    else if (pBP.BAR < lastMP.BAR)
+                        //        dirCalc++;
 
-                        if(dir == 1)
-                        {
-                            if (pBP.BAR < minMP.BAR)
-                            {
-                                minMP = pBP;
-                                limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
-                            }
-                            else
-                            {
-                                --limitCheckCount;
-                            }
-                        }
-                        else if(dir == -1)
-                        {
-                            if (pBP.BAR > maxMP.BAR)
-                            {
-                                maxMP = pBP;
-                                limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
-                            }
-                            else
-                            {
-                                --limitCheckCount;
-                            }
-                        }
+                        //    //if(dirDownCount - dirUpCount > 3 ||
+                        //    //    (isDown && curMissCount > 3))
+                        //    //{
+                        //    //    dir = -1;
+                        //    //}
+                        //    //else if(dirUpCount - dirDownCount > 3)
+                        //    //{
+                        //    //    dir = 1;
+                        //    //}
+                        //    if (dirCalc < -1)
+                        //        dir = -1;
+                        //    else if (dirCalc > 1)
+                        //        dir = 1;
 
-                        if (limitCheckCount == 0)
-                            break;
+                        //    if (maxMP.BAR < pBP.BAR)
+                        //        maxMP = pBP;
+                        //    if (minMP.BAR > pBP.BAR)
+                        //        minMP = pBP;
+                        //}
+
+                        //if(dir == 1)
+                        //{
+                        //    if (pBP.BAR < minMP.BAR)
+                        //    {
+                        //        minMP = pBP;
+                        //        limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
+                        //    }
+                        //    else
+                        //    {
+                        //        --limitCheckCount;
+                        //    }
+                        //}
+                        //else if(dir == -1)
+                        //{
+                        //    if (pBP.BAR > maxMP.BAR)
+                        //    {
+                        //        maxMP = pBP;
+                        //        limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
+                        //    }
+                        //    else
+                        //    {
+                        //        --limitCheckCount;
+                        //    }
+                        //}
+
+                        //if (limitCheckCount == 0)
+                        //    break;
+
+                        //lastMP = pBP;
                     }
 
                     pItem = pItem.parent.GetPrevItem(pItem);
                     --loopCount;
+                }
+
+                if(maxMP.parent.index < minMP.parent.index)
+                {
+                    if (minMP.parent.index < mp.parent.index)
+                        dir = 1;
+                }
+                else if(maxMP.parent.index > minMP.parent.index)
+                {
+                    if (maxMP.parent.index < mp.parent.index)
+                        dir = -1;
                 }
 
                 pci.paramMap["MacdUp"] = 0f;
@@ -3606,7 +3634,7 @@ namespace LotteryAnalyze
                         {
                             if (lastPathCurPCI.paramMap.ContainsKey("MacdUp"))
                             {
-                                if ((float)lastPathCurPCI.paramMap["MacdUp"] > 0)
+                                if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0)
                                     return;
                             }
                         }
