@@ -3136,7 +3136,7 @@ namespace LotteryAnalyze
                 int totalCount = 0;
                 int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 DataItem pItem = item;
-                MACDPoint maxMP = mp, minMP = mp, lastMP = mp;
+                MACDPoint maxMP = mp, minMP = mp, lastMP = mp, firstU = null, firstD = null;
                 int dir = 0;
 
                 int dirCalc = 0;
@@ -3156,11 +3156,26 @@ namespace LotteryAnalyze
                         KData pKD = pKDD.GetData(cdt, false);
                         MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
 
+                        MACDPointMap ppm = kddc.GetMacdPointMap(pBP.parent.index - 1);
+                        MACDPointMap npm = kddc.GetMacdPointMap(pBP.parent.index + 1);
+                        if (ppm != null && npm != null)
+                        {
+                            MACDPoint prevP = ppm.GetData(cdt, false);
+                            MACDPoint nextP = npm.GetData(cdt, false);
+
+                            if (firstU == null && prevP.BAR < pBP.BAR && nextP.BAR < pBP.BAR)
+                                firstU = pBP;
+                            if (firstD == null && prevP.BAR > pBP.BAR && nextP.BAR > pBP.BAR)
+                                firstD = pBP;
+                        }
+
                         if (maxMP.BAR < pBP.BAR)
                             maxMP = pBP;
                         if (minMP.BAR > pBP.BAR)
                             minMP = pBP;
 
+                        if (firstD != null || firstU != null)
+                            break;
 
                         //if(dir == 0)
                         //{
@@ -3233,7 +3248,30 @@ namespace LotteryAnalyze
                     --loopCount;
                 }
 
-                if(maxMP.parent.index < minMP.parent.index)
+                if(firstU != null && firstD == null)
+                {
+                    dir = -1;
+                    maxMP = firstU;
+                }
+                else if(firstU == null && firstD != null)
+                {
+                    dir = 1;
+                    minMP = firstD;
+                }
+                else if(firstD != null && firstU != null)
+                {
+                    if(firstD.parent.index < firstU.parent.index)
+                    {
+                        dir = -1;
+                        maxMP = firstU;
+                    }
+                    else
+                    {
+                        dir = 1;
+                        minMP = firstD;
+                    }
+                }
+                else if(maxMP.parent.index < minMP.parent.index)
                 {
                     if (minMP.parent.index < mp.parent.index)
                         dir = 1;
@@ -3518,6 +3556,22 @@ namespace LotteryAnalyze
 
                     if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                     {
+                        int xCount = 0, yCount = 0;
+                        if ((float)x.paramMap["MacdUp"] > 0) ++xCount;
+                        if ((float)x.paramMap["curRateF"] >= 33) ++xCount;
+                        if ((float)x.paramMap["detRateF"] >= 0) ++xCount;
+                        if ((float)y.paramMap["MacdUp"] > 0) ++yCount;
+                        if ((float)y.paramMap["curRateF"] >= 33) ++yCount;
+                        if ((float)y.paramMap["detRateF"] >= 0) ++yCount;
+                       
+                        x.paramMap["AnaCount"] = xCount;
+                        y.paramMap["AnaCount"] = yCount;
+
+                        if (xCount == 3 && yCount < 3)
+                            return -1;
+                        if (xCount < 3 && yCount == 3)
+                            return 1;
+
                         if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
                             return -1;
                         if ((float)x.paramMap["MacdUp"] < (float)y.paramMap["MacdUp"])
@@ -3599,6 +3653,12 @@ namespace LotteryAnalyze
                             return;
                         }
                     }
+                }
+
+                if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                {
+                    if ((float)tmp.paramMap["AnaCount"] >= 3)
+                        return;
                 }
 
                 

@@ -779,6 +779,13 @@ namespace LotteryAnalyze
             }
             return null;
         }
+
+        public MACDPointMap GetMacdPointMap(int index)
+        {
+            if (index >= 0 && index < macdDataLst.macdMapLst.Count)
+                return macdDataLst.macdMapLst[index];
+            return null;
+        }
     }
 
     // 图表数据容器基类
