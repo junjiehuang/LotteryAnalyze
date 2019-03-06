@@ -3657,7 +3657,7 @@ namespace LotteryAnalyze
 
                 if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                 {
-                    if ((float)tmp.paramMap["AnaCount"] >= 3)
+                    if ((int)tmp.paramMap["AnaCount"] >= 3)
                         return;
                 }
 
