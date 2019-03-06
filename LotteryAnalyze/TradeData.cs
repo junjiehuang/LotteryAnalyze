@@ -3572,6 +3572,14 @@ namespace LotteryAnalyze
                         if (xCount < 3 && yCount == 3)
                             return 1;
 
+                        //if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"] &&
+                        //    (float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                        //    return -1;
+
+                        //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"] &&
+                        //    (float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                        //    return 1;
+
                         if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
                             return -1;
                         if ((float)x.paramMap["MacdUp"] < (float)y.paramMap["MacdUp"])
