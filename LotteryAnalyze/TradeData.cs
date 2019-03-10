@@ -3558,11 +3558,11 @@ namespace LotteryAnalyze
                     {
                         int xCount = 0, yCount = 0;
                         if ((float)x.paramMap["MacdUp"] > 0) ++xCount;
-                        if ((float)x.paramMap["curRateF"] >= 33) ++xCount;
-                        if ((float)x.paramMap["detRateF"] >= 0) ++xCount;
+                        if ((float)x.paramMap["curRateF"] > 33) ++xCount;
+                        if ((float)x.paramMap["detRateF"] > 0) ++xCount;
                         if ((float)y.paramMap["MacdUp"] > 0) ++yCount;
-                        if ((float)y.paramMap["curRateF"] >= 33) ++yCount;
-                        if ((float)y.paramMap["detRateF"] >= 0) ++yCount;
+                        if ((float)y.paramMap["curRateF"] > 33) ++yCount;
+                        if ((float)y.paramMap["detRateF"] > 0) ++yCount;
                        
                         x.paramMap["AnaCount"] = xCount;
                         y.paramMap["AnaCount"] = yCount;
@@ -3579,6 +3579,11 @@ namespace LotteryAnalyze
                         //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"] &&
                         //    (float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
                         //    return 1;
+
+                        if ((float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                            return -1;
+                        if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                            return 1;
 
                         if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
                             return -1;
@@ -3697,15 +3702,15 @@ namespace LotteryAnalyze
                             }
                         }
 
-                        // 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
-                        if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                        {
-                            if (lastPathCurPCI.paramMap.ContainsKey("MacdUp"))
-                            {
-                                if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0)
-                                    return;
-                            }
-                        }
+                        //// 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
+                        //if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                        //{
+                        //    if (lastPathCurPCI.paramMap.ContainsKey("MacdUp"))
+                        //    {
+                        //        if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0)
+                        //            return;
+                        //    }
+                        //}
 
                         // 取这一路的通道线工具
                         CollectDataType cdt = GetPathCDT(lastPathCurPCI.pathIndex);
