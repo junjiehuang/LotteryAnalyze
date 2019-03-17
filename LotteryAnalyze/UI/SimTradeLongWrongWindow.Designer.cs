@@ -49,6 +49,7 @@
             // 
             // buttonLoadLongWrongInfo
             // 
+            this.buttonLoadLongWrongInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonLoadLongWrongInfo.Location = new System.Drawing.Point(2, 266);
             this.buttonLoadLongWrongInfo.Name = "buttonLoadLongWrongInfo";
             this.buttonLoadLongWrongInfo.Size = new System.Drawing.Size(75, 23);
@@ -59,6 +60,7 @@
             // 
             // buttonStart
             // 
+            this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonStart.Location = new System.Drawing.Point(83, 266);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
@@ -69,6 +71,7 @@
             // 
             // buttonStep
             // 
+            this.buttonStep.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonStep.Location = new System.Drawing.Point(164, 266);
             this.buttonStep.Name = "buttonStep";
             this.buttonStep.Size = new System.Drawing.Size(75, 23);
@@ -79,6 +82,7 @@
             // 
             // buttonStop
             // 
+            this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonStop.Location = new System.Drawing.Point(245, 266);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
@@ -89,6 +93,7 @@
             // 
             // buttonPause
             // 
+            this.buttonPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonPause.Location = new System.Drawing.Point(326, 266);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(75, 23);
@@ -99,6 +104,7 @@
             // 
             // buttonClearEarnNode
             // 
+            this.buttonClearEarnNode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonClearEarnNode.Location = new System.Drawing.Point(407, 266);
             this.buttonClearEarnNode.Name = "buttonClearEarnNode";
             this.buttonClearEarnNode.Size = new System.Drawing.Size(84, 23);
