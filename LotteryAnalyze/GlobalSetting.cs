@@ -58,7 +58,8 @@ namespace LotteryAnalyze
         [Parameter("数据源类型")]
         private static AutoUpdateUtil.DataSourceType g_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
 
-
+        [Parameter("是否记录交易数据")]
+        private static bool g_ENABLE_REC_TRADE_DATAS = true;
 
 
         public static List<string> TradeTags = new List<string>();
@@ -318,6 +319,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_ENABLE_REC_TRADE_DATAS
+        {
+            get
+            {
+                return g_ENABLE_REC_TRADE_DATAS;
+            }
+
+            set
+            {
+                g_ENABLE_REC_TRADE_DATAS = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -343,6 +358,7 @@ namespace LotteryAnalyze
             G_ENABLE_MACD_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableMACDUpCheck", false);
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
             G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
+            G_ENABLE_REC_TRADE_DATAS = cfg.ReadBool("GlobalSetting", "EnableRecTradeDatas", true);
 
             G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
             TradeSets.Clear();
@@ -393,6 +409,7 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableMACDUpCheck", G_ENABLE_MACD_UP_CHECK);
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
             cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
+            cfg.WriteBool("GlobalSetting", "EnableRecTradeDatas", G_ENABLE_REC_TRADE_DATAS);
 
             cfg.WriteInt("TradeSets", "CurTradeIndex", G_CUR_TRADE_INDEX);
 

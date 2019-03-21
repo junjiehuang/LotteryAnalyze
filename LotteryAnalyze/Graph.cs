@@ -729,13 +729,13 @@ namespace LotteryAnalyze
 #if TRADE_DBG
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[preViewDataIndex];
                     MACDPoint mp = mpm.GetData(cdt, false);
+                    MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
+                    float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
+                    float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
+                    float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
+
                     if (mpm.index >= 1 && mp.LEFT_DIF_INDEX != -1)
                     {
-                        MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
-                        float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
-                        float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
-                        float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
-
                         string info = "MACD线 = " + ((TradeDataManager.MACDLineWaveConfig)(mp.WAVE_CFG)).ToString() + 
                             ", MACD柱 = " + ((TradeDataManager.MACDBarConfig)(mp.BAR_CFG)).ToString() + 
                             ", K线 = " + ((TradeDataManager.KGraphConfig)(mp.KGRAPH_CFG)).ToString();
@@ -766,6 +766,11 @@ namespace LotteryAnalyze
                             float y2 = StandToCanvas(mpm2.GetData(cdt, false).DIF * _gridScaleH, false);
                             g.DrawLine(greenLinePen, x1, y1, x2, y2);
                         }
+                    }
+                    else
+                    {
+                        string info = "MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
+                        g.DrawString(info, auxFont, whiteBrush, 5, 5);
                     }
 #endif
                 }

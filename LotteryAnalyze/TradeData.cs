@@ -4527,6 +4527,8 @@ namespace LotteryAnalyze
 
         void RecordTradeDatas()
         {
+            if (GlobalSetting.G_ENABLE_REC_TRADE_DATAS == false)
+                return;
             var etor = TradeDataManager.Instance.longWrongTradeInfo.GetEnumerator();
             while(etor.MoveNext())
             {
