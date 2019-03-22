@@ -3127,12 +3127,15 @@ namespace LotteryAnalyze
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(item);
             MACDPointMap bpm = kddc.GetMacdPointMap(kdd);
+            KData minKD = null, maxKD = null;
+
             for (int i = 0; i < cdts.Length; ++i)
             {
                 PathCmpInfo pci = pcis[i];
                 CollectDataType cdt = cdts[i];
                 KData kd = kdd.GetData(cdt, false);
                 MACDPoint mp = bpm.GetData(cdt, false);
+                minKD = maxKD = kd;
                 int totalCount = 0;
                 int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 DataItem pItem = item;
@@ -3174,74 +3177,13 @@ namespace LotteryAnalyze
                         if (minMP.BAR > pBP.BAR)
                             minMP = pBP;
 
-                        if (firstD != null || firstU != null)
-                            break;
+                        if (minKD.KValue > pKD.KValue)
+                            minKD = pKD;
+                        if (maxKD.KValue < pKD.KValue)
+                            maxKD = pKD;
 
-                        //if(dir == 0)
-                        //{
-                        //    //bool isDown = pBP.BAR > mp.BAR;
-                        //    //if (isDown)
-                        //    //{
-                        //    //    dirDownCount++;
-                        //    //}
-                        //    //else if (pBP.BAR < mp.BAR)
-                        //    //{
-                        //    //    dirUpCount++;
-                        //    //}
-                        //    if (pBP.BAR > lastMP.BAR)
-                        //        dirCalc--;
-                        //    else if (pBP.BAR < lastMP.BAR)
-                        //        dirCalc++;
-
-                        //    //if(dirDownCount - dirUpCount > 3 ||
-                        //    //    (isDown && curMissCount > 3))
-                        //    //{
-                        //    //    dir = -1;
-                        //    //}
-                        //    //else if(dirUpCount - dirDownCount > 3)
-                        //    //{
-                        //    //    dir = 1;
-                        //    //}
-                        //    if (dirCalc < -1)
-                        //        dir = -1;
-                        //    else if (dirCalc > 1)
-                        //        dir = 1;
-
-                        //    if (maxMP.BAR < pBP.BAR)
-                        //        maxMP = pBP;
-                        //    if (minMP.BAR > pBP.BAR)
-                        //        minMP = pBP;
-                        //}
-
-                        //if(dir == 1)
-                        //{
-                        //    if (pBP.BAR < minMP.BAR)
-                        //    {
-                        //        minMP = pBP;
-                        //        limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
-                        //    }
-                        //    else
-                        //    {
-                        //        --limitCheckCount;
-                        //    }
-                        //}
-                        //else if(dir == -1)
-                        //{
-                        //    if (pBP.BAR > maxMP.BAR)
-                        //    {
-                        //        maxMP = pBP;
-                        //        limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
-                        //    }
-                        //    else
-                        //    {
-                        //        --limitCheckCount;
-                        //    }
-                        //}
-
-                        //if (limitCheckCount == 0)
+                        //if (firstD != null || firstU != null)
                         //    break;
-
-                        //lastMP = pBP;
                     }
 
                     pItem = pItem.parent.GetPrevItem(pItem);
@@ -3291,6 +3233,42 @@ namespace LotteryAnalyze
                 {
                     pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR);
                 }
+
+                if(maxKD.index > minKD.index)
+                {
+                    if (maxKD == kd)
+                        pci.paramMap["KGraph"] = 2.0;
+                    else
+                    {
+                        float maxDist = maxKD.KValue - minKD.KValue;
+                        if (maxDist < 3)
+                            pci.paramMap["KGraph"] = 1.0;
+                        else
+                        {
+                            pci.paramMap["KGraph"] = Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                        }
+                    }
+                }
+                else if(maxKD.index < minKD.index)
+                {
+                    if(minKD == kd)
+                        pci.paramMap["KGraph"] = 0.0;
+                    else
+                    {
+                        float maxDist = maxKD.KValue - minKD.KValue;
+                        if (maxDist < 3)
+                            pci.paramMap["KGraph"] = 1.0;
+                        else
+                        {
+                            pci.paramMap["KGraph"] = Math.Abs(kd.KValue - minKD.KValue) / maxDist;
+                        }
+                    }
+                }
+                else
+                {
+                    pci.paramMap["KGraph"] = -1.0;
+                }
+
                 //if (minMP != mp && maxMP != mp)
                 //{
                 //    if(minMP.parent.index < maxMP.parent.index)
