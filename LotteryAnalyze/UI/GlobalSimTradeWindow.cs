@@ -763,10 +763,13 @@ namespace LotteryAnalyze.UI
                 {
                     LongWrongTradeInfo ti = lst[i];
                     info += "\t\t\t<TradeDatas startDataItemTag=\"" + ti.startDataItemTag + "\" endDataItemTag=\"" + ti.endDataItemTag + "\">\n";
-                   
-                    for( int j = 0; j < ti.tradeDatas.Count; ++j )
+
+                    if (ti.tradeDatas != null)
                     {
-                        info += ti.tradeDatas[j];
+                        for (int j = 0; j < ti.tradeDatas.Count; ++j)
+                        {
+                            info += ti.tradeDatas[j];
+                        }
                     }
                     info += "\t\t\t</TradeDatas>\n";
 

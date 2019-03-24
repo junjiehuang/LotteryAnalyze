@@ -3128,6 +3128,7 @@ namespace LotteryAnalyze
             KDataDict kdd = kddc.GetKDataDict(item);
             MACDPointMap bpm = kddc.GetMacdPointMap(kdd);
             KData minKD = null, maxKD = null;
+            DataItem minItem = item, maxItem = item;
 
             for (int i = 0; i < cdts.Length; ++i)
             {
@@ -3178,9 +3179,15 @@ namespace LotteryAnalyze
                             minMP = pBP;
 
                         if (minKD.KValue > pKD.KValue)
+                        {
                             minKD = pKD;
+                            minItem = pItem;
+                        }
                         if (maxKD.KValue < pKD.KValue)
+                        {
                             maxKD = pKD;
+                            maxItem = pItem;
+                        }
 
                         //if (firstD != null || firstU != null)
                         //    break;
@@ -3236,37 +3243,55 @@ namespace LotteryAnalyze
 
                 if(maxKD.index > minKD.index)
                 {
-                    if (maxKD == kd)
-                        pci.paramMap["KGraph"] = 2.0;
+                    if (maxKD == kd || kd.index - maxKD.index < 3)
+                        pci.paramMap["KGraph"] = 2.0f;
                     else
                     {
                         float maxDist = maxKD.KValue - minKD.KValue;
                         if (maxDist < 3)
-                            pci.paramMap["KGraph"] = 1.0;
+                            pci.paramMap["KGraph"] = 1.0f;
                         else
                         {
-                            pci.paramMap["KGraph"] = Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                            pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
                         }
                     }
                 }
                 else if(maxKD.index < minKD.index)
                 {
-                    if(minKD == kd)
-                        pci.paramMap["KGraph"] = 0.0;
+                    if (minKD == kd)
+                    {
+                        pci.paramMap["KGraph"] = 0.0f;
+                    }
                     else
                     {
-                        float maxDist = maxKD.KValue - minKD.KValue;
-                        if (maxDist < 3)
-                            pci.paramMap["KGraph"] = 1.0;
+                        DataItem cItem = item;
+                        int maxMissCount = 0;
+                        while (cItem != null && cItem.idGlobal > minItem.idGlobal)
+                        {
+                            int cmc = cItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                            if (cmc > maxMissCount)
+                                maxMissCount = cmc;
+                            cItem = cItem.parent.GetPrevItem(cItem);
+                        }
+                        if (maxMissCount < 3)
+                        {
+                            pci.paramMap["KGraph"] = 2.0f;
+                        }
                         else
                         {
-                            pci.paramMap["KGraph"] = Math.Abs(kd.KValue - minKD.KValue) / maxDist;
+                            float maxDist = maxKD.KValue - minKD.KValue;
+                            if (maxDist < 3)
+                                pci.paramMap["KGraph"] = 1.0f;
+                            else
+                            {
+                                pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - minKD.KValue) / maxDist;
+                            }
                         }
                     }
                 }
                 else
                 {
-                    pci.paramMap["KGraph"] = -1.0;
+                    pci.paramMap["KGraph"] = -1.0f;
                 }
 
                 //if (minMP != mp && maxMP != mp)
@@ -3535,9 +3560,16 @@ namespace LotteryAnalyze
                     if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                     {
                         int xCount = 0, yCount = 0;
+                        bool isXKUp = (float)x.paramMap["KGraph"] >= 1.0f;
+                        bool isYKUp = (float)y.paramMap["KGraph"] >= 1.0f;
+                        bool isXMUp = (float)x.paramMap["MacdUp"] > 0;
+                        bool isYMUp = (float)y.paramMap["MacdUp"] > 0;
+                        if ((float)x.paramMap["KGraph"] == 2) ++xCount;
                         if ((float)x.paramMap["MacdUp"] > 0) ++xCount;
                         if ((float)x.paramMap["curRateF"] > 33) ++xCount;
                         if ((float)x.paramMap["detRateF"] > 0) ++xCount;
+
+                        if ((float)y.paramMap["KGraph"] == 2) ++yCount;
                         if ((float)y.paramMap["MacdUp"] > 0) ++yCount;
                         if ((float)y.paramMap["curRateF"] > 33) ++yCount;
                         if ((float)y.paramMap["detRateF"] > 0) ++yCount;
@@ -3545,22 +3577,35 @@ namespace LotteryAnalyze
                         x.paramMap["AnaCount"] = xCount;
                         y.paramMap["AnaCount"] = yCount;
 
-                        if (xCount == 3 && yCount < 3)
+                        if (xCount == 4 && yCount < 4)
                             return -1;
-                        if (xCount < 3 && yCount == 3)
+                        if (xCount < 4 && yCount == 4)
                             return 1;
 
-                        //if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"] &&
-                        //    (float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
-                        //    return -1;
+                        if (isXKUp && isXMUp)
+                        {
+                            if (!(isYKUp && isYMUp))
+                                return -1;
+                        }
+                        if (isYMUp && isYKUp)
+                        {
+                            if (!(isXKUp && isXMUp))
+                                return 1;
+                        }
 
-                        //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"] &&
-                        //    (float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
-                        //    return 1;
-
-                        if ((float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                        if ((float)x.paramMap["KGraph"] > (float)y.paramMap["KGraph"] &&
+                            isXMUp && !isYMUp)
                             return -1;
-                        if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                        if ((float)x.paramMap["KGraph"] < (float)y.paramMap["KGraph"] &&
+                            !isXMUp && isYMUp)
+                            return 1;
+
+                        if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"] &&
+                            (float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                            return -1;
+
+                        if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"] &&
+                            (float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
                             return 1;
 
                         if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
