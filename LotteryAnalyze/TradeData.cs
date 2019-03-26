@@ -3725,15 +3725,13 @@ namespace LotteryAnalyze
                             }
                         }
 
-                        //// 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
-                        //if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                        //{
-                        //    if (lastPathCurPCI.paramMap.ContainsKey("MacdUp"))
-                        //    {
-                        //        if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0)
-                        //            return;
-                        //    }
-                        //}
+                        // 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
+                        if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                        {
+                            if ((float)lastPathCurPCI.paramMap["MacdUp"] > 0.0f &&
+                                (float)lastPathCurPCI.paramMap["KGraph"] == 2.0f)
+                                return;
+                        }
 
                         // 取这一路的通道线工具
                         CollectDataType cdt = GetPathCDT(lastPathCurPCI.pathIndex);
