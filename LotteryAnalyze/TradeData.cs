@@ -3492,7 +3492,10 @@ namespace LotteryAnalyze
             float[] count2BMs = new float[] { 0, 0, 0, };
             float[] count2BDs = new float[] { 0, 0, 0, };
             int[] count2LIM = new int[] { 0, 0, 0, };
-            CalcKValueDistToBolleanLine(item, numIndex, cdts, ref count2BUs, ref count2BMs, ref count2BDs, ref count2LIM);
+            if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+            {
+                CalcKValueDistToBolleanLine(item, numIndex, cdts, ref count2BUs, ref count2BMs, ref count2BDs, ref count2LIM);
+            }
 
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < cdts.Length; ++i)
@@ -3506,10 +3509,13 @@ namespace LotteryAnalyze
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
                 //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
                 //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
-                pci.paramMap["count2LIM"] = count2LIM[i];
-                //pci.paramMap["count2BUs"] = count2BUs[i];
-                //pci.paramMap["count2BMs"] = count2BMs[i];
-                pci.paramMap["count2BDs"] = count2BDs[i];
+                if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                {
+                    pci.paramMap["count2LIM"] = count2LIM[i];
+                    pci.paramMap["count2BDs"] = count2BDs[i];
+                    //pci.paramMap["count2BUs"] = count2BUs[i];
+                    //pci.paramMap["count2BMs"] = count2BMs[i];
+                }
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
@@ -3529,9 +3535,18 @@ namespace LotteryAnalyze
                 CalcPathMacdUp(item, trade, numIndex);
             }
 
+            int path0Index = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+            int selPathIndex = GraphDataManager.S_CDT_LIST.IndexOf(GlobalSetting.G_TRADE_SPEC_CDT) - path0Index;
             trade.pathCmpInfos[numIndex].Sort(
                 (x, y) =>
                 {
+                    if(GlobalSetting.G_ONLY_TRADE_SPEC_CDT)
+                    {
+                        if (x.pathIndex == selPathIndex)
+                            return -1;
+                        return 1;
+                    }
+
                     if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
                     {
                         if ((float)x.paramMap["MayUpCount"] > (float)y.paramMap["MayUpCount"])
@@ -3624,10 +3639,13 @@ namespace LotteryAnalyze
                     if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
                         return 1;
 
-                    if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
-                        return -1;
-                    if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
-                        return 1;
+                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                    {
+                        if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
+                            return -1;
+                        if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
+                            return 1;
+                    }
 
                     if ((int)x.paramMap["curMissCount"] < (int)y.paramMap["curMissCount"])
                         return -1;
@@ -3663,6 +3681,8 @@ namespace LotteryAnalyze
 
         void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex, int mayUpPathsCount = 0)
         {
+            if (GlobalSetting.G_ONLY_TRADE_SPEC_CDT)
+                return;
             if (GlobalSetting.G_ENABLE_CheckAndKeepSamePath == false)
                 return;
             if (CurrentTradeCountIndex != 0)
