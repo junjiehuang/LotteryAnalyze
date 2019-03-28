@@ -3260,7 +3260,7 @@ namespace LotteryAnalyze
                 {
                     if (minKD == kd)
                     {
-                        pci.paramMap["KGraph"] = 0.0f;
+                        pci.paramMap["KGraph"] = -1.0f;
                     }
                     else
                     {
@@ -3616,11 +3616,11 @@ namespace LotteryAnalyze
                             return 1;
 
                         if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"] &&
-                            (float)x.paramMap["detRateF"] > (float)y.paramMap["detRateF"])
+                            (float)x.paramMap["detRateF"] >= (float)y.paramMap["detRateF"])
                             return -1;
 
                         if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"] &&
-                            (float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
+                            (float)x.paramMap["detRateF"] <= (float)y.paramMap["detRateF"])
                             return 1;
 
                         if ((float)x.paramMap["MacdUp"] > (float)y.paramMap["MacdUp"])
@@ -3745,11 +3745,11 @@ namespace LotteryAnalyze
                             }
                         }
 
-                        // 如果上期选择的那一路在这一期是MACD柱上行的，就继续交易这一路
+                        // 如果上期选择的那一路在这一期是MACD柱下行或者k线下行，就不在坚持交易这一路了
                         if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                         {
-                            if ((float)lastPathCurPCI.paramMap["MacdUp"] > 0.0f &&
-                                (float)lastPathCurPCI.paramMap["KGraph"] == 2.0f)
+                            if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0.0f ||
+                                (float)lastPathCurPCI.paramMap["KGraph"] <= 0.0f)
                                 return;
                         }
 
