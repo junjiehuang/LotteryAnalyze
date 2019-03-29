@@ -710,16 +710,16 @@ namespace LotteryAnalyze
                 findPrevPt = false;
                 int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
                 if (startIndex < 0)
-                    startIndex = 1;
+                    startIndex = 0;
                 int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
-                if (endIndex > kddc.macdDataLst.macdMapLst.Count)
-                    endIndex = kddc.macdDataLst.macdMapLst.Count;
                 if (parent.endShowDataItemIndex != -1)
                 {
                     if (endIndex > parent.endShowDataItemIndex + 1)
                         endIndex = parent.endShowDataItemIndex + 1;
                 }
-                for ( int i = startIndex; i < endIndex; ++i )
+                if (endIndex >= kddc.macdDataLst.macdMapLst.Count)
+                    endIndex = kddc.macdDataLst.macdMapLst.Count - 1;
+                for ( int i = startIndex; i <= endIndex; ++i )
                 {
                     DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], winW, winH, cdt, i == selectKDataIndex);
                 }
@@ -769,7 +769,7 @@ namespace LotteryAnalyze
                     }
                     else
                     {
-                        string info = "MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
+                        string info = mpm.index + ", MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
                         g.DrawString(info, auxFont, whiteBrush, 5, 5);
                     }
 #endif
@@ -1124,12 +1124,8 @@ namespace LotteryAnalyze
         void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt, bool drawSelectedLine)
         {
             MACDPoint mp = mpm.macdpMap[cdt];
-            float standX = (mpm.index + 0.5f) * gridScaleW;            
-            if (findPrevPt == false)
-            {
-                findPrevPt = true;
-                return;
-            }
+            float standX = (mpm.index + 0.5f) * gridScaleW;
+            float halfW = gridScaleW * 0.5f;
             float cx = StandToCanvas(standX, true);
             if (cx < 0 || cx > winW)
             {
@@ -1137,28 +1133,27 @@ namespace LotteryAnalyze
             }
             MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
             float gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
-            MACDPointMap prevMPM = mpm.GetPrevMACDPM();
-            MACDPoint prevMP = prevMPM.macdpMap[cdt];
             float standY = mp.BAR * gridScaleH;
-            float px = StandToCanvas((prevMPM.index + 0.5f) * gridScaleW, true);
-            float pyDIF = StandToCanvas((prevMP.DIF * gridScaleH), false);
-            float pyDEA = StandToCanvas((prevMP.DEA * gridScaleH), false);
             float cyDIF = StandToCanvas((mp.DIF * gridScaleH), false);
             float cyDEA = StandToCanvas((mp.DEA * gridScaleH), false);
             float cyBAR = StandToCanvas(standY, false);
             float rcY = StandToCanvas(standY > 0 ? standY : 0, false);
-
-            //PushLinePts(yellowLinePen, px, pyDIF, cx, cyDIF);
-            //PushLinePts(whiteLinePen, px, pyDEA, cx, cyDEA);
-            //PushRcPts(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
-            g.FillRectangle(mp.BAR > 0 ? redBrush : cyanBrush, px - gridScaleW * 0.5f, rcY, gridScaleW, Math.Abs(standY));
-            g.DrawLine(yellowLinePen, px, pyDIF, cx, cyDIF);
-            g.DrawLine(whiteLinePen, px, pyDEA, cx, cyDEA);
+            g.FillRectangle(mp.BAR > 0 ? redBrush : cyanBrush, cx - halfW, rcY, gridScaleW, Math.Abs(standY));
+            MACDPointMap prevMPM = mpm.GetPrevMACDPM();
+            if (prevMPM != null)
+            {
+                MACDPoint prevMP = prevMPM.macdpMap[cdt];
+                float px = cx - gridScaleW;
+                float pyDIF = StandToCanvas((prevMP.DIF * gridScaleH), false);
+                float pyDEA = StandToCanvas((prevMP.DEA * gridScaleH), false);
+                g.DrawLine(yellowLinePen, px, pyDIF, cx, cyDIF);
+                g.DrawLine(whiteLinePen, px, pyDEA, cx, cyDEA);
+            }
 
             if(drawSelectedLine)
             {
-                float xL = px + gridScaleW * 0.5f;
-                float xR = cx + gridScaleW * 0.5f;
+                float xL = cx - halfW;
+                float xR = cx + halfW;
                 g.DrawLine(yellowLinePen, xL, 0, xL, winH);
                 g.DrawLine(yellowLinePen, xR, 0, xR, winH);
             }
