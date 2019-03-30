@@ -3130,8 +3130,13 @@ namespace LotteryAnalyze
             KData minKD = null, maxKD = null;
             DataItem minItem = item, maxItem = item;
 
+            List<KData> minPts = new List<KData>(), maxPts = new List<KData>();
+
             for (int i = 0; i < cdts.Length; ++i)
             {
+                minPts.Clear();
+                maxPts.Clear();
+
                 PathCmpInfo pci = pcis[i];
                 CollectDataType cdt = cdts[i];
                 KData kd = kdd.GetData(cdt, false);
@@ -3173,24 +3178,38 @@ namespace LotteryAnalyze
                                 firstD = pBP;
                         }
 
+                        // 获取MACD曲线的最高点
                         if (maxMP.BAR < pBP.BAR)
                             maxMP = pBP;
+
+                        // 获取MACD曲线的最低点
                         if (minMP.BAR > pBP.BAR)
                             minMP = pBP;
 
+                        // 获取K线最低点
                         if (minKD.KValue > pKD.KValue)
                         {
                             minKD = pKD;
                             minItem = pItem;
                         }
+                        // 获取K线最高点
                         if (maxKD.KValue < pKD.KValue)
                         {
                             maxKD = pKD;
                             maxItem = pItem;
                         }
-
-                        //if (firstD != null || firstU != null)
-                        //    break;
+                        
+                        KData prevKD = pKD.GetPrevKData();
+                        KData nextKD = pKD.GetNextKData();
+                        if(prevKD != null && nextKD != null)
+                        {
+                            // 获取K线的相对高点并存储起来
+                            if (prevKD.KValue < pKD.KValue && nextKD.KValue < pKD.KValue)
+                                maxPts.Add(pKD);
+                            // 获取K线的相对低点并存储起来
+                            if (prevKD.KValue > pKD.KValue && nextKD.KValue > pKD.KValue)
+                                minPts.Add(pKD);
+                        }
                     }
 
                     pItem = pItem.parent.GetPrevItem(pItem);
@@ -3241,29 +3260,63 @@ namespace LotteryAnalyze
                     pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR);
                 }
 
+                // k线的最小值在左边，最大值在右边，显示上升的形态
                 if(maxKD.index > minKD.index)
                 {
+                    // 如果当前就是最大值，或者当前和最大值在3期范围之内，就认为强上升状态
                     if (maxKD == kd || kd.index - maxKD.index < 3)
                         pci.paramMap["KGraph"] = 2.0f;
                     else
                     {
-                        float maxDist = maxKD.KValue - minKD.KValue;
-                        if (maxDist < 3)
-                            pci.paramMap["KGraph"] = 1.0f;
+                        // 检测最高点后面的低点，是不是逐步提升的
+                        bool isBottomUp = true;
+                        float kv = kd.KValue;
+                        // 遍历所有的低点
+                        for (int p = 0; p < minPts.Count; ++p)
+                        {
+                            // 如果在最高点的左边，就不用检测了
+                            if (minPts[p].index < maxKD.index)
+                                break;
+                            // 如果后面一个低点的k值低于当前这个低点的k值，说明不是低点逐步提升，就不用再检测了
+                            if (kv < minPts[p].KValue)
+                            {
+                                isBottomUp = false;
+                                break;
+                            }
+                            // 把当前低点的k值赋值一下，以便于和左边的低点做比较
+                            else
+                            {
+                                kv = minPts[p].KValue;
+                            }
+                        }
+                        // 最高点右边的低点是逐步抬升的，认为这还是一个可靠的上升形态
+                        if (isBottomUp)
+                        {
+                            pci.paramMap["KGraph"] = 2.0f;
+                        }
                         else
                         {
-                            pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                            float maxDist = maxKD.KValue - minKD.KValue;
+                            if (maxDist < 3)
+                                pci.paramMap["KGraph"] = 1.0f;
+                            else
+                            {
+                                pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                            }
                         }
                     }
                 }
+                // K线的最大值在左边，最小值在右边，显示的是下降的形态
                 else if(maxKD.index < minKD.index)
                 {
+                    // 如果当前就是最小值，那么就认为是强下降形态
                     if (minKD == kd)
                     {
                         pci.paramMap["KGraph"] = -1.0f;
                     }
                     else
                     {
+                        // 计算当前到最低点的最大遗漏值
                         DataItem cItem = item;
                         int maxMissCount = 0;
                         while (cItem != null && cItem.idGlobal > minItem.idGlobal)
@@ -3273,6 +3326,7 @@ namespace LotteryAnalyze
                                 maxMissCount = cmc;
                             cItem = cItem.parent.GetPrevItem(cItem);
                         }
+                        // 如果最大遗漏值在3期范围之内，我们认为这是一个从下降转为上升的一个形态
                         if (maxMissCount < 3)
                         {
                             pci.paramMap["KGraph"] = 2.0f;
@@ -3293,26 +3347,6 @@ namespace LotteryAnalyze
                 {
                     pci.paramMap["KGraph"] = -1.0f;
                 }
-
-                //if (minMP != mp && maxMP != mp)
-                //{
-                //    if(minMP.parent.index < maxMP.parent.index)
-                //    {
-                //        pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (maxMP.BAR - minMP.BAR);
-                //    }
-                //    else if(minMP.parent.index > maxMP.parent.index)
-                //    {
-                //        pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (maxMP.BAR - minMP.BAR);
-                //    }
-                //}
-                //else if(minMP == mp && maxMP != mp)
-                //{
-                //    pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR) / (mp.parent.index - maxMP.parent.index);
-                //}
-                //else if(minMP != mp && maxMP == mp)
-                //{
-                //    pci.paramMap["MacdUp"] = (mp.BAR - minMP.BAR) / (mp.parent.index - minMP.parent.index);
-                //}
             }
         }
 
@@ -3716,7 +3750,6 @@ namespace LotteryAnalyze
                     if ((int)tmp.paramMap["AnaCount"] >= 3)
                         return;
                 }
-
                 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
@@ -3744,13 +3777,21 @@ namespace LotteryAnalyze
                                 return;
                             }
                         }
-
-                        // 如果上期选择的那一路在这一期是MACD柱下行或者k线下行，就不在坚持交易这一路了
+                        
                         if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                         {
+                            // 如果上期选择的那一路在这一期是MACD柱下行或者k线下行，就不在坚持交易这一路了
                             if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0.0f ||
                                 (float)lastPathCurPCI.paramMap["KGraph"] <= 0.0f)
                                 return;
+
+                            // 如果上期选择的那一路在这一期K值依然坚挺上升，我们就依旧选择这一路
+                            if ((float)lastPathCurPCI.paramMap["KGraph"] == 2.0f)
+                            {
+                                trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
+                                trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                                return;
+                            }
                         }
 
                         // 取这一路的通道线工具
