@@ -3264,19 +3264,24 @@ namespace LotteryAnalyze
                 if(maxKD.index > minKD.index)
                 {
                     // 如果当前就是最大值，或者当前和最大值在3期范围之内，就认为强上升状态
-                    if (maxKD == kd || kd.index - maxKD.index < 3)
+                    if (maxKD == kd || kd.index - maxKD.index < 4)
                         pci.paramMap["KGraph"] = 2.0f;
                     else
                     {
                         // 检测最高点后面的低点，是不是逐步提升的
                         bool isBottomUp = true;
                         float kv = kd.KValue;
+                        KData firstMinBeforeMaxPt = null;
                         // 遍历所有的低点
                         for (int p = 0; p < minPts.Count; ++p)
                         {
                             // 如果在最高点的左边，就不用检测了
                             if (minPts[p].index < maxKD.index)
+                            {
+                                if (firstMinBeforeMaxPt == null)
+                                    firstMinBeforeMaxPt = minPts[p];
                                 break;
+                            }
                             // 如果后面一个低点的k值低于当前这个低点的k值，说明不是低点逐步提升，就不用再检测了
                             if (kv < minPts[p].KValue)
                             {
@@ -3289,15 +3294,23 @@ namespace LotteryAnalyze
                                 kv = minPts[p].KValue;
                             }
                         }
+
+                        bool hasSet = false;
                         // 最高点右边的低点是逐步抬升的，认为这还是一个可靠的上升形态
                         if (isBottomUp)
                         {
-                            pci.paramMap["KGraph"] = 2.0f;
+                            if (firstMinBeforeMaxPt != null &&
+                                firstMinBeforeMaxPt.KValue <= kd.KValue &&
+                                (float)pci.paramMap["count2BMs"] <= 0)
+                            {
+                                pci.paramMap["KGraph"] = 2.0f;
+                                hasSet = true;
+                            }
                         }
-                        else
+                        if(!hasSet)
                         {
                             float maxDist = maxKD.KValue - minKD.KValue;
-                            if (maxDist < 3)
+                            if (maxDist < 4)
                                 pci.paramMap["KGraph"] = 1.0f;
                             else
                             {
@@ -3327,14 +3340,14 @@ namespace LotteryAnalyze
                             cItem = cItem.parent.GetPrevItem(cItem);
                         }
                         // 如果最大遗漏值在3期范围之内，我们认为这是一个从下降转为上升的一个形态
-                        if (maxMissCount < 3)
+                        if (maxMissCount < 4)
                         {
                             pci.paramMap["KGraph"] = 2.0f;
                         }
                         else
                         {
                             float maxDist = maxKD.KValue - minKD.KValue;
-                            if (maxDist < 3)
+                            if (maxDist < 4)
                                 pci.paramMap["KGraph"] = 1.0f;
                             else
                             {
@@ -3526,7 +3539,7 @@ namespace LotteryAnalyze
             float[] count2BMs = new float[] { 0, 0, 0, };
             float[] count2BDs = new float[] { 0, 0, 0, };
             int[] count2LIM = new int[] { 0, 0, 0, };
-            if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+            //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
             {
                 CalcKValueDistToBolleanLine(item, numIndex, cdts, ref count2BUs, ref count2BMs, ref count2BDs, ref count2LIM);
             }
@@ -3543,12 +3556,12 @@ namespace LotteryAnalyze
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
                 //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
                 //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
-                if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
                 {
-                    pci.paramMap["count2LIM"] = count2LIM[i];
+                    //pci.paramMap["count2LIM"] = count2LIM[i];
                     pci.paramMap["count2BDs"] = count2BDs[i];
                     //pci.paramMap["count2BUs"] = count2BUs[i];
-                    //pci.paramMap["count2BMs"] = count2BMs[i];
+                    pci.paramMap["count2BMs"] = count2BMs[i];
                 }
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
@@ -3731,25 +3744,25 @@ namespace LotteryAnalyze
                         return;
                 }    
 
-                // 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
-                if(GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
-                {
-                    if(tmp.paramMap.ContainsKey("curRateF"))
-                    {
-                        float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
-                        float rate0 = (float)tmp.paramMap["curRateF"];
-                        if (rate0 > rate12)
-                        {
-                            return;
-                        }
-                    }
-                }
+                //// 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
+                //if(GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
+                //{
+                //    if(tmp.paramMap.ContainsKey("curRateF"))
+                //    {
+                //        float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
+                //        float rate0 = (float)tmp.paramMap["curRateF"];
+                //        if (rate0 > rate12)
+                //        {
+                //            return;
+                //        }
+                //    }
+                //}
 
-                if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                {
-                    if ((int)tmp.paramMap["AnaCount"] >= 3)
-                        return;
-                }
+                //if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                //{
+                //    if ((int)tmp.paramMap["AnaCount"] >= 3)
+                //        return;
+                //}
                 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
@@ -3777,19 +3790,23 @@ namespace LotteryAnalyze
                                 return;
                             }
                         }
-                        
+
                         if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                         {
-                            // 如果上期选择的那一路在这一期是MACD柱下行或者k线下行，就不在坚持交易这一路了
-                            if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0.0f ||
-                                (float)lastPathCurPCI.paramMap["KGraph"] <= 0.0f)
-                                return;
+                            //// 如果上期选择的那一路在这一期是MACD柱下行或者k线下行，就不在坚持交易这一路了
+                            //if ((float)lastPathCurPCI.paramMap["MacdUp"] < 0.0f ||
+                            //    (float)lastPathCurPCI.paramMap["KGraph"] <= 0.0f)
+                            //    return;
 
                             // 如果上期选择的那一路在这一期K值依然坚挺上升，我们就依旧选择这一路
                             if ((float)lastPathCurPCI.paramMap["KGraph"] == 2.0f)
                             {
                                 trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
                                 trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                                return;
+                            }
+                            else
+                            {
                                 return;
                             }
                         }
