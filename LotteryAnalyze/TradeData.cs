@@ -3742,28 +3742,28 @@ namespace LotteryAnalyze
                 {
                     if ((float)tmp.paramMap["MayUpCount"] > 0)
                         return;
-                }    
+                }
 
-                //// 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
-                //if(GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
-                //{
-                //    if(tmp.paramMap.ContainsKey("curRateF"))
-                //    {
-                //        float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
-                //        float rate0 = (float)tmp.paramMap["curRateF"];
-                //        if (rate0 > rate12)
-                //        {
-                //            return;
-                //        }
-                //    }
-                //}
+                // 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
+                if (GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
+                {
+                    if (tmp.paramMap.ContainsKey("curRateF"))
+                    {
+                        float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
+                        float rate0 = (float)tmp.paramMap["curRateF"];
+                        if (rate0 > rate12)
+                        {
+                            return;
+                        }
+                    }
+                }
 
-                //if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                //{
-                //    if ((int)tmp.paramMap["AnaCount"] >= 3)
-                //        return;
-                //}
-                
+                if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                {
+                    if ((int)tmp.paramMap["AnaCount"] >= 3)
+                        return;
+                }
+
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
                 if (lastTrade != null)
                 {
