@@ -3263,6 +3263,8 @@ namespace LotteryAnalyze
                 // k线的最小值在左边，最大值在右边，显示上升的形态
                 if(maxKD.index > minKD.index)
                 {
+                    pci.paramMap["KUP"] = 1;
+
                     // 如果当前就是最大值，或者当前和最大值在3期范围之内，就认为强上升状态
                     if (maxKD == kd || kd.index - maxKD.index < 4)
                         pci.paramMap["KGraph"] = 2.0f;
@@ -3322,6 +3324,8 @@ namespace LotteryAnalyze
                 // K线的最大值在左边，最小值在右边，显示的是下降的形态
                 else if(maxKD.index < minKD.index)
                 {
+                    pci.paramMap["KUP"] = -1;
+
                     // 如果当前就是最小值，那么就认为是强下降形态
                     if (minKD == kd)
                     {
@@ -3358,6 +3362,7 @@ namespace LotteryAnalyze
                 }
                 else
                 {
+                    pci.paramMap["KUP"] = 0;
                     pci.paramMap["KGraph"] = -1.0f;
                 }
             }
@@ -3622,6 +3627,8 @@ namespace LotteryAnalyze
                     if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                     {
                         int xCount = 0, yCount = 0;
+                        bool XKUP = (float)x.paramMap["KGraph"] == 2.0f;
+                        bool YKUP = (float)y.paramMap["KGraph"] == 2.0f;
                         bool isXKUp = (float)x.paramMap["KGraph"] >= 1.0f;
                         bool isYKUp = (float)y.paramMap["KGraph"] >= 1.0f;
                         bool isXMUp = (float)x.paramMap["MacdUp"] > 0;
@@ -3643,6 +3650,18 @@ namespace LotteryAnalyze
                             return -1;
                         if (xCount < 4 && yCount == 4)
                             return 1;
+
+                        if ((XKUP && isXMUp) && !(YKUP && isYMUp))
+                            return -1;
+                        if (!(XKUP && isXMUp) && (YKUP && isYMUp))
+                            return 1;
+                        if ((XKUP && isXMUp) && (YKUP && isYMUp))
+                        {
+                            if ((int)x.paramMap["KUP"] > 0 && (int)y.paramMap["KUP"] < 0)
+                                return -1;
+                            if ((int)x.paramMap["KUP"] < 0 && (int)y.paramMap["KUP"] > 0)
+                                return 1;
+                        }
 
                         if (isXKUp && isXMUp)
                         {
