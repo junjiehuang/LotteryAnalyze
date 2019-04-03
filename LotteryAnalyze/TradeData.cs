@@ -1773,6 +1773,13 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
+            if(GlobalSetting.G_ONLY_TRADE_BEST_PATH)
+            {
+                if ((float)pci0.paramMap["KGraph"] != 2.0f ||
+                    (float)pci0.paramMap["MacdUp"] <= 0.0f ||
+                    (int)pci0.paramMap["KUP"] <= 0)
+                    return;
+            }
             PathCmpInfo pci1 = trade.pathCmpInfos[bestNumIndex][1];
             tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
             int lastSelPathID = pci0.pathIndex;

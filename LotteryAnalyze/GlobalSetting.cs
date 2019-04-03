@@ -46,6 +46,8 @@ namespace LotteryAnalyze
         private static bool g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = true;
         [Parameter("是否开启MACD上升检测")]
         private static bool g_ENABLE_MACD_UP_CHECK = true;
+        [Parameter("是否只在最佳的012路交易")]
+        private static bool g_ONLY_TRADE_BEST_PATH = false;
         //private static bool g_ENABLE_SAME_PATH_CHECK_MAX_DELTA_APPEAR_RATE = true;
         [Parameter("1注1星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
@@ -366,6 +368,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_ONLY_TRADE_BEST_PATH
+        {
+            get
+            {
+                return g_ONLY_TRADE_BEST_PATH;
+            }
+
+            set
+            {
+                g_ONLY_TRADE_BEST_PATH = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -392,7 +408,7 @@ namespace LotteryAnalyze
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
             G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
             G_ENABLE_REC_TRADE_DATAS = cfg.ReadBool("GlobalSetting", "EnableRecTradeDatas", true);
-
+            G_ONLY_TRADE_BEST_PATH = cfg.ReadBool("GlobalSetting", "OnlyTradeBestPath", false);
             G_ONLY_TRADE_SPEC_CDT = cfg.ReadBool("GlobalSetting", "OnlyTradeSpecCDT", false);
             G_TRADE_SPEC_CDT = (CollectDataType)cfg.ReadInt("GlobalSetting", "TradeSpecCDT", (int)(CollectDataType.ePath0));
 
@@ -446,6 +462,7 @@ namespace LotteryAnalyze
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
             cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
             cfg.WriteBool("GlobalSetting", "EnableRecTradeDatas", G_ENABLE_REC_TRADE_DATAS);
+            cfg.WriteBool("GlobalSetting", "OnlyTradeBestPath", G_ONLY_TRADE_BEST_PATH);
             cfg.WriteBool("GlobalSetting", "OnlyTradeSpecCDT", G_ONLY_TRADE_SPEC_CDT);
             cfg.WriteInt("GlobalSetting", "TradeSpecCDT", (int)G_TRADE_SPEC_CDT);
 
