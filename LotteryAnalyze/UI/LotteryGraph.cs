@@ -1095,6 +1095,7 @@ namespace LotteryAnalyze.UI
 
         private void clearAllTradeDatasToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            BatchTradeSimulator.Instance.ResetTradeInfo();
             TradeDataManager.Instance.ClearAllTradeDatas();
         }
 

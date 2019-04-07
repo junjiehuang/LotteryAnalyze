@@ -1775,9 +1775,10 @@ namespace LotteryAnalyze
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
             if(GlobalSetting.G_ONLY_TRADE_BEST_PATH)
             {
-                if ((float)pci0.paramMap["KGraph"] != 2.0f ||
-                    (float)pci0.paramMap["MacdUp"] <= 0.0f ||
-                    (int)pci0.paramMap["KUP"] <= 0)
+                if ((float)pci0.paramMap["KGraph"] != 2.0f 
+                    || (float)pci0.paramMap["MacdUp"] <= 0.0f
+                    //|| (int)pci0.paramMap["KUP"] <= 0
+                    )
                     return;
             }
             PathCmpInfo pci1 = trade.pathCmpInfos[bestNumIndex][1];
@@ -4776,7 +4777,7 @@ namespace LotteryAnalyze
             return v;
         }
 
-        public void Start(ref int startDateID, ref int endDateID)
+        public void ResetTradeInfo()
         {
             missCountInfos.Clear();
             lastTradeIDTag = "";
@@ -4787,7 +4788,12 @@ namespace LotteryAnalyze
             TradeDataManager.Instance.StopAtTheLatestItem = true;
             minMoney = maxMoney = currentMoney = startMoney;
             totalCount = tradeRightCount = tradeWrongCount = untradeCount = 0;
+        }
 
+
+        public void Start(ref int startDateID, ref int endDateID)
+        {
+            ResetTradeInfo();
             fileIDLst.Clear();
             DataManager dm = DataManager.GetInst();
             foreach( int id in dm.mFileMetaInfo.Keys )

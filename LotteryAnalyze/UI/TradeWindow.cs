@@ -293,5 +293,15 @@ namespace LotteryAnalyze.UI
         {
             FormMain.RemoveWindow(this);
         }
+
+        private void buttonNoTrade_Click(object sender, EventArgs e)
+        {
+            DataItem lastItem = DataManager.GetInst().GetLatestItem();
+            if (graphMgr.endShowDataItemIndex >= 0)
+                lastItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
+            TradeDataOneStar trade = TradeDataManager.Instance.NewTrade(TradeType.eOneStar) as TradeDataOneStar;
+            trade.lastDateItem = lastItem;
+            LotteryGraph.NotifyAllGraphsRefresh();
+        }
     }
 }

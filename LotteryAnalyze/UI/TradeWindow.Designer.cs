@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonW2 = new System.Windows.Forms.Button();
+            this.buttonW1 = new System.Windows.Forms.Button();
+            this.buttonW0 = new System.Windows.Forms.Button();
             this.buttonWClear = new System.Windows.Forms.Button();
             this.textBoxLotteryCountW = new System.Windows.Forms.TextBox();
             this.checkBoxW9 = new System.Windows.Forms.CheckBox();
@@ -42,7 +45,10 @@
             this.checkBoxW1 = new System.Windows.Forms.CheckBox();
             this.checkBoxW0 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonQ2 = new System.Windows.Forms.Button();
             this.textBoxLotteryCountQ = new System.Windows.Forms.TextBox();
+            this.buttonQ1 = new System.Windows.Forms.Button();
+            this.buttonQ0 = new System.Windows.Forms.Button();
             this.buttonQClear = new System.Windows.Forms.Button();
             this.checkBoxQ9 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ8 = new System.Windows.Forms.CheckBox();
@@ -55,6 +61,9 @@
             this.checkBoxQ1 = new System.Windows.Forms.CheckBox();
             this.checkBoxQ0 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.buttonB2 = new System.Windows.Forms.Button();
+            this.buttonB1 = new System.Windows.Forms.Button();
+            this.buttonB0 = new System.Windows.Forms.Button();
             this.textBoxLotteryCountB = new System.Windows.Forms.TextBox();
             this.buttonBClear = new System.Windows.Forms.Button();
             this.checkBoxB9 = new System.Windows.Forms.CheckBox();
@@ -68,7 +77,10 @@
             this.checkBoxB1 = new System.Windows.Forms.CheckBox();
             this.checkBoxB0 = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.buttonS2 = new System.Windows.Forms.Button();
             this.textBoxLotteryCountS = new System.Windows.Forms.TextBox();
+            this.buttonS1 = new System.Windows.Forms.Button();
+            this.buttonS0 = new System.Windows.Forms.Button();
             this.buttonSClear = new System.Windows.Forms.Button();
             this.checkBoxS9 = new System.Windows.Forms.CheckBox();
             this.checkBoxS8 = new System.Windows.Forms.CheckBox();
@@ -81,7 +93,10 @@
             this.checkBoxS1 = new System.Windows.Forms.CheckBox();
             this.checkBoxS0 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.buttonG2 = new System.Windows.Forms.Button();
             this.textBoxLotteryCountG = new System.Windows.Forms.TextBox();
+            this.buttonG1 = new System.Windows.Forms.Button();
+            this.buttonG0 = new System.Windows.Forms.Button();
             this.buttonGClear = new System.Windows.Forms.Button();
             this.checkBoxG9 = new System.Windows.Forms.CheckBox();
             this.checkBoxG8 = new System.Windows.Forms.CheckBox();
@@ -94,21 +109,7 @@
             this.checkBoxG1 = new System.Windows.Forms.CheckBox();
             this.checkBoxG0 = new System.Windows.Forms.CheckBox();
             this.buttonSubmit = new System.Windows.Forms.Button();
-            this.buttonW0 = new System.Windows.Forms.Button();
-            this.buttonW1 = new System.Windows.Forms.Button();
-            this.buttonW2 = new System.Windows.Forms.Button();
-            this.buttonQ2 = new System.Windows.Forms.Button();
-            this.buttonQ1 = new System.Windows.Forms.Button();
-            this.buttonQ0 = new System.Windows.Forms.Button();
-            this.buttonB2 = new System.Windows.Forms.Button();
-            this.buttonB1 = new System.Windows.Forms.Button();
-            this.buttonB0 = new System.Windows.Forms.Button();
-            this.buttonS2 = new System.Windows.Forms.Button();
-            this.buttonS1 = new System.Windows.Forms.Button();
-            this.buttonS0 = new System.Windows.Forms.Button();
-            this.buttonG2 = new System.Windows.Forms.Button();
-            this.buttonG1 = new System.Windows.Forms.Button();
-            this.buttonG0 = new System.Windows.Forms.Button();
+            this.buttonNoTrade = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -139,6 +140,33 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "万位：";
+            // 
+            // buttonW2
+            // 
+            this.buttonW2.Location = new System.Drawing.Point(467, 22);
+            this.buttonW2.Name = "buttonW2";
+            this.buttonW2.Size = new System.Drawing.Size(35, 23);
+            this.buttonW2.TabIndex = 15;
+            this.buttonW2.Text = "2路";
+            this.buttonW2.UseVisualStyleBackColor = true;
+            // 
+            // buttonW1
+            // 
+            this.buttonW1.Location = new System.Drawing.Point(426, 22);
+            this.buttonW1.Name = "buttonW1";
+            this.buttonW1.Size = new System.Drawing.Size(35, 23);
+            this.buttonW1.TabIndex = 14;
+            this.buttonW1.Text = "1路";
+            this.buttonW1.UseVisualStyleBackColor = true;
+            // 
+            // buttonW0
+            // 
+            this.buttonW0.Location = new System.Drawing.Point(385, 22);
+            this.buttonW0.Name = "buttonW0";
+            this.buttonW0.Size = new System.Drawing.Size(35, 23);
+            this.buttonW0.TabIndex = 13;
+            this.buttonW0.Text = "0路";
+            this.buttonW0.UseVisualStyleBackColor = true;
             // 
             // buttonWClear
             // 
@@ -302,6 +330,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "千位：";
             // 
+            // buttonQ2
+            // 
+            this.buttonQ2.Location = new System.Drawing.Point(467, 23);
+            this.buttonQ2.Name = "buttonQ2";
+            this.buttonQ2.Size = new System.Drawing.Size(35, 23);
+            this.buttonQ2.TabIndex = 18;
+            this.buttonQ2.Text = "2路";
+            this.buttonQ2.UseVisualStyleBackColor = true;
+            // 
             // textBoxLotteryCountQ
             // 
             this.textBoxLotteryCountQ.Location = new System.Drawing.Point(533, 25);
@@ -309,6 +346,24 @@
             this.textBoxLotteryCountQ.Size = new System.Drawing.Size(66, 21);
             this.textBoxLotteryCountQ.TabIndex = 13;
             this.textBoxLotteryCountQ.Text = "1";
+            // 
+            // buttonQ1
+            // 
+            this.buttonQ1.Location = new System.Drawing.Point(426, 23);
+            this.buttonQ1.Name = "buttonQ1";
+            this.buttonQ1.Size = new System.Drawing.Size(35, 23);
+            this.buttonQ1.TabIndex = 17;
+            this.buttonQ1.Text = "1路";
+            this.buttonQ1.UseVisualStyleBackColor = true;
+            // 
+            // buttonQ0
+            // 
+            this.buttonQ0.Location = new System.Drawing.Point(385, 23);
+            this.buttonQ0.Name = "buttonQ0";
+            this.buttonQ0.Size = new System.Drawing.Size(35, 23);
+            this.buttonQ0.TabIndex = 16;
+            this.buttonQ0.Text = "0路";
+            this.buttonQ0.UseVisualStyleBackColor = true;
             // 
             // buttonQClear
             // 
@@ -463,6 +518,33 @@
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "百位：";
+            // 
+            // buttonB2
+            // 
+            this.buttonB2.Location = new System.Drawing.Point(467, 23);
+            this.buttonB2.Name = "buttonB2";
+            this.buttonB2.Size = new System.Drawing.Size(35, 23);
+            this.buttonB2.TabIndex = 18;
+            this.buttonB2.Text = "2路";
+            this.buttonB2.UseVisualStyleBackColor = true;
+            // 
+            // buttonB1
+            // 
+            this.buttonB1.Location = new System.Drawing.Point(426, 23);
+            this.buttonB1.Name = "buttonB1";
+            this.buttonB1.Size = new System.Drawing.Size(35, 23);
+            this.buttonB1.TabIndex = 17;
+            this.buttonB1.Text = "1路";
+            this.buttonB1.UseVisualStyleBackColor = true;
+            // 
+            // buttonB0
+            // 
+            this.buttonB0.Location = new System.Drawing.Point(385, 23);
+            this.buttonB0.Name = "buttonB0";
+            this.buttonB0.Size = new System.Drawing.Size(35, 23);
+            this.buttonB0.TabIndex = 16;
+            this.buttonB0.Text = "0路";
+            this.buttonB0.UseVisualStyleBackColor = true;
             // 
             // textBoxLotteryCountB
             // 
@@ -626,6 +708,15 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "十位：";
             // 
+            // buttonS2
+            // 
+            this.buttonS2.Location = new System.Drawing.Point(467, 23);
+            this.buttonS2.Name = "buttonS2";
+            this.buttonS2.Size = new System.Drawing.Size(35, 23);
+            this.buttonS2.TabIndex = 21;
+            this.buttonS2.Text = "2路";
+            this.buttonS2.UseVisualStyleBackColor = true;
+            // 
             // textBoxLotteryCountS
             // 
             this.textBoxLotteryCountS.Location = new System.Drawing.Point(533, 25);
@@ -633,6 +724,24 @@
             this.textBoxLotteryCountS.Size = new System.Drawing.Size(66, 21);
             this.textBoxLotteryCountS.TabIndex = 15;
             this.textBoxLotteryCountS.Text = "1";
+            // 
+            // buttonS1
+            // 
+            this.buttonS1.Location = new System.Drawing.Point(426, 23);
+            this.buttonS1.Name = "buttonS1";
+            this.buttonS1.Size = new System.Drawing.Size(35, 23);
+            this.buttonS1.TabIndex = 20;
+            this.buttonS1.Text = "1路";
+            this.buttonS1.UseVisualStyleBackColor = true;
+            // 
+            // buttonS0
+            // 
+            this.buttonS0.Location = new System.Drawing.Point(385, 23);
+            this.buttonS0.Name = "buttonS0";
+            this.buttonS0.Size = new System.Drawing.Size(35, 23);
+            this.buttonS0.TabIndex = 19;
+            this.buttonS0.Text = "0路";
+            this.buttonS0.UseVisualStyleBackColor = true;
             // 
             // buttonSClear
             // 
@@ -788,6 +897,15 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "个位：";
             // 
+            // buttonG2
+            // 
+            this.buttonG2.Location = new System.Drawing.Point(467, 23);
+            this.buttonG2.Name = "buttonG2";
+            this.buttonG2.Size = new System.Drawing.Size(35, 23);
+            this.buttonG2.TabIndex = 24;
+            this.buttonG2.Text = "2路";
+            this.buttonG2.UseVisualStyleBackColor = true;
+            // 
             // textBoxLotteryCountG
             // 
             this.textBoxLotteryCountG.Location = new System.Drawing.Point(533, 25);
@@ -795,6 +913,24 @@
             this.textBoxLotteryCountG.Size = new System.Drawing.Size(66, 21);
             this.textBoxLotteryCountG.TabIndex = 16;
             this.textBoxLotteryCountG.Text = "1";
+            // 
+            // buttonG1
+            // 
+            this.buttonG1.Location = new System.Drawing.Point(426, 23);
+            this.buttonG1.Name = "buttonG1";
+            this.buttonG1.Size = new System.Drawing.Size(35, 23);
+            this.buttonG1.TabIndex = 23;
+            this.buttonG1.Text = "1路";
+            this.buttonG1.UseVisualStyleBackColor = true;
+            // 
+            // buttonG0
+            // 
+            this.buttonG0.Location = new System.Drawing.Point(385, 23);
+            this.buttonG0.Name = "buttonG0";
+            this.buttonG0.Size = new System.Drawing.Size(35, 23);
+            this.buttonG0.TabIndex = 22;
+            this.buttonG0.Text = "0路";
+            this.buttonG0.UseVisualStyleBackColor = true;
             // 
             // buttonGClear
             // 
@@ -936,146 +1072,22 @@
             this.buttonSubmit.UseVisualStyleBackColor = true;
             this.buttonSubmit.Click += new System.EventHandler(this.buttonSubmit_Click);
             // 
-            // buttonW0
+            // buttonNoTrade
             // 
-            this.buttonW0.Location = new System.Drawing.Point(385, 22);
-            this.buttonW0.Name = "buttonW0";
-            this.buttonW0.Size = new System.Drawing.Size(35, 23);
-            this.buttonW0.TabIndex = 13;
-            this.buttonW0.Text = "0路";
-            this.buttonW0.UseVisualStyleBackColor = true;
-            // 
-            // buttonW1
-            // 
-            this.buttonW1.Location = new System.Drawing.Point(426, 22);
-            this.buttonW1.Name = "buttonW1";
-            this.buttonW1.Size = new System.Drawing.Size(35, 23);
-            this.buttonW1.TabIndex = 14;
-            this.buttonW1.Text = "1路";
-            this.buttonW1.UseVisualStyleBackColor = true;
-            // 
-            // buttonW2
-            // 
-            this.buttonW2.Location = new System.Drawing.Point(467, 22);
-            this.buttonW2.Name = "buttonW2";
-            this.buttonW2.Size = new System.Drawing.Size(35, 23);
-            this.buttonW2.TabIndex = 15;
-            this.buttonW2.Text = "2路";
-            this.buttonW2.UseVisualStyleBackColor = true;
-            // 
-            // buttonQ2
-            // 
-            this.buttonQ2.Location = new System.Drawing.Point(467, 23);
-            this.buttonQ2.Name = "buttonQ2";
-            this.buttonQ2.Size = new System.Drawing.Size(35, 23);
-            this.buttonQ2.TabIndex = 18;
-            this.buttonQ2.Text = "2路";
-            this.buttonQ2.UseVisualStyleBackColor = true;
-            // 
-            // buttonQ1
-            // 
-            this.buttonQ1.Location = new System.Drawing.Point(426, 23);
-            this.buttonQ1.Name = "buttonQ1";
-            this.buttonQ1.Size = new System.Drawing.Size(35, 23);
-            this.buttonQ1.TabIndex = 17;
-            this.buttonQ1.Text = "1路";
-            this.buttonQ1.UseVisualStyleBackColor = true;
-            // 
-            // buttonQ0
-            // 
-            this.buttonQ0.Location = new System.Drawing.Point(385, 23);
-            this.buttonQ0.Name = "buttonQ0";
-            this.buttonQ0.Size = new System.Drawing.Size(35, 23);
-            this.buttonQ0.TabIndex = 16;
-            this.buttonQ0.Text = "0路";
-            this.buttonQ0.UseVisualStyleBackColor = true;
-            // 
-            // buttonB2
-            // 
-            this.buttonB2.Location = new System.Drawing.Point(467, 23);
-            this.buttonB2.Name = "buttonB2";
-            this.buttonB2.Size = new System.Drawing.Size(35, 23);
-            this.buttonB2.TabIndex = 18;
-            this.buttonB2.Text = "2路";
-            this.buttonB2.UseVisualStyleBackColor = true;
-            // 
-            // buttonB1
-            // 
-            this.buttonB1.Location = new System.Drawing.Point(426, 23);
-            this.buttonB1.Name = "buttonB1";
-            this.buttonB1.Size = new System.Drawing.Size(35, 23);
-            this.buttonB1.TabIndex = 17;
-            this.buttonB1.Text = "1路";
-            this.buttonB1.UseVisualStyleBackColor = true;
-            // 
-            // buttonB0
-            // 
-            this.buttonB0.Location = new System.Drawing.Point(385, 23);
-            this.buttonB0.Name = "buttonB0";
-            this.buttonB0.Size = new System.Drawing.Size(35, 23);
-            this.buttonB0.TabIndex = 16;
-            this.buttonB0.Text = "0路";
-            this.buttonB0.UseVisualStyleBackColor = true;
-            // 
-            // buttonS2
-            // 
-            this.buttonS2.Location = new System.Drawing.Point(467, 23);
-            this.buttonS2.Name = "buttonS2";
-            this.buttonS2.Size = new System.Drawing.Size(35, 23);
-            this.buttonS2.TabIndex = 21;
-            this.buttonS2.Text = "2路";
-            this.buttonS2.UseVisualStyleBackColor = true;
-            // 
-            // buttonS1
-            // 
-            this.buttonS1.Location = new System.Drawing.Point(426, 23);
-            this.buttonS1.Name = "buttonS1";
-            this.buttonS1.Size = new System.Drawing.Size(35, 23);
-            this.buttonS1.TabIndex = 20;
-            this.buttonS1.Text = "1路";
-            this.buttonS1.UseVisualStyleBackColor = true;
-            // 
-            // buttonS0
-            // 
-            this.buttonS0.Location = new System.Drawing.Point(385, 23);
-            this.buttonS0.Name = "buttonS0";
-            this.buttonS0.Size = new System.Drawing.Size(35, 23);
-            this.buttonS0.TabIndex = 19;
-            this.buttonS0.Text = "0路";
-            this.buttonS0.UseVisualStyleBackColor = true;
-            // 
-            // buttonG2
-            // 
-            this.buttonG2.Location = new System.Drawing.Point(467, 23);
-            this.buttonG2.Name = "buttonG2";
-            this.buttonG2.Size = new System.Drawing.Size(35, 23);
-            this.buttonG2.TabIndex = 24;
-            this.buttonG2.Text = "2路";
-            this.buttonG2.UseVisualStyleBackColor = true;
-            // 
-            // buttonG1
-            // 
-            this.buttonG1.Location = new System.Drawing.Point(426, 23);
-            this.buttonG1.Name = "buttonG1";
-            this.buttonG1.Size = new System.Drawing.Size(35, 23);
-            this.buttonG1.TabIndex = 23;
-            this.buttonG1.Text = "1路";
-            this.buttonG1.UseVisualStyleBackColor = true;
-            // 
-            // buttonG0
-            // 
-            this.buttonG0.Location = new System.Drawing.Point(385, 23);
-            this.buttonG0.Name = "buttonG0";
-            this.buttonG0.Size = new System.Drawing.Size(35, 23);
-            this.buttonG0.TabIndex = 22;
-            this.buttonG0.Text = "0路";
-            this.buttonG0.UseVisualStyleBackColor = true;
+            this.buttonNoTrade.Location = new System.Drawing.Point(90, 12);
+            this.buttonNoTrade.Name = "buttonNoTrade";
+            this.buttonNoTrade.Size = new System.Drawing.Size(75, 23);
+            this.buttonNoTrade.TabIndex = 14;
+            this.buttonNoTrade.Text = "不交易";
+            this.buttonNoTrade.UseVisualStyleBackColor = true;
+            this.buttonNoTrade.Click += new System.EventHandler(this.buttonNoTrade_Click);
             // 
             // TradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(658, 326);
+            this.Controls.Add(this.buttonNoTrade);
             this.Controls.Add(this.buttonSubmit);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -1185,5 +1197,6 @@
         private System.Windows.Forms.Button buttonG2;
         private System.Windows.Forms.Button buttonG1;
         private System.Windows.Forms.Button buttonG0;
+        private System.Windows.Forms.Button buttonNoTrade;
     }
 }
