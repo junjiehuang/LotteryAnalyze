@@ -52,9 +52,9 @@
             this.buttonCollectMissCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonCollectMissCount.Location = new System.Drawing.Point(2, 244);
             this.buttonCollectMissCount.Name = "buttonCollectMissCount";
-            this.buttonCollectMissCount.Size = new System.Drawing.Size(75, 23);
+            this.buttonCollectMissCount.Size = new System.Drawing.Size(97, 23);
             this.buttonCollectMissCount.TabIndex = 1;
-            this.buttonCollectMissCount.Text = "统计遗漏";
+            this.buttonCollectMissCount.Text = "统计所有数据遗漏值";
             this.buttonCollectMissCount.UseVisualStyleBackColor = true;
             this.buttonCollectMissCount.Click += new System.EventHandler(this.buttonCollectMissCount_Click);
             // 
@@ -100,7 +100,7 @@
             // buttonExport
             // 
             this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonExport.Location = new System.Drawing.Point(83, 244);
+            this.buttonExport.Location = new System.Drawing.Point(105, 244);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(102, 23);
             this.buttonExport.TabIndex = 6;

@@ -636,6 +636,19 @@ namespace LotteryAnalyze
             LotteryGraph.Open(false);
         }
 
+        void CollectSelectDateMissCount()
+        {
+            List<int> tags = new List<int>();
+            if (listViewFileList.SelectedItems.Count > 0)
+            {
+                for(int i = 0; i < listViewFileList.SelectedItems.Count; ++i)
+                {
+                    tags.Add((int)listViewFileList.SelectedItems[i].Tag);
+                }
+            }
+            AnalyzeInfoCollectWindow.CollectSelectDateMissCount(tags);
+        }
+
         private void toolStripTextBoxAlpha_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(toolStripTextBoxAlpha.Text))
@@ -670,6 +683,11 @@ namespace LotteryAnalyze
         private void openGlobalSettingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GlobalSettingPanel.Open();
+        }
+
+        private void anaSelectDatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CollectSelectDateMissCount();
         }
     }
 }

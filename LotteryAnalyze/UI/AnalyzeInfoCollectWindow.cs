@@ -168,11 +168,14 @@ namespace LotteryAnalyze.UI
 
                 if(cItem == null)
                 {
-                    if (endIndex == dateIDLst[dateIDLst.Count - 1])
+                    //if (endIndex == dateIDLst[dateIDLst.Count - 1])
+                    if(endIndex == dateIDLst.Count - 1)
                     {
                         hasFinished = true;
                         lastDataItemTag = "";
                         status = ProcStatus.eCompleted;
+
+                        RefreshTree();
                     }
                     else
                     {
@@ -211,6 +214,48 @@ namespace LotteryAnalyze.UI
                     DoBatch();
                     break;
             }
+        }
+
+        public static void CollectSelectDateMissCount(List<int> tags)
+        {
+            AnalyzeInfoCollectWindow.Open();
+            AnalyzeInfoCollectWindow.sInst.CollectSelectDateMissCountImpl(tags);
+        }
+
+        void CollectSelectDateMissCountImpl(List<int> tags)
+        {
+            status = ProcStatus.eStart;
+            allCDTMissCountTreeNodeMap.Clear();
+            progressBarMain.Value = 0;
+            treeViewMissCount.Nodes.Clear();
+            DataManager dataMgr = DataManager.GetInst();
+            dateIDLst.Clear();
+            dateIDLst.AddRange(tags);
+            startIndex = 0;
+            allCDTMissCountNumMap.Clear();
+            hasFinished = false;
+            for (int i = 0; i < 5; ++i)
+            {
+                TreeNode posNode = new TreeNode(KDataDictContainer.C_TAGS[i]);
+                posNode.Tag = i;
+                treeViewMissCount.Nodes.Add(posNode);
+                Dictionary<CollectDataType, Dictionary<int, TreeNode>> cid = new Dictionary<CollectDataType, Dictionary<int, TreeNode>>();
+                allCDTMissCountTreeNodeMap.Add(cid);
+
+                Dictionary<CollectDataType, Dictionary<int, int>> dct = new Dictionary<CollectDataType, Dictionary<int, int>>();
+                allCDTMissCountNumMap.Add(dct);
+                for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                {
+                    TreeNode cdtNode = new TreeNode(GraphDataManager.S_CDT_TAG_LIST[j]);
+                    cdtNode.Tag = GraphDataManager.S_CDT_LIST[j];
+                    posNode.Nodes.Add(cdtNode);
+
+                    dct.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, int>());
+                    cid.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, TreeNode>());
+                }
+            }
+            this.Invalidate(true);
+
         }
 
         private void buttonCollectMissCount_Click(object sender, EventArgs e)
