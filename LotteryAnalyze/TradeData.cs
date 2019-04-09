@@ -1773,7 +1773,7 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
-            if(GlobalSetting.G_ONLY_TRADE_BEST_PATH)
+            if(GlobalSetting.G_ONLY_TRADE_BEST_PATH && GlobalSetting.G_ENABLE_MACD_UP_CHECK)
             {
                 if ((float)pci0.paramMap["KGraph"] != 2.0f 
                     || (float)pci0.paramMap["MacdUp"] <= 0.0f
