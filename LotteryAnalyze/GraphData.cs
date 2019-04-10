@@ -564,8 +564,11 @@ namespace LotteryAnalyze
     public class MACDPoint
     {
         public MACDPointMap parent;
+        // 快线
         public float DIF = 0;
+        // 慢线
         public float DEA = 0;
+        // 动能柱
         public float BAR = 0;
 #if TRADE_DBG
         public byte WAVE_CFG = 0;

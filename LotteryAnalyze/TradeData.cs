@@ -332,8 +332,14 @@ namespace LotteryAnalyze
         static Type FT = typeof(float);
         static Type BT = typeof(bool);
 
-        public static float SingleTradeCost = 1;
-        public static float SingleTradeReward = 9.8f;
+        public static float SingleTradeCost
+        {
+            get { return GlobalSetting.G_ONE_STARE_TRADE_COST; }
+        }
+        public static float SingleTradeReward
+        {
+            get { return GlobalSetting.G_ONE_STARE_TRADE_REWARD; }
+        }
 
         public Dictionary<int, TradeNumbers> tradeInfo = new Dictionary<int, TradeNumbers>();
 
@@ -351,6 +357,19 @@ namespace LotteryAnalyze
                     return i;
             }
             return -1;
+        }
+        public PathCmpInfo FindInfoByPathIndex(int numindex, int pathIndex)
+        {
+            if (numindex < 0 || numindex >= pathCmpInfos.Count)
+                return null;
+            if (pathIndex < 0 || pathIndex >= pathCmpInfos[numindex].Count)
+                return null;
+            for (int i = 0; i < pathCmpInfos[numindex].Count; ++i)
+            {
+                if (pathCmpInfos[numindex][i].pathIndex == pathIndex)
+                    return pathCmpInfos[numindex][i];
+            }
+            return null;
         }
 #endif
 
@@ -1775,8 +1794,11 @@ namespace LotteryAnalyze
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
             if(GlobalSetting.G_ONLY_TRADE_BEST_PATH && GlobalSetting.G_ENABLE_MACD_UP_CHECK)
             {
-                if ((float)pci0.paramMap["KGraph"] != 2.0f 
-                    || (float)pci0.paramMap["MacdUp"] <= 0.0f
+                MacdLineCfg cfg = (MacdLineCfg)pci0.paramMap["MacdCfg"];
+                if (//(int)pci0.paramMap["KUP"] <= 0
+                    //(float)pci0.paramMap["KGraph"] != 2.0f 
+                    //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
+                    false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
                     //|| (int)pci0.paramMap["KUP"] <= 0
                     )
                     return;
@@ -3125,6 +3147,23 @@ namespace LotteryAnalyze
             }
         }
 
+        public enum MacdLineCfg
+        {
+            // 未定义
+            eNone,
+            // 当前快线小于等于慢线
+            eFLES,
+            // 金叉
+            eGC,
+            // 金叉后的快线大于等于慢线
+            eGCFHES,
+            // 当前快线大于等于慢线
+            eFHES,
+            // 死叉
+            eDC,
+        }
+
+
         void CalcPathMacdUp(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             const int TOTAL_LIMIT_CHECK_COUNT = 3;
@@ -3137,8 +3176,8 @@ namespace LotteryAnalyze
             MACDPointMap bpm = kddc.GetMacdPointMap(kdd);
             KData minKD = null, maxKD = null;
             DataItem minItem = item, maxItem = item;
-
             List<KData> minPts = new List<KData>(), maxPts = new List<KData>();
+            TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
 
             for (int i = 0; i < cdts.Length; ++i)
             {
@@ -3162,6 +3201,77 @@ namespace LotteryAnalyze
                 int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
 
                 int curMissCount = item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+
+                PathCmpInfo lastPCI = null;
+                if (lastTrade != null)
+                {
+                    int pathIndex = GraphDataManager.S_CDT_LIST.IndexOf(cdt) - GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+                    lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
+                }
+
+                if(lastPCI == null)
+                {
+                    if(mp.DIF < mp.DEA)
+                        pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                    else if(mp.DIF > mp.DEA)
+                        pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                    else
+                        pci.paramMap["MacdCfg"] = MacdLineCfg.eNone;
+                }
+                else
+                {
+                    MacdLineCfg lastCFG = (MacdLineCfg)lastPCI.paramMap["MacdCfg"];
+                    switch(lastCFG)
+                    {
+                        case MacdLineCfg.eNone:
+                            {
+                                if (mp.DIF < mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                                else if (mp.DIF > mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                                else
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eNone;
+                            }
+                            break;
+                        case MacdLineCfg.eFLES:
+                            {
+                                if (mp.DIF >= mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                                else
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                            }
+                            break;
+                        case MacdLineCfg.eFHES:
+                            {
+                                if (mp.DIF <= mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                                else
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                            }
+                            break;
+                        case MacdLineCfg.eDC:
+                            {
+                                if(mp.DIF < mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                                else if(mp.DIF > mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                                else
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                            }
+                            break;
+                        case MacdLineCfg.eGC:
+                        case MacdLineCfg.eGCFHES:
+                            {
+                                if (mp.DIF > mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGCFHES;
+                                else if (mp.DIF < mp.DEA)
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                                else
+                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                            }
+                            break;
+                    }
+                }
 
                 while (pItem != null && loopCount > 0)
                 {
@@ -3641,6 +3751,11 @@ namespace LotteryAnalyze
                         bool isYKUp = (float)y.paramMap["KGraph"] >= 1.0f;
                         bool isXMUp = (float)x.paramMap["MacdUp"] > 0;
                         bool isYMUp = (float)y.paramMap["MacdUp"] > 0;
+                        MacdLineCfg xCfg = (MacdLineCfg)x.paramMap["MacdCfg"];
+                        MacdLineCfg yCfg = (MacdLineCfg)y.paramMap["MacdCfg"];
+                        bool isXGC = xCfg == MacdLineCfg.eGC || xCfg == MacdLineCfg.eGCFHES;
+                        bool isYGC = yCfg == MacdLineCfg.eGC || yCfg == MacdLineCfg.eGCFHES;
+
                         if ((float)x.paramMap["KGraph"] == 2) ++xCount;
                         if ((float)x.paramMap["MacdUp"] > 0) ++xCount;
                         if ((float)x.paramMap["curRateF"] > 33) ++xCount;
@@ -3650,9 +3765,14 @@ namespace LotteryAnalyze
                         if ((float)y.paramMap["MacdUp"] > 0) ++yCount;
                         if ((float)y.paramMap["curRateF"] > 33) ++yCount;
                         if ((float)y.paramMap["detRateF"] > 0) ++yCount;
-                       
+
                         x.paramMap["AnaCount"] = xCount;
                         y.paramMap["AnaCount"] = yCount;
+
+                        if (isXGC && !isYGC)
+                            return -1;
+                        if (!isXGC && isYGC)
+                            return 1;                            
 
                         if (xCount == 4 && yCount < 4)
                             return -1;
