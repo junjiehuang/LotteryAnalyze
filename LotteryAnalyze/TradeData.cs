@@ -1799,6 +1799,7 @@ namespace LotteryAnalyze
                     //(float)pci0.paramMap["KGraph"] != 2.0f 
                     //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
                     false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
+                    || (int)pci0.paramMap["IsMacdPUP"] != 1
                     //|| (int)pci0.paramMap["KUP"] <= 0
                     )
                     return;
@@ -3209,14 +3210,15 @@ namespace LotteryAnalyze
                     lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
                 }
 
-                if(lastPCI == null)
+                MacdLineCfg curCfg = MacdLineCfg.eNone;
+                if (lastPCI == null)
                 {
                     if(mp.DIF < mp.DEA)
-                        pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                        curCfg = MacdLineCfg.eFLES;
                     else if(mp.DIF > mp.DEA)
-                        pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                        curCfg = MacdLineCfg.eFHES;
                     else
-                        pci.paramMap["MacdCfg"] = MacdLineCfg.eNone;
+                        curCfg = MacdLineCfg.eNone;
                 }
                 else
                 {
@@ -3226,52 +3228,53 @@ namespace LotteryAnalyze
                         case MacdLineCfg.eNone:
                             {
                                 if (mp.DIF < mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                                    curCfg = MacdLineCfg.eFLES;
                                 else if (mp.DIF > mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                                    curCfg = MacdLineCfg.eFHES;
                                 else
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eNone;
+                                    curCfg = MacdLineCfg.eNone;
                             }
                             break;
                         case MacdLineCfg.eFLES:
                             {
                                 if (mp.DIF >= mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                                    curCfg = MacdLineCfg.eGC;
                                 else
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                                    curCfg = MacdLineCfg.eFLES;
                             }
                             break;
                         case MacdLineCfg.eFHES:
                             {
                                 if (mp.DIF <= mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                                    curCfg = MacdLineCfg.eDC;
                                 else
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFHES;
+                                    curCfg = MacdLineCfg.eFHES;
                             }
                             break;
                         case MacdLineCfg.eDC:
                             {
                                 if(mp.DIF < mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eFLES;
+                                    curCfg = MacdLineCfg.eFLES;
                                 else if(mp.DIF > mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                                    curCfg = MacdLineCfg.eGC;
                                 else
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                                    curCfg = MacdLineCfg.eDC;
                             }
                             break;
                         case MacdLineCfg.eGC:
                         case MacdLineCfg.eGCFHES:
                             {
                                 if (mp.DIF > mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGCFHES;
+                                    curCfg = MacdLineCfg.eGCFHES;
                                 else if (mp.DIF < mp.DEA)
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eDC;
+                                    curCfg = MacdLineCfg.eDC;
                                 else
-                                    pci.paramMap["MacdCfg"] = MacdLineCfg.eGC;
+                                    curCfg = MacdLineCfg.eGC;
                             }
                             break;
                     }
                 }
+                pci.paramMap["MacdCfg"] = curCfg;
 
                 while (pItem != null && loopCount > 0)
                 {
@@ -3378,8 +3381,24 @@ namespace LotteryAnalyze
                     pci.paramMap["MacdUp"] = (mp.BAR - maxMP.BAR);
                 }
 
+                pci.paramMap["IsMacdPUP"] = -1;
+                if (curCfg == MacdLineCfg.eGC || curCfg == MacdLineCfg.eGCFHES)
+                {
+                    if(maxMP.parent.index < mp.parent.index)
+                    {
+                        if(mp.DEA >= 0)
+                        {
+                            pci.paramMap["IsMacdPUP"] = 1;
+                        }
+                    }
+                    else
+                    {
+                        pci.paramMap["IsMacdPUP"] = 1;
+                    }
+                }
+
                 // k线的最小值在左边，最大值在右边，显示上升的形态
-                if(maxKD.index > minKD.index)
+                if (maxKD.index > minKD.index)
                 {
                     pci.paramMap["KUP"] = 1;
 
@@ -3679,13 +3698,13 @@ namespace LotteryAnalyze
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
                 //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
                 //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
-                //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
                 {
-                    //pci.paramMap["count2LIM"] = count2LIM[i];
+                    pci.paramMap["count2LIM"] = count2LIM[i];
+                    pci.paramMap["count2BUs"] = count2BUs[i];
                     pci.paramMap["count2BDs"] = count2BDs[i];
-                    //pci.paramMap["count2BUs"] = count2BUs[i];
-                    pci.paramMap["count2BMs"] = count2BMs[i];
                 }
+                pci.paramMap["count2BMs"] = count2BMs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
 
