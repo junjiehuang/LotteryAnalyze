@@ -1800,6 +1800,7 @@ namespace LotteryAnalyze
                     //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
                     false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
                     || (int)pci0.paramMap["IsMacdPUP"] != 1
+                    || (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1 && (int)pci0.paramMap["curMissCount"] > 2)
                     //|| (int)pci0.paramMap["KUP"] <= 0
                     )
                     return;
@@ -3386,7 +3387,14 @@ namespace LotteryAnalyze
                 {
                     if(maxMP.parent.index < mp.parent.index)
                     {
-                        if(mp.DEA >= 0)
+                        if (maxMP.parent.index > minMP.parent.index)
+                        {
+                            if (mp.DEA >= 0)
+                            {
+                                pci.paramMap["IsMacdPUP"] = 1;
+                            }
+                        }
+                        else if(minMP.parent.index < mp.parent.index)
                         {
                             pci.paramMap["IsMacdPUP"] = 1;
                         }
