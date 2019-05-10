@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace LotteryAnalyze
@@ -26,9 +27,9 @@ namespace LotteryAnalyze
         private static float g_WINDOW_OPACITY = 1;
         [Parameter("支撑压力线取样数")]
         private static int g_ANALYZE_TOOL_SAMPLE_COUNT = 30;
-        [Parameter("曲线图刷新时间(毫秒)")]
+        [Parameter("曲线图刷新毫秒间隔")]
         private static int g_LOTTERY_GRAPH_UPDATE_INTERVAL = 1500;
-        [Parameter("模拟图刷新时间(毫秒)")]
+        [Parameter("模拟图刷新毫秒间隔")]
         private static int g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 1500;
         [Parameter("是否开启通道线分析工具")]
         private static bool g_EANBLE_ANALYZE_TOOL = true;
@@ -46,12 +47,16 @@ namespace LotteryAnalyze
         private static bool g_ENABLE_UPBOLLEAN_COUNT_STATISTIC = true;
         [Parameter("是否开启MACD上升检测")]
         private static bool g_ENABLE_MACD_UP_CHECK = true;
+        [Parameter("是否开启布林线形态检测")]
+        private static bool g_ENABLE_BOLLEAN_CFG_CHECK = true;
         [Parameter("是否只在最佳的012路交易")]
         private static bool g_ONLY_TRADE_BEST_PATH = false;
+        [Parameter("是否开启判定这一路能否交易")]
+        private static bool g_ENABLE_CHECK_PATH_CAN_TRADE = false;
         //private static bool g_ENABLE_SAME_PATH_CHECK_MAX_DELTA_APPEAR_RATE = true;
-        [Parameter("1注1星交易成本")]
+        [Parameter("每注一星交易成本")]
         private static float g_ONE_STARE_TRADE_COST = 1.0f;
-        [Parameter("1注1星交易奖金")]
+        [Parameter("每注一星交易奖金")]
         private static float g_ONE_STARE_TRADE_REWARD = 9.8f;
         [Parameter("选择交易策略ID")]
         private static int g_CUR_TRADE_INDEX = -1;
@@ -382,6 +387,34 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_ENABLE_BOLLEAN_CFG_CHECK
+        {
+            get
+            {
+                return g_ENABLE_BOLLEAN_CFG_CHECK;
+            }
+
+            set
+            {
+                g_ENABLE_BOLLEAN_CFG_CHECK = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_ENABLE_CHECK_PATH_CAN_TRADE
+        {
+            get
+            {
+                return g_ENABLE_CHECK_PATH_CAN_TRADE;
+            }
+
+            set
+            {
+                g_ENABLE_CHECK_PATH_CAN_TRADE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -405,6 +438,8 @@ namespace LotteryAnalyze
             G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
             G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
             G_ENABLE_MACD_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableMACDUpCheck", false);
+            G_ENABLE_BOLLEAN_CFG_CHECK = cfg.ReadBool("GlobalSetting", "EnableBolleanCfgCheck", false);
+            G_ENABLE_CHECK_PATH_CAN_TRADE = cfg.ReadBool("GlobalSetting", "EnableCheckPathCanTrade", false);
             G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 1);
             G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
             G_ENABLE_REC_TRADE_DATAS = cfg.ReadBool("GlobalSetting", "EnableRecTradeDatas", true);
@@ -459,6 +494,8 @@ namespace LotteryAnalyze
             cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
             cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
             cfg.WriteBool("GlobalSetting", "EnableMACDUpCheck", G_ENABLE_MACD_UP_CHECK);
+            cfg.WriteBool("GlobalSetting", "EnableBolleanCfgCheck", G_ENABLE_BOLLEAN_CFG_CHECK);
+            cfg.WriteBool("GlobalSetting", "EnableCheckPathCanTrade", G_ENABLE_CHECK_PATH_CAN_TRADE);
             cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
             cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
             cfg.WriteBool("GlobalSetting", "EnableRecTradeDatas", G_ENABLE_REC_TRADE_DATAS);
@@ -489,6 +526,25 @@ namespace LotteryAnalyze
                 cfg.WriteString("TradeSets", "TradeNames", ("\""+tradeNames+ "\""));
             }
             HAS_MODIFY = false;
+        }
+
+        public static string WriteSettingToXMLString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\t<GlobalSetting>\n");
+            FieldInfo[] fis = typeof(GlobalSetting).GetFields(BindingFlags.Static | BindingFlags.NonPublic);
+            for (int i = 0; i < fis.Length; ++i)
+            {
+                FieldInfo fi = fis[i];
+                Parameter par = Attribute.GetCustomAttribute(fi, typeof(Parameter)) as Parameter;
+                if (par != null)
+                {
+                    object v = fi.GetValue(new GlobalSetting());
+                    sb.Append("\t\t<" + par.name + ">" + v.ToString() + "</" + par.name + ">\n");
+                }
+            }
+            sb.Append("\t</GlobalSetting>\n");
+            return sb.ToString();
         }
     }
 }

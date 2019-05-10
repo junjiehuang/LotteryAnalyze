@@ -35,6 +35,8 @@
             this.buttonClearAllBPs = new System.Windows.Forms.Button();
             this.textBoxWrongCountBP = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.buttonStartDebug = new System.Windows.Forms.Button();
+            this.buttonStep = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // treeViewDebugNodes
@@ -101,11 +103,33 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "连错N期断点：";
             // 
+            // buttonStartDebug
+            // 
+            this.buttonStartDebug.Location = new System.Drawing.Point(12, 375);
+            this.buttonStartDebug.Name = "buttonStartDebug";
+            this.buttonStartDebug.Size = new System.Drawing.Size(63, 23);
+            this.buttonStartDebug.TabIndex = 7;
+            this.buttonStartDebug.Text = "开始调试";
+            this.buttonStartDebug.UseVisualStyleBackColor = true;
+            this.buttonStartDebug.Click += new System.EventHandler(this.buttonStartDebug_Click);
+            // 
+            // buttonStep
+            // 
+            this.buttonStep.Location = new System.Drawing.Point(81, 375);
+            this.buttonStep.Name = "buttonStep";
+            this.buttonStep.Size = new System.Drawing.Size(63, 23);
+            this.buttonStep.TabIndex = 8;
+            this.buttonStep.Text = "单步";
+            this.buttonStep.UseVisualStyleBackColor = true;
+            this.buttonStep.Click += new System.EventHandler(this.buttonStep_Click);
+            // 
             // TradeDebugWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(263, 439);
+            this.ClientSize = new System.Drawing.Size(263, 405);
+            this.Controls.Add(this.buttonStep);
+            this.Controls.Add(this.buttonStartDebug);
             this.Controls.Add(this.textBoxWrongCountBP);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonClearAllBPs);
@@ -130,5 +154,7 @@
         private System.Windows.Forms.Button buttonClearAllBPs;
         private System.Windows.Forms.TextBox textBoxWrongCountBP;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonStartDebug;
+        private System.Windows.Forms.Button buttonStep;
     }
 }

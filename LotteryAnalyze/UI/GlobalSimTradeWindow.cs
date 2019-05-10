@@ -523,6 +523,9 @@ namespace LotteryAnalyze.UI
             textBoxDayCountPerBatch.Enabled = true;
             textBoxStartMoney.Enabled = true;
             textBoxTradeCountLst.Enabled = true;
+
+            // 重置K线的起点值
+            KGraphDataContainer.ResetCurKValueMap();
         }
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -711,6 +714,8 @@ namespace LotteryAnalyze.UI
             info += "\t\t<UnTradeCount>" + BatchTradeSimulator.Instance.untradeCount + "</UnTradeCount>\n";
             info += "\t</Simple>\n";
 
+            info += GlobalSetting.WriteSettingToXMLString();
+
             List<int> keys = BatchTradeSimulator.Instance.tradeMissInfo.Keys.ToList<int>();
             keys.Sort();
             info += "\t<TradeBeief>\n";
@@ -804,5 +809,15 @@ namespace LotteryAnalyze.UI
             textBoxRefreshTime.Text = GlobalSetting.G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL.ToString();
             this.Invalidate(true);
         }
+
+        public static void StartDebug()
+        {
+            if (sInst != null)
+            {
+                sInst.DoStop();
+                sInst.DoStart();
+            }
+        }
+
     }
 }

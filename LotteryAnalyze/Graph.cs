@@ -492,15 +492,24 @@ namespace LotteryAnalyze
         
         
         Pen bollinLinePenUp = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
-        Pen bollinLinePenMid = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Pen bollinLinePenMid = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 2);
+        Pen bollinLinePenMidR = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
+        Pen bollinLinePenMidC = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 2);
         Pen bollinLinePenDown = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
 
         Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
         Pen redLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
+        Pen redLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         Pen cyanLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 1);
+        Pen cyanLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 2);
         Pen whiteLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
+        Pen whiteLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 2);
         Pen yellowLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 1);
+        Pen yellowLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
         Pen greenLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.LightGreen, 1);
+        Pen greenLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.LightGreen, 2);
+        Pen orangeLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Orange, 2);
+        Pen blueLinePenB = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.BlueViolet, 2);
 
         Pen redDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Red, 1);
         Pen cyanDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Cyan, 1);
@@ -512,6 +521,7 @@ namespace LotteryAnalyze
         SolidBrush greenBrush = new SolidBrush(Color.Green);
         SolidBrush tmpBrush;
 
+        Dictionary<Pen, List<PointF>> segPools = new Dictionary<Pen, List<PointF>>();
         Dictionary<Pen, List<PointF>> linePools = new Dictionary<Pen, List<PointF>>();
         Dictionary<SolidBrush, List<RectangleF>> rcPools = new Dictionary<SolidBrush,List<RectangleF>>();
         List<AuxiliaryLine> auxiliaryLineList = new List<AuxiliaryLine>();
@@ -531,6 +541,8 @@ namespace LotteryAnalyze
         {
             get { return startItemIndex; }
         }
+
+        string graphInfo = "";
 
         public GraphKCurve()
         {
@@ -564,6 +576,7 @@ namespace LotteryAnalyze
 
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
+            graphInfo = "";
             BeforeDraw();
 
             int beforeID = preViewDataIndex;
@@ -671,9 +684,24 @@ namespace LotteryAnalyze
                             DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                             if(i == preViewDataIndex)
                             {
-                                BollinPoint bp = kddc.bollinDataLst.bollinMapLst[i].GetData(cdt, false);
-                                string info = "Boll值 = (" + bp.upValue + ", " + bp.midValue + ", " + bp.downValue + ")";
-                                g.DrawString(info, selDataFont, whiteBrush, 5, 45);
+                                int index = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                                float missHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[index];
+                                BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[i];
+                                BollinPoint bp = bpm.GetData(cdt, false);
+                                float bandSize = bp.upValue - bp.downValue;
+                                float bandCount = bandSize / missHeight;
+                                string info = "Boll值 = (" + bp.upValue + ", " + bp.midValue + ", " + bp.downValue + ") [" + bandSize + ", " + bandCount + "]";
+                                KData kd = bpm.kdd.GetData(cdt, false);
+                                float bollUpCount = kd.RelateDistTo(bp.upValue) / missHeight;
+                                float bollMidCount = kd.RelateDistTo(bp.midValue) / missHeight;
+                                float bollDownCount = kd.RelateDistTo(bp.downValue) / missHeight;
+                                info += "\nBUpC = " + bollUpCount + ", BMdC = " + bollMidCount + ", BDnC = " + bollDownCount;
+                                info += "\nUpMC = " + bp.uponMidCount + ", OnMC = " + bp.onMidCount + ", DnMC = " + bp.underMidCount;
+                                info += "\nUpMCC = " + bp.uponMidCountContinue + ", OnMCC = " + bp.onMidCountContinue + ", DnMCC = " + bp.underMidCountContinue;
+                                info += "\nBMKUC = " + bp.midKeepUpCount + ", BMKHC = " + bp.midKeepHorzCount + ", BMKDC = " + bp.midKeepDownCount;
+                                info += "\nBMKUCC = " + bp.midKeepUpCountContinue + ", BMKHCC = " + bp.midKeepHorzCountContinue + ", BMKDCC = " + bp.midKeepDownCountContinue;
+                                graphInfo += "\n" + info;
+                                //g.DrawString(info, selDataFont, whiteBrush, 5, 45);
                             }
                         }
                     }
@@ -694,6 +722,8 @@ namespace LotteryAnalyze
                 parent.MakeWindowRepaint();
             }
             EndDraw(g);
+
+            g.DrawString(graphInfo, selDataFont, whiteBrush, 5, 5);
         }
         public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
@@ -793,6 +823,18 @@ namespace LotteryAnalyze
                 selectKDataIndex = -1;
             canvasOffset.X = index * gridScaleW + xOffset;
             autoAllign = true;
+        }
+
+        public int SelectKData(Point mouseRelPos)
+        {
+            DataManager dm = DataManager.GetInst();
+            selectKDataIndex = -1;
+            Point standMousePos = CanvasToStand(mouseRelPos);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+            if (mouseHoverID >= dm.GetAllDataItemCount())
+                mouseHoverID = -1;
+            selectKDataIndex = mouseHoverID;
+            return selectKDataIndex;
         }
 
         public void UnSelectData()
@@ -962,6 +1004,10 @@ namespace LotteryAnalyze
             {
                 rcPools[k].Clear();
             }
+            foreach (Pen k in segPools.Keys)
+            {
+                segPools[k].Clear();
+            }
         }
         void EndDraw(Graphics g)
         {
@@ -975,6 +1021,24 @@ namespace LotteryAnalyze
                 if (linePools[k].Count > 0)
                     g.DrawLines(k, linePools[k].ToArray());
             }
+            foreach (Pen k in segPools.Keys)
+            {
+                if (segPools[k].Count > 0)
+                {
+                    List<PointF> pts = segPools[k];
+                    for (int i = 0; i < pts.Count;)
+                    {
+                        g.DrawLine(k, pts[i], pts[i + 1]);
+                        i += 2;
+                    }
+                }
+            }
+        }
+        void PushSegPts(Pen pen, float x1, float y1, float x2, float y2)
+        {
+            List<PointF> pts = GetSegLst(pen);
+            pts.Add(new PointF(x1, y1));
+            pts.Add(new PointF(x2, y2));
         }
         void PushLinePts(Pen pen, float x1, float y1, float x2, float y2)
         {
@@ -986,6 +1050,17 @@ namespace LotteryAnalyze
         {
             List<RectangleF> rcs = GetRCLst(brush);
             rcs.Add(new RectangleF(x, y, w, h));
+        }
+        List<PointF> GetSegLst(Pen pen)
+        {
+            List<PointF> res = null;
+            segPools.TryGetValue(pen, out res);
+            if(res == null)
+            {
+                res = new List<PointF>();
+                segPools[pen] = res;
+            }
+            return res;
         }
         List<PointF> GetLineLst(Pen pen)
         {
@@ -1055,11 +1130,13 @@ namespace LotteryAnalyze
                 preViewDataIndex = data.index;
                 g.DrawLine(grayDotLinePen, standX, 0, standX, winH);
                 g.DrawLine(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
-                //PushLinePts(grayDotLinePen, standX, 0, standX, winH);
-                //PushLinePts(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
-                g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
-                string str = "K值 = " + data.KValue.ToString() + ", 上 = " + data.UpValue.ToString() + ", 下 = " + data.DownValue.ToString();
-                g.DrawString(str, selDataFont, whiteBrush, 5, 25);
+                //g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
+                //string str = "K值 = " + data.KValue.ToString() + ", 上 = " + data.UpValue.ToString() + ", 下 = " + data.DownValue.ToString();
+                //g.DrawString(str, selDataFont, whiteBrush, 5, 25);
+                graphInfo += data.GetInfo() +
+                    "K值 = " + data.KValue.ToString() + 
+                    ", 上 = " + data.UpValue.ToString() + 
+                    ", 下 = " + data.DownValue.ToString();
             }
 
             if(data.index == selectKDataIndex)
@@ -1117,8 +1194,13 @@ namespace LotteryAnalyze
             float cyU = StandToCanvas(bp.upValue * gridScaleH, false);
             float cyM = StandToCanvas(bp.midValue * gridScaleH, false);
             float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
+            Pen midPen = bollinLinePenMid;
+            if (bp.midKeepDownCountContinue > 0)//prevBP.midValue > bp.midValue)
+                midPen = bollinLinePenMidC;
+            else if (bp.midKeepUpCountContinue > 0)//prevBP.midValue < bp.midValue)
+                midPen = bollinLinePenMidR;
             PushLinePts(bollinLinePenUp, px, pyU, cx, cyU);
-            PushLinePts(bollinLinePenMid, px, pyM, cx, cyM);
+            PushSegPts(midPen, px, pyM, cx, cyM);
             PushLinePts(bollinLinePenDown, px, pyD, cx, cyD);
         }
         void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt, bool drawSelectedLine)
@@ -1287,12 +1369,12 @@ namespace LotteryAnalyze
             }
             AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
             if (sali.upLineData.valid)
-                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePen);
+                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePenB, orangeLinePenB, redLinePenB);
             if (sali.downLineData.valid)
-                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePen);
+                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePenB, blueLinePenB, cyanLinePenB);
         }
 
-        void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen)
+        void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen, Pen prevPen, Pen nextPen)
         {
             float bx = lineData.dataSharp.index * gridScaleW, sx;
             float by = lineData.dataSharp.KValue * gridScaleH, sy;
@@ -1309,8 +1391,8 @@ namespace LotteryAnalyze
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
-                g.DrawLine(pen, 0, fyl, winW, fyr);
-                g.DrawRectangle(pen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                g.DrawLine(prevPen, 0, fyl, winW, fyr);
+                g.DrawRectangle(prevPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
             }
             if (lineData.dataNextSharp != null)
             {
@@ -1321,8 +1403,8 @@ namespace LotteryAnalyze
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
-                g.DrawLine(pen, 0, fyl, winW, fyr);
-                g.DrawRectangle(pen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
+                g.DrawLine(nextPen, 0, fyl, winW, fyr);
+                g.DrawRectangle(nextPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
             }
         }
 

@@ -33,6 +33,8 @@ namespace LotteryAnalyze
         public CollectDataType cdt = CollectDataType.eNone;
         // 针对该统计类型的遗漏值
         public Byte missCount = 0;
+        // 连续开出的期数
+        public Byte appearCount = 0;
         public StaticData fastData = new StaticData();
         public StaticData shortData = new StaticData();
         public StaticData longData = new StaticData();
@@ -213,6 +215,16 @@ namespace LotteryAnalyze
                         else
                             su.missCount = (Byte)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].missCount + 1);
                         break;
+                }
+
+                if (su.missCount > 0)
+                    su.appearCount = 0;
+                else
+                {
+                    if (prevItem != null)
+                        su.appearCount = (Byte)(prevItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[su.cdt].appearCount + 1);
+                    else
+                        su.appearCount = 1;
                 }
             }
         }

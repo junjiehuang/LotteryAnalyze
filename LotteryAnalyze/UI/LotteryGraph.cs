@@ -32,6 +32,7 @@ namespace LotteryAnalyze.UI
         System.Windows.Forms.Timer updateTimer;
         int updateInterval = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL;
         double updateCountDown = 0;
+        DataItem itemSel = null;
 
         #region ctor and common
 
@@ -469,89 +470,228 @@ namespace LotteryAnalyze.UI
             GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
         }
 
+        void SelItemForGraph(int selID, GraphBase graph)
+        {
+            int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
+            int xOffset = 0;
+            if (selID * graph.gridScaleW > checkW)
+                xOffset = -checkW;
+            else
+                xOffset = -(int)(selID * graph.gridScaleW);
+            graph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+        }
+        void SelItemForKCurveGraph(int selID)
+        {
+            SelItemForGraph(selID, graphMgr.kvalueGraph);
+        }
+        void SelItemForAppearenceGraph(int selID)
+        {
+            SelItemForGraph(selID, graphMgr.appearenceGraph);
+        }
+        void SelItemForMissCountGraph(int selID)
+        {
+            SelItemForGraph(selID, graphMgr.missCountGraph);
+        }
+        void SelItemForTradeGraph(int selID, bool isTradeID)
+        {
+            if (isTradeID)
+            {
+                if (TradeDataManager.Instance.GetTrade(selID) == null)
+                    return;
+            }
+            else
+            {
+               int tradeID = TradeDataManager.Instance.GetTradeIndex(selID);
+                if (tradeID == -1)
+                    return;
+                selID = tradeID;
+            }
+            SelItemForGraph(selID, graphMgr.tradeGraph);
+        }
+        void SelItemByItemID(int kdIndex)
+        {
+            if (graphMgr.CurrentGraphType != GraphType.eKCurveGraph)
+            {
+                SelItemForKCurveGraph(kdIndex);
+            }
+            if (graphMgr.CurrentGraphType != GraphType.eAppearenceGraph)
+            {
+                SelItemForAppearenceGraph(kdIndex);
+            }
+            if (graphMgr.CurrentGraphType != GraphType.eMissCountGraph)
+            {
+                SelItemForMissCountGraph(kdIndex);
+            }
+            if (graphMgr.CurrentGraphType != GraphType.eTradeGraph)
+            {
+                SelItemForTradeGraph(kdIndex, false);
+            }
+            FormMain.Instance.SelectDataItem(kdIndex);
+            DataItem item = DataManager.GetInst().FindDataItem(kdIndex);
+            CollectBarGraphData(item);
+            itemSel = item;
+        }
+        void UnselectItem()
+        {
+            graphMgr.kvalueGraph.UnSelectData();
+            graphMgr.appearenceGraph.UnselectDataItem();
+            graphMgr.missCountGraph.UnselectDataItem();
+            graphMgr.tradeGraph.UnselectTradeData();
+            FormMain.Instance.SelectDataItem(null);
+            CollectBarGraphData(null);
+            itemSel = null;
+        }
+        void SelItem(int selID)
+        {
+            if (selID != -1)
+            {
+                SelItemByItemID(selID);
+            }
+            //else
+            //{
+            //    UnselectItem();
+            //}
+        }
+        void ProcAddAuxLine(Point mousePos)
+        {
+            if (graphMgr.kvalueGraph.enableAuxiliaryLine)
+            {
+                graphMgr.kvalueGraph.SelectAuxLine(mousePos, numberIndex, curCDT);
+                if (graphMgr.kvalueGraph.selAuxLine == null && hasMouseMoveOnUpPanel == false)
+                {
+                    switch (graphMgr.kvalueGraph.auxOperationIndex)
+                    {
+                        case AuxLineType.eNone:
+                            {
+
+                            }
+                            break;
+                        case AuxLineType.eHorzLine:
+                            {
+                                graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT);
+                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                            }
+                            break;
+                        case AuxLineType.eVertLine:
+                            {
+                                graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT);
+                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                            }
+                            break;
+                        case AuxLineType.eSingleLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddSingleLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eChannelLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
+                                {
+                                    graphMgr.kvalueGraph.AddChannelLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1],
+                                        graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eGoldSegmentedLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddGoldSegLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eCircleLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddCircleLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eArrowLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddArrowLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                        case AuxLineType.eRectLine:
+                            {
+                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
+                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                {
+                                    graphMgr.kvalueGraph.AddRectLine(
+                                        graphMgr.kvalueGraph.mouseHitPts[0],
+                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
+                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
         private void panelUp_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                // 当前是出号率视图
                 if(graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
                 {
                     int selID = graphMgr.appearenceGraph.SelectDataItem(e.Location);
-                    if(selID != -1)
-                    {
-                        // 滚动到屏幕中间
-                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
-                        int xOffset = 0;
-                        if (selID * graphMgr.kvalueGraph.gridScaleW > checkW)
-                            xOffset = -checkW;
-                        else
-                            xOffset = -(int)(selID * graphMgr.kvalueGraph.gridScaleW);
-
-                        graphMgr.kvalueGraph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
-                        FormMain.Instance.SelectDataItem(selID);
-                    }
-                    else
-                    {
-                        graphMgr.appearenceGraph.UnselectDataItem();
-                        graphMgr.kvalueGraph.UnSelectData();
-                    }
+                    SelItem(selID);
                 }
+                // 当前是遗漏视图
                 else if(graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
                 {
                     int selID = graphMgr.missCountGraph.SelectDataItem(e.Location);
-                    if (selID != -1)
-                    {
-                        // 滚动到屏幕中间
-                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
-                        int xOffset = 0;
-                        if (selID * graphMgr.kvalueGraph.gridScaleW > checkW)
-                            xOffset = -checkW;
-                        else
-                            xOffset = -(int)(selID * graphMgr.kvalueGraph.gridScaleW);
-
-                        graphMgr.kvalueGraph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
-                        FormMain.Instance.SelectDataItem(selID);
-                    }
-                    else
-                    {
-                        graphMgr.missCountGraph.UnselectDataItem();
-                        graphMgr.kvalueGraph.UnSelectData();
-                    }
+                    SelItem(selID);
                 }
+                // 当前是交易视图
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 {
                     TradeDataBase selectTD = null;
                     int kdataID = -1;
+                    // 鼠标没有移动
                     if (e.X == upPanelMousePosOnBtnDown.X && e.Y == upPanelMousePosOnBtnDown.Y)
                     {
+                        // 计算点击选中的交易项
                         int selID = graphMgr.tradeGraph.SelectTradeData(e.Location);
                         if (selID != -1)
                         {
                             selectTD = TradeDataManager.Instance.historyTradeDatas[selID];
                             kdataID = selectTD.targetLotteryItem.idGlobal;
-                            CollectBarGraphData(selectTD.targetLotteryItem);
                         }
-                        else
-                        {
-                            CollectBarGraphData(null);
-                        }
-                    }
-                    else
-                    {
-                        CollectBarGraphData(null);
-                        graphMgr.tradeGraph.UnselectTradeData();
                     }
                     if (kdataID != -1)
                     {
-                        // 滚动到屏幕中间
-                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
-                        int xOffset = 0;
-                        if (kdataID * graphMgr.kvalueGraph.gridScaleW > checkW)
-                            xOffset = -checkW;
-                        else
-                            xOffset = -(int)(kdataID * graphMgr.kvalueGraph.gridScaleW);
-
-                        graphMgr.kvalueGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
-                        FormMain.Instance.SelectDataItem(kdataID);
+                        // 对所有图形视图中的选中项进行选中
+                        SelItemByItemID(kdataID);
 
                         // 在K线图中，切换到交易选中的那个数字位以及012路对应的视图
                         int numID = -1, pathID = -1;
@@ -564,134 +704,25 @@ namespace LotteryAnalyze.UI
                             curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
                         }
                     }
-                    else
-                    {
-                        graphMgr.kvalueGraph.UnSelectData();
-                    }
-
-                    if(kdataID != -1)
-                    {
-                        // 滚动到屏幕中间
-                        int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
-                        int xOffset = 0;
-                        if (kdataID * graphMgr.appearenceGraph.gridScaleW > checkW)
-                            xOffset = -checkW;
-                        else
-                            xOffset = -(int)(kdataID * graphMgr.appearenceGraph.gridScaleW);
-
-                        graphMgr.appearenceGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
-
-                        xOffset = 0;
-                        if (kdataID * graphMgr.missCountGraph.gridScaleW > checkW)
-                            xOffset = -checkW;
-                        else
-                            xOffset = -(int)(kdataID * graphMgr.missCountGraph.gridScaleW);
-                        graphMgr.missCountGraph.ScrollToData(kdataID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
-                    }
-                    else
-                    {
-                        graphMgr.appearenceGraph.UnselectDataItem();
-                        graphMgr.missCountGraph.UnselectDataItem();
-                    }
+                    //else
+                    //{
+                    //    UnselectItem();
+                    //}
                 }
-                else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
-                    graphMgr.kvalueGraph.enableAuxiliaryLine)
+                // 当前是K线图
+                else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
-                    graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
+                    // 处理辅助线的添加
+                    ProcAddAuxLine(e.Location);
                     if (graphMgr.kvalueGraph.selAuxLine == null && hasMouseMoveOnUpPanel == false)
                     {
-                        switch (graphMgr.kvalueGraph.auxOperationIndex)
+                        int kdataID = -1;
+                        // 鼠标没有移动
+                        if (e.X == upPanelMousePosOnBtnDown.X && e.Y == upPanelMousePosOnBtnDown.Y)
                         {
-                            case AuxLineType.eNone:
-                                {
-
-                                }
-                                break;
-                            case AuxLineType.eHorzLine:
-                                {
-                                    graphMgr.kvalueGraph.AddHorzLine(e.Location, numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                }
-                                break;
-                            case AuxLineType.eVertLine:
-                                {
-                                    graphMgr.kvalueGraph.AddVertLine(e.Location, numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                }
-                                break;
-                            case AuxLineType.eSingleLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
-                                    {
-                                        graphMgr.kvalueGraph.AddSingleLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
-                            case AuxLineType.eChannelLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
-                                    {
-                                        graphMgr.kvalueGraph.AddChannelLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1],
-                                            graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
-                            case AuxLineType.eGoldSegmentedLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
-                                    {
-                                        graphMgr.kvalueGraph.AddGoldSegLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
-                            case AuxLineType.eCircleLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
-                                    {
-                                        graphMgr.kvalueGraph.AddCircleLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
-                            case AuxLineType.eArrowLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
-                                    {
-                                        graphMgr.kvalueGraph.AddArrowLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
-                            case AuxLineType.eRectLine:
-                                {
-                                    graphMgr.kvalueGraph.mouseHitPts.Add(e.Location);
-                                    if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
-                                    {
-                                        graphMgr.kvalueGraph.AddRectLine(
-                                            graphMgr.kvalueGraph.mouseHitPts[0],
-                                            graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                        graphMgr.kvalueGraph.mouseHitPts.Clear();
-                                    }
-                                }
-                                break;
+                            // 计算点击选中的K值
+                            int selID = graphMgr.kvalueGraph.SelectKData(e.Location);
+                            SelItem(selID);
                         }
                     }
                 }
@@ -1369,6 +1400,14 @@ namespace LotteryAnalyze.UI
             }
             graphMgr.endShowDataItemIndex = TradeDataManager.Instance.historyTradeDatas.Count - 1;
             this.Invalidate(true);
+        }
+
+        private void setBreakPointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (itemSel != null)
+                TradeDataManager.Instance.debugInfo.dataItemTagBP = itemSel.idTag;
+            TradeDebugWindow.Open();
+            TradeDebugWindow.RefreshUI();
         }
     }
 }

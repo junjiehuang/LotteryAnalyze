@@ -426,9 +426,15 @@ namespace LotteryAnalyze
                     pci = pcis[j];
                     dbgtxt += "[" + pci.pathIndex + "] ";
                     var etor = pci.paramMap.GetEnumerator();
+                    int count = 0;
                     while(etor.MoveNext())
                     {
                         dbgtxt += etor.Current.Key + "=" + etor.Current.Value + ", ";
+                        ++count;
+                        if(count % 5 == 0)
+                        {
+                            dbgtxt += "\n\t";
+                        }
                     }
                     dbgtxt += "\n";
                     //dbgtxt += "[" + pci.pathIndex + " = " + pci.pathValue;
@@ -524,7 +530,7 @@ namespace LotteryAnalyze
             // 已开奖
             if(tips.Length == 0 && targetLotteryItem != null)
             {
-                tips += "[期号：" + targetLotteryItem.idTag + "] [号码：" + targetLotteryItem.lotteryNumber + "]\n";
+                tips += targetLotteryItem.idGlobal + " [期号：" + targetLotteryItem.idTag + "] [号码：" + targetLotteryItem.lotteryNumber + "]\n";
                 foreach( int key in tradeInfo.Keys)
                 {
                     TradeNumbers tn = tradeInfo[key];
@@ -564,6 +570,7 @@ namespace LotteryAnalyze
                 {
                     numIndex = key;
                     pathIndex = tradeInfo[key].tradeNumbers[0].number % 3;
+                    break;
                 }
             }
         }
@@ -1035,6 +1042,28 @@ namespace LotteryAnalyze
                 }
             }
             return null;
+        }
+        public TradeDataBase GetTradeByItemGlobalID(int itemGlobalID)
+        {
+            for(int i = 0; i < historyTradeDatas.Count; ++i)
+            {
+                if (historyTradeDatas[i].targetLotteryItem.idGlobal == itemGlobalID)
+                    return historyTradeDatas[i];
+            }
+            return null;
+        }
+        public int GetTradeIndex(int itemGlobalID)
+        {
+            for (int i = 0; i < historyTradeDatas.Count; ++i)
+            {
+                if (historyTradeDatas[i].targetLotteryItem.idGlobal == itemGlobalID)
+                    return i;
+            }
+            return -1;
+        }
+        public int GetTradeIndex(TradeDataBase trade)
+        {
+            return historyTradeDatas.IndexOf(trade);
         }
         
         public DataItem GetLatestTradedDataItem()
@@ -1792,18 +1821,287 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
-            if(GlobalSetting.G_ONLY_TRADE_BEST_PATH && GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+            if (GlobalSetting.G_ONLY_TRADE_BEST_PATH)
             {
-                MacdLineCfg cfg = (MacdLineCfg)pci0.paramMap["MacdCfg"];
-                if (//(int)pci0.paramMap["KUP"] <= 0
-                    //(float)pci0.paramMap["KGraph"] != 2.0f 
-                    //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
-                    false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
-                    || (int)pci0.paramMap["IsMacdPUP"] != 1
-                    || (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1 && (int)pci0.paramMap["curMissCount"] > 2)
-                    //|| (int)pci0.paramMap["KUP"] <= 0
-                    )
-                    return;
+                if (GlobalSetting.G_ENABLE_CHECK_PATH_CAN_TRADE == false)
+                {
+                    if ((int)pci0.paramMap["curMissCount"] > 1)
+                        return;
+                }
+                else
+                {
+                    // K线是否在布林中轨
+                    bool isOnBolleanMid = Math.Abs((float)pci0.paramMap["count2BMs"]) <= 1.2;
+                    // 判断K值是否落在支撑线上的检测距离
+                    float downLineCheckTor = 0.2f;// 1.2f;
+                                                  // K线与支撑线的关系：0 - 在支撑线上， 1 - 在支撑线上方， -1 - 在支撑线下方
+                    int relationShipToDownLine = 0;
+                    // 剩余交易次数是否可用
+                    bool isTradeCountLeftNotEnough = false;
+                    // 下支撑线的斜率
+                    float downLineSlope = 0;
+                    // 从支撑线判断当前是否处于支撑线下方或者剩余交易次数不足
+                    bool isKCurveUnderDownLineOrTradeCountNotEnough = false;
+                    float distFromCur2Min = 999;
+                    // 是否在布林中轨之下运行且出现抬升转折点了
+                    bool isUnderBolleanMidAndBecomeUp = false;
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    {
+                        isUnderBolleanMidAndBecomeUp =
+                        (int)pci0.paramMap["KKeepDown"] == 2 &&
+                        (int)pci0.paramMap["KAtBMDown"] == 1;
+                    }
+                    // 布林中轨是否转而向下了
+                    bool isBolleanMidBecomeDown = (float)pci0.paramMap["bpmDelta"] < 0;
+                    bool isNearDL = false;
+
+
+                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+                    {
+                        // 还剩下多少笔交易可用
+                        int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
+                        // 下后支撑线存在
+                        if ((int)pci0.paramMap["DLNext"] == 1)
+                        {
+                            float vdist = (float)pci0.paramMap["DLNextVDist"];
+                            // k线穿出下后支撑线了
+                            if (vdist > downLineCheckTor)
+                                relationShipToDownLine = -1;
+                            // k线在下后支撑线上方
+                            else if (vdist < -downLineCheckTor)
+                                relationShipToDownLine = 1;
+                            // k线落在下后支撑线上
+                            else
+                                relationShipToDownLine = 0;
+
+                            // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
+                            // 那么可以认为剩余次数不足了
+                            if ((int)pci0.paramMap["DLHasNextHitPt"] == 1)
+                            {
+                                float count2DL = (float)pci0.paramMap["DLNextHitPtXOF"];
+                                if (count2DL > countLeft)
+                                    isTradeCountLeftNotEnough = true;
+                                if (0 < count2DL && count2DL <= 2)
+                                    isNearDL = true;
+                            }
+                            downLineSlope = (float)pci0.paramMap["DLNextSlope"];
+                            distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
+                        }
+                        else if ((int)pci0.paramMap["DLPrev"] == 1)
+                        {
+                            float vdist = (float)pci0.paramMap["DLPrevVDist"];
+                            // k线穿出下前支撑线了
+                            if (vdist > downLineCheckTor)
+                                relationShipToDownLine = -1;
+                            // k线在下前支撑线上方
+                            else if (vdist < -downLineCheckTor)
+                                relationShipToDownLine = 1;
+                            // k线落在下前支撑线上
+                            else
+                                relationShipToDownLine = 0;
+
+                            // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
+                            // 那么可以认为剩余次数不足了
+                            if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1)
+                            {
+                                float count2DL = (float)pci0.paramMap["DLPrevHitPtXOF"];
+                                if (count2DL > countLeft)
+                                    isTradeCountLeftNotEnough = true;
+                                if (0 < count2DL && count2DL <= 2)
+                                    isNearDL = true;
+                            }
+                            downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
+                            distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
+                        }
+                    }
+
+
+                    // test only trade upon bollean mid
+                    //if ((int)pci0.paramMap["BollBandLE3Count"] < 3)
+                    bool tradeImmediate =
+                        (int)pci0.paramMap["KDownFromTop"] != 1 &&
+                        (
+                            (int)pci0.paramMap["aprC"] >= 3
+                            || (int)pci0.paramMap["onMCC"] > 0
+                        );
+                    //|| (isNearDL && downLineSlope >= 0.0)
+                    //|| relationShipToDownLine == 0;
+                    if (!tradeImmediate)
+                    {
+                        // 如果是在布林中轨上方超过2期没开出，放弃之
+                        if ((int)pci0.paramMap["KDownFromTop"] == 1)
+                            return;
+                        // 如果当前运行在中轨之下，放弃之
+                        if ((int)pci0.paramMap["dnMCC"] > 0)
+                            return;
+                        // 如果少于3期在布林中轨及之上，就放弃之
+                        int upMC = (int)pci0.paramMap["upMC"];
+                        int onMC = (int)pci0.paramMap["onMC"];
+                        int onMCC = (int)pci0.paramMap["onMCC"];
+                        int upAndOnMC = upMC + onMC;
+                        // 如果当前在中轨以及之上的期数小于3，放弃之
+                        if (upAndOnMC < 3)
+                            return;
+                        // 如果超出3期没开出或者当前k线运行到布林中轨之下，放弃之
+                        if (!(onMCC >= 3 || upMC > 0))
+                            return;
+                        // 如果布林中轨往下运行，放弃之
+                        if ((float)pci0.paramMap["bpmDelta"] < -0.01)
+                            return;
+                    }
+
+                    /*
+                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+                    {
+                        // 还剩下多少笔交易可用
+                        int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
+                        // 下后支撑线存在
+                        if ((int)pci0.paramMap["DLNext"] == 1)
+                        {
+                            float vdist = (float)pci0.paramMap["DLNextVDist"];
+                            // k线穿出下后支撑线了
+                            if (vdist > downLineCheckTor)
+                                relationShipToDownLine = -1;
+                            // k线在下后支撑线上方
+                            else if (vdist < -downLineCheckTor)
+                                relationShipToDownLine = 1;
+                            // k线落在下后支撑线上
+                            else
+                                relationShipToDownLine = 0;
+
+                            // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
+                            // 那么可以认为剩余次数不足了
+                            if ((int)pci0.paramMap["DLHasNextHitPt"] == 1 && (float)pci0.paramMap["DLNextHitPtXOF"] > countLeft)
+                                isTradeCountLeftNotEnough = true;
+                            downLineSlope = (float)pci0.paramMap["DLNextSlope"];
+                            distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
+                        }
+                        else if ((int)pci0.paramMap["DLPrev"] == 1)
+                        {
+                            float vdist = (float)pci0.paramMap["DLPrevVDist"];
+                            // k线穿出下前支撑线了
+                            if (vdist > downLineCheckTor)
+                                relationShipToDownLine = -1;
+                            // k线在下前支撑线上方
+                            else if (vdist < -downLineCheckTor)
+                                relationShipToDownLine = 1;
+                            // k线落在下前支撑线上
+                            else
+                                relationShipToDownLine = 0;
+
+                            // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
+                            // 那么可以认为剩余次数不足了
+                            if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1 && (float)pci0.paramMap["DLPrevHitPtXOF"] > countLeft)
+                                isTradeCountLeftNotEnough = true;
+                            downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
+                            distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
+                        }
+                        // 是否长期处于布林中轨之下，且下支撑线是抬升的，当前离支撑点在3个单位之内
+                        bool isLongUnderBMAndMayBecomeUp =
+                            //downLineSlope > 0 &&
+                            //distFromCur2Min > -1 && distFromCur2Min <= 3 &&
+                            isUnderBolleanMidAndBecomeUp;
+
+                        isKCurveUnderDownLineOrTradeCountNotEnough = relationShipToDownLine == -1;// || isTradeCountLeftNotEnough;
+                        // 如果k线穿过下支撑线或者剩余交易次数不足，那么可以认为当前的交易可以放弃了
+                        if (isKCurveUnderDownLineOrTradeCountNotEnough && 
+                            !(isOnBolleanMid || isLongUnderBMAndMayBecomeUp))
+                        {
+                            return;
+                        }
+                    }
+
+                    if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+                    {
+                        //BolleanBandCfg bbCfg = (BolleanBandCfg)pci0.paramMap["BBandCfg"];
+                        //if(bbCfg == BolleanBandCfg.eNone)
+                        //    return;
+                        //else if(bbCfg == BolleanBandCfg.eBecomeLarge || bbCfg == BolleanBandCfg.eBecomeSmall)
+                        //{
+                        //    if ((int)pci0.paramMap["curMissCount"] > 3 && Math.Abs((float)pci0.paramMap["count2BMs"]) > 1)
+                        //        return;
+                        //}
+
+
+                        // k线在布林中轨 或者 k线在下支撑线
+                        bool isOnBolleanMidOrOnDownLine = isOnBolleanMid || relationShipToDownLine == 0;
+                        // 判断当前的交易是否需要取消
+                        bool isCurTradeShouldCancel =
+                            // 是否超过3次没出了
+                            (int)pci0.paramMap["curMissCount"] > 3
+                            // 且剩余次数足够
+                            && !isTradeCountLeftNotEnough
+                            // 且没有出现下面的情况(k线在布林中轨 或者 k线在下支撑线)
+                            && !isOnBolleanMidOrOnDownLine
+                            // 如果没有出现抬升转折点
+                            && !isUnderBolleanMidAndBecomeUp;
+                        if (isCurTradeShouldCancel)
+                        {
+                            return;
+                        }
+
+                        BolleanCfg bmCFG = (BolleanCfg)pci0.paramMap["BMCfg"];
+                        if (bmCFG == BolleanCfg.eNone ||
+                            bmCFG == BolleanCfg.eDown ||
+                            bmCFG == BolleanCfg.eFirstUpThenDown ||
+                            isBolleanMidBecomeDown)
+                        {
+                            if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                            {
+                                if (//isOnBolleanMidOrOnDownLine == false && 
+                                    downLineSlope < 0 &&
+                                    (int)pci0.paramMap["KKeepDown"] == 1 &&
+                                    (int)pci0.paramMap["KAtBMDown"] == 1)
+                                    return;
+                            }
+                            else
+                                return;
+                        }
+                    }
+
+                    //if ((int)pci0.paramMap["KAtBMDown"] == 1)
+                    //    return;
+
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    {
+                        //// 当前没有出现坚持等待的信号时
+                        //if ((int)pci0.paramMap["WaitUp"] == 0)
+                        //{
+                        //    int tradeDistToMax = tradeCountList.Count - currentTradeCountIndex;
+                        //    if (// K线在布林中轨下方下降运行，就放弃
+                        //        (int)pci0.paramMap["KKeepDown"] == 1
+                        //         ||
+                        //        // 如果K线没出现反弹信号且剩下的交易次数小于MultiTradePathCount，就放弃
+                        //        ((tradeDistToMax < MultiTradePathCount) && (int)pci0.paramMap["KKeepDown"] != 2)
+                        //         ||
+                        //        // 如果当前的遗漏超过3，且MACD柱不是上升或者触底反弹的，就放弃
+                        //        (
+                        //            (int)pci0.paramMap["MBAR"] <= 0 &&
+                        //            (int)pci0.paramMap["curMissCount"] > 3
+                        //        )
+                        //         ||
+                        //        // 如果当前的遗漏超过3，当前遗漏超过最大遗漏且K线是纯下行的话，就放弃
+                        //        (
+                        //            (float)pci0.paramMap["KGraph"] == -1.0f &&
+                        //            (int)pci0.paramMap["curMissCount"] >= (int)pci0.paramMap["maxMissCount"]
+                        //            && (int)pci0.paramMap["curMissCount"] > 3
+                        //        ))
+                        //        return;
+                        //}
+
+                        //MacdLineCfg cfg = (MacdLineCfg)pci0.paramMap["MacdCfg"];
+                        //if (//(int)pci0.paramMap["KUP"] <= 0
+                        //    //(float)pci0.paramMap["KGraph"] != 2.0f 
+                        //    //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
+                        //    false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
+                        //    || (int)pci0.paramMap["IsMacdPUP"] != 1
+                        //    || (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1 && (int)pci0.paramMap["curMissCount"] > 2)
+                        //    //|| (int)pci0.paramMap["KUP"] <= 0
+                        //    )
+                        //    return;
+                    }
+                    */
+                }
             }
             PathCmpInfo pci1 = trade.pathCmpInfos[bestNumIndex][1];
             tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
@@ -3165,6 +3463,242 @@ namespace LotteryAnalyze
             eDC,
         }
 
+        // 布林中轨形态
+        public enum BolleanCfg
+        {
+            // 未看出是啥形态
+            eNone,
+            // 先升后降
+            eFirstUpThenDown,
+            // 下降
+            eDown,
+            // 先降后升
+            eFirstDownThenUp,
+            // 上升
+            eUp,
+            // 水平震荡
+            eHorz,
+        }
+
+        // 布林带开口类型
+        public enum BolleanBandCfg
+        {
+            // 未定义
+            eNone,
+            // 开口变小（上升到末端或者下降到末端，预示着要开始做调整了）
+            eBecomeSmall,
+            // 开口增大（准备上升或者准备下降了）
+            eBecomeLarge,
+            // 保持不变（震荡形态）
+            eKeepSize,
+        }
+
+        void CalcBolleanCfg(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            const int LOOP_COUNT = 10;
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
+
+            for (int i = 0; i < cdts.Length; ++i)
+            {
+				CollectDataType cdt = cdts[i];
+				BollinPoint bpRight = kddc.GetBollinPointMap(kdd).GetData(cdt, false);
+                PathCmpInfo pci = pcis[i];
+				// 布林中轨的形态
+                pci.paramMap["BMCfg"] = BolleanCfg.eNone;
+				// 布林中轨的斜率
+                pci.paramMap["bpmDelta"] = (float)0.0f;
+				// 是否在布林中轨之上连续超过2期没开出
+                pci.paramMap["KDownFromTop"] = 0;
+				// 布林通道在3期内的个数
+                pci.paramMap["BollBandLE3Count"] = 0;
+				// 计算连续落在布林中轨以及之上的K值的个数
+                pci.paramMap["onMC"] = bpRight.onMidCount;
+                pci.paramMap["upMC"] = bpRight.uponMidCount;
+                pci.paramMap["dnMC"] = bpRight.underMidCount;
+                pci.paramMap["onMCC"] = bpRight.onMidCountContinue;
+				pci.paramMap["dnMCC"] = bpRight.underMidCountContinue;
+                // 计算连续开出的期数
+                pci.paramMap["aprC"] = (int)item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].appearCount;
+                // 计算中轨方向变化的次数
+                pci.paramMap["midKUC"] = bpRight.midKeepUpCount;
+                pci.paramMap["midKHC"] = bpRight.midKeepHorzCount;
+                pci.paramMap["midKDC"] = bpRight.midKeepDownCount;
+                pci.paramMap["midKUCC"] = bpRight.midKeepUpCountContinue;
+                pci.paramMap["midKHCC"] = bpRight.midKeepHorzCountContinue;
+                pci.paramMap["midKDCC"] = bpRight.midKeepDownCountContinue;
+
+                //if (item.idGlobal < LOOP_COUNT)
+                //{
+                //    pci.paramMap["BBandCfg"] = BolleanBandCfg.eNone;
+                //    continue;
+                //}
+                if (item.idGlobal < 1)
+                {
+                    continue;
+                }
+                
+                KData kd = kdd.GetData(cdt, false);
+                BollinPoint bpLeft = bpRight, bpMax = bpRight, bpMin = bpRight;
+                float missHeight = GraphDataManager.GetMissRelLength(cdt);
+                float horzTor = missHeight * 0.3f;
+                BollinPoint bpP = kddc.GetBollinPointMap(kdd.index - 1).GetData(cdt, false);
+                float deltaCur = bpRight.midValue - bpP.midValue;
+                float deltaLast = 0;
+                int pathIndex = GraphDataManager.S_CDT_LIST.IndexOf(cdt) - GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+
+                while (lastTrade != null)
+                {
+                    PathCmpInfo lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
+                    deltaLast = (float)lastPCI.paramMap["bpmDelta"];
+                    float tor = Math.Abs(deltaCur - deltaLast);
+                    if (tor > 0.01f)
+                        break;
+                    lastTrade = TradeDataManager.Instance.GetTrade(lastTrade.INDEX - 1) as TradeDataOneStar;
+                }
+                // 计算布林中轨当前的斜率
+                pci.paramMap["bpmDelta"] = (float)deltaCur;
+
+                // 计算布林中轨曲线的形态
+                if (deltaCur > deltaLast)
+                    pci.paramMap["BMCfg"] = BolleanCfg.eUp;
+                else if(deltaCur < deltaLast)
+                    pci.paramMap["BMCfg"] = BolleanCfg.eDown;
+                else if(deltaCur > 0)
+                    pci.paramMap["BMCfg"] = BolleanCfg.eUp;
+                else if(deltaCur < 0)
+                    pci.paramMap["BMCfg"] = BolleanCfg.eDown;
+                else
+                    pci.paramMap["BMCfg"] = BolleanCfg.eHorz;
+
+
+                // 计算当前k值是否出现在布林中轨之上且连续超过2期没出的情况
+                StatisticUnit curSU = item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt];
+                int curMissCount = curSU.missCount;
+                int curAppearCount = curSU.appearCount;
+                bool isMaxMissCountLE1 = false;
+                if (kd.index > 6 && curMissCount < 2)
+                {
+                    DataItem cit = item.parent.GetPrevItem(item);
+                    int loop = 1;
+                    while (cit != null && loop <= 4)
+                    {
+                        int cmc = cit.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                        if (cmc > 1)
+                        {
+                            break;
+                        }
+                        cit = cit.parent.GetPrevItem(cit);
+                        ++loop;
+                    }
+                    if (loop == 5)
+                        isMaxMissCountLE1 = true;
+                }
+                if (curMissCount > 0)
+                {
+                    int tid = kd.index - curMissCount + 1;
+                    BollinPoint tbp = kddc.GetBollinPointMap(tid).GetData(cdt, false);
+                    KData tkd = kddc.GetKDataDict(tid).GetData(cdt, false);
+                    float distToUp = tkd.RelateDistTo(tbp.upValue) / missHeight;
+                    // 如果最近开出的那一期是在布林上轨，那么认为这是要连续下降的趋势
+                    if(distToUp <= 1)
+                    {
+                        pci.paramMap["KDownFromTop"] = 1;
+                    }
+                    // 如果超过2期没开出，且当前期是在布林中轨上方一个单位以外，我们也认为这是要下降的趋势
+                    else if(curMissCount > 1 && bpRight.midDistToKD < -1)
+                    {
+                        pci.paramMap["KDownFromTop"] = 1;
+                    }
+                    // 如果最近开出的那一期是在布林中轨，且连续开出少于2期，并且k线是在布林中轨之下运行的，
+                    // 那么认为这也是下降趋势
+                    //else if(tbp.onMidCountContinue < 3 && tbp.underMidCount > 0)
+                    //else if(curMissCount > 1 && tbp.onMidCountContinue > 0 && tbp.underMidCount > 0)
+                    else if(!
+                        (curAppearCount >= 3
+                        || bpRight.onMidCountContinue >= 3
+                        || isMaxMissCountLE1
+                        ))
+                    {
+                        if(bpRight.underMidCount > 0)
+                            pci.paramMap["KDownFromTop"] = 1;
+                    }
+                }
+                else if(!isMaxMissCountLE1 && bpRight.underMidCount > 0)
+                {
+                    pci.paramMap["KDownFromTop"] = 1;
+                }
+
+                int t = kd.index - 2;
+                if (t < 0) t = 0;
+                int BollBandLE3Count = 0;
+                for ( ; t <= kd.index; ++t )
+                {
+                    KData tkd = kddc.GetKDataDict(t).GetData(cdt, false);
+                    BollinPoint tbp = kddc.GetBollinPointMap(t).GetData(cdt, false);
+                    float band = (tbp.midValue - tbp.downValue) / missHeight;
+                    if (band <= 3.1)
+                        ++BollBandLE3Count;
+                }
+                // 计算布林带小于等于3的数量
+                pci.paramMap["BollBandLE3Count"] = BollBandLE3Count;
+
+                /*
+                for (int j = 1; j <= LOOP_COUNT; ++j)
+                {
+                    BollinPoint pBP = kddc.GetBollinPointMap(kdd.index - j).GetData(cdt, false);
+                    bpLeft = pBP;
+                    if (bpMax.midValue <= pBP.midValue)
+                        bpMax = pBP;
+                    if (bpMin.midValue >= pBP.midValue)
+                        bpMin = pBP;
+                }
+
+                float minMaxGap = bpMax.midValue - bpMin.midValue;
+                if (bpLeft == bpMax && bpRight == bpMin)
+                {
+                    pci.paramMap["BMCfg"] = BolleanCfg.eDown;
+                }
+                else if (bpLeft == bpMin && bpRight == bpMax)
+                {
+                    pci.paramMap["BMCfg"] = BolleanCfg.eUp;
+                }
+                else if(minMaxGap <= horzTor)
+                {
+                    pci.paramMap["BMCfg"] = BolleanCfg.eHorz;
+                }
+                else if (bpMax.Index < bpMin.Index)
+                {
+                    if (bpMin.Index < bpRight.Index && bpMin.midValue < bpRight.midValue)
+                        pci.paramMap["BMCfg"] = BolleanCfg.eFirstDownThenUp;
+                    else
+                        pci.paramMap["BMCfg"] = BolleanCfg.eFirstUpThenDown;
+                }
+                else if (bpMax.Index > bpMin.Index)
+                {
+                    if (bpMax.Index < bpRight.Index && bpMax.midValue > bpRight.midValue)
+                        pci.paramMap["BMCfg"] = BolleanCfg.eFirstUpThenDown;
+                    else
+                        pci.paramMap["BMCfg"] = BolleanCfg.eFirstDownThenUp;
+                }
+
+                float leftBandSize = (bpLeft.upValue - bpLeft.downValue) / missHeight;
+                float rightBandSize = (bpRight.upValue - bpRight.downValue) / missHeight;
+                float checkSize = 1;
+                float deltaSize = rightBandSize - leftBandSize;
+                if (deltaSize > checkSize)
+                    pci.paramMap["BBandCfg"] = BolleanBandCfg.eBecomeLarge;
+                else if (deltaSize < -checkSize)
+                    pci.paramMap["BBandCfg"] = BolleanBandCfg.eBecomeSmall;
+                else
+                    pci.paramMap["BBandCfg"] = BolleanBandCfg.eKeepSize;
+                */
+            }
+        }
 
         void CalcPathMacdUp(DataItem item, TradeDataOneStar trade, int numIndex)
         {
@@ -3190,6 +3724,38 @@ namespace LotteryAnalyze
                 CollectDataType cdt = cdts[i];
                 KData kd = kdd.GetData(cdt, false);
                 MACDPoint mp = bpm.GetData(cdt, false);
+                int curMissCount = item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+
+                /*
+                pci.paramMap["MBAR"] = 0;
+                MACDPointMap pMPM = kddc.GetMacdPointMap(mp.parent.index - 1);
+                MACDPointMap ppMPM = kddc.GetMacdPointMap(mp.parent.index - 2);
+                if(pMPM != null && ppMPM != null)
+                {
+                    MACDPoint pMP = pMPM.GetData(cdt, false);
+                    MACDPoint ppMP = ppMPM.GetData(cdt, false);
+                    if(mp.BAR > pMP.BAR)
+                    {
+                        if (pMP.BAR >= ppMP.BAR)
+                            pci.paramMap["MBAR"] = 2;
+                        else
+                            pci.paramMap["MBAR"] = 1;
+                    }
+                    else if(mp.BAR < pMP.BAR && pMP.BAR < ppMP.BAR)
+                    {
+                        float rate = (mp.BAR - pMP.BAR) / (pMP.BAR - ppMP.BAR);
+                        if(rate < 0.5f)
+                            pci.paramMap["MBAR"] = 1;
+                        else
+                            pci.paramMap["MBAR"] = -1;
+                    }
+                    else if(mp.BAR < pMP.BAR && mp.BAR >= ppMP.BAR)
+                    {
+                        pci.paramMap["MBAR"] = 1;
+                    }
+                }
+                */
+
                 minKD = maxKD = kd;
                 int totalCount = 0;
                 int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
@@ -3202,8 +3768,6 @@ namespace LotteryAnalyze
                 int dirDownCount = 0;
                 int limitCheckCount = TOTAL_LIMIT_CHECK_COUNT;
 
-                int curMissCount = item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
-
                 PathCmpInfo lastPCI = null;
                 if (lastTrade != null)
                 {
@@ -3211,6 +3775,7 @@ namespace LotteryAnalyze
                     lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
                 }
 
+                /*
                 MacdLineCfg curCfg = MacdLineCfg.eNone;
                 if (lastPCI == null)
                 {
@@ -3276,6 +3841,7 @@ namespace LotteryAnalyze
                     }
                 }
                 pci.paramMap["MacdCfg"] = curCfg;
+                */
 
                 while (pItem != null && loopCount > 0)
                 {
@@ -3338,6 +3904,7 @@ namespace LotteryAnalyze
                     --loopCount;
                 }
 
+                /*
                 if(firstU != null && firstD == null)
                 {
                     dir = -1;
@@ -3404,7 +3971,9 @@ namespace LotteryAnalyze
                         pci.paramMap["IsMacdPUP"] = 1;
                     }
                 }
+                */
 
+                /*
                 // k线的最小值在左边，最大值在右边，显示上升的形态
                 if (maxKD.index > minKD.index)
                 {
@@ -3454,14 +4023,30 @@ namespace LotteryAnalyze
                                 hasSet = true;
                             }
                         }
+                        // 如果还没检测出来
                         if(!hasSet)
                         {
+                            // 取最大最小值的距离
                             float maxDist = maxKD.KValue - minKD.KValue;
+                            // 如果是在4格范围之内，我们认为这还是一个强上升的形态
                             if (maxDist < 4)
                                 pci.paramMap["KGraph"] = 1.0f;
                             else
                             {
-                                pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                                // 如果当前是连续没出，且最近一次出的k值是最大值
+                                if (curMissCount == kd.index - maxKD.index)
+                                {
+                                    // 判断当前k值是否超过上次的最低点，如果是，则表明这个K线是要下行了
+                                    if (minPts.Count > 0 && kd.KValue < minPts[0].KValue)
+                                    {
+                                        pci.paramMap["KGraph"] = -1.0f;
+                                        hasSet = true;
+                                    }
+                                }
+                                if (!hasSet)
+                                {
+                                    pci.paramMap["KGraph"] = (float)Math.Abs(kd.KValue - maxKD.KValue) / maxDist;
+                                }
                             }
                         }
                     }
@@ -3509,6 +4094,306 @@ namespace LotteryAnalyze
                 {
                     pci.paramMap["KUP"] = 0;
                     pci.paramMap["KGraph"] = -1.0f;
+                }
+                */
+
+                //pci.paramMap["WaitUp"] = 0;
+                pci.paramMap["KKeepDown"] = 0;
+                pci.paramMap["KAtBMDown"] = 0;
+
+                //// 重置上次交易对的WaitUp的值
+                //int lastTradeNumID = -1, lastTradePathIndex = -1;
+                //if (lastTrade != null)
+                //{
+                //    lastTrade.GetTradeNumIndexAndPathIndex(ref lastTradeNumID, ref lastTradePathIndex);
+                //    // 上一次交易这一路对了，就把WaitUp标记为2
+                //    if (lastTrade.reward > 0 && lastTradeNumID == numIndex && lastTradePathIndex == pci.pathIndex)
+                //    {
+                //        lastPCI.paramMap["WaitUp"] = 2;
+                //    }
+                //}
+
+                float missheight = GraphDataManager.GetMissRelLength(cdt);
+                BollinPoint bp = kddc.GetBollinPointMap(kdd).GetData(cdt,false);
+                // 当前K线是否触及布林下轨了
+                bool isCurHitBolleanDown = false;
+                if(kd.index > 0)
+                {
+                    BollinPoint bpPrev = kddc.GetBollinPointMap(kd.index - 1).GetData(cdt, false);
+                    KData kdPrev = kddc.GetKDataDict(kd.index - 1).GetData(cdt, false);
+                    if (kdPrev.DownValue > bpPrev.downValue && kd.DownValue <= bp.downValue)
+                        isCurHitBolleanDown = true;
+                }
+
+                float curDistToBM = kd.RelateDistTo(bp.midValue) / missheight;
+                // 标记当前k线是否运行到布林中轨之下了
+                if(curDistToBM > 1)
+                {
+                    pci.paramMap["KAtBMDown"] = 1;
+                }
+
+                bool hasCheckKeepDown = false;
+                if(curMissCount >= 3)
+                {
+                    int idP = kdd.index - (curMissCount - 1);
+                    KDataDict kddP = kddc.GetKDataDict(idP);
+                    BollinPointMap bpmP = kddc.GetBollinPointMap(idP);
+                    KData kdP = kddP.GetData(cdt, false);
+                    BollinPoint bpP = bpmP.GetData(cdt, false);
+                    float upDistP = kdP.RelateDistTo(bpP.upValue) / missheight;
+                    float midDistP = kdP.RelateDistTo(bpP.midValue) / missheight;
+                    if (upDistP <= 1 ||
+                        (midDistP <= -1 && curDistToBM > 1))
+                    {
+                        pci.paramMap["KKeepDown"] = 1;
+                        hasCheckKeepDown = true;
+                    }
+                }
+
+                if (hasCheckKeepDown == false)
+                {
+                    // 当前K值在布林中轨下方
+                    if (curDistToBM >= 0)
+                    {
+                        KData tmpMinKD = null, tmpMaxKD = maxKD;
+                        int tmpMinKDID = -1, tmpMaxKDID = maxPts.IndexOf(maxKD);
+                        // 遍历最大值右边的相对低点的最低值
+                        for (int t = 0; t < minPts.Count; ++t)
+                        {
+                            KData tkd = minPts[t];
+                            if (tkd.parent.index > maxKD.parent.index)
+                            {
+                                // 找到最低点
+                                if (tmpMinKD == null || tmpMinKD.KValue >= tkd.KValue)
+                                {
+                                    tmpMinKD = tkd;
+                                    tmpMinKDID = t;
+                                }
+                            }
+                            else
+                                break;
+                        }
+                        bool findTmpMax = false;
+                        // 遍历最大值右边首个在布林中轨之上的相对高点
+                        for (int t = 0; t < maxPts.Count; ++t)
+                        {
+                            KData tkd = maxPts[t];
+                            if (tkd.index <= maxKD.index)
+                                break;
+                            bp = kddc.GetBollinPointMap(tkd.parent).GetData(cdt, false);
+                            //float distToMid = tkd.RelateDistTo(bp.midValue) / missheight;
+                            float distToMid = (tkd.DownValue - bp.midValue) / missheight;
+                            if (distToMid >= 1)
+                            {
+                                tmpMaxKD = tkd;
+                                tmpMaxKDID = t;
+                                findTmpMax = true;
+                                break;
+                            }
+                        }
+                        bool isTmpMaxKDUpBolleanMidLine = findTmpMax ? true : false;
+                        if (!isTmpMaxKDUpBolleanMidLine)
+                        {
+                            bp = kddc.GetBollinPointMap(tmpMaxKD.parent).GetData(cdt, false);
+                            isTmpMaxKDUpBolleanMidLine = tmpMaxKD.RelateDistTo(bp.midValue) / missheight < 0;
+                        }
+
+                        if (tmpMinKD != null)
+                        {
+                            bp = kddc.GetBollinPointMap(tmpMinKD.parent).GetData(cdt, false);
+                            float tmpMinDistToBM = tmpMinKD.RelateDistTo(bp.midValue) / missheight;
+
+                            // 如果最低点也在布林中轨下方
+                            if (tmpMinDistToBM > 0)
+                            {
+                                //// 标记是否连续开出2轮以上的反转信号
+                                //bool hasExistBecomeUpSignalMoreThanTwice = false;
+                                //// 追溯当前K值之前的3期，获取开出的次数
+                                //int appcount = curMissCount == 0 ? 1 : 0;
+                                //if (kd.index > 4)
+                                //{
+                                //    for (int t = 1; t <= 3; ++t)
+                                //    {
+                                //        int nmc = kddc.GetKDataDict(kd.index - t).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                //        if (nmc == 0)
+                                //            ++appcount;
+                                //    }
+                                //}
+                                //// 如果最近4期开出大于等于2次
+                                //if (appcount >= 2)
+                                //{
+                                //    int endID = tmpMaxKD.index + 3;
+                                //    int firstAppcount = 0;
+                                //    for (int t = kd.index - 4; t >= endID; --t)
+                                //    {
+                                //        firstAppcount = 0;
+                                //        for (int k = 0; k <= 3; ++k)
+                                //        {
+                                //            int nmc = kddc.GetKDataDict(t - k).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                //            if (nmc == 0)
+                                //                ++firstAppcount;
+                                //        }
+                                //        if (firstAppcount >= 2)
+                                //            break;
+                                //    }
+                                //    if (firstAppcount >= 2)
+                                //    {
+                                //        pci.paramMap["WaitUp"] = 1;
+                                //        hasExistBecomeUpSignalMoreThanTwice = true;
+                                //    }
+                                //}
+                                //else if (lastPCI != null && (int)lastPCI.paramMap["WaitUp"] == 1)
+                                //{
+                                //    pci.paramMap["WaitUp"] = 1;
+                                //}
+
+                                // 如果相对高点在布林中轨之上，且在相对低点的右边
+                                if (isTmpMaxKDUpBolleanMidLine &&
+                                    tmpMaxKD.index > tmpMinKD.index &&
+                                    tmpMaxKD.index < kd.index)
+                                {
+                                    if(isCurHitBolleanDown)
+                                        pci.paramMap["KKeepDown"] = 2;
+                                    else
+                                        pci.paramMap["KKeepDown"] = 1;
+                                }
+                                else
+                                {
+                                    float distToMin = (tmpMinKD.KValue - kd.KValue) / missheight;
+
+                                    // 如果当前K值是最低点，或者当前k值低于相对低点，我们认为这段K线是纯下降的
+                                    if (tmpMinKD == kd || distToMin > 1.4f)
+                                    {
+                                        if (isCurHitBolleanDown)
+                                            pci.paramMap["KKeepDown"] = 2;
+                                        else
+                                            pci.paramMap["KKeepDown"] = 1;
+                                    }
+                                    // 第一个相对低点是最低点
+                                    else if (tmpMinKDID == 0)
+                                    {
+                                        //int prevHitCount = 0, nextHitCount = 0, tid = 0;
+                                        //int tmpMinKDMissCount = kddc.GetKDataDict(tmpMinKD.index).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                        //for (int t = 1; t <= 3; ++t)
+                                        //{
+                                        //    tid = tmpMinKD.index - t;
+                                        //    if(tid >= 0 && tmpMinKDMissCount < 3)
+                                        //    {
+                                        //        int nmc = kddc.GetKDataDict(tid).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                        //        if (nmc == 0)
+                                        //            ++prevHitCount;
+                                        //    }
+                                        //    tid = tmpMinKD.index + t;
+                                        //    if(tid <= kd.index)
+                                        //    {
+                                        //        int nmc = kddc.GetKDataDict(tid).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                        //        if (nmc == 0)
+                                        //            ++nextHitCount;
+                                        //    }
+                                        //}
+                                        int hitCount = 0, startID = tmpMinKD.index - 3, endID = tmpMinKD.index + 3;
+                                        if(endID > kd.index)
+                                        {
+                                            endID = kd.index;
+                                            if (endID - kd.index == 1)
+                                            {
+                                                startID -= 1;
+                                            }
+                                        }
+                                        if (startID < 0)
+                                            startID = 0;
+                                        for (int t = startID; t <= endID; ++t)
+                                        {
+                                            int nmc = kddc.GetKDataDict(t).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                            if (nmc == 0)
+                                                ++hitCount;
+                                        }
+                                        if (hitCount >= 2)
+                                        {
+                                            pci.paramMap["KKeepDown"] = 2;
+                                        }
+                                        //int gap = kd.index - tmpMinKD.index;
+                                        //// 如果最低点到当前超过2期
+                                        //if (gap >= 2)
+                                        //{
+                                        //    int contHit = 0;
+                                        //    for (int t = 1; t <= gap; ++t)
+                                        //    {
+                                        //        int nmc = kddc.GetKDataDict(tmpMinKD.index + t).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                        //        if (nmc == 0)
+                                        //            ++contHit;
+                                        //        else
+                                        //            break;
+                                        //    }
+                                        //    // 如果超过2期且最低点到当前都是连续开出，那么就设置这是强烈上升的
+                                        //    if ( contHit >= 2 )
+                                        //        pci.paramMap["KKeepDown"] = 2;
+                                        //    else
+                                        //        pci.paramMap["KKeepDown"] = 1;
+                                        //}
+                                        //// 从当前项往前遍历4期
+                                        //else if(kd.index > 4)
+                                        //{
+                                        //    int contHit = curMissCount == 0 ? 1 : 0;
+                                        //    for(int t = 1; t <= 3; ++t)
+                                        //    {
+                                        //        int nmc = kddc.GetKDataDict(kd.index - t).startItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].missCount;
+                                        //        if (nmc == 0)
+                                        //            ++contHit;
+                                        //    }
+                                        //    if (contHit >= 2)
+                                        //        pci.paramMap["KKeepDown"] = 2;
+                                        //    else
+                                        //        pci.paramMap["KKeepDown"] = 1;
+                                        //}
+                                        // 还没出现转折信号，认为还是下降
+                                        else
+                                        {
+                                            pci.paramMap["KKeepDown"] = 1;
+                                        }
+                                    }
+                                    // 右边还有相对低点，说明已经出现反转信号了，很可能要回升了
+                                    else if (tmpMinKDID > 0)
+                                    {
+                                        // 如果触及布林下轨或者离相对低点的高度没有低于超过1.5个单位，可以认为还有有上升可能
+                                        if(isCurHitBolleanDown || distToMin <= 1.4f)
+                                            pci.paramMap["KKeepDown"] = 2;
+                                        // 否则就认为这是下降趋势
+                                        else
+                                            pci.paramMap["KKeepDown"] = 1;
+                                    }
+                                    
+                                    else
+                                    {
+                                        //if(hasExistBecomeUpSignalMoreThanTwice)
+                                        //    pci.paramMap["KKeepDown"] = 2;
+                                        //else
+                                        pci.paramMap["KKeepDown"] = 1;
+                                    }
+                                }
+                            }
+                            // 低点在布林中轨之上
+                            else
+                            {
+                                pci.paramMap["KKeepDown"] = 1;
+                            }
+                        }
+                    }
+                    // 当前k值在布林中轨之上
+                    else if (minKD.index < maxKD.index)
+                    {
+                        // 如果最高值接触到布林上轨，且当前遗漏超过2期，那么可以认为k线要下行了
+                        bp = kddc.GetBollinPointMap(maxKD.parent).GetData(cdt, false);
+                        float maxKDistToBU = maxKD.RelateDistTo(bp.upValue) / missheight;
+                        if (maxKDistToBU <= 0 && curMissCount > 2)
+                        {
+                            // 在布林中轨附近的时候，认为有反弹的可能性
+                            if (Math.Abs(curDistToBM) <= 1)
+                                pci.paramMap["KKeepDown"] = 0;
+                            else
+                                pci.paramMap["KKeepDown"] = 1;
+                        }
+                    }
                 }
             }
         }
@@ -3671,11 +4556,13 @@ namespace LotteryAnalyze
             //float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
             //int[] maxMissCount = new int[] { 0, 0, 0, };
             int[] curMissCount = new int[] { 0, 0, 0, };
+            int[] preMaxMissCount = new int[] { 0, 0, 0, };
             for (int i = 0; i < cdts.Length; ++i)
             {
                 CollectDataType cdt = cdts[i];
                 //maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
                 curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
+                preMaxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
                 appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
                 //appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
                 if (sumPRV != null)
@@ -3700,6 +4587,7 @@ namespace LotteryAnalyze
                 PathCmpInfo pci = new PathCmpInfo(i, sumCUR.statisticUnitMap[cdts[i]]);
                 //pci.paramMap["maxMissCount"] = maxMissCount[i];
                 pci.paramMap["curMissCount"] = curMissCount[i];
+                pci.paramMap["maxMissCount"] = preMaxMissCount[i];
                 //pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
                 pci.paramMap["curRateF"] = appearenceRateFastCUR[i];
                 pci.paramMap["detRateF"] = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
@@ -3732,6 +4620,16 @@ namespace LotteryAnalyze
                 CalcPathMacdUp(item, trade, numIndex);
             }
 
+            if(GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+            {
+                CalcBolleanCfg(item, trade, numIndex);
+            }
+
+            if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+            {
+                AutoAnalyzeToolCheck(numIndex, trade);
+            }
+
             int path0Index = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
             int selPathIndex = GraphDataManager.S_CDT_LIST.IndexOf(GlobalSetting.G_TRADE_SPEC_CDT) - path0Index;
             trade.pathCmpInfos[numIndex].Sort(
@@ -3752,15 +4650,6 @@ namespace LotteryAnalyze
                             return 1;
                     }
 
-                    //if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
-                    //    return -1;
-                    //if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
-                    //    return 1;
-                    //if ((float)x.paramMap["detRateF"] > 0 && (float)y.paramMap["detRateF"] <= 0)
-                    //    return -1;
-                    //if ((float)x.paramMap["detRateF"] <= 0 && (float)y.paramMap["detRateF"] > 0)
-                    //    return 1;
-
                     if(GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
                     {
                         if ((float)x.paramMap["UpBolleanCount"] > (float)y.paramMap["UpBolleanCount"])
@@ -3769,7 +4658,28 @@ namespace LotteryAnalyze
                             return 1;
                     }
 
-                    if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    if(GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+                    {
+                        int xMDC = (int)x.paramMap["midKDC"];
+                        int yMDC = (int)y.paramMap["midKDC"];
+                        if (xMDC == 0 && yMDC > 0)
+                            return -1;
+                        else if (xMDC > 0 && yMDC == 0)
+                            return 1;
+                        if ((int)x.paramMap["aprC"] > (int)y.paramMap["aprC"])
+                            return -1;
+                        if ((int)x.paramMap["aprC"] < (int)y.paramMap["aprC"])
+                            return 1;
+
+                        //int xMidUpHorzCount = (int)x.paramMap["onMC"];// + (int)x.paramMap["upMC"];
+                        //int yMidUpHorzCount = (int)y.paramMap["onMC"];// + (int)y.paramMap["upMC"];
+                        //if (xMidUpHorzCount > yMidUpHorzCount)
+                        //    return -1;
+                        //else if (xMidUpHorzCount < yMidUpHorzCount)
+                        //    return 1;
+                    }
+
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                     {
                         int xCount = 0, yCount = 0;
                         bool XKUP = (float)x.paramMap["KGraph"] == 2.0f;
@@ -3836,6 +4746,11 @@ namespace LotteryAnalyze
                             !isXMUp && isYMUp)
                             return 1;
 
+                        if ((int)x.paramMap["MBAR"] > (int)y.paramMap["MBAR"])
+                            return -1;
+                        if ((int)x.paramMap["MBAR"] < (int)y.paramMap["MBAR"])
+                            return 1;
+
                         if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"] &&
                             (float)x.paramMap["detRateF"] >= (float)y.paramMap["detRateF"])
                             return -1;
@@ -3898,6 +4813,83 @@ namespace LotteryAnalyze
                 case 2: return CollectDataType.ePath2;
             }
             return CollectDataType.eNone;
+        }
+
+        void AutoAnalyzeToolCheck(int numIndex, TradeDataBase trade)
+        {
+            int path0Index = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            for( int i = 0; i < 3; ++i )
+            {
+                CollectDataType cdt = cdts[i];
+                int selPathIndex = i;
+                TradeDataOneStar osTrade = trade as TradeDataOneStar;
+                PathCmpInfo pci = osTrade.FindInfoByPathIndex(numIndex, selPathIndex);
+				pci.paramMap["DLNext"] = 0;
+				pci.paramMap["DLPrev"] = 0;
+
+                // 取这一路的通道线工具
+                AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+
+                // 取下通道线
+                if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+                {
+                    KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                    KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+                    KDataDict kdd = kddc.GetKDataDict(trade.lastDateItem);
+                    KData kd = kdd.GetData(cdt, false);
+                    float missHeight = GraphDataManager.GetMissRelLength(cdt);
+                    bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
+                    float prevKV, nextKV, prevSlope, nextSlope;
+                    float prevHitPtX, nextHitPtX, prevHitPtY, nextHitPtY;
+                    // 计算当前期在下通道线上的K值
+                    int testID = trade.lastDateItem.idGlobal + 1;
+                    // 如果下支撑线存在
+                    if (sali.downLineData.valid)
+                    {
+                        // 计算下后支撑线的参数
+                        sali.downLineData.GetKValue(testID, kd.UpValue, -missHeight,
+                            out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPtX, out prevHitPtY,
+                            out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPtX, out nextHitPtY);
+                        // 存在下后通道线
+                        if (hasNextKV)
+                        {
+                            // 获取下后支撑线的最低值
+                            float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataNextSharp.DownValue);
+                            // 计算当前K值在下后通道线上的垂直投影点与当前K值的距离
+                            float willMissCount = kd.RelateDistTo(nextKV) / missHeight;
+							pci.paramMap["DLNext"] = 1;
+                            pci.paramMap["DLNextSlope"] = (float)nextSlope;
+                            pci.paramMap["DLNextVDist"] = (float)willMissCount;
+                            pci.paramMap["DLHasNextHitPt"] = hasNextHitPt ? 1 : 0;
+                            if (hasNextHitPt)
+                            {
+                                pci.paramMap["DLNextHitPtXOF"] = nextHitPtX - testID;
+                            }
+                            float dlNextDist2Min = (kd.UpValue - minKV) / missHeight;
+                            pci.paramMap["DLNextDist2Min"] = dlNextDist2Min;
+                        }
+                        // 下前通道线
+                        if (hasPrevKV)
+                        {
+                            // 计算下前支撑线的参数
+                            float minKV = Math.Min(sali.downLineData.dataSharp.DownValue, sali.downLineData.dataPrevSharp.DownValue);
+                            // 计算当前K值在下前通道线上的垂直投影点与当前K值的距离
+                            float willMissCount = kd.RelateDistTo(prevKV) / missHeight;
+							pci.paramMap["DLPrev"] = 1;
+                            pci.paramMap["DLPrevSlope"] = (float)prevSlope;
+                            pci.paramMap["DLPrevVDist"] = (float)willMissCount;
+                            pci.paramMap["DLHasPrevHitPt"] = hasPrevHitPt ? 1 : 0;
+                            if (hasPrevHitPt)
+                            {
+                                pci.paramMap["DLPrevHitPtXOF"] = prevHitPtX - testID;
+                            }
+                            float dlPrevDist2Min = (kd.UpValue - minKV) / missHeight;
+                            pci.paramMap["DLPrevDist2Min"] = dlPrevDist2Min;
+                        }
+                    }
+                }
+            }
         }
 
         void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex, int mayUpPathsCount = 0)
@@ -4237,7 +5229,6 @@ namespace LotteryAnalyze
 
         void CalcKValueDistToBolleanLine(KDataDict kdd, BollinPointMap bpm, CollectDataType cdt, ref float count2BU, ref float count2BM, ref float count2BD)
         {
-
             KData kd = kdd.GetData(cdt, false);
             BollinPoint bp = bpm.GetData(cdt, false);
             float dist2bu = kd.RelateDistTo(bp.upValue);

@@ -1,4 +1,5 @@
 ﻿#define TRADE_DBG
+#define RECORD_BOLLEAN_MID_COUNTS
 
 using System;
 using System.Collections.Generic;
@@ -45,18 +46,30 @@ namespace LotteryAnalyze
 
         public float HitValue;
         public float MissValue;
-        public float KValue;
+        public float KValue
+        {
+            get
+            {
+                return kvalue;
+            }
+            set
+            {
+                kvalue = value;
+                RefreshUpDownValue();
+            }
+        }
 
         //string info = null;
         bool hasRefreshUpDownValue = false;
         float upValue;
         float downValue;
+        float kvalue;
 
         public float UpValue
         {
             get
             {
-                RefreshUpDownValue();
+                //RefreshUpDownValue();
                 return upValue;
             }
         }
@@ -65,7 +78,7 @@ namespace LotteryAnalyze
         {
             get
             {
-                RefreshUpDownValue();
+                //RefreshUpDownValue();
                 return downValue;
             }
         }
@@ -77,21 +90,25 @@ namespace LotteryAnalyze
         // < 0，测试点在K线的下方
         public float RelateDistTo(float testValue)
         {
-            float KDIST = UpValue - DownValue;
+            float ret = 0;
+            //float KDIST = UpValue - DownValue;
             if (testValue >= DownValue && testValue <= UpValue)
-                return 0;
+            {
+                ret = 0;
+            }
             else if (testValue > UpValue)
             {
-                if(KDIST != 0)
-                    return (testValue - UpValue) / KDIST;
-                return testValue - UpValue;
+                //if(KDIST != 0)
+                //    return (testValue - UpValue) / KDIST;
+                ret = testValue - UpValue;
             }
             else
             {
-                if (KDIST != 0)
-                    return (testValue - DownValue) / KDIST;
-                return testValue - DownValue;
+                //if (KDIST != 0)
+                //    return (testValue - DownValue) / KDIST;
+                ret = testValue - DownValue;
             }
+            return ret;
         }
 
         public int index
@@ -106,21 +123,21 @@ namespace LotteryAnalyze
 
         void RefreshUpDownValue()
         {
-            if (hasRefreshUpDownValue)
-                return;
-            hasRefreshUpDownValue = true;
+            //if (hasRefreshUpDownValue)
+            //    return;
+            //hasRefreshUpDownValue = true;
             int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
             float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
             float missV = MissValue * missRelHeight;
-            if (HitValue > missV)
+            if (HitValue > MissValue)
             {
-                upValue = KValue;
-                downValue = KValue - missV;
+                upValue = kvalue;
+                downValue = kvalue - HitValue;
             }
             else
             {
-                upValue = KValue + HitValue;
-                downValue = KValue;
+                upValue = kvalue + missV;
+                downValue = kvalue;
             }
         }
 
@@ -132,14 +149,14 @@ namespace LotteryAnalyze
                 int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
                 if (parent.startItem == parent.endItem)
                 {
-                    info = "[" + parent.startItem.idTag + "-" + parent.startItem.lotteryNumber + "] [" +
+                    info = parent.startItem.idGlobal + " [" + parent.startItem.idTag + "-" + parent.startItem.lotteryNumber + "] [" +
                     parent.parent.GetNumberIndexName() + " " +
                     GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
                     HitValue + " : " + MissValue + "]\n";
                 }
                 else
                 {
-                    info = "[" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
+                    info = parent.startItem.idGlobal + " [" + parent.startItem.idTag + "-" + parent.endItem.idTag + "] [" +
                     GraphDataManager.S_CDT_TAG_LIST[cdtID] + "] [" +
                     HitValue + " : " + MissValue + "]\n";
                 }
@@ -456,6 +473,7 @@ namespace LotteryAnalyze
 
     public class BollinPoint
     {
+        public BollinPointMap parent = null;
         //// 标准差
         //public float standardDeviation = 0;
         // 上轨值
@@ -464,6 +482,43 @@ namespace LotteryAnalyze
         public float midValue = 0;
         // 下轨值
         public float downValue = 0;
+
+#if RECORD_BOLLEAN_MID_COUNTS
+        // K值开在布林中轨之下的个数
+        public int underMidCount = 0;
+        // K值开在布林中轨之上的个数
+        public int uponMidCount = 0;
+        // K值开在布林中轨的个数
+        public int onMidCount = 0;
+
+        // K值连续开在布林中轨之下的个数
+        public int underMidCountContinue = 0;
+        // K值连续开在布林中轨的个数
+        public int onMidCountContinue = 0;
+        // K值连续开在布林中轨之上的个数
+        public int uponMidCountContinue = 0;
+        // 布林中轨到对应K值的距离单位
+        public float midDistToKD = 0;
+
+        // 布林中轨保持向上的个数
+        public int midKeepUpCount = 0;
+        // 布林中轨保持水平的个数
+        public int midKeepHorzCount = 0;
+        // 布林中轨保持下降的个数
+        public int midKeepDownCount = 0;
+
+        public int midKeepUpCountContinue = 0;
+        public int midKeepHorzCountContinue = 0;
+        public int midKeepDownCountContinue = 0;
+#endif
+
+        public int Index
+        {
+            get
+            {
+                return parent.index;
+            }
+        }
     }
     public class BollinPointMap
     {
@@ -485,6 +540,7 @@ namespace LotteryAnalyze
             else if (createIfNotExist == false)
                 return null;
             BollinPoint data = new BollinPoint();
+            data.parent = this;
             bpMap.Add(collectDataType, data);
             return data;
         }
@@ -510,9 +566,10 @@ namespace LotteryAnalyze
             bollinMapLst.Add(bpm);
             return bpm;
         }
-
+        
         public void Process(List<KDataDict> srcData, AvgDataContainer avgContainer)
         {
+            const float scale = 2;
             bollinMapLst.Clear();
             if (ENABLE == false)
             {                
@@ -524,11 +581,17 @@ namespace LotteryAnalyze
                 AvgPointMap apm = avgContainer.avgPointMapLst[i];
 
                 BollinPointMap bpm = CreateBollinPointMap(srcData[i]);
+                BollinPointMap prevBPM = null;
+                if (bpm.index > 0)
+                {
+                    prevBPM = bpm.GetPrevBPM();
+                }
                 for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];
                     AvgPoint ap = apm.apMap[cdt];
                     KData kd = kdd.dataDict[cdt];
+                    float missHeight = GraphDataManager.GetMissRelLength(cdt);
 
                     float MA = ap.avgKValue;
                     int startIndex = i - avgContainer.cycle + 1;
@@ -543,13 +606,192 @@ namespace LotteryAnalyze
                         ++N;
                     }
                     SD = (float)Math.Sqrt(SD / N);
-
                     BollinPoint bp = bpm.GetData(cdt, true);
-                    const float scale = 2;
-                    //bp.standardDeviation = SD;
                     bp.midValue = MA;
                     bp.upValue = MA + scale * SD;
                     bp.downValue = MA - scale * SD;
+
+#if RECORD_BOLLEAN_MID_COUNTS
+                    CalcRelationCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    CalcMidKeepCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+#endif
+                }
+            }
+        }
+
+        void CalcRelationCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
+        {
+            const float TOR = 0.5f;
+            if (bpm.index == 0)
+            {
+                bp.underMidCount = bp.uponMidCount = bp.underMidCountContinue = bp.uponMidCountContinue = 0;
+                bp.onMidCount = bp.onMidCountContinue = 1;
+                bp.midDistToKD = 0.0f;
+            }
+            else
+            {
+                BollinPoint pBP = prevBPM.GetData(cdt, false);
+                string tt = (kd.RelateDistTo(bp.midValue) / missHeight).ToString("f1");
+                bp.midDistToKD = float.Parse(tt);
+                // 当前K值在布林中轨之上
+                if (bp.midDistToKD < -TOR)
+                {
+                    bp.underMidCount = 0;
+                    // 如果之前在布林中轨下方的个数大于0，意味着出现反转信号，
+                    // 那么需要重置在中轨及以上的个数
+                    if (pBP.underMidCount > 0)
+                    {
+                        bp.onMidCount = pBP.onMidCountContinue;
+                        bp.uponMidCount = 1;
+                    }
+                    // 中轨之上的个数增加
+                    else
+                    {
+                        bp.onMidCount = pBP.onMidCount;
+                        bp.uponMidCount = pBP.uponMidCount + 1;
+                    }
+
+                    if (pBP.uponMidCountContinue > 0)
+                    {
+                        bp.uponMidCountContinue = pBP.uponMidCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.uponMidCountContinue = 1;
+                    }
+                    bp.onMidCountContinue = 0;
+                    bp.underMidCountContinue = 0;
+                }
+                // 当前K值在布林中轨之下
+                else if (bp.midDistToKD > TOR)
+                {
+                    bp.uponMidCount = 0;
+                    // 如果之前在布林中轨上方的个数大于0，意味着出现反转信号，
+                    // 那么需要重置在中轨及以下的个数
+                    if (pBP.uponMidCount > 0)
+                    {
+                        bp.onMidCount = pBP.onMidCountContinue;
+                        bp.underMidCount = 1;
+                    }
+                    // 中轨之下的个数增加
+                    else
+                    {
+                        bp.onMidCount = pBP.onMidCount;
+                        bp.underMidCount = pBP.underMidCount + 1;
+                    }
+
+                    if (pBP.underMidCountContinue > 0)
+                    {
+                        bp.underMidCountContinue = pBP.underMidCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.underMidCountContinue = 1;
+                    }
+                    bp.onMidCountContinue = 0;
+                    bp.uponMidCountContinue = 0;
+                }
+                // 当前K值在布林中轨
+                else
+                {
+                    bp.onMidCount = pBP.onMidCount + 1;
+                    bp.underMidCount = pBP.underMidCount;
+                    bp.uponMidCount = pBP.uponMidCount;
+
+                    if (pBP.onMidCountContinue > 0)
+                    {
+                        bp.onMidCountContinue = pBP.onMidCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.onMidCountContinue = 1;
+                    }
+                    bp.underMidCountContinue = 0;
+                    bp.uponMidCountContinue = 0;
+                }
+            }
+        }
+        void CalcMidKeepCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
+        {
+            const float TOR = 0.00001f;
+            if (bpm.index == 0)
+            {
+                bp.midKeepDownCount = bp.midKeepUpCount = bp.midKeepDownCountContinue = bp.midKeepUpCountContinue = 0;
+                bp.midKeepHorzCount = bp.midKeepHorzCountContinue = 1;
+            }
+            else
+            {
+                BollinPoint pBP = prevBPM.GetData(cdt, false);
+                float delta = bp.midValue - pBP.midValue;
+                // turn up
+                if(delta > TOR)
+                {
+                    bp.midKeepDownCount = 0;
+                    if (pBP.midKeepDownCount > 0)
+                    {
+                        bp.midKeepHorzCount = pBP.midKeepHorzCountContinue;
+                        bp.midKeepUpCount = 1;
+                    }
+                    else
+                    {
+                        bp.midKeepHorzCount = pBP.midKeepHorzCount;
+                        bp.midKeepUpCount = pBP.midKeepUpCount + 1;
+                    }
+
+                    if (pBP.midKeepUpCountContinue > 0)
+                    {
+                        bp.midKeepUpCountContinue = pBP.midKeepUpCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.midKeepUpCountContinue = 1;
+                    }
+                    bp.midKeepHorzCountContinue = 0;
+                    bp.midKeepDownCountContinue = 0;
+                }
+                // turn down
+                else if(delta < -TOR)
+                {
+                    bp.midKeepUpCount = 0;
+                    if (pBP.midKeepUpCount > 0)
+                    {
+                        bp.midKeepHorzCount = pBP.midKeepHorzCountContinue;
+                        bp.midKeepDownCount = 1;
+                    }
+                    // 中轨之下的个数增加
+                    else
+                    {
+                        bp.midKeepHorzCount = pBP.midKeepHorzCount;
+                        bp.midKeepDownCount = pBP.midKeepDownCount + 1;
+                    }
+
+                    if (pBP.midKeepDownCountContinue > 0)
+                    {
+                        bp.midKeepDownCountContinue = pBP.midKeepDownCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.midKeepDownCountContinue = 1;
+                    }
+                    bp.midKeepHorzCountContinue = 0;
+                    bp.midKeepUpCountContinue = 0;
+                }
+                else
+                {
+                    bp.midKeepHorzCount = pBP.midKeepHorzCount + 1;
+                    bp.midKeepDownCount = pBP.midKeepDownCount;
+                    bp.midKeepUpCount = pBP.midKeepUpCount;
+
+                    if (pBP.midKeepHorzCountContinue > 0)
+                    {
+                        bp.midKeepHorzCountContinue = pBP.midKeepHorzCountContinue + 1;
+                    }
+                    else
+                    {
+                        bp.midKeepHorzCountContinue = 1;
+                    }
+                    bp.midKeepDownCountContinue = 0;
+                    bp.midKeepUpCountContinue = 0;
                 }
             }
         }
@@ -747,6 +989,15 @@ namespace LotteryAnalyze
             return null;
         }
 
+        public KDataDict GetKDataDict(int id)
+        {
+            if(id >=0 && id < dataLst.Count)
+            {
+                return dataLst[id];
+            }
+            return null;
+        }
+
         public AvgPointMap GetAvgPointMap(int avgIndex, KDataDict kdd)
         {
             if(kdd != null && avgDataContMap.ContainsKey(avgIndex))
@@ -770,6 +1021,13 @@ namespace LotteryAnalyze
                 if (bpm.kdd == kdd)
                     return bpm;
             }
+            return null;
+        }
+
+        public BollinPointMap GetBollinPointMap(int index)
+        {
+            if (index >= 0 && index < bollinDataLst.bollinMapLst.Count)
+                return bollinDataLst.bollinMapLst[index];
             return null;
         }
 
@@ -844,8 +1102,8 @@ namespace LotteryAnalyze
         int dataLength = 0;
         int cycleLength = 1;
         int bollinBandCycleLength = 20;
-        int macdEMAShortCycle = 10;
-        int macdEMALongCycle = 20;
+        int macdEMAShortCycle = 5;//10;
+        int macdEMALongCycle = 10;//20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
 
         static List<Dictionary<CollectDataType, float>> G_CUR_KVALUE_MAP = new List<Dictionary<CollectDataType, float>>();
@@ -854,9 +1112,12 @@ namespace LotteryAnalyze
             for(int i = 0; i < G_CUR_KVALUE_MAP.Count; ++i)
             {
                 Dictionary<CollectDataType, float> dct = G_CUR_KVALUE_MAP[i];
-                foreach(CollectDataType cdt in dct.Keys)
+                if (dct != null)
                 {
-                    dct[cdt] = 0;
+                    for(int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
+                    {
+                        dct[GraphDataManager.S_CDT_LIST[t]] = 0;
+                    }
                 }
             }
         }

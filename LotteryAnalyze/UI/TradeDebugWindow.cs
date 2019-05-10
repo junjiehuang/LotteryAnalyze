@@ -27,6 +27,14 @@ namespace LotteryAnalyze.UI
             FormMain.AddWindow(this);
         }
 
+        public static void RefreshUI()
+        {
+            if(sInst != null)
+            {
+                sInst.Data2UI();
+            }
+        }
+
         void Data2UI()
         {
             treeViewDebugNodes.Nodes.Clear();
@@ -78,6 +86,21 @@ namespace LotteryAnalyze.UI
         {
             TradeDataManager.Instance.debugInfo.ClearAllBreakPoints();
             Data2UI();
+        }
+
+        private void buttonStartDebug_Click(object sender, EventArgs e)
+        {
+            GlobalSimTradeWindow.Open();
+            GlobalSimTradeWindow.StartDebug();
+        }
+
+        private void buttonStep_Click(object sender, EventArgs e)
+        {
+            if (TradeDataManager.Instance.IsCompleted() == false)
+            {
+                TradeDataManager.Instance.PauseAutoTradeJob();
+                TradeDataManager.Instance.SimTradeOneStep();
+            }
         }
     }
 }

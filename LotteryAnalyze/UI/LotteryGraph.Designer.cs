@@ -61,6 +61,7 @@ namespace LotteryAnalyze.UI
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadNextBatchDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeSimFromFirstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,8 +159,9 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.loadNextBatchDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.CreateUpAndDownPanel();
+            this.setBreakPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            CreateUpAndDownPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -224,6 +226,13 @@ namespace LotteryAnalyze.UI
             this.delAllAuxLinesToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.delAllAuxLinesToolStripMenuItem.Text = "清除所有辅助线";
             this.delAllAuxLinesToolStripMenuItem.Click += new System.EventHandler(this.delAllAuxLinesToolStripMenuItem_Click);
+            // 
+            // loadNextBatchDatasToolStripMenuItem
+            // 
+            this.loadNextBatchDatasToolStripMenuItem.Name = "loadNextBatchDatasToolStripMenuItem";
+            this.loadNextBatchDatasToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.loadNextBatchDatasToolStripMenuItem.Text = "读取下一批数据";
+            this.loadNextBatchDatasToolStripMenuItem.Click += new System.EventHandler(this.loadNextBatchDatasToolStripMenuItem_Click);
             // 
             // 设置ToolStripMenuItem
             // 
@@ -404,9 +413,11 @@ namespace LotteryAnalyze.UI
             this.delSelAuxLineToolStripMenuItem,
             this.delAllLinesToolStripMenuItem,
             this.cancelAddAuxLineToolStripMenuItem,
-            this.modifyAuxLineColorToolStripMenuItem});
+            this.modifyAuxLineColorToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.setBreakPointToolStripMenuItem});
             this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
-            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 92);
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(173, 142);
             // 
             // delSelAuxLineToolStripMenuItem
             // 
@@ -1302,12 +1313,17 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // loadNextBatchDatasToolStripMenuItem
+            // setBreakPointToolStripMenuItem
             // 
-            this.loadNextBatchDatasToolStripMenuItem.Name = "loadNextBatchDatasToolStripMenuItem";
-            this.loadNextBatchDatasToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.loadNextBatchDatasToolStripMenuItem.Text = "读取下一批数据";
-            this.loadNextBatchDatasToolStripMenuItem.Click += new System.EventHandler(this.loadNextBatchDatasToolStripMenuItem_Click);
+            this.setBreakPointToolStripMenuItem.Name = "setBreakPointToolStripMenuItem";
+            this.setBreakPointToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.setBreakPointToolStripMenuItem.Text = "设置断点";
+            this.setBreakPointToolStripMenuItem.Click += new System.EventHandler(this.setBreakPointToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(169, 6);
             // 
             // LotteryGraph
             // 
@@ -1460,5 +1476,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBoxAppearenceType;
         private System.Windows.Forms.ToolStripMenuItem loadNextBatchDatasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem setBreakPointToolStripMenuItem;
     }
 }
