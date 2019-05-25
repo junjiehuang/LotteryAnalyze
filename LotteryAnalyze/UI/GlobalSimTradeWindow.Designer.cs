@@ -77,6 +77,7 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.checkBoxShowDetail = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -525,6 +526,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.checkBoxShowDetail);
             this.splitContainer2.Panel2.Controls.Add(this.treeViewLongWrongTradeInfos);
             this.splitContainer2.Panel2.Controls.Add(this.splitter1);
             this.splitContainer2.Size = new System.Drawing.Size(536, 364);
@@ -548,9 +550,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongTradeInfos.ContextMenuStrip = this.contextMenuStripSimulationResultTree;
-            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 2);
+            this.treeViewLongWrongTradeInfos.Location = new System.Drawing.Point(3, 27);
             this.treeViewLongWrongTradeInfos.Name = "treeViewLongWrongTradeInfos";
-            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(258, 359);
+            this.treeViewLongWrongTradeInfos.Size = new System.Drawing.Size(258, 334);
             this.treeViewLongWrongTradeInfos.TabIndex = 12;
             this.treeViewLongWrongTradeInfos.DoubleClick += new System.EventHandler(this.treeViewLongWrongTradeInfos_DoubleClick);
             // 
@@ -606,6 +608,19 @@
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
             // 
+            // checkBoxShowDetail
+            // 
+            this.checkBoxShowDetail.AutoSize = true;
+            this.checkBoxShowDetail.Checked = true;
+            this.checkBoxShowDetail.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxShowDetail.Location = new System.Drawing.Point(3, 5);
+            this.checkBoxShowDetail.Name = "checkBoxShowDetail";
+            this.checkBoxShowDetail.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxShowDetail.TabIndex = 14;
+            this.checkBoxShowDetail.Text = "显示详情";
+            this.checkBoxShowDetail.UseVisualStyleBackColor = true;
+            this.checkBoxShowDetail.CheckedChanged += new System.EventHandler(this.checkBoxShowDetail_CheckedChanged);
+            // 
             // GlobalSimTradeWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -628,6 +643,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRiskControl)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.contextMenuStripSimulationResultTree.ResumeLayout(false);
@@ -686,5 +702,6 @@
         private System.Windows.Forms.TextBox textBoxRefreshTime;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.CheckBox checkBoxShowDetail;
     }
 }

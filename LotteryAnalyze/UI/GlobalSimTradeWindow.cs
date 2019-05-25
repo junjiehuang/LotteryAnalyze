@@ -403,29 +403,35 @@ namespace LotteryAnalyze.UI
                 {
                     pN = new TreeNode();
                     bool insert = false;
-                    for( int j = 0; j < treeViewLongWrongTradeInfos.Nodes.Count; ++j)
+                    for (int j = 0; j < treeViewLongWrongTradeInfos.Nodes.Count; ++j)
                     {
-                        if((int)(treeViewLongWrongTradeInfos.Nodes[j].Tag) < key)
+                        if ((int)(treeViewLongWrongTradeInfos.Nodes[j].Tag) < key)
                         {
                             treeViewLongWrongTradeInfos.Nodes.Insert(j, pN);
                             insert = true;
                             break;
                         }
                     }
-                    if(insert == false)
+                    if (insert == false)
                         treeViewLongWrongTradeInfos.Nodes.Add(pN);
                     tradeWrongCountTreeNodeMap[key] = pN;
                     pN.Tag = key;
                 }
-                pN.Text = key + "-" + tags.Count;
-
-                for ( int i = 0; i < tags.Count; ++i )
+                if (pN != null)
                 {
-                    if (tagTreeNodeMap.ContainsKey(tags[i]))
-                        continue;
-                    TreeNode pS = new TreeNode(tags[i]);
-                    pN.Nodes.Add(pS);
-                    tagTreeNodeMap[tags[i]] = pS;
+                    pN.Text = key + "-" + tags.Count;
+                }
+
+                if (checkBoxShowDetail.Checked)
+                {
+                    for (int i = 0; i < tags.Count; ++i)
+                    {
+                        if (tagTreeNodeMap.ContainsKey(tags[i]))
+                            continue;
+                        TreeNode pS = new TreeNode(tags[i]);
+                        pN.Nodes.Add(pS);
+                        tagTreeNodeMap[tags[i]] = pS;
+                    }
                 }
             }
             needRefreshTree = false;
@@ -819,5 +825,9 @@ namespace LotteryAnalyze.UI
             }
         }
 
+        private void checkBoxShowDetail_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshTree();
+        }
     }
 }

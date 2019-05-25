@@ -485,31 +485,37 @@ namespace LotteryAnalyze
 
 #if RECORD_BOLLEAN_MID_COUNTS
         // K值开在布林中轨之下的个数
-        public int underMidCount = 0;
+        public int underBolleanMidCount = 0;
         // K值开在布林中轨之上的个数
-        public int uponMidCount = 0;
+        public int uponBolleanMidCount = 0;
         // K值开在布林中轨的个数
-        public int onMidCount = 0;
+        public int onBolleanMidCount = 0;
 
         // K值连续开在布林中轨之下的个数
-        public int underMidCountContinue = 0;
+        public int underBolleanMidCountContinue = 0;
         // K值连续开在布林中轨的个数
-        public int onMidCountContinue = 0;
+        public int onBolleanMidCountContinue = 0;
         // K值连续开在布林中轨之上的个数
-        public int uponMidCountContinue = 0;
+        public int uponBolleanMidCountContinue = 0;
         // 布林中轨到对应K值的距离单位
-        public float midDistToKD = 0;
+        public float distFromBolleanMidToKD = 0;
+
+        // K值连续开在布林下轨的个数
+        public int onBolleanDownCountContinue = 0;
 
         // 布林中轨保持向上的个数
-        public int midKeepUpCount = 0;
+        public int bolleanMidKeepUpCount = 0;
         // 布林中轨保持水平的个数
-        public int midKeepHorzCount = 0;
+        public int bolleanMidKeepHorzCount = 0;
         // 布林中轨保持下降的个数
-        public int midKeepDownCount = 0;
+        public int bolleanMidKeepDownCount = 0;
 
-        public int midKeepUpCountContinue = 0;
-        public int midKeepHorzCountContinue = 0;
-        public int midKeepDownCountContinue = 0;
+        // 布林中轨持续向上的个数
+        public int bolleanMidKeepUpCountContinue = 0;
+        // 布林中轨持续走平的个数
+        public int bolleanMidKeepHorzCountContinue = 0;
+        // 布林中轨持续向下的个数
+        public int bolleanMidKeepDownCountContinue = 0;
 #endif
 
         public int Index
@@ -612,112 +618,113 @@ namespace LotteryAnalyze
                     bp.downValue = MA - scale * SD;
 
 #if RECORD_BOLLEAN_MID_COUNTS
-                    CalcRelationCount(bp, bpm, prevBPM, cdt, missHeight, kd);
-                    CalcMidKeepCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    CalcBolleanMidCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    CalcBolleanMidDirectionCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    CalcBolleanDownCount(bp, bpm, prevBPM, cdt, missHeight, kd);
 #endif
                 }
             }
         }
 
-        void CalcRelationCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
+        void CalcBolleanMidCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
         {
             const float TOR = 0.5f;
             if (bpm.index == 0)
             {
-                bp.underMidCount = bp.uponMidCount = bp.underMidCountContinue = bp.uponMidCountContinue = 0;
-                bp.onMidCount = bp.onMidCountContinue = 1;
-                bp.midDistToKD = 0.0f;
+                bp.underBolleanMidCount = bp.uponBolleanMidCount = bp.underBolleanMidCountContinue = bp.uponBolleanMidCountContinue = 0;
+                bp.onBolleanMidCount = bp.onBolleanMidCountContinue = 1;
+                bp.distFromBolleanMidToKD = 0.0f;
             }
             else
             {
                 BollinPoint pBP = prevBPM.GetData(cdt, false);
                 string tt = (kd.RelateDistTo(bp.midValue) / missHeight).ToString("f1");
-                bp.midDistToKD = float.Parse(tt);
+                bp.distFromBolleanMidToKD = float.Parse(tt);
                 // 当前K值在布林中轨之上
-                if (bp.midDistToKD < -TOR)
+                if (bp.distFromBolleanMidToKD < -TOR)
                 {
-                    bp.underMidCount = 0;
+                    bp.underBolleanMidCount = 0;
                     // 如果之前在布林中轨下方的个数大于0，意味着出现反转信号，
                     // 那么需要重置在中轨及以上的个数
-                    if (pBP.underMidCount > 0)
+                    if (pBP.underBolleanMidCount > 0)
                     {
-                        bp.onMidCount = pBP.onMidCountContinue;
-                        bp.uponMidCount = 1;
+                        bp.onBolleanMidCount = pBP.onBolleanMidCountContinue;
+                        bp.uponBolleanMidCount = 1;
                     }
                     // 中轨之上的个数增加
                     else
                     {
-                        bp.onMidCount = pBP.onMidCount;
-                        bp.uponMidCount = pBP.uponMidCount + 1;
+                        bp.onBolleanMidCount = pBP.onBolleanMidCount;
+                        bp.uponBolleanMidCount = pBP.uponBolleanMidCount + 1;
                     }
 
-                    if (pBP.uponMidCountContinue > 0)
+                    if (pBP.uponBolleanMidCountContinue > 0)
                     {
-                        bp.uponMidCountContinue = pBP.uponMidCountContinue + 1;
+                        bp.uponBolleanMidCountContinue = pBP.uponBolleanMidCountContinue + 1;
                     }
                     else
                     {
-                        bp.uponMidCountContinue = 1;
+                        bp.uponBolleanMidCountContinue = 1;
                     }
-                    bp.onMidCountContinue = 0;
-                    bp.underMidCountContinue = 0;
+                    bp.onBolleanMidCountContinue = 0;
+                    bp.underBolleanMidCountContinue = 0;
                 }
                 // 当前K值在布林中轨之下
-                else if (bp.midDistToKD > TOR)
+                else if (bp.distFromBolleanMidToKD > TOR)
                 {
-                    bp.uponMidCount = 0;
+                    bp.uponBolleanMidCount = 0;
                     // 如果之前在布林中轨上方的个数大于0，意味着出现反转信号，
                     // 那么需要重置在中轨及以下的个数
-                    if (pBP.uponMidCount > 0)
+                    if (pBP.uponBolleanMidCount > 0)
                     {
-                        bp.onMidCount = pBP.onMidCountContinue;
-                        bp.underMidCount = 1;
+                        bp.onBolleanMidCount = pBP.onBolleanMidCountContinue;
+                        bp.underBolleanMidCount = 1;
                     }
                     // 中轨之下的个数增加
                     else
                     {
-                        bp.onMidCount = pBP.onMidCount;
-                        bp.underMidCount = pBP.underMidCount + 1;
+                        bp.onBolleanMidCount = pBP.onBolleanMidCount;
+                        bp.underBolleanMidCount = pBP.underBolleanMidCount + 1;
                     }
 
-                    if (pBP.underMidCountContinue > 0)
+                    if (pBP.underBolleanMidCountContinue > 0)
                     {
-                        bp.underMidCountContinue = pBP.underMidCountContinue + 1;
+                        bp.underBolleanMidCountContinue = pBP.underBolleanMidCountContinue + 1;
                     }
                     else
                     {
-                        bp.underMidCountContinue = 1;
+                        bp.underBolleanMidCountContinue = 1;
                     }
-                    bp.onMidCountContinue = 0;
-                    bp.uponMidCountContinue = 0;
+                    bp.onBolleanMidCountContinue = 0;
+                    bp.uponBolleanMidCountContinue = 0;
                 }
                 // 当前K值在布林中轨
                 else
                 {
-                    bp.onMidCount = pBP.onMidCount + 1;
-                    bp.underMidCount = pBP.underMidCount;
-                    bp.uponMidCount = pBP.uponMidCount;
+                    bp.onBolleanMidCount = pBP.onBolleanMidCount + 1;
+                    bp.underBolleanMidCount = pBP.underBolleanMidCount;
+                    bp.uponBolleanMidCount = pBP.uponBolleanMidCount;
 
-                    if (pBP.onMidCountContinue > 0)
+                    if (pBP.onBolleanMidCountContinue > 0)
                     {
-                        bp.onMidCountContinue = pBP.onMidCountContinue + 1;
+                        bp.onBolleanMidCountContinue = pBP.onBolleanMidCountContinue + 1;
                     }
                     else
                     {
-                        bp.onMidCountContinue = 1;
+                        bp.onBolleanMidCountContinue = 1;
                     }
-                    bp.underMidCountContinue = 0;
-                    bp.uponMidCountContinue = 0;
+                    bp.underBolleanMidCountContinue = 0;
+                    bp.uponBolleanMidCountContinue = 0;
                 }
             }
         }
-        void CalcMidKeepCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
+        void CalcBolleanMidDirectionCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
         {
             const float TOR = 0.00001f;
             if (bpm.index == 0)
             {
-                bp.midKeepDownCount = bp.midKeepUpCount = bp.midKeepDownCountContinue = bp.midKeepUpCountContinue = 0;
-                bp.midKeepHorzCount = bp.midKeepHorzCountContinue = 1;
+                bp.bolleanMidKeepDownCount = bp.bolleanMidKeepUpCount = bp.bolleanMidKeepDownCountContinue = bp.bolleanMidKeepUpCountContinue = 0;
+                bp.bolleanMidKeepHorzCount = bp.bolleanMidKeepHorzCountContinue = 1;
             }
             else
             {
@@ -726,73 +733,118 @@ namespace LotteryAnalyze
                 // turn up
                 if(delta > TOR)
                 {
-                    bp.midKeepDownCount = 0;
-                    if (pBP.midKeepDownCount > 0)
+                    bp.bolleanMidKeepDownCount = 0;
+                    if (pBP.bolleanMidKeepDownCount > 0)
                     {
-                        bp.midKeepHorzCount = pBP.midKeepHorzCountContinue;
-                        bp.midKeepUpCount = 1;
+                        bp.bolleanMidKeepHorzCount = pBP.bolleanMidKeepHorzCountContinue;
+                        bp.bolleanMidKeepUpCount = 1;
                     }
                     else
                     {
-                        bp.midKeepHorzCount = pBP.midKeepHorzCount;
-                        bp.midKeepUpCount = pBP.midKeepUpCount + 1;
+                        bp.bolleanMidKeepHorzCount = pBP.bolleanMidKeepHorzCount;
+                        bp.bolleanMidKeepUpCount = pBP.bolleanMidKeepUpCount + 1;
                     }
 
-                    if (pBP.midKeepUpCountContinue > 0)
+                    if (pBP.bolleanMidKeepUpCountContinue > 0)
                     {
-                        bp.midKeepUpCountContinue = pBP.midKeepUpCountContinue + 1;
+                        bp.bolleanMidKeepUpCountContinue = pBP.bolleanMidKeepUpCountContinue + 1;
                     }
                     else
                     {
-                        bp.midKeepUpCountContinue = 1;
+                        bp.bolleanMidKeepUpCountContinue = 1;
                     }
-                    bp.midKeepHorzCountContinue = 0;
-                    bp.midKeepDownCountContinue = 0;
+                    bp.bolleanMidKeepHorzCountContinue = 0;
+                    bp.bolleanMidKeepDownCountContinue = 0;
                 }
                 // turn down
                 else if(delta < -TOR)
                 {
-                    bp.midKeepUpCount = 0;
-                    if (pBP.midKeepUpCount > 0)
+                    bp.bolleanMidKeepUpCount = 0;
+                    if (pBP.bolleanMidKeepUpCount > 0)
                     {
-                        bp.midKeepHorzCount = pBP.midKeepHorzCountContinue;
-                        bp.midKeepDownCount = 1;
+                        bp.bolleanMidKeepHorzCount = pBP.bolleanMidKeepHorzCountContinue;
+                        bp.bolleanMidKeepDownCount = 1;
                     }
                     // 中轨之下的个数增加
                     else
                     {
-                        bp.midKeepHorzCount = pBP.midKeepHorzCount;
-                        bp.midKeepDownCount = pBP.midKeepDownCount + 1;
+                        bp.bolleanMidKeepHorzCount = pBP.bolleanMidKeepHorzCount;
+                        bp.bolleanMidKeepDownCount = pBP.bolleanMidKeepDownCount + 1;
                     }
 
-                    if (pBP.midKeepDownCountContinue > 0)
+                    if (pBP.bolleanMidKeepDownCountContinue > 0)
                     {
-                        bp.midKeepDownCountContinue = pBP.midKeepDownCountContinue + 1;
+                        bp.bolleanMidKeepDownCountContinue = pBP.bolleanMidKeepDownCountContinue + 1;
                     }
                     else
                     {
-                        bp.midKeepDownCountContinue = 1;
+                        bp.bolleanMidKeepDownCountContinue = 1;
                     }
-                    bp.midKeepHorzCountContinue = 0;
-                    bp.midKeepUpCountContinue = 0;
+                    bp.bolleanMidKeepHorzCountContinue = 0;
+                    bp.bolleanMidKeepUpCountContinue = 0;
                 }
                 else
                 {
-                    bp.midKeepHorzCount = pBP.midKeepHorzCount + 1;
-                    bp.midKeepDownCount = pBP.midKeepDownCount;
-                    bp.midKeepUpCount = pBP.midKeepUpCount;
+                    bp.bolleanMidKeepHorzCount = pBP.bolleanMidKeepHorzCount + 1;
+                    bp.bolleanMidKeepDownCount = pBP.bolleanMidKeepDownCount;
+                    bp.bolleanMidKeepUpCount = pBP.bolleanMidKeepUpCount;
 
-                    if (pBP.midKeepHorzCountContinue > 0)
+                    if (pBP.bolleanMidKeepHorzCountContinue > 0)
                     {
-                        bp.midKeepHorzCountContinue = pBP.midKeepHorzCountContinue + 1;
+                        bp.bolleanMidKeepHorzCountContinue = pBP.bolleanMidKeepHorzCountContinue + 1;
                     }
                     else
                     {
-                        bp.midKeepHorzCountContinue = 1;
+                        bp.bolleanMidKeepHorzCountContinue = 1;
                     }
-                    bp.midKeepDownCountContinue = 0;
-                    bp.midKeepUpCountContinue = 0;
+                    bp.bolleanMidKeepDownCountContinue = 0;
+                    bp.bolleanMidKeepUpCountContinue = 0;
                 }
+            }
+        }
+        void CalcBolleanDownCount(BollinPoint bp, BollinPointMap bpm, BollinPointMap prevBPM, CollectDataType cdt, float missHeight, KData kd)
+        {
+            const float TOR = 0.5f;
+            string tt = (kd.RelateDistTo(bp.downValue) / missHeight).ToString("f1");
+            float distFromBolleanDownToKD = float.Parse(tt);
+
+            if(kd.MissValue == 0)
+            {
+                bp.onBolleanDownCountContinue = 0;
+            }
+            else if(distFromBolleanDownToKD >= -TOR)
+            {
+                if (prevBPM == null)
+                    bp.onBolleanDownCountContinue = 1;
+                else
+                {
+                    int preC = prevBPM.bpMap[cdt].onBolleanDownCountContinue;
+                    bp.onBolleanDownCountContinue = preC + 1;
+                }
+            }
+            else
+            {
+                //if (kd.MissValue > 0)
+                {
+                    if (prevBPM != null)
+                    {
+                        BollinPoint preBP = prevBPM.GetData(cdt, false);
+                        KData preKD = kd.GetPrevKData();
+                        if (preKD.HitValue > 0)
+                            bp.onBolleanDownCountContinue = 0;
+                        else
+                        {
+                            if (preBP.onBolleanDownCountContinue > 0)
+                                bp.onBolleanDownCountContinue = preBP.onBolleanDownCountContinue + 1;
+                            else
+                                bp.onBolleanDownCountContinue = 0;
+                        }
+                    }
+                    else
+                        bp.onBolleanDownCountContinue = 0;
+                }
+                //else
+                //    bp.onBolleanDownCountContinue = 0;
             }
         }
     }

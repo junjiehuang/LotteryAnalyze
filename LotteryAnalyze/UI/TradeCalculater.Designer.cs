@@ -39,12 +39,19 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxResult = new System.Windows.Forms.TextBox();
             this.buttonStartCalc = new System.Windows.Forms.Button();
+            this.textBoxCount = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.buttonCalcByCount = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBoxParam = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.comboBoxGenerateType = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 44);
+            this.label1.Location = new System.Drawing.Point(12, 33);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 0;
@@ -102,17 +109,17 @@
             // 
             this.textBoxTradeSlu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxTradeSlu.Location = new System.Drawing.Point(83, 41);
+            this.textBoxTradeSlu.Location = new System.Drawing.Point(83, 30);
             this.textBoxTradeSlu.Multiline = true;
             this.textBoxTradeSlu.Name = "textBoxTradeSlu";
             this.textBoxTradeSlu.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxTradeSlu.Size = new System.Drawing.Size(402, 46);
+            this.textBoxTradeSlu.Size = new System.Drawing.Size(429, 46);
             this.textBoxTradeSlu.TabIndex = 7;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 97);
+            this.label5.Location = new System.Drawing.Point(12, 82);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 12);
             this.label5.TabIndex = 8;
@@ -122,28 +129,95 @@
             // 
             this.textBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxResult.Location = new System.Drawing.Point(83, 94);
+            this.textBoxResult.Location = new System.Drawing.Point(83, 78);
             this.textBoxResult.Multiline = true;
             this.textBoxResult.Name = "textBoxResult";
             this.textBoxResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxResult.Size = new System.Drawing.Size(402, 284);
+            this.textBoxResult.Size = new System.Drawing.Size(429, 282);
             this.textBoxResult.TabIndex = 9;
             // 
             // buttonStartCalc
             // 
-            this.buttonStartCalc.Location = new System.Drawing.Point(16, 386);
+            this.buttonStartCalc.Location = new System.Drawing.Point(16, 364);
             this.buttonStartCalc.Name = "buttonStartCalc";
-            this.buttonStartCalc.Size = new System.Drawing.Size(75, 23);
+            this.buttonStartCalc.Size = new System.Drawing.Size(142, 23);
             this.buttonStartCalc.TabIndex = 10;
-            this.buttonStartCalc.Text = "开始计算";
+            this.buttonStartCalc.Text = "按给定的投注方案计算";
             this.buttonStartCalc.UseVisualStyleBackColor = true;
             this.buttonStartCalc.Click += new System.EventHandler(this.buttonStartCalc_Click);
+            // 
+            // textBoxCount
+            // 
+            this.textBoxCount.Location = new System.Drawing.Point(83, 394);
+            this.textBoxCount.Name = "textBoxCount";
+            this.textBoxCount.Size = new System.Drawing.Size(75, 21);
+            this.textBoxCount.TabIndex = 11;
+            this.textBoxCount.TextChanged += new System.EventHandler(this.textBoxCount_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 397);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 12);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "投注次数：";
+            // 
+            // buttonCalcByCount
+            // 
+            this.buttonCalcByCount.Location = new System.Drawing.Point(164, 364);
+            this.buttonCalcByCount.Name = "buttonCalcByCount";
+            this.buttonCalcByCount.Size = new System.Drawing.Size(210, 23);
+            this.buttonCalcByCount.TabIndex = 13;
+            this.buttonCalcByCount.Text = "按指定条件生成投注方案并计算";
+            this.buttonCalcByCount.UseVisualStyleBackColor = true;
+            this.buttonCalcByCount.Click += new System.EventHandler(this.buttonCalcByCount_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(163, 397);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(41, 12);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "参数：";
+            // 
+            // textBoxParam
+            // 
+            this.textBoxParam.Location = new System.Drawing.Point(210, 394);
+            this.textBoxParam.Name = "textBoxParam";
+            this.textBoxParam.Size = new System.Drawing.Size(81, 21);
+            this.textBoxParam.TabIndex = 14;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 423);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 12);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "生成类型：";
+            // 
+            // comboBoxGenerateType
+            // 
+            this.comboBoxGenerateType.FormattingEnabled = true;
+            this.comboBoxGenerateType.Location = new System.Drawing.Point(83, 420);
+            this.comboBoxGenerateType.Name = "comboBoxGenerateType";
+            this.comboBoxGenerateType.Size = new System.Drawing.Size(429, 20);
+            this.comboBoxGenerateType.TabIndex = 17;
             // 
             // TradeCalculater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(524, 421);
+            this.ClientSize = new System.Drawing.Size(524, 446);
+            this.Controls.Add(this.comboBoxGenerateType);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.textBoxParam);
+            this.Controls.Add(this.buttonCalcByCount);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textBoxCount);
             this.Controls.Add(this.buttonStartCalc);
             this.Controls.Add(this.textBoxResult);
             this.Controls.Add(this.label5);
@@ -176,5 +250,12 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxResult;
         private System.Windows.Forms.Button buttonStartCalc;
+        private System.Windows.Forms.TextBox textBoxCount;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button buttonCalcByCount;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxParam;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox comboBoxGenerateType;
     }
 }

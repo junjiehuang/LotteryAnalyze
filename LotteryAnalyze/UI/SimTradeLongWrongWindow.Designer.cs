@@ -35,6 +35,7 @@
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonPause = new System.Windows.Forms.Button();
             this.buttonClearEarnNode = new System.Windows.Forms.Button();
+            this.textBoxResult = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // treeViewLongWrongInfo
@@ -44,13 +45,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewLongWrongInfo.Location = new System.Drawing.Point(2, 3);
             this.treeViewLongWrongInfo.Name = "treeViewLongWrongInfo";
-            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(489, 257);
+            this.treeViewLongWrongInfo.Size = new System.Drawing.Size(489, 246);
             this.treeViewLongWrongInfo.TabIndex = 0;
             // 
             // buttonLoadLongWrongInfo
             // 
             this.buttonLoadLongWrongInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonLoadLongWrongInfo.Location = new System.Drawing.Point(2, 266);
+            this.buttonLoadLongWrongInfo.Location = new System.Drawing.Point(2, 301);
             this.buttonLoadLongWrongInfo.Name = "buttonLoadLongWrongInfo";
             this.buttonLoadLongWrongInfo.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadLongWrongInfo.TabIndex = 1;
@@ -61,7 +62,7 @@
             // buttonStart
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonStart.Location = new System.Drawing.Point(83, 266);
+            this.buttonStart.Location = new System.Drawing.Point(83, 301);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
             this.buttonStart.TabIndex = 2;
@@ -72,7 +73,7 @@
             // buttonStep
             // 
             this.buttonStep.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonStep.Location = new System.Drawing.Point(164, 266);
+            this.buttonStep.Location = new System.Drawing.Point(164, 301);
             this.buttonStep.Name = "buttonStep";
             this.buttonStep.Size = new System.Drawing.Size(75, 23);
             this.buttonStep.TabIndex = 3;
@@ -83,7 +84,7 @@
             // buttonStop
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonStop.Location = new System.Drawing.Point(245, 266);
+            this.buttonStop.Location = new System.Drawing.Point(245, 301);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 4;
@@ -94,7 +95,7 @@
             // buttonPause
             // 
             this.buttonPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonPause.Location = new System.Drawing.Point(326, 266);
+            this.buttonPause.Location = new System.Drawing.Point(326, 301);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(75, 23);
             this.buttonPause.TabIndex = 5;
@@ -105,7 +106,7 @@
             // buttonClearEarnNode
             // 
             this.buttonClearEarnNode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonClearEarnNode.Location = new System.Drawing.Point(407, 266);
+            this.buttonClearEarnNode.Location = new System.Drawing.Point(407, 301);
             this.buttonClearEarnNode.Name = "buttonClearEarnNode";
             this.buttonClearEarnNode.Size = new System.Drawing.Size(84, 23);
             this.buttonClearEarnNode.TabIndex = 6;
@@ -113,11 +114,23 @@
             this.buttonClearEarnNode.UseVisualStyleBackColor = true;
             this.buttonClearEarnNode.Click += new System.EventHandler(this.buttonClearEarnNode_Click);
             // 
+            // textBoxResult
+            // 
+            this.textBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxResult.Location = new System.Drawing.Point(2, 255);
+            this.textBoxResult.Multiline = true;
+            this.textBoxResult.Name = "textBoxResult";
+            this.textBoxResult.ReadOnly = true;
+            this.textBoxResult.Size = new System.Drawing.Size(489, 40);
+            this.textBoxResult.TabIndex = 7;
+            // 
             // SimTradeLongWrongWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(494, 296);
+            this.ClientSize = new System.Drawing.Size(494, 331);
+            this.Controls.Add(this.textBoxResult);
             this.Controls.Add(this.buttonClearEarnNode);
             this.Controls.Add(this.buttonPause);
             this.Controls.Add(this.buttonStop);
@@ -129,6 +142,7 @@
             this.Text = "SimTradeLongWrongWindow";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SimTradeLongWrongWindow_FormClosed);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -141,5 +155,6 @@
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.Button buttonClearEarnNode;
+        private System.Windows.Forms.TextBox textBoxResult;
     }
 }

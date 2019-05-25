@@ -1814,6 +1814,11 @@ namespace LotteryAnalyze
             else
                 tradeCount = 0;
 
+            if(CurrentTradeCountIndex == 0)
+            {
+                downFromTopCheckCount = 2;
+            }
+
             CalcPathAppearence(item, trade, bestNumIndex);
 
             TradeNumbers tn = new TradeNumbers();
@@ -1821,12 +1826,48 @@ namespace LotteryAnalyze
             trade.tradeInfo.Add(bestNumIndex, tn);
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
+
+            if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE)
+            {
+                // K线如果超过2期运行到布林下轨，那么就不做交易了
+                if ((int)pci0.paramMap["onDownCC"] > 2)
+                    return;
+            }
+            if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS)
+            {
+                if(GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
+                {
+                    if ((int)pci0.paramMap["KDownFromTop"] == 1)
+                        return;
+                }
+            }
+
             if (GlobalSetting.G_ONLY_TRADE_BEST_PATH)
             {
                 if (GlobalSetting.G_ENABLE_CHECK_PATH_CAN_TRADE == false)
                 {
-                    if ((int)pci0.paramMap["curMissCount"] > 1)
+                    if ((bool)pci0.paramMap["isAppRatePrefer"] == false)
                         return;
+                    /*
+                    int checkCounts = tradeCountList.Count - 3;
+                    if ((int)pci0.paramMap["maxMissCount"] < checkCounts)
+                        checkCounts = (int)pci0.paramMap["maxMissCount"];
+
+                    if ((int)pci0.paramMap["underTheoRateCount"] > 1)
+                    {
+                        return;
+                    }
+
+                    if ((int)pci0.paramMap["maxMissCountID"] < item.idGlobal)
+                    {
+                        if ((int)pci0.paramMap["curMissCount"] > checkCounts)
+                            return;
+                    }
+                    else if ((int)pci0.paramMap["curMissCount"] > 2)
+                    {
+                        return;
+                    }
+                    */
                 }
                 else
                 {
@@ -2103,8 +2144,10 @@ namespace LotteryAnalyze
                     */
                 }
             }
-            PathCmpInfo pci1 = trade.pathCmpInfos[bestNumIndex][1];
+            
             tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
+
+            PathCmpInfo pci1 = trade.pathCmpInfos[bestNumIndex][1];
             int lastSelPathID = pci0.pathIndex;
             if (currentTradeCountIndex > tradeCountList.Count - MultiTradePathCount 
                 //||  ((float)pci0.paramMap["detRate"] == (float)pci1.paramMap["detRate"]) && 
@@ -3409,43 +3452,42 @@ namespace LotteryAnalyze
         }
 
 
-        void CalcPathUpBolleanCount(DataItem item, TradeDataOneStar trade, int numIndex)
-        {
-            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
-            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
-            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
-            BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
-            for (int i = 0; i < cdts.Length; ++i)
-            {
-                PathCmpInfo pci = pcis[i];
-                CollectDataType cdt = cdts[i];
-                KData kd = kdd.GetData(cdt, false);
-                BollinPoint bp = bpm.GetData(cdt, false);
-                //pci.paramMap["UpBolleanCount"] = (float)0;
-                int upCount = 0;
-                int totalCount = 0;
-                float missheight = GraphDataManager.GetMissRelLength(cdt);
-                int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
-                DataItem pItem = item;
-                while(pItem != null && loopCount > 0)
-                {
-                    ++totalCount;
-                    KDataDict pKDD = kddc.GetKDataDict(pItem);
-                    KData pKD = pKDD.GetData(cdt, false);
-                    BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);                    
-                    float rdM = pKD.RelateDistTo(pBP.midValue);
-                    if(rdM < 1)
-                    {
-                        ++upCount;
-                    }
-                    pItem = pItem.parent.GetPrevItem(pItem);
-                    --loopCount;
-                }
-                pci.paramMap["UpBolleanCount"] = upCount * 100.0f / totalCount;
-            }
-        }
+        //void CalcPathUpBolleanCount(DataItem item, TradeDataOneStar trade, int numIndex)
+        //{
+        //    List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+        //    CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+        //    KGraphDataContainer kgdc = GraphDataManager.KGDC;
+        //    KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+        //    KDataDict kdd = kddc.GetKDataDict(item);
+        //    BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
+        //    for (int i = 0; i < cdts.Length; ++i)
+        //    {
+        //        PathCmpInfo pci = pcis[i];
+        //        CollectDataType cdt = cdts[i];
+        //        KData kd = kdd.GetData(cdt, false);
+        //        BollinPoint bp = bpm.GetData(cdt, false);
+        //        int upCount = 0;
+        //        int totalCount = 0;
+        //        float missheight = GraphDataManager.GetMissRelLength(cdt);
+        //        int loopCount = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
+        //        DataItem pItem = item;
+        //        while(pItem != null && loopCount > 0)
+        //        {
+        //            ++totalCount;
+        //            KDataDict pKDD = kddc.GetKDataDict(pItem);
+        //            KData pKD = pKDD.GetData(cdt, false);
+        //            BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);                    
+        //            float rdM = pKD.RelateDistTo(pBP.midValue);
+        //            if(rdM < 1)
+        //            {
+        //                ++upCount;
+        //            }
+        //            pItem = pItem.parent.GetPrevItem(pItem);
+        //            --loopCount;
+        //        }
+        //        pci.paramMap["UpBolleanCount"] = upCount * 100.0f / totalCount;
+        //    }
+        //}
 
         public enum MacdLineCfg
         {
@@ -3493,6 +3535,50 @@ namespace LotteryAnalyze
             eKeepSize,
         }
 
+        void CalcBolleanCommonData(DataItem item, TradeDataOneStar trade, int numIndex)
+        {
+            List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
+            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+            KDataDict kdd = kddc.GetKDataDict(item);
+            TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
+
+            for (int i = 0; i < cdts.Length; ++i)
+            {
+                CollectDataType cdt = cdts[i];
+                BollinPoint bpRight = kddc.GetBollinPointMap(kdd).GetData(cdt, false);
+                PathCmpInfo pci = pcis[i];
+                // 统计落在布林中轨的K值的个数
+                pci.paramMap["onMC"] = bpRight.onBolleanMidCount;
+                // 统计落在布林中轨之上的K值个数
+                pci.paramMap["upMC"] = bpRight.uponBolleanMidCount;
+                // 统计落在布林中轨之下的K值个数
+                pci.paramMap["dnMC"] = bpRight.underBolleanMidCount;
+                // 统计连续落在布林中轨的K值的个数
+                pci.paramMap["onMCC"] = bpRight.onBolleanMidCountContinue;
+                // 统计连续落在布林中轨之下的K值的个数
+                pci.paramMap["dnMCC"] = bpRight.underBolleanMidCountContinue;
+                // 统计连续落在布林下轨的K值的个数
+                pci.paramMap["onDownCC"] = bpRight.onBolleanDownCountContinue;
+                // 计算连续开出的期数
+                pci.paramMap["aprC"] = (int)item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].appearCount;
+                // 计算中轨向上的次数
+                pci.paramMap["midKUC"] = bpRight.bolleanMidKeepUpCount;
+                // 计算中轨走平的次数
+                pci.paramMap["midKHC"] = bpRight.bolleanMidKeepHorzCount;
+                // 计算中轨向下的次数
+                pci.paramMap["midKDC"] = bpRight.bolleanMidKeepDownCount;
+                // 计算中轨连续向上的次数
+                pci.paramMap["midKUCC"] = bpRight.bolleanMidKeepUpCountContinue;
+                // 计算中轨连续走平的次数
+                pci.paramMap["midKHCC"] = bpRight.bolleanMidKeepHorzCountContinue;
+                // 计算中轨连续向下的次数
+                pci.paramMap["midKDCC"] = bpRight.bolleanMidKeepDownCountContinue;
+            }
+        }
+
+        int downFromTopCheckCount = 2;
         void CalcBolleanCfg(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             const int LOOP_COUNT = 10;
@@ -3516,21 +3602,6 @@ namespace LotteryAnalyze
                 pci.paramMap["KDownFromTop"] = 0;
 				// 布林通道在3期内的个数
                 pci.paramMap["BollBandLE3Count"] = 0;
-				// 计算连续落在布林中轨以及之上的K值的个数
-                pci.paramMap["onMC"] = bpRight.onMidCount;
-                pci.paramMap["upMC"] = bpRight.uponMidCount;
-                pci.paramMap["dnMC"] = bpRight.underMidCount;
-                pci.paramMap["onMCC"] = bpRight.onMidCountContinue;
-				pci.paramMap["dnMCC"] = bpRight.underMidCountContinue;
-                // 计算连续开出的期数
-                pci.paramMap["aprC"] = (int)item.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt].appearCount;
-                // 计算中轨方向变化的次数
-                pci.paramMap["midKUC"] = bpRight.midKeepUpCount;
-                pci.paramMap["midKHC"] = bpRight.midKeepHorzCount;
-                pci.paramMap["midKDC"] = bpRight.midKeepDownCount;
-                pci.paramMap["midKUCC"] = bpRight.midKeepUpCountContinue;
-                pci.paramMap["midKHCC"] = bpRight.midKeepHorzCountContinue;
-                pci.paramMap["midKDCC"] = bpRight.midKeepDownCountContinue;
 
                 //if (item.idGlobal < LOOP_COUNT)
                 //{
@@ -3607,31 +3678,36 @@ namespace LotteryAnalyze
                     // 如果最近开出的那一期是在布林上轨，那么认为这是要连续下降的趋势
                     if(distToUp <= 1)
                     {
-                        pci.paramMap["KDownFromTop"] = 1;
+                        if (curMissCount > downFromTopCheckCount)
+                        {
+                            pci.paramMap["KDownFromTop"] = 1;
+                            ++downFromTopCheckCount;
+                        }
                     }
                     // 如果超过2期没开出，且当前期是在布林中轨上方一个单位以外，我们也认为这是要下降的趋势
-                    else if(curMissCount > 1 && bpRight.midDistToKD < -1)
+                    else if(curMissCount > downFromTopCheckCount && bpRight.distFromBolleanMidToKD < -1)
                     {
                         pci.paramMap["KDownFromTop"] = 1;
+                        ++downFromTopCheckCount;
                     }
-                    // 如果最近开出的那一期是在布林中轨，且连续开出少于2期，并且k线是在布林中轨之下运行的，
-                    // 那么认为这也是下降趋势
-                    //else if(tbp.onMidCountContinue < 3 && tbp.underMidCount > 0)
-                    //else if(curMissCount > 1 && tbp.onMidCountContinue > 0 && tbp.underMidCount > 0)
-                    else if(!
-                        (curAppearCount >= 3
-                        || bpRight.onMidCountContinue >= 3
-                        || isMaxMissCountLE1
-                        ))
-                    {
-                        if(bpRight.underMidCount > 0)
-                            pci.paramMap["KDownFromTop"] = 1;
-                    }
+                    //// 如果最近开出的那一期是在布林中轨，且连续开出少于2期，并且k线是在布林中轨之下运行的，
+                    //// 那么认为这也是下降趋势
+                    ////else if(tbp.onMidCountContinue < 3 && tbp.underMidCount > 0)
+                    ////else if(curMissCount > 1 && tbp.onMidCountContinue > 0 && tbp.underMidCount > 0)
+                    //else if(!
+                    //    (curAppearCount >= 3
+                    //    || bpRight.onBolleanMidCountContinue >= 3
+                    //    || isMaxMissCountLE1
+                    //    ))
+                    //{
+                    //    if(bpRight.underBolleanMidCount > 0)
+                    //        pci.paramMap["KDownFromTop"] = 1;
+                    //}
                 }
-                else if(!isMaxMissCountLE1 && bpRight.underMidCount > 0)
-                {
-                    pci.paramMap["KDownFromTop"] = 1;
-                }
+                //else if(!isMaxMissCountLE1 && bpRight.underBolleanMidCount > 0)
+                //{
+                //    pci.paramMap["KDownFromTop"] = 1;
+                //}
 
                 int t = kd.index - 2;
                 if (t < 0) t = 0;
@@ -4550,25 +4626,29 @@ namespace LotteryAnalyze
             if (prvItem != null)
                 sumPRV = prvItem.statisticInfo.allStatisticInfo[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+            float[] theoryAppRate = new float[] { 0, 0, 0 };
             float[] appearenceRateFastCUR = new float[] { 0, 0, 0, };
             float[] appearenceRateFastPRV = new float[] { 0, 0, 0, };
-            //float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
-            //float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
-            //int[] maxMissCount = new int[] { 0, 0, 0, };
+            float[] appearenceRateShortCUR = new float[] { 0, 0, 0, };
+            float[] appearenceRateShortPRV = new float[] { 0, 0, 0, };
             int[] curMissCount = new int[] { 0, 0, 0, };
             int[] preMaxMissCount = new int[] { 0, 0, 0, };
+            int[] preMaxMissCountID = new int[] { 0, 0, 0, };
+            int[] underTheoryRateCount = new int[] { 0, 0, 0, };
             for (int i = 0; i < cdts.Length; ++i)
             {
                 CollectDataType cdt = cdts[i];
-                //maxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
+                theoryAppRate[i] = GraphDataManager.GetTheoryProbability(cdt);
                 curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
-                preMaxMissCount[i] = sumCUR.statisticUnitMap[cdt].fastData.prevMaxMissCount;
+                preMaxMissCount[i] = sumCUR.statisticUnitMap[cdt].shortData.prevMaxMissCount;
+                preMaxMissCountID[i] = sumCUR.statisticUnitMap[cdt].shortData.prevMaxMissCountIndex;
                 appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
-                //appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
+                underTheoryRateCount[i] = sumCUR.statisticUnitMap[cdt].fastData.underTheoryCount;
+                appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
                 if (sumPRV != null)
                 {
                     appearenceRateFastPRV[i] = sumPRV.statisticUnitMap[cdt].fastData.appearProbability;
-                    //appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].shortData.appearProbability;
+                    appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].shortData.appearProbability;
                 }
             }
 
@@ -4576,7 +4656,6 @@ namespace LotteryAnalyze
             float[] count2BMs = new float[] { 0, 0, 0, };
             float[] count2BDs = new float[] { 0, 0, 0, };
             int[] count2LIM = new int[] { 0, 0, 0, };
-            //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
             {
                 CalcKValueDistToBolleanLine(item, numIndex, cdts, ref count2BUs, ref count2BMs, ref count2BDs, ref count2LIM);
             }
@@ -4585,15 +4664,32 @@ namespace LotteryAnalyze
             for (int i = 0; i < cdts.Length; ++i)
             {
                 PathCmpInfo pci = new PathCmpInfo(i, sumCUR.statisticUnitMap[cdts[i]]);
-                //pci.paramMap["maxMissCount"] = maxMissCount[i];
+                float diffPrevF = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
+                float diffPrevS = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
+                float diffTheoF = (appearenceRateFastCUR[i] - theoryAppRate[i]);
+                float diffThroS = (appearenceRateShortCUR[i] - theoryAppRate[i]);
                 pci.paramMap["curMissCount"] = curMissCount[i];
                 pci.paramMap["maxMissCount"] = preMaxMissCount[i];
+                pci.paramMap["maxMissCountID"] = preMaxMissCountID[i];
                 //pci.paramMap["prvRateF"] = appearenceRateFastPRV[i];
+                //pci.paramMap["theoryAppRate"] = theoryAppRate[i];
+                pci.paramMap["underTheoRateCount"] = underTheoryRateCount[i];
                 pci.paramMap["curRateF"] = appearenceRateFastCUR[i];
-                pci.paramMap["detRateF"] = appearenceRateFastCUR[i] - appearenceRateFastPRV[i];
+                pci.paramMap["detRateF"] = diffPrevF;
+                pci.paramMap["isCurRateFBTheoRate"] = (diffTheoF >= 0);
                 //pci.paramMap["prvRateS"] = appearenceRateShortPRV[i];
-                //pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
-                //pci.paramMap["detRateS"] = appearenceRateShortCUR[i] - appearenceRateShortPRV[i];
+                pci.paramMap["curRateS"] = appearenceRateShortCUR[i];
+                pci.paramMap["detRateS"] = diffPrevS;
+                pci.paramMap["isCurRateSBTheoRate"] = (diffThroS >= 0);
+                bool isAppRatePrefer = false;
+                if (GlobalSetting.G_AppearenceCheckType == AppearenceCheckType.eUseFast)
+                    isAppRatePrefer = diffPrevF > 0 || diffTheoF >= 0;
+                else if (GlobalSetting.G_AppearenceCheckType == AppearenceCheckType.eUSeShort)
+                    isAppRatePrefer = diffPrevS > 0 || diffThroS >= 0;
+                else if(GlobalSetting.G_AppearenceCheckType == AppearenceCheckType.eUseFastAndShort)
+                    isAppRatePrefer = (diffPrevF > 0 || diffTheoF >= 0) && (diffPrevS > 0 || diffThroS >= 0);
+                pci.paramMap["isAppRatePrefer"] = isAppRatePrefer;
+
                 if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
                 {
                     pci.paramMap["count2LIM"] = count2LIM[i];
@@ -4603,29 +4699,30 @@ namespace LotteryAnalyze
                 pci.paramMap["count2BMs"] = count2BMs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
+            CalcBolleanCommonData(item, trade, numIndex);
 
             int mayUpPathsCount = 0;
-            if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
-            {
-                CalcPathIfBecomeUp(item, trade, numIndex, ref mayUpPathsCount);
-            }
+            //if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+            //{
+            //    CalcPathIfBecomeUp(item, trade, numIndex, ref mayUpPathsCount);
+            //}
 
-            if (GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
-            {
-                CalcPathUpBolleanCount(item, trade, numIndex);
-            }
+            //if (GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
+            //{
+            //    CalcPathUpBolleanCount(item, trade, numIndex);
+            //}
 
-            if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+            if (GlobalSetting.G_COLLECT_MACD_ANALYZE_DATA)
             {
                 CalcPathMacdUp(item, trade, numIndex);
             }
 
-            if(GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+            if(GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
             {
                 CalcBolleanCfg(item, trade, numIndex);
             }
 
-            if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+            if(GlobalSetting.G_COLLECT_ANALYZE_TOOL_DATA)
             {
                 AutoAnalyzeToolCheck(numIndex, trade);
             }
@@ -4642,41 +4739,123 @@ namespace LotteryAnalyze
                         return 1;
                     }
 
-                    if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
-                    {
-                        if ((float)x.paramMap["MayUpCount"] > (float)y.paramMap["MayUpCount"])
-                            return -1;
-                        if ((float)x.paramMap["MayUpCount"] < (float)y.paramMap["MayUpCount"])
-                            return 1;
-                    }
+                    //if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                    //{
+                    //    if ((float)x.paramMap["MayUpCount"] > (float)y.paramMap["MayUpCount"])
+                    //        return -1;
+                    //    if ((float)x.paramMap["MayUpCount"] < (float)y.paramMap["MayUpCount"])
+                    //        return 1;
+                    //}
 
-                    if(GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
+                    //if(GlobalSetting.G_ENABLE_UPBOLLEAN_COUNT_STATISTIC)
+                    //{
+                    //    if ((float)x.paramMap["UpBolleanCount"] > (float)y.paramMap["UpBolleanCount"])
+                    //        return -1;
+                    //    if ((float)x.paramMap["UpBolleanCount"] < (float)y.paramMap["UpBolleanCount"])
+                    //        return 1;
+                    //}
+
+                    if(GlobalSetting.G_SEQ_PATH_BY_APPEARENCE_RATE)
                     {
-                        if ((float)x.paramMap["UpBolleanCount"] > (float)y.paramMap["UpBolleanCount"])
+                        bool isXPrefer = (bool)x.paramMap["isAppRatePrefer"];
+                        bool isYPrefer = (bool)y.paramMap["isAppRatePrefer"];
+                        if (isXPrefer && !isYPrefer)
                             return -1;
-                        if ((float)x.paramMap["UpBolleanCount"] < (float)y.paramMap["UpBolleanCount"])
+                        if (!isXPrefer && isYPrefer)
+                            return 1;
+
+                        if ((float)x.paramMap["detRateS"] >= 0 && (float)y.paramMap["detRateS"] < 0)
+                            return -1;
+                        if ((float)x.paramMap["detRateS"] < 0 && (float)y.paramMap["detRateS"] >= 0)
                             return 1;
                     }
 
                     if(GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
                     {
-                        int xMDC = (int)x.paramMap["midKDC"];
-                        int yMDC = (int)y.paramMap["midKDC"];
-                        if (xMDC == 0 && yMDC > 0)
+                        bool isXPrefer = (bool)x.paramMap["isAppRatePrefer"];
+                        bool isYPrefer = (bool)y.paramMap["isAppRatePrefer"];
+                        if (isXPrefer && !isYPrefer)
                             return -1;
-                        else if (xMDC > 0 && yMDC == 0)
-                            return 1;
-                        if ((int)x.paramMap["aprC"] > (int)y.paramMap["aprC"])
-                            return -1;
-                        if ((int)x.paramMap["aprC"] < (int)y.paramMap["aprC"])
+                        if (!isXPrefer && isYPrefer)
                             return 1;
 
-                        //int xMidUpHorzCount = (int)x.paramMap["onMC"];// + (int)x.paramMap["upMC"];
-                        //int yMidUpHorzCount = (int)y.paramMap["onMC"];// + (int)y.paramMap["upMC"];
-                        //if (xMidUpHorzCount > yMidUpHorzCount)
-                        //    return -1;
-                        //else if (xMidUpHorzCount < yMidUpHorzCount)
-                        //    return 1;
+                        if ((float)x.paramMap["detRateS"] >= 0 && (float)y.paramMap["detRateS"] < 0)
+                            return -1;
+                        if ((float)x.paramMap["detRateS"] < 0 && (float)y.paramMap["detRateS"] >= 0)
+                            return 1;
+
+                        // 计算x图里布林中轨持续向下的个数
+                        int xMDC = (int)x.paramMap["midKDC"];
+                        // 计算y图里布林中轨持续向下的个数
+                        int yMDC = (int)y.paramMap["midKDC"];
+                        // x没有向下，y向下了
+                        if (xMDC == 0 && yMDC > 0)
+                            return -1;
+                        // x向下了，y没有向下
+                        if (xMDC > 0 && yMDC == 0)
+                            return 1;
+
+                        if ((int)x.paramMap["aprC"] >= 2)
+                            return -1;
+                        if ((int)y.paramMap["aprC"] >= 2)
+                            return 1;
+
+                        if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
+                            return -1;
+                        if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
+                            return 1;
+
+                        /*
+                        // 计算x图里布林中轨持续向下的个数
+                        int xMDC = (int)x.paramMap["midKDC"];
+                        // 计算y图里布林中轨持续向下的个数
+                        int yMDC = (int)y.paramMap["midKDC"];
+                        // x没有向下，y向下了
+                        if (xMDC == 0 && yMDC > 0)
+                        //if(xMDC <= 1 && yMDC > 1)
+                            return -1;
+                        // x向下了，y没有向下
+                        if (xMDC > 0 && yMDC == 0)
+                        //if(xMDC > 1 && yMDC <= 1)
+                            return 1;
+                        // 都没有向下
+                        //if(xMDC == 0 && yMDC == 0)
+                        if(xMDC <= 1 && yMDC <= 1)
+                        {
+                            bool isXAppRateHTheoryRate = (bool)x.paramMap["isCurRateFBTheoRate"];
+                            bool isYAppRateHTheoryRate = (bool)y.paramMap["isCurRateFBTheoRate"];
+                            // 如果x的出号率高于理论值，y的出号率没有高于理论值，那么就选x
+                            if (isXAppRateHTheoryRate && !isYAppRateHTheoryRate)
+                                return -1;
+                            // 如果x的出号率没有高于理论值，y的出号率高于理论值，那么就选y
+                            if (!isXAppRateHTheoryRate && isYAppRateHTheoryRate)
+                                return 1;
+
+                            // 如果x的k线在布林中轨之下的个数小于y的k线在布林中轨之下的个数，优先选x
+                            if ((int)x.paramMap["dnMCC"] < (int)y.paramMap["dnMCC"])
+                                return -1;
+                            // 如果x的k线在布林中轨之下的个数大于y的k线在布林中轨之下的个数，优先选y
+                            if ((int)x.paramMap["dnMCC"] > (int)y.paramMap["dnMCC"])
+                                return 1;
+
+                            int xUC = (int)x.paramMap["midKHC"] + (int)x.paramMap["midKUC"];
+                            int yUC = (int)y.paramMap["midKHC"] + (int)y.paramMap["midKUC"];
+                            if (xUC > yUC)
+                                return -1;
+                            if (xUC < yUC)
+                                return 1;
+                        }
+                        
+                        if ((int)x.paramMap["aprC"] >= 2)
+                            return -1;
+                        if ((int)y.paramMap["aprC"] >= 2)
+                            return 1;
+
+                        if ((float)x.paramMap["curRateF"] > (float)y.paramMap["curRateF"])
+                            return -1;
+                        if ((float)x.paramMap["curRateF"] < (float)y.paramMap["curRateF"])
+                            return 1;
+                        */
                     }
 
                     if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
@@ -4892,42 +5071,66 @@ namespace LotteryAnalyze
             }
         }
 
+
+        bool _needChangePath = false;
+        bool NeedChangePath
+        {
+            get { return _needChangePath; }
+            set
+            {
+                _needChangePath = value;
+            }
+        }
+
         void CheckAndKeepSamePath(TradeDataOneStar trade, int numIndex, int mayUpPathsCount = 0)
         {
             if (GlobalSetting.G_ONLY_TRADE_SPEC_CDT)
                 return;
             if (GlobalSetting.G_ENABLE_CheckAndKeepSamePath == false)
                 return;
+
+            if(GlobalSetting.G_CHANGE_PATH_ON_ALL_TRADE_MISS)
+            {
+                // 如果是标记重新选分路，那么就直接返回
+                if(NeedChangePath)
+                {
+                    NeedChangePath = false;
+                    return;
+                }
+            }
             if (CurrentTradeCountIndex != 0)
             {
                 // 当前这次交易优先级最高的PathCmpInfo
-                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];            
-                
-                // 如果当前这一路是触到布林下轨且出现回补的，就交易这一路
-                if(GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
-                {
-                    if ((float)tmp.paramMap["MayUpCount"] > 0)
-                        return;
-                }
+                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
 
-                // 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
-                if (GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
+                if (GlobalSetting.G_CHANGE_PATH_ON_ALL_TRADE_MISS == false)
                 {
-                    if (tmp.paramMap.ContainsKey("curRateF"))
+                    //// 如果当前这一路是触到布林下轨且出现回补的，就交易这一路
+                    //if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                    //{
+                    //    if ((float)tmp.paramMap["MayUpCount"] > 0)
+                    //        return;
+                    //}
+
+                    // 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
+                    if (GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
                     {
-                        float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
-                        float rate0 = (float)tmp.paramMap["curRateF"];
-                        if (rate0 > rate12)
+                        if (tmp.paramMap.ContainsKey("curRateF"))
                         {
-                            return;
+                            float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
+                            float rate0 = (float)tmp.paramMap["curRateF"];
+                            if (rate0 > rate12)
+                            {
+                                return;
+                            }
                         }
                     }
-                }
 
-                if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                {
-                    if ((int)tmp.paramMap["AnaCount"] >= 3)
-                        return;
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    {
+                        if ((int)tmp.paramMap["AnaCount"] >= 3)
+                            return;
+                    }
                 }
 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
@@ -4943,19 +5146,63 @@ namespace LotteryAnalyze
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
 
+                        // 当上次选择的那一路在当前出号率很低的时候，就要重新选择分路了
+                        if(GlobalSetting.G_CHANGE_PATH_ON_LOW_APPEARENCE_RATE)
+                        {
+                            if ((float)lastPathCurPCI.paramMap["curRateF"] == 0.0f &&
+                                (float)lastPathCurPCI.paramMap["curRateS"] <= 10.0f)
+                            {
+                                return;
+                            }
+                        }
+
+                        // 如果是在全部交易都失败的时候，标记下次要重新选分路
+                        if (GlobalSetting.G_CHANGE_PATH_ON_ALL_TRADE_MISS)
+                        {
+                            trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
+                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                            if(CurrentTradeCountIndex == tradeCountList.Count - 1)
+                                NeedChangePath = true;
+                            return;
+                        }
+
+                        // 如果开启布林图形检测
+                        if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+                        {
+                            if ((bool)lastPathCurPCI.paramMap["isAppRatePrefer"] == false)
+                                return;
+                            if ((float)lastPathCurPCI.paramMap["detRateS"] < 0)
+                                return;
+
+
+                            /*
+                            // 如果上期选择的那路在这一期，布林中轨出现向下走了，那么就不再选择这一路
+                            if ((int)lastPathCurPCI.paramMap["midKDC"] > 0)
+                            {
+                                return;
+                            }
+                            // 如果出号率低于理论概率，那么这一路也不再选择了
+                            bool isHigherThanTheoAppRate = (bool)lastPathCurPCI.paramMap["isCurRateBTheoRate"];
+                            if (!isHigherThanTheoAppRate)
+                            {
+                                return;
+                            }
+                            */
+                        }
+
                         // 计算这一路的遗漏值
                         int curMissCount = -1;
                         if (lastPathCurPCI.paramMap.ContainsKey("curMissCount"))
                             curMissCount = (int)lastPathCurPCI.paramMap["curMissCount"];
 
-                        // 如果上期选择的那一路在这一期出现继续下行，那么就不再坚持选择往期的那一路
-                        if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
-                        {
-                            if ((float)lastPathCurPCI.paramMap["MayUpCount"] < 0 && curMissCount > 0)
-                            {
-                                return;
-                            }
-                        }
+                        //// 如果上期选择的那一路在这一期出现继续下行，那么就不再坚持选择往期的那一路
+                        //if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)
+                        //{
+                        //    if ((float)lastPathCurPCI.paramMap["MayUpCount"] < 0 && curMissCount > 0)
+                        //    {
+                        //        return;
+                        //    }
+                        //}
 
                         if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
                         {
@@ -5102,6 +5349,7 @@ namespace LotteryAnalyze
             //float[] avgMissCountAreas = new float[] { 0, 0, 0, };
             int[] maxMissCount = new int[] { 0, 0, 0, };
             int[] missCount = new int[] { 0, 0, 0, };
+            int[] maxMissCountID = new int[] { 0, 0, 0, };
             int MAX_MISS_COUNT_TOR = 4;
 
             for (int i = 0; i < cdts.Length; ++i )
@@ -5110,6 +5358,7 @@ namespace LotteryAnalyze
                 maxMissCount[i] = su.fastData.prevMaxMissCount;
                 missCount[i] = su.missCount;
                 missCountAreas[i] = su.fastData.missCountArea;
+                maxMissCountID[i] = su.fastData.prevMaxMissCountIndex;
             }
 
             //int validCount = 0;
@@ -5151,6 +5400,7 @@ namespace LotteryAnalyze
                 pci.paramMap["missCountAreas"] = missCountAreas[i];                
                 //pci.paramMap["avgMissCountAreas"] = avgMissCountAreas[i];
                 pci.paramMap["maxMissCount"] = maxMissCount[i];
+                pci.paramMap["maxMissCountID"] = maxMissCountID[i];
                 pci.paramMap["curMissCount"] = missCount[i];
                 //MACDPoint mp = macdPM.GetData(cdts[i], false);
                 //pci.paramMap["DEA"] = mp.DEA;
@@ -5765,8 +6015,28 @@ namespace LotteryAnalyze
         public Dictionary<int, int> tradeMissInfo = new Dictionary<int, int>();
         List<int> fileIDLst = new List<int>();
         int lastIndex = -1;        
-        SimState state = SimState.eNone;
+        SimState _state = SimState.eNone;
+        SimState state
+        {
+            get { return _state; }
+            set
+            {
+                _state = value;
+                if(value == SimState.eFinishAll)
+                {
+                    if(onTradeSimulateCompleted != null)
+                    {
+                        onTradeSimulateCompleted();
+                    }
+                }
+            }
+        }
+
         string lastTradeIDTag = null;
+        public string LastTradeIDTag
+        {
+            get { return lastTradeIDTag; }
+        }
         int lastTradeCountIndex = -1;
         DataItem curTradeItem;
         SimState backUpState = SimState.eNone;
@@ -5783,6 +6053,9 @@ namespace LotteryAnalyze
 
         public delegate void CallBackOnPrepareDataItems(DataItem startTradeItem);
         public static CallBackOnPrepareDataItems onPrepareDataItems;
+
+        public delegate void CallBackOnCompleted();
+        public static CallBackOnCompleted onTradeSimulateCompleted;
 
         public BatchTradeSimulator()
         {

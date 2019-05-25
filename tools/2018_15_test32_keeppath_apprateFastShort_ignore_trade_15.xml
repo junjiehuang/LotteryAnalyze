@@ -1,0 +1,118 @@
+<root>
+	<TradeStrategy>
+		<batch>10</batch>
+		<startMoney>2000</startMoney>
+		<tradeCountLstStr>1,2,4,8,16,32,64,128,256,512,1024,2048,4096,9000,18000</tradeCountLstStr>
+		<strongUpStartIndex>30</strongUpStartIndex>
+		<simSelNumIndex>0</simSelNumIndex>
+		<curTradeStrategy>eSinglePositionPathByAppearencePosibility</curTradeStrategy>
+		<forceTradeByMaxNumCount>False</forceTradeByMaxNumCount>
+		<maxNumCount>5</maxNumCount>
+		<specNumIndex>True</specNumIndex>
+		<onlyTradeOnStrongUpPath>False</onlyTradeOnStrongUpPath>
+		<riskControl>0</riskControl>
+		<uponValue>10</uponValue>
+		<MultiTradePathCount>0</MultiTradePathCount>
+		<killLastNumber>False</killLastNumber>
+		<procOnNegMoney>0</procOnNegMoney>
+	</TradeStrategy>
+	<Simple>
+		<StartMoney>2000</StartMoney>
+		<CurrentMoney>791994.6</CurrentMoney>
+		<MaxMoney>1301269</MaxMoney>
+		<MinMoney>-10194</MinMoney>
+		<EarnMoney>789994.6</EarnMoney>
+		<TradeTotalCount>11278</TradeTotalCount>
+		<TradeRightCount>3724</TradeRightCount>
+		<TradeWrongCount>7084</TradeWrongCount>
+		<UnTradeCount>470</UnTradeCount>
+	</Simple>
+	<GlobalSetting>
+		<g_DATA_SOURCE_TYPE desc="数据收集设定/数据源类型">eCaiBow</g_DATA_SOURCE_TYPE>
+		<g_UPDATE_IN_MAIN_THREAD desc="界面设置/是否在主线程刷新">True</g_UPDATE_IN_MAIN_THREAD>
+		<g_WINDOW_OPACITY desc="界面设置/窗口透明度">1</g_WINDOW_OPACITY>
+		<g_LOTTERY_GRAPH_UPDATE_INTERVAL desc="界面设置/曲线图刷新毫秒间隔">1500</g_LOTTERY_GRAPH_UPDATE_INTERVAL>
+		<g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL desc="界面设置/模拟图刷新毫秒间隔">1500</g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL>
+		<g_EANBLE_ANALYZE_TOOL desc="自动通道线工具/是否开启">False</g_EANBLE_ANALYZE_TOOL>
+		<g_ANALYZE_TOOL_SAMPLE_COUNT desc="自动通道线工具/取样数">50</g_ANALYZE_TOOL_SAMPLE_COUNT>
+		<g_ENABLE_CHECK_AND_KEEP_SAME_PATH desc="筛选设定/是否开启同路保持检测">True</g_ENABLE_CHECK_AND_KEEP_SAME_PATH>
+		<g_CHANGE_PATH_ON_ALL_TRADE_MISS desc="筛选设定/是否在计划次数全部失败的时候才切换分路">True</g_CHANGE_PATH_ON_ALL_TRADE_MISS>
+		<g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL desc="筛选设定/是否开启同路支撑压力检测">False</g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL>
+		<g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE desc="筛选设定/是否开启同路布林通道检测">False</g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE>
+		<g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK desc="筛选设定/是否开启布林下轨提升检测">False</g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK>
+		<g_ENABLE_MAX_APPEARENCE_FIRST_CHECK desc="筛选设定/是否开启最大出现率检测">False</g_ENABLE_MAX_APPEARENCE_FIRST_CHECK>
+		<g_ENABLE_UPBOLLEAN_COUNT_STATISTIC desc="是否开启布林中轨之上数量统计">False</g_ENABLE_UPBOLLEAN_COUNT_STATISTIC>
+		<g_ENABLE_MACD_UP_CHECK desc="筛选设定/是否开启MACD上升检测">False</g_ENABLE_MACD_UP_CHECK>
+		<g_ENABLE_BOLLEAN_CFG_CHECK desc="筛选设定/是否开启布林线形态检测">False</g_ENABLE_BOLLEAN_CFG_CHECK>
+		<g_ONLY_TRADE_BEST_PATH desc="筛选设定/是否只在最佳的012路交易">False</g_ONLY_TRADE_BEST_PATH>
+		<g_ENABLE_CHECK_PATH_CAN_TRADE desc="筛选设定/是否开启判定这一路能否交易">False</g_ENABLE_CHECK_PATH_CAN_TRADE>
+		<g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE desc="筛选设定/是否在布林下轨连续开出就忽略当前的交易">True</g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE>
+		<g_SEQ_PATH_BY_APPEARENCE_RATE desc="筛选设定/是否按照出现率排序">True</g_SEQ_PATH_BY_APPEARENCE_RATE>
+		<g_AppearenceCheckType desc="筛选设定/出现率检查类型">eUseFastAndShort</g_AppearenceCheckType>
+		<g_ONLY_TRADE_SPEC_CDT desc="模拟交易设置/是否只交易指定的012路">False</g_ONLY_TRADE_SPEC_CDT>
+		<g_TRADE_SPEC_CDT desc="模拟交易设置/交易指定的012路">ePath0</g_TRADE_SPEC_CDT>
+		<g_ONE_STARE_TRADE_COST desc="数据设置/每注一星交易成本">2</g_ONE_STARE_TRADE_COST>
+		<g_ONE_STARE_TRADE_REWARD desc="数据设置/每注一星交易奖金">19.6</g_ONE_STARE_TRADE_REWARD>
+		<g_CUR_TRADE_INDEX desc="数据设置/选择交易策略ID">-1</g_CUR_TRADE_INDEX>
+		<g_DAYS_PER_BATCH desc="数据设置/每批加载多少天的数据">3</g_DAYS_PER_BATCH>
+		<g_ENABLE_REC_TRADE_DATAS desc="数据设置/是否记录交易数据">False</g_ENABLE_REC_TRADE_DATAS>
+	</GlobalSetting>
+	<TradeBeief>
+		<MissCount count="1">814</MissCount>
+		<MissCount count="2">544</MissCount>
+		<MissCount count="3">380</MissCount>
+		<MissCount count="4">225</MissCount>
+		<MissCount count="5">131</MissCount>
+		<MissCount count="6">89</MissCount>
+		<MissCount count="7">66</MissCount>
+		<MissCount count="8">54</MissCount>
+		<MissCount count="9">24</MissCount>
+		<MissCount count="10">25</MissCount>
+		<MissCount count="11">15</MissCount>
+		<MissCount count="12">9</MissCount>
+		<MissCount count="13">6</MissCount>
+		<MissCount count="14">7</MissCount>
+		<MissCount count="15">1</MissCount>
+		<MissCount count="16">3</MissCount>
+		<MissCount count="21">1</MissCount>
+		<MissCount count="31">1</MissCount>
+	</TradeBeief>
+	<LongMissTradeInfos>
+		<trade name="31-1">
+			<detail>20100408-108,20100409-020,10937</detail>
+		</trade>
+		<trade name="21-1">
+			<detail>20100209-114,20100210-017,4815</detail>
+		</trade>
+		<trade name="16-3">
+			<detail>20100120-060,20100120-082,2360</detail>
+			<detail>20100211-091,20100211-108,5026</detail>
+			<detail>20100403-013,20100403-033,10230</detail>
+		</trade>
+		<trade name="15-1">
+			<detail>20100318-018,20100318-036,8313</detail>
+		</trade>
+	</LongMissTradeInfos>
+	<LongMissTradeDatas>
+		<TradeMissCount name="16">
+			<TradeDatas startDataItemTag="20100120-060" endDataItemTag="20100120-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100211-091" endDataItemTag="20100211-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100403-013" endDataItemTag="20100403-033">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="21">
+			<TradeDatas startDataItemTag="20100209-114" endDataItemTag="20100210-017">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="15">
+			<TradeDatas startDataItemTag="20100318-018" endDataItemTag="20100318-036">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="31">
+			<TradeDatas startDataItemTag="20100408-108" endDataItemTag="20100409-020">
+			</TradeDatas>
+		</TradeMissCount>
+	</LongMissTradeDatas>
+</root>

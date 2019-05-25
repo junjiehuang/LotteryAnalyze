@@ -13,6 +13,8 @@ namespace LotteryAnalyze
     {
         // 统计之前出现的最大遗漏值
         public int prevMaxMissCount;
+        // 统计之前出现的最大遗漏值的那期的索引值
+        public int prevMaxMissCountIndex;
         // 统计遗漏面积
         public float missCountArea;
         // 统计出现该统计类型数据的次数
@@ -23,6 +25,8 @@ namespace LotteryAnalyze
         public float appearProbability;
         // 统计出现该统计类型数据的百分比与理论概率的差值
         public float appearProbabilityDiffWithTheory;
+        // 连续低于理论概率的个数
+        public int underTheoryCount = 0;
 
     }
 
@@ -399,17 +403,45 @@ namespace LotteryAnalyze
         }
 
         void CollectMissCountArea()
-        {            
-            for( int i = 0; i < 5; ++i )
+        {
+            DataItem prevItem = lotteryData.parent.GetPrevItem(lotteryData);
+            for ( int i = 0; i < 5; ++i )
             {
                 StatisticUnitMap sumME = allStatisticInfo[i];
+                StatisticUnitMap sumPre = null;
+                if(prevItem != null)
+                {
+                    sumPre = prevItem.statisticInfo.allStatisticInfo[i];
+                }
                 for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
                     StatisticUnit su = sumME.statisticUnitMap[cdt];
+                    StatisticUnit suPre = null;
+
+                    if (sumPre != null)
+                    {
+                        suPre = sumPre.statisticUnitMap[cdt];
+                    }
+                    if (su.fastData.appearProbabilityDiffWithTheory <= 0)
+                        su.fastData.underTheoryCount = sumPre == null ? 1 : (suPre.fastData.underTheoryCount + 1);
+                    else
+                        su.fastData.underTheoryCount = 0;
+                    if (su.shortData.appearProbabilityDiffWithTheory <= 0)
+                        su.shortData.underTheoryCount = sumPre == null ? 1 : (suPre.shortData.underTheoryCount + 1);
+                    else
+                        su.shortData.underTheoryCount = 0;
+                    if (su.longData.appearProbabilityDiffWithTheory <= 0)
+                        su.longData.underTheoryCount = sumPre == null ? 1 : (suPre.longData.underTheoryCount + 1);
+                    else
+                        su.longData.underTheoryCount = 0;
+
                     su.fastData.prevMaxMissCount = su.missCount;
                     su.shortData.prevMaxMissCount = su.missCount;
                     su.longData.prevMaxMissCount = su.missCount;
+                    su.fastData.prevMaxMissCountIndex = lotteryData.idGlobal;
+                    su.shortData.prevMaxMissCountIndex = lotteryData.idGlobal;
+                    su.longData.prevMaxMissCountIndex = lotteryData.idGlobal;
                 }
             }
 
@@ -435,20 +467,29 @@ namespace LotteryAnalyze
                         if (loopCount < FAST_COUNT)
                         {
                             suM.fastData.missCountArea += subArea;
-                            if(suM.fastData.prevMaxMissCount < suP.missCount)
+                            if (suM.fastData.prevMaxMissCount < suP.missCount)
+                            {
                                 suM.fastData.prevMaxMissCount = suP.missCount;
+                                suM.fastData.prevMaxMissCountIndex = pItem.idGlobal;
+                            }
                         }
                         if (loopCount < SHOR_COUNT)
                         {
                             suM.shortData.missCountArea += subArea;
                             if (suM.shortData.prevMaxMissCount < suP.missCount)
+                            {
                                 suM.shortData.prevMaxMissCount = suP.missCount;
+                                suM.shortData.prevMaxMissCountIndex = pItem.idGlobal;
+                            }
                         }
                         if (loopCount < LONG_COUNT)
                         {
                             suM.longData.missCountArea += subArea;
                             if (suM.longData.prevMaxMissCount < suP.missCount)
+                            {
                                 suM.longData.prevMaxMissCount = suP.missCount;
+                                suM.longData.prevMaxMissCountIndex = pItem.idGlobal;
+                            }
                         }
                     }
                 }

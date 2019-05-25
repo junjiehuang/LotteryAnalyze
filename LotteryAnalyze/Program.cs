@@ -58,6 +58,8 @@ namespace LotteryAnalyze
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+            GlobalSetting.ReadCfg();
             
             mainForm = new FormMain();
             {

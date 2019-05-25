@@ -696,10 +696,11 @@ namespace LotteryAnalyze
                                 float bollMidCount = kd.RelateDistTo(bp.midValue) / missHeight;
                                 float bollDownCount = kd.RelateDistTo(bp.downValue) / missHeight;
                                 info += "\nBUpC = " + bollUpCount + ", BMdC = " + bollMidCount + ", BDnC = " + bollDownCount;
-                                info += "\nUpMC = " + bp.uponMidCount + ", OnMC = " + bp.onMidCount + ", DnMC = " + bp.underMidCount;
-                                info += "\nUpMCC = " + bp.uponMidCountContinue + ", OnMCC = " + bp.onMidCountContinue + ", DnMCC = " + bp.underMidCountContinue;
-                                info += "\nBMKUC = " + bp.midKeepUpCount + ", BMKHC = " + bp.midKeepHorzCount + ", BMKDC = " + bp.midKeepDownCount;
-                                info += "\nBMKUCC = " + bp.midKeepUpCountContinue + ", BMKHCC = " + bp.midKeepHorzCountContinue + ", BMKDCC = " + bp.midKeepDownCountContinue;
+                                info += "\nUpMC = " + bp.uponBolleanMidCount + ", OnMC = " + bp.onBolleanMidCount + ", DnMC = " + bp.underBolleanMidCount;
+                                info += "\nUpMCC = " + bp.uponBolleanMidCountContinue + ", OnMCC = " + bp.onBolleanMidCountContinue + ", DnMCC = " + bp.underBolleanMidCountContinue;
+                                info += "\nBMKUC = " + bp.bolleanMidKeepUpCount + ", BMKHC = " + bp.bolleanMidKeepHorzCount + ", BMKDC = " + bp.bolleanMidKeepDownCount;
+                                info += "\nBMKUCC = " + bp.bolleanMidKeepUpCountContinue + ", BMKHCC = " + bp.bolleanMidKeepHorzCountContinue + ", BMKDCC = " + bp.bolleanMidKeepDownCountContinue;
+                                info += "\nOnDownCC = " + bp.onBolleanDownCountContinue;
                                 graphInfo += "\n" + info;
                                 //g.DrawString(info, selDataFont, whiteBrush, 5, 45);
                             }
@@ -1195,9 +1196,9 @@ namespace LotteryAnalyze
             float cyM = StandToCanvas(bp.midValue * gridScaleH, false);
             float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
             Pen midPen = bollinLinePenMid;
-            if (bp.midKeepDownCountContinue > 0)//prevBP.midValue > bp.midValue)
+            if (bp.bolleanMidKeepDownCountContinue > 0)//prevBP.midValue > bp.midValue)
                 midPen = bollinLinePenMidC;
-            else if (bp.midKeepUpCountContinue > 0)//prevBP.midValue < bp.midValue)
+            else if (bp.bolleanMidKeepUpCountContinue > 0)//prevBP.midValue < bp.midValue)
                 midPen = bollinLinePenMidR;
             PushLinePts(bollinLinePenUp, px, pyU, cx, cyU);
             PushSegPts(midPen, px, pyM, cx, cyM);
@@ -2146,7 +2147,7 @@ namespace LotteryAnalyze
             "统计10期的出号个数",
             "统计30期的出号个数",
         };
-        AppearenceType appearenceType = AppearenceType.eAppearenceShort;
+        AppearenceType appearenceType = AppearenceType.eAppearenceFast;
         public AppearenceType AppearenceCycleType
         {
             get { return appearenceType; }
@@ -2307,7 +2308,37 @@ namespace LotteryAnalyze
 
             if (hoverItem != null)
             {
-                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "]";
+                StatisticUnit su = hoverItem.statisticInfo.allStatisticInfo[numIndex].statisticUnitMap[cdt];
+                float apprate = 0;
+                int underTheoRateCount = 0;
+                switch(appearenceType)
+                {
+                    case AppearenceType.eAppearCountFast:
+                        apprate = (su.fastData.appearCount * 100 / LotteryStatisticInfo.FAST_COUNT);
+                        underTheoRateCount = su.fastData.underTheoryCount;
+                        break;
+                    case AppearenceType.eAppearCountShort:
+                        apprate = (su.shortData.appearCount * 100 / LotteryStatisticInfo.SHOR_COUNT);
+                        underTheoRateCount = su.shortData.underTheoryCount;
+                        break;
+                    case AppearenceType.eAppearCountLong:
+                        apprate = (su.longData.appearCount * 100 / LotteryStatisticInfo.LONG_COUNT);
+                        underTheoRateCount = su.longData.underTheoryCount;
+                        break;
+                    case AppearenceType.eAppearenceFast:
+                        apprate = su.fastData.appearProbability;
+                        underTheoRateCount = su.fastData.underTheoryCount;
+                        break;
+                    case AppearenceType.eAppearenceShort:
+                        apprate = su.shortData.appearProbability;
+                        underTheoRateCount = su.shortData.underTheoryCount;
+                        break;
+                    case AppearenceType.eAppearenceLong:
+                        apprate = su.longData.appearProbability;
+                        underTheoRateCount = su.longData.underTheoryCount;
+                        break;
+                }
+                string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] [出号率 = " + apprate + "] [连续低于理论概率期数 = " + underTheoRateCount + "]";
                 g.DrawString(info, tagFont, tagBrush, 5, 5);
             }
 

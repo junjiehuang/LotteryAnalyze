@@ -41,9 +41,12 @@ namespace LotteryAnalyze.UI
             this.SetStyle(ControlStyles.UserPaint, true);
 
             buttonPause.Text = isPause ? "恢复" : "暂停";
+            textBoxResult.Text = "";
 
             FormMain.AddWindow(this);
             Program.AddUpdater(this);
+
+            BatchTradeSimulator.onTradeSimulateCompleted += OnTradeSimulateCompleted;
         }
 
         void LoadPatch()
@@ -91,16 +94,19 @@ namespace LotteryAnalyze.UI
                 TreeNode pTN = new TreeNode(name);
                 pTN.Name = name;
                 treeViewLongWrongInfo.Nodes.Add(pTN);
+                int subID = 1;
                 foreach (XmlNode node in subNode.ChildNodes)
                 {
                     TreeNode sTN = new TreeNode(node.InnerXml);
-                    sTN.Name = node.InnerXml;
+                    sTN.Name = node.InnerXml + "\t[" + name + "," + (subID++) + "]";
                     string[] strs = node.InnerXml.Split(',');
                     strs = strs[0].Split('-');
                     sTN.Tag = strs[0];
                     pTN.Nodes.Add(sTN);
                 }
             }
+
+            this.Text = fileName;
         }
 
         void Start()
@@ -170,8 +176,15 @@ namespace LotteryAnalyze.UI
             isPause = false;
             startSim = false;
             buttonPause.Text = isPause ? "恢复" : "暂停";
+            //textBoxResult.Text = "";
 
-            DialogResult dr = MessageBox.Show((moneyEarnOrLost > 0 ? "盈利：" : "亏损：") + moneyEarnOrLost, "模拟结果", MessageBoxButtons.OKCancel);
+            DialogResult dr = MessageBox.Show(
+                (moneyEarnOrLost > 0 ? "盈利：" : "亏损：") + moneyEarnOrLost, 
+                "模拟结果", 
+                MessageBoxButtons.OKCancel, 
+                MessageBoxIcon.Information, 
+                MessageBoxDefaultButton.Button1,
+                MessageBoxOptions.ServiceNotification);
         }
 
         void Step()
@@ -216,17 +229,18 @@ namespace LotteryAnalyze.UI
                 updateCountDown = updateInterval;
                 if (BatchTradeSimulator.Instance.HasFinished())
                 {
-                    if (curSubNode != null)
-                    {
-                        float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
-                        curSubNode.Text = curSubNode.Name + ", " + delta;
-                        moneyEarnOrLost += delta;
-                        if (delta > 0 && lostMoneyNodes.Contains(curSubNode) == false)
-                        {
-                            lostMoneyNodes.Add(curSubNode);
-                        }
-                    }
-
+                    //if (curSubNode != null)
+                    //{
+                    //    float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
+                    //    curSubNode.Text = curSubNode.Name + ", " + delta;
+                    //    if(isPause == false && startSim == true)
+                    //        moneyEarnOrLost += delta;
+                    //    if (delta > 0 && lostMoneyNodes.Contains(curSubNode) == false)
+                    //    {
+                    //        lostMoneyNodes.Add(curSubNode);
+                    //    }
+                    //    textBoxResult.Text = (moneyEarnOrLost > 0 ? "盈利：" : "亏损：") + moneyEarnOrLost;
+                    //}
                     if (isPause == false && startSim == true)
                         Step();
                 }
@@ -239,6 +253,7 @@ namespace LotteryAnalyze.UI
 
         private void SimTradeLongWrongWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            BatchTradeSimulator.onTradeSimulateCompleted -= OnTradeSimulateCompleted;
             FormMain.RemoveWindow(this);
             Program.RemoveUpdater(this);
             sInst = null;
@@ -288,7 +303,12 @@ namespace LotteryAnalyze.UI
                         float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
                         curSubNode.Text = curSubNode.Name + ", " + delta;
                         moneyEarnOrLost += delta;
-                        if (delta > 0 && lostMoneyNodes.Contains(curSubNode) == false)
+                        if (lostMoneyNodes.Contains(curSubNode))
+                        {
+                            if (delta < 0)
+                                lostMoneyNodes.Remove(curSubNode);
+                        }
+                        else if (delta > 0)
                         {
                             lostMoneyNodes.Add(curSubNode);
                         }
@@ -311,6 +331,29 @@ namespace LotteryAnalyze.UI
                 TreeNode pn = treeViewLongWrongInfo.Nodes[i];
                 if (pn.Nodes.Count == 0)
                     pn.Remove();
+            }
+        }
+        
+        void OnTradeSimulateCompleted()
+        {
+            if (BatchTradeSimulator.Instance.HasFinished())
+            {
+                if (curSubNode != null)
+                {
+                    float delta = BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney;
+                    curSubNode.Text = curSubNode.Name + ", " + delta;
+                    moneyEarnOrLost += delta;
+                    if(lostMoneyNodes.Contains(curSubNode))
+                    {
+                        if (delta < 0)
+                            lostMoneyNodes.Remove(curSubNode);
+                    }
+                    else if(delta > 0)
+                    {
+                        lostMoneyNodes.Add(curSubNode);
+                    }
+                    textBoxResult.Text = (moneyEarnOrLost > 0 ? "盈利：" : "亏损：") + moneyEarnOrLost;
+                }
             }
         }
     }
