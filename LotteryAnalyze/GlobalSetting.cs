@@ -76,8 +76,8 @@ namespace LotteryAnalyze
         private static bool g_CHANGE_PATH_ON_ALL_TRADE_MISS = true;
         [Parameter("筛选设定/是否开启同路支撑压力检测", true)]
         private static bool g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = true;
-        [Parameter("筛选设定/是否开启同路布林通道检测", true)]
-        private static bool g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = true;
+        //[Parameter("筛选设定/是否开启同路布林通道检测", true)]
+        //private static bool g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = true;
         //[Parameter("筛选设定/是否开启布林下轨提升检测", true)]
         //private static bool g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK = true;
         [Parameter("筛选设定/是否交易最大出现率那一路", true)]
@@ -95,9 +95,14 @@ namespace LotteryAnalyze
         private static bool g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE = false;
         [Parameter("筛选设定/忽略设置/是否在布林上轨连续超过3期没开出就忽略当前的交易", false)]
         private static bool g_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS = false;
-        [Parameter("筛选设定/出现率/是否按照出现率排序",false)]
+
+        [Parameter("筛选设定/排序选项/是否按照MACD分析数据排序", false)]
+        private static bool g_SEQ_PATH_BY_MACD_CFG = false;
+        [Parameter("筛选设定/排序选项/是否按照布林分析数据排序",false)]
+        private static bool g_SEQ_PATH_BY_BOLLEAN_CFG = false;
+        [Parameter("筛选设定/排序选项/是否按照出现率排序", false)]
         private static bool g_SEQ_PATH_BY_APPEARENCE_RATE = false;
-        [Parameter("筛选设定/出现率/出现率检查类型", AppearenceCheckType.eUseFast)]
+        [Parameter("筛选设定/排序选项/出现率检查类型", AppearenceCheckType.eUseFast)]
         private static AppearenceCheckType g_AppearenceCheckType = AppearenceCheckType.eUseFast;
 
         [Parameter("模拟交易设置/是否只交易指定的012路",true)]
@@ -220,19 +225,19 @@ namespace LotteryAnalyze
             }
         }
 
-        public static bool G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
-        {
-            get
-            {
-                return g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE;
-            }
+        //public static bool G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
+        //{
+        //    get
+        //    {
+        //        return g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE;
+        //    }
 
-            set
-            {
-                g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = value;
-                HAS_MODIFY = true;
-            }
-        }
+        //    set
+        //    {
+        //        g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = value;
+        //        HAS_MODIFY = true;
+        //    }
+        //}
 
         public static float G_ONE_STARE_TRADE_COST
         {
@@ -580,6 +585,34 @@ namespace LotteryAnalyze
             set
             {
                 g_CHANGE_PATH_ON_LOW_APPEARENCE_RATE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SEQ_PATH_BY_BOLLEAN_CFG
+        {
+            get
+            {
+                return g_SEQ_PATH_BY_BOLLEAN_CFG;
+            }
+
+            set
+            {
+                g_SEQ_PATH_BY_BOLLEAN_CFG = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SEQ_PATH_BY_MACD_CFG
+        {
+            get
+            {
+                return g_SEQ_PATH_BY_MACD_CFG;
+            }
+
+            set
+            {
+                g_SEQ_PATH_BY_MACD_CFG = value;
                 HAS_MODIFY = true;
             }
         }

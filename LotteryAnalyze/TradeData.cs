@@ -4690,12 +4690,12 @@ namespace LotteryAnalyze
                     isAppRatePrefer = (diffPrevF > 0 || diffTheoF >= 0) && (diffPrevS > 0 || diffThroS >= 0);
                 pci.paramMap["isAppRatePrefer"] = isAppRatePrefer;
 
-                if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
-                {
-                    pci.paramMap["count2LIM"] = count2LIM[i];
-                    pci.paramMap["count2BUs"] = count2BUs[i];
-                    pci.paramMap["count2BDs"] = count2BDs[i];
-                }
+                //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                //{
+                //    pci.paramMap["count2LIM"] = count2LIM[i];
+                //    pci.paramMap["count2BUs"] = count2BUs[i];
+                //    pci.paramMap["count2BDs"] = count2BDs[i];
+                //}
                 pci.paramMap["count2BMs"] = count2BMs[i];
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
@@ -4770,7 +4770,8 @@ namespace LotteryAnalyze
                             return 1;
                     }
 
-                    if(GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+                    if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK &&
+                        GlobalSetting.G_SEQ_PATH_BY_BOLLEAN_CFG)
                     {
                         bool isXPrefer = (bool)x.paramMap["isAppRatePrefer"];
                         bool isYPrefer = (bool)y.paramMap["isAppRatePrefer"];
@@ -4858,7 +4859,8 @@ namespace LotteryAnalyze
                         */
                     }
 
-                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
+                        GlobalSetting.G_SEQ_PATH_BY_MACD_CFG)
                     {
                         int xCount = 0, yCount = 0;
                         bool XKUP = (float)x.paramMap["KGraph"] == 2.0f;
@@ -4872,9 +4874,13 @@ namespace LotteryAnalyze
                         bool isXGC = xCfg == MacdLineCfg.eGC || xCfg == MacdLineCfg.eGCFHES;
                         bool isYGC = yCfg == MacdLineCfg.eGC || yCfg == MacdLineCfg.eGCFHES;
 
+                        // K线图是否提升
                         if ((float)x.paramMap["KGraph"] == 2) ++xCount;
+                        // MACD图是否提升
                         if ((float)x.paramMap["MacdUp"] > 0) ++xCount;
+                        // 当前5期内的出现率是否高于33%
                         if ((float)x.paramMap["curRateF"] > 33) ++xCount;
+                        // 当期5期内的出现率是否比上期提升了
                         if ((float)x.paramMap["detRateF"] > 0) ++xCount;
 
                         if ((float)y.paramMap["KGraph"] == 2) ++yCount;
@@ -4882,6 +4888,7 @@ namespace LotteryAnalyze
                         if ((float)y.paramMap["curRateF"] > 33) ++yCount;
                         if ((float)y.paramMap["detRateF"] > 0) ++yCount;
 
+                        // 表现为提升的数据的量
                         x.paramMap["AnaCount"] = xCount;
                         y.paramMap["AnaCount"] = yCount;
 
@@ -4954,13 +4961,13 @@ namespace LotteryAnalyze
                     if ((float)x.paramMap["detRateF"] < (float)y.paramMap["detRateF"])
                         return 1;
 
-                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
-                    {
-                        if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
-                            return -1;
-                        if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
-                            return 1;
-                    }
+                    //if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE)
+                    //{
+                    //    if ((int)x.paramMap["count2LIM"] < (int)y.paramMap["count2LIM"])
+                    //        return -1;
+                    //    if ((int)x.paramMap["count2LIM"] > (int)y.paramMap["count2LIM"])
+                    //        return 1;
+                    //}
 
                     if ((int)x.paramMap["curMissCount"] < (int)y.paramMap["curMissCount"])
                         return -1;
@@ -5101,8 +5108,9 @@ namespace LotteryAnalyze
             if (CurrentTradeCountIndex != 0)
             {
                 // 当前这次交易优先级最高的PathCmpInfo
-                PathCmpInfo tmp = trade.pathCmpInfos[numIndex][0];
+                PathCmpInfo pciOpt0 = trade.pathCmpInfos[numIndex][0];
 
+                // 如果不是在所有次数用完才切换分路
                 if (GlobalSetting.G_CHANGE_PATH_ON_ALL_TRADE_MISS == false)
                 {
                     //// 如果当前这一路是触到布林下轨且出现回补的，就交易这一路
@@ -5115,10 +5123,10 @@ namespace LotteryAnalyze
                     // 检测第0位的出号率是否比第1，2位的出号率的和还要大，如果是，直接交易第0位的号
                     if (GlobalSetting.G_ENABLE_MAX_APPEARENCE_FIRST)
                     {
-                        if (tmp.paramMap.ContainsKey("curRateF"))
+                        if (pciOpt0.paramMap.ContainsKey("curRateF"))
                         {
                             float rate12 = (float)trade.pathCmpInfos[numIndex][1].paramMap["curRateF"] + (float)trade.pathCmpInfos[numIndex][2].paramMap["curRateF"];
-                            float rate0 = (float)tmp.paramMap["curRateF"];
+                            float rate0 = (float)pciOpt0.paramMap["curRateF"];
                             if (rate0 > rate12)
                             {
                                 return;
@@ -5126,9 +5134,11 @@ namespace LotteryAnalyze
                         }
                     }
 
-                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
+                        GlobalSetting.G_SEQ_PATH_BY_MACD_CFG)
                     {
-                        if ((int)tmp.paramMap["AnaCount"] >= 3)
+                        // 如果当前表现为提升的类型等于大于3，那么就选择这一路
+                        if ((int)pciOpt0.paramMap["AnaCount"] >= 3)
                             return;
                     }
                 }
@@ -5140,7 +5150,7 @@ namespace LotteryAnalyze
                     PathCmpInfo lastPCI = lastTrade.pathCmpInfos[numIndex][0];
                     int lastTradePath = lastPCI.pathIndex;
                     // 如果2次交易不是选择的同一路
-                    if (tmp.pathIndex != lastTradePath)
+                    if (pciOpt0.pathIndex != lastTradePath)
                     {
                         // 找到上一次交易所选择的那一路在这次交易中的PathCmpInfo
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
@@ -5149,6 +5159,7 @@ namespace LotteryAnalyze
                         // 当上次选择的那一路在当前出号率很低的时候，就要重新选择分路了
                         if(GlobalSetting.G_CHANGE_PATH_ON_LOW_APPEARENCE_RATE)
                         {
+                            // 如果5期内出现率等于0且15期内的出现率小于等于10%，那么就不选上次选的那路了
                             if ((float)lastPathCurPCI.paramMap["curRateF"] == 0.0f &&
                                 (float)lastPathCurPCI.paramMap["curRateS"] <= 10.0f)
                             {
@@ -5160,7 +5171,7 @@ namespace LotteryAnalyze
                         if (GlobalSetting.G_CHANGE_PATH_ON_ALL_TRADE_MISS)
                         {
                             trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
-                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = pciOpt0;
                             if(CurrentTradeCountIndex == tradeCountList.Count - 1)
                                 NeedChangePath = true;
                             return;
@@ -5169,11 +5180,12 @@ namespace LotteryAnalyze
                         // 如果开启布林图形检测
                         if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
                         {
+                            // 如果上期选择的那路不是出现率提升或者高于理论出现率的，那么就不选择了
                             if ((bool)lastPathCurPCI.paramMap["isAppRatePrefer"] == false)
                                 return;
+                            // 如果上期选择的那路出现15期出现率变低，那么就不选择了
                             if ((float)lastPathCurPCI.paramMap["detRateS"] < 0)
                                 return;
-
 
                             /*
                             // 如果上期选择的那路在这一期，布林中轨出现向下走了，那么就不再选择这一路
@@ -5215,7 +5227,7 @@ namespace LotteryAnalyze
                             if ((float)lastPathCurPCI.paramMap["KGraph"] == 2.0f)
                             {
                                 trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
-                                trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                                trade.pathCmpInfos[numIndex][lastPathCurIndex] = pciOpt0;
                                 return;
                             }
                             else
@@ -5297,31 +5309,32 @@ namespace LotteryAnalyze
                             }
                         }
                         
-                        // 过滤掉连续在布林线下轨附近的012路
-                        if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
-                            && lastTrade.INDEX > 10
-                            && curMissCount > 4)
-                        {
-                            TradeDataOneStar t0 = GetTrade(lastTrade.INDEX - 0) as TradeDataOneStar;
-                            TradeDataOneStar t1 = GetTrade(lastTrade.INDEX - 1) as TradeDataOneStar;
-                            TradeDataOneStar t2 = GetTrade(lastTrade.INDEX - 2) as TradeDataOneStar;
-                            if (t0 != null && t1 != null && t2 != null)
-                            {
-                                float c2bds0 = (float)GetPathInfo(t0, numIndex, lastTradePath).paramMap["count2BDs"];
-                                float c2bds1 = (float)GetPathInfo(t1, numIndex, lastTradePath).paramMap["count2BDs"];
-                                float c2bds2 = (float)GetPathInfo(t2, numIndex, lastTradePath).paramMap["count2BDs"];
-                                // 连续3期这一路都走到布林线下轨了，那么就不再坚持选择这路了
-                                if (Math.Abs(c2bds0) < 1 && Math.Abs(c2bds1) < 1 && Math.Abs(c2bds2) < 1)
-                                {
-                                    return;
-                                }
-                            }
-                        }
+                        //// 过滤掉连续在布林线下轨附近的012路
+                        //if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE
+                        //    && lastTrade.INDEX > 10
+                        //    && curMissCount > 4)
+                        //{
+                        //    TradeDataOneStar t0 = GetTrade(lastTrade.INDEX - 0) as TradeDataOneStar;
+                        //    TradeDataOneStar t1 = GetTrade(lastTrade.INDEX - 1) as TradeDataOneStar;
+                        //    TradeDataOneStar t2 = GetTrade(lastTrade.INDEX - 2) as TradeDataOneStar;
+                        //    if (t0 != null && t1 != null && t2 != null)
+                        //    {
+                        //        float c2bds0 = (float)GetPathInfo(t0, numIndex, lastTradePath).paramMap["count2BDs"];
+                        //        float c2bds1 = (float)GetPathInfo(t1, numIndex, lastTradePath).paramMap["count2BDs"];
+                        //        float c2bds2 = (float)GetPathInfo(t2, numIndex, lastTradePath).paramMap["count2BDs"];
+                        //        // 连续3期这一路都走到布林线下轨了，那么就不再坚持选择这路了
+                        //        if (Math.Abs(c2bds0) < 1 && Math.Abs(c2bds1) < 1 && Math.Abs(c2bds2) < 1)
+                        //        {
+                        //            return;
+                        //        }
+                        //    }
+                        //}
+
                         //if ((int)lastPathCurPCI.paramMap["maxMissCount"] < MAX_MISS_COUNT_TOR &&
                         //    (int)lastPathCurPCI.paramMap["curMissCount"] < MAX_MISS_COUNT_TOR)
                         {
                             trade.pathCmpInfos[numIndex][0] = lastPathCurPCI;
-                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = tmp;
+                            trade.pathCmpInfos[numIndex][lastPathCurIndex] = pciOpt0;
                         }
                     }
                 }

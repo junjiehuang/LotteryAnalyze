@@ -70,6 +70,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textBoxCmd = new System.Windows.Forms.WebBrowser();
+            this.checkBoxShowDetail = new System.Windows.Forms.CheckBox();
             this.treeViewLongWrongTradeInfos = new System.Windows.Forms.TreeView();
             this.contextMenuStripSimulationResultTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,7 +78,6 @@
             this.buttonDebugSetting = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.checkBoxShowDetail = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -544,6 +544,17 @@
             this.textBoxCmd.Size = new System.Drawing.Size(262, 358);
             this.textBoxCmd.TabIndex = 0;
             // 
+            // checkBoxShowDetail
+            // 
+            this.checkBoxShowDetail.AutoSize = true;
+            this.checkBoxShowDetail.Location = new System.Drawing.Point(3, 5);
+            this.checkBoxShowDetail.Name = "checkBoxShowDetail";
+            this.checkBoxShowDetail.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxShowDetail.TabIndex = 14;
+            this.checkBoxShowDetail.Text = "显示详情";
+            this.checkBoxShowDetail.UseVisualStyleBackColor = true;
+            this.checkBoxShowDetail.CheckedChanged += new System.EventHandler(this.checkBoxShowDetail_CheckedChanged);
+            // 
             // treeViewLongWrongTradeInfos
             // 
             this.treeViewLongWrongTradeInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -607,19 +618,6 @@
             this.label10.Size = new System.Drawing.Size(53, 12);
             this.label10.TabIndex = 27;
             this.label10.Text = "总进度：";
-            // 
-            // checkBoxShowDetail
-            // 
-            this.checkBoxShowDetail.AutoSize = true;
-            this.checkBoxShowDetail.Checked = true;
-            this.checkBoxShowDetail.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxShowDetail.Location = new System.Drawing.Point(3, 5);
-            this.checkBoxShowDetail.Name = "checkBoxShowDetail";
-            this.checkBoxShowDetail.Size = new System.Drawing.Size(72, 16);
-            this.checkBoxShowDetail.TabIndex = 14;
-            this.checkBoxShowDetail.Text = "显示详情";
-            this.checkBoxShowDetail.UseVisualStyleBackColor = true;
-            this.checkBoxShowDetail.CheckedChanged += new System.EventHandler(this.checkBoxShowDetail_CheckedChanged);
             // 
             // GlobalSimTradeWindow
             // 

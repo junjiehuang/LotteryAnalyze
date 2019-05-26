@@ -276,11 +276,11 @@ namespace LotteryAnalyze.UI
                 info += (int)(BatchTradeSimulator.Instance.minMoney);
                 int delta = (int)(BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);
                 if (delta > 0)
-                    info += (")]#NL#[盈利: (<font color=\"red\">+");
+                    info += (")]#NL#[盈利: (<font color=\"red\" size=30>+");
                 else if (delta < 0)
-                    info += (")]#NL#[亏损: (<font color=\"green\">");
+                    info += (")]#NL#[亏损: (<font color=\"green\" size=30>");
                 else
-                    info += (")]#NL#[平衡: (<font color=\"white\">");
+                    info += (")]#NL#[平衡: (<font color=\"white\" size=30>");
                 info += delta + "</font>";
 
                 info += (")]#NL#---------------------#NL#");
@@ -333,11 +333,11 @@ namespace LotteryAnalyze.UI
                 info += (int)(BatchTradeSimulator.Instance.minMoney);
                 int delta = (int)(BatchTradeSimulator.Instance.currentMoney - BatchTradeSimulator.Instance.startMoney);
                 if (delta > 0)
-                    info += (")]#NL#[盈利: (<font color=\"red\">+");
+                    info += (")]#NL#[盈利: (<font color=\"red\" size=30>+");
                 else if (delta < 0)
-                    info += (")]#NL#[亏损: (<font color=\"green\">");
+                    info += (")]#NL#[亏损: (<font color=\"green\" size=30>");
                 else
-                    info += (")]#NL#[平衡: (<font color=\"white\">");
+                    info += (")]#NL#[平衡: (<font color=\"white\" size=30>");
                 info += delta + "</font>";
 
                 info += (")]#NL#---------------------#NL#");
