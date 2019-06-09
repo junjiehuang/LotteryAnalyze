@@ -1827,321 +1827,352 @@ namespace LotteryAnalyze
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
 
-            if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE)
+            bool tradeImmediate = false;
+            // 忽略没有落在布林中轨的k线
+            if (GlobalSetting.G_TRADE_IMMEDIATE_AT_BOLLEAN_MID)
             {
-                // K线如果超过2期运行到布林下轨，那么就不做交易了
-                if ((int)pci0.paramMap["onDownCC"] > 2)
-                    return;
-            }
-            if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS)
-            {
-                if(GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
+                if (GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
                 {
-                    if ((int)pci0.paramMap["KDownFromTop"] == 1)
-                        return;
+                    float count2BM = (float)pci0.paramMap["count2BMs"];
+                    if (Math.Abs(count2BM) < 1)
+                    {
+                        tradeImmediate = true;
+                    }
                 }
             }
-
-            if (GlobalSetting.G_ONLY_TRADE_BEST_PATH)
+            if (GlobalSetting.G_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN)
             {
-                if (GlobalSetting.G_ENABLE_CHECK_PATH_CAN_TRADE == false)
+                int onBDCC = (int)pci0.paramMap["onDownCC"];
+                if (onBDCC > 0 && onBDCC < 2)
+                    tradeImmediate = true;
+            }
+
+            if (tradeImmediate == false)
+            {
+                // 是否在布林下轨连续开出就忽略当前的交易
+                if (GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE)
                 {
-                    if ((bool)pci0.paramMap["isAppRatePrefer"] == false)
+                    // K线如果超过2期运行到布林下轨，那么就不做交易了
+                    if ((int)pci0.paramMap["onDownCC"] > 2)
                         return;
-                    /*
-                    int checkCounts = tradeCountList.Count - 3;
-                    if ((int)pci0.paramMap["maxMissCount"] < checkCounts)
-                        checkCounts = (int)pci0.paramMap["maxMissCount"];
-
-                    if ((int)pci0.paramMap["underTheoRateCount"] > 1)
-                    {
-                        return;
-                    }
-
-                    if ((int)pci0.paramMap["maxMissCountID"] < item.idGlobal)
-                    {
-                        if ((int)pci0.paramMap["curMissCount"] > checkCounts)
-                            return;
-                    }
-                    else if ((int)pci0.paramMap["curMissCount"] > 2)
-                    {
-                        return;
-                    }
-                    */
                 }
-                else
+                // 是否在布林上轨连续超过3期没开出就忽略当前的交易
+                if (GlobalSetting.G_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS)
                 {
-                    // K线是否在布林中轨
-                    bool isOnBolleanMid = Math.Abs((float)pci0.paramMap["count2BMs"]) <= 1.2;
-                    // 判断K值是否落在支撑线上的检测距离
-                    float downLineCheckTor = 0.2f;// 1.2f;
-                                                  // K线与支撑线的关系：0 - 在支撑线上， 1 - 在支撑线上方， -1 - 在支撑线下方
-                    int relationShipToDownLine = 0;
-                    // 剩余交易次数是否可用
-                    bool isTradeCountLeftNotEnough = false;
-                    // 下支撑线的斜率
-                    float downLineSlope = 0;
-                    // 从支撑线判断当前是否处于支撑线下方或者剩余交易次数不足
-                    bool isKCurveUnderDownLineOrTradeCountNotEnough = false;
-                    float distFromCur2Min = 999;
-                    // 是否在布林中轨之下运行且出现抬升转折点了
-                    bool isUnderBolleanMidAndBecomeUp = false;
-                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    if (GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
                     {
-                        isUnderBolleanMidAndBecomeUp =
-                        (int)pci0.paramMap["KKeepDown"] == 2 &&
-                        (int)pci0.paramMap["KAtBMDown"] == 1;
-                    }
-                    // 布林中轨是否转而向下了
-                    bool isBolleanMidBecomeDown = (float)pci0.paramMap["bpmDelta"] < 0;
-                    bool isNearDL = false;
-
-
-                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
-                    {
-                        // 还剩下多少笔交易可用
-                        int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
-                        // 下后支撑线存在
-                        if ((int)pci0.paramMap["DLNext"] == 1)
-                        {
-                            float vdist = (float)pci0.paramMap["DLNextVDist"];
-                            // k线穿出下后支撑线了
-                            if (vdist > downLineCheckTor)
-                                relationShipToDownLine = -1;
-                            // k线在下后支撑线上方
-                            else if (vdist < -downLineCheckTor)
-                                relationShipToDownLine = 1;
-                            // k线落在下后支撑线上
-                            else
-                                relationShipToDownLine = 0;
-
-                            // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
-                            // 那么可以认为剩余次数不足了
-                            if ((int)pci0.paramMap["DLHasNextHitPt"] == 1)
-                            {
-                                float count2DL = (float)pci0.paramMap["DLNextHitPtXOF"];
-                                if (count2DL > countLeft)
-                                    isTradeCountLeftNotEnough = true;
-                                if (0 < count2DL && count2DL <= 2)
-                                    isNearDL = true;
-                            }
-                            downLineSlope = (float)pci0.paramMap["DLNextSlope"];
-                            distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
-                        }
-                        else if ((int)pci0.paramMap["DLPrev"] == 1)
-                        {
-                            float vdist = (float)pci0.paramMap["DLPrevVDist"];
-                            // k线穿出下前支撑线了
-                            if (vdist > downLineCheckTor)
-                                relationShipToDownLine = -1;
-                            // k线在下前支撑线上方
-                            else if (vdist < -downLineCheckTor)
-                                relationShipToDownLine = 1;
-                            // k线落在下前支撑线上
-                            else
-                                relationShipToDownLine = 0;
-
-                            // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
-                            // 那么可以认为剩余次数不足了
-                            if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1)
-                            {
-                                float count2DL = (float)pci0.paramMap["DLPrevHitPtXOF"];
-                                if (count2DL > countLeft)
-                                    isTradeCountLeftNotEnough = true;
-                                if (0 < count2DL && count2DL <= 2)
-                                    isNearDL = true;
-                            }
-                            downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
-                            distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
-                        }
-                    }
-
-
-                    // test only trade upon bollean mid
-                    //if ((int)pci0.paramMap["BollBandLE3Count"] < 3)
-                    bool tradeImmediate =
-                        (int)pci0.paramMap["KDownFromTop"] != 1 &&
-                        (
-                            (int)pci0.paramMap["aprC"] >= 3
-                            || (int)pci0.paramMap["onMCC"] > 0
-                        );
-                    //|| (isNearDL && downLineSlope >= 0.0)
-                    //|| relationShipToDownLine == 0;
-                    if (!tradeImmediate)
-                    {
-                        // 如果是在布林中轨上方超过2期没开出，放弃之
                         if ((int)pci0.paramMap["KDownFromTop"] == 1)
                             return;
-                        // 如果当前运行在中轨之下，放弃之
-                        if ((int)pci0.paramMap["dnMCC"] > 0)
-                            return;
-                        // 如果少于3期在布林中轨及之上，就放弃之
-                        int upMC = (int)pci0.paramMap["upMC"];
-                        int onMC = (int)pci0.paramMap["onMC"];
-                        int onMCC = (int)pci0.paramMap["onMCC"];
-                        int upAndOnMC = upMC + onMC;
-                        // 如果当前在中轨以及之上的期数小于3，放弃之
-                        if (upAndOnMC < 3)
-                            return;
-                        // 如果超出3期没开出或者当前k线运行到布林中轨之下，放弃之
-                        if (!(onMCC >= 3 || upMC > 0))
-                            return;
-                        // 如果布林中轨往下运行，放弃之
-                        if ((float)pci0.paramMap["bpmDelta"] < -0.01)
-                            return;
                     }
+                }
+                if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID)
+                {
+                    if (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1)
+                        return;
+                }
 
-                    /*
-                    if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+
+                if (GlobalSetting.G_ONLY_TRADE_BEST_PATH)
+                {
+                    if (GlobalSetting.G_ENABLE_CHECK_PATH_CAN_TRADE == false)
                     {
-                        // 还剩下多少笔交易可用
-                        int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
-                        // 下后支撑线存在
-                        if ((int)pci0.paramMap["DLNext"] == 1)
-                        {
-                            float vdist = (float)pci0.paramMap["DLNextVDist"];
-                            // k线穿出下后支撑线了
-                            if (vdist > downLineCheckTor)
-                                relationShipToDownLine = -1;
-                            // k线在下后支撑线上方
-                            else if (vdist < -downLineCheckTor)
-                                relationShipToDownLine = 1;
-                            // k线落在下后支撑线上
-                            else
-                                relationShipToDownLine = 0;
-
-                            // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
-                            // 那么可以认为剩余次数不足了
-                            if ((int)pci0.paramMap["DLHasNextHitPt"] == 1 && (float)pci0.paramMap["DLNextHitPtXOF"] > countLeft)
-                                isTradeCountLeftNotEnough = true;
-                            downLineSlope = (float)pci0.paramMap["DLNextSlope"];
-                            distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
-                        }
-                        else if ((int)pci0.paramMap["DLPrev"] == 1)
-                        {
-                            float vdist = (float)pci0.paramMap["DLPrevVDist"];
-                            // k线穿出下前支撑线了
-                            if (vdist > downLineCheckTor)
-                                relationShipToDownLine = -1;
-                            // k线在下前支撑线上方
-                            else if (vdist < -downLineCheckTor)
-                                relationShipToDownLine = 1;
-                            // k线落在下前支撑线上
-                            else
-                                relationShipToDownLine = 0;
-
-                            // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
-                            // 那么可以认为剩余次数不足了
-                            if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1 && (float)pci0.paramMap["DLPrevHitPtXOF"] > countLeft)
-                                isTradeCountLeftNotEnough = true;
-                            downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
-                            distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
-                        }
-                        // 是否长期处于布林中轨之下，且下支撑线是抬升的，当前离支撑点在3个单位之内
-                        bool isLongUnderBMAndMayBecomeUp =
-                            //downLineSlope > 0 &&
-                            //distFromCur2Min > -1 && distFromCur2Min <= 3 &&
-                            isUnderBolleanMidAndBecomeUp;
-
-                        isKCurveUnderDownLineOrTradeCountNotEnough = relationShipToDownLine == -1;// || isTradeCountLeftNotEnough;
-                        // 如果k线穿过下支撑线或者剩余交易次数不足，那么可以认为当前的交易可以放弃了
-                        if (isKCurveUnderDownLineOrTradeCountNotEnough && 
-                            !(isOnBolleanMid || isLongUnderBMAndMayBecomeUp))
-                        {
+                        if ((bool)pci0.paramMap["isAppRatePrefer"] == false)
                             return;
-                        }
-                    }
+                        /*
+                        int checkCounts = tradeCountList.Count - 3;
+                        if ((int)pci0.paramMap["maxMissCount"] < checkCounts)
+                            checkCounts = (int)pci0.paramMap["maxMissCount"];
 
-                    if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
-                    {
-                        //BolleanBandCfg bbCfg = (BolleanBandCfg)pci0.paramMap["BBandCfg"];
-                        //if(bbCfg == BolleanBandCfg.eNone)
-                        //    return;
-                        //else if(bbCfg == BolleanBandCfg.eBecomeLarge || bbCfg == BolleanBandCfg.eBecomeSmall)
-                        //{
-                        //    if ((int)pci0.paramMap["curMissCount"] > 3 && Math.Abs((float)pci0.paramMap["count2BMs"]) > 1)
-                        //        return;
-                        //}
-
-
-                        // k线在布林中轨 或者 k线在下支撑线
-                        bool isOnBolleanMidOrOnDownLine = isOnBolleanMid || relationShipToDownLine == 0;
-                        // 判断当前的交易是否需要取消
-                        bool isCurTradeShouldCancel =
-                            // 是否超过3次没出了
-                            (int)pci0.paramMap["curMissCount"] > 3
-                            // 且剩余次数足够
-                            && !isTradeCountLeftNotEnough
-                            // 且没有出现下面的情况(k线在布林中轨 或者 k线在下支撑线)
-                            && !isOnBolleanMidOrOnDownLine
-                            // 如果没有出现抬升转折点
-                            && !isUnderBolleanMidAndBecomeUp;
-                        if (isCurTradeShouldCancel)
+                        if ((int)pci0.paramMap["underTheoRateCount"] > 1)
                         {
                             return;
                         }
 
-                        BolleanCfg bmCFG = (BolleanCfg)pci0.paramMap["BMCfg"];
-                        if (bmCFG == BolleanCfg.eNone ||
-                            bmCFG == BolleanCfg.eDown ||
-                            bmCFG == BolleanCfg.eFirstUpThenDown ||
-                            isBolleanMidBecomeDown)
+                        if ((int)pci0.paramMap["maxMissCountID"] < item.idGlobal)
                         {
-                            if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
-                            {
-                                if (//isOnBolleanMidOrOnDownLine == false && 
-                                    downLineSlope < 0 &&
-                                    (int)pci0.paramMap["KKeepDown"] == 1 &&
-                                    (int)pci0.paramMap["KAtBMDown"] == 1)
-                                    return;
-                            }
-                            else
+                            if ((int)pci0.paramMap["curMissCount"] > checkCounts)
                                 return;
                         }
+                        else if ((int)pci0.paramMap["curMissCount"] > 2)
+                        {
+                            return;
+                        }
+                        */
                     }
-
-                    //if ((int)pci0.paramMap["KAtBMDown"] == 1)
-                    //    return;
-
-                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                    else
                     {
-                        //// 当前没有出现坚持等待的信号时
-                        //if ((int)pci0.paramMap["WaitUp"] == 0)
-                        //{
-                        //    int tradeDistToMax = tradeCountList.Count - currentTradeCountIndex;
-                        //    if (// K线在布林中轨下方下降运行，就放弃
-                        //        (int)pci0.paramMap["KKeepDown"] == 1
-                        //         ||
-                        //        // 如果K线没出现反弹信号且剩下的交易次数小于MultiTradePathCount，就放弃
-                        //        ((tradeDistToMax < MultiTradePathCount) && (int)pci0.paramMap["KKeepDown"] != 2)
-                        //         ||
-                        //        // 如果当前的遗漏超过3，且MACD柱不是上升或者触底反弹的，就放弃
-                        //        (
-                        //            (int)pci0.paramMap["MBAR"] <= 0 &&
-                        //            (int)pci0.paramMap["curMissCount"] > 3
-                        //        )
-                        //         ||
-                        //        // 如果当前的遗漏超过3，当前遗漏超过最大遗漏且K线是纯下行的话，就放弃
-                        //        (
-                        //            (float)pci0.paramMap["KGraph"] == -1.0f &&
-                        //            (int)pci0.paramMap["curMissCount"] >= (int)pci0.paramMap["maxMissCount"]
-                        //            && (int)pci0.paramMap["curMissCount"] > 3
-                        //        ))
-                        //        return;
-                        //}
+                        // K线是否在布林中轨
+                        bool isOnBolleanMid = Math.Abs((float)pci0.paramMap["count2BMs"]) <= 1.2;
+                        // 判断K值是否落在支撑线上的检测距离
+                        float downLineCheckTor = 0.2f;// 1.2f;
+                                                      // K线与支撑线的关系：0 - 在支撑线上， 1 - 在支撑线上方， -1 - 在支撑线下方
+                        int relationShipToDownLine = 0;
+                        // 剩余交易次数是否可用
+                        bool isTradeCountLeftNotEnough = false;
+                        // 下支撑线的斜率
+                        float downLineSlope = 0;
+                        // 从支撑线判断当前是否处于支撑线下方或者剩余交易次数不足
+                        bool isKCurveUnderDownLineOrTradeCountNotEnough = false;
+                        float distFromCur2Min = 999;
+                        // 是否在布林中轨之下运行且出现抬升转折点了
+                        bool isUnderBolleanMidAndBecomeUp = false;
+                        if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                        {
+                            isUnderBolleanMidAndBecomeUp =
+                            (int)pci0.paramMap["KKeepDown"] == 2 &&
+                            (int)pci0.paramMap["KAtBMDown"] == 1;
+                        }
+                        // 布林中轨是否转而向下了
+                        bool isBolleanMidBecomeDown = (float)pci0.paramMap["bpmDelta"] < 0;
+                        bool isNearDL = false;
 
-                        //MacdLineCfg cfg = (MacdLineCfg)pci0.paramMap["MacdCfg"];
-                        //if (//(int)pci0.paramMap["KUP"] <= 0
-                        //    //(float)pci0.paramMap["KGraph"] != 2.0f 
-                        //    //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
-                        //    false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
-                        //    || (int)pci0.paramMap["IsMacdPUP"] != 1
-                        //    || (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1 && (int)pci0.paramMap["curMissCount"] > 2)
-                        //    //|| (int)pci0.paramMap["KUP"] <= 0
-                        //    )
+
+                        if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+                        {
+                            // 还剩下多少笔交易可用
+                            int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
+                            // 下后支撑线存在
+                            if ((int)pci0.paramMap["DLNext"] == 1)
+                            {
+                                float vdist = (float)pci0.paramMap["DLNextVDist"];
+                                // k线穿出下后支撑线了
+                                if (vdist > downLineCheckTor)
+                                    relationShipToDownLine = -1;
+                                // k线在下后支撑线上方
+                                else if (vdist < -downLineCheckTor)
+                                    relationShipToDownLine = 1;
+                                // k线落在下后支撑线上
+                                else
+                                    relationShipToDownLine = 0;
+
+                                // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
+                                // 那么可以认为剩余次数不足了
+                                if ((int)pci0.paramMap["DLHasNextHitPt"] == 1)
+                                {
+                                    float count2DL = (float)pci0.paramMap["DLNextHitPtXOF"];
+                                    if (count2DL > countLeft)
+                                        isTradeCountLeftNotEnough = true;
+                                    if (0 < count2DL && count2DL <= 2)
+                                        isNearDL = true;
+                                }
+                                downLineSlope = (float)pci0.paramMap["DLNextSlope"];
+                                distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
+                            }
+                            else if ((int)pci0.paramMap["DLPrev"] == 1)
+                            {
+                                float vdist = (float)pci0.paramMap["DLPrevVDist"];
+                                // k线穿出下前支撑线了
+                                if (vdist > downLineCheckTor)
+                                    relationShipToDownLine = -1;
+                                // k线在下前支撑线上方
+                                else if (vdist < -downLineCheckTor)
+                                    relationShipToDownLine = 1;
+                                // k线落在下前支撑线上
+                                else
+                                    relationShipToDownLine = 0;
+
+                                // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
+                                // 那么可以认为剩余次数不足了
+                                if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1)
+                                {
+                                    float count2DL = (float)pci0.paramMap["DLPrevHitPtXOF"];
+                                    if (count2DL > countLeft)
+                                        isTradeCountLeftNotEnough = true;
+                                    if (0 < count2DL && count2DL <= 2)
+                                        isNearDL = true;
+                                }
+                                downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
+                                distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
+                            }
+                        }
+
+
+                        // test only trade upon bollean mid
+                        //if ((int)pci0.paramMap["BollBandLE3Count"] < 3)
+                        bool shouldTrade =
+                            (int)pci0.paramMap["KDownFromTop"] != 1 &&
+                            (
+                                (int)pci0.paramMap["aprC"] >= 3
+                                || (int)pci0.paramMap["onMCC"] > 0
+                            );
+                        //|| (isNearDL && downLineSlope >= 0.0)
+                        //|| relationShipToDownLine == 0;
+                        if (!shouldTrade)
+                        {
+                            // 如果是在布林中轨上方超过2期没开出，放弃之
+                            if ((int)pci0.paramMap["KDownFromTop"] == 1)
+                                return;
+                            // 如果当前运行在中轨之下，放弃之
+                            if ((int)pci0.paramMap["dnMCC"] > 0)
+                                return;
+                            // 如果少于3期在布林中轨及之上，就放弃之
+                            int upMC = (int)pci0.paramMap["upMC"];
+                            int onMC = (int)pci0.paramMap["onMC"];
+                            int onMCC = (int)pci0.paramMap["onMCC"];
+                            int upAndOnMC = upMC + onMC;
+                            // 如果当前在中轨以及之上的期数小于3，放弃之
+                            if (upAndOnMC < 3)
+                                return;
+                            // 如果超出3期没开出或者当前k线运行到布林中轨之下，放弃之
+                            if (!(onMCC >= 3 || upMC > 0))
+                                return;
+                            // 如果布林中轨往下运行，放弃之
+                            if ((float)pci0.paramMap["bpmDelta"] < -0.01)
+                                return;
+                        }
+
+                        /*
+                        if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
+                        {
+                            // 还剩下多少笔交易可用
+                            int countLeft = tradeCountList.Count - CurrentTradeCountIndex;
+                            // 下后支撑线存在
+                            if ((int)pci0.paramMap["DLNext"] == 1)
+                            {
+                                float vdist = (float)pci0.paramMap["DLNextVDist"];
+                                // k线穿出下后支撑线了
+                                if (vdist > downLineCheckTor)
+                                    relationShipToDownLine = -1;
+                                // k线在下后支撑线上方
+                                else if (vdist < -downLineCheckTor)
+                                    relationShipToDownLine = 1;
+                                // k线落在下后支撑线上
+                                else
+                                    relationShipToDownLine = 0;
+
+                                // 从当前的K线按照下降的趋势做延长线到下后支撑线的交点，
+                                // 那么可以认为剩余次数不足了
+                                if ((int)pci0.paramMap["DLHasNextHitPt"] == 1 && (float)pci0.paramMap["DLNextHitPtXOF"] > countLeft)
+                                    isTradeCountLeftNotEnough = true;
+                                downLineSlope = (float)pci0.paramMap["DLNextSlope"];
+                                distFromCur2Min = (float)pci0.paramMap["DLNextDist2Min"];
+                            }
+                            else if ((int)pci0.paramMap["DLPrev"] == 1)
+                            {
+                                float vdist = (float)pci0.paramMap["DLPrevVDist"];
+                                // k线穿出下前支撑线了
+                                if (vdist > downLineCheckTor)
+                                    relationShipToDownLine = -1;
+                                // k线在下前支撑线上方
+                                else if (vdist < -downLineCheckTor)
+                                    relationShipToDownLine = 1;
+                                // k线落在下前支撑线上
+                                else
+                                    relationShipToDownLine = 0;
+
+                                // 从当前的K线按照下降的趋势做延长线到下前支撑线的交点，
+                                // 那么可以认为剩余次数不足了
+                                if ((int)pci0.paramMap["DLHasPrevHitPt"] == 1 && (float)pci0.paramMap["DLPrevHitPtXOF"] > countLeft)
+                                    isTradeCountLeftNotEnough = true;
+                                downLineSlope = (float)pci0.paramMap["DLPrevSlope"];
+                                distFromCur2Min = (float)pci0.paramMap["DLPrevDist2Min"];
+                            }
+                            // 是否长期处于布林中轨之下，且下支撑线是抬升的，当前离支撑点在3个单位之内
+                            bool isLongUnderBMAndMayBecomeUp =
+                                //downLineSlope > 0 &&
+                                //distFromCur2Min > -1 && distFromCur2Min <= 3 &&
+                                isUnderBolleanMidAndBecomeUp;
+
+                            isKCurveUnderDownLineOrTradeCountNotEnough = relationShipToDownLine == -1;// || isTradeCountLeftNotEnough;
+                            // 如果k线穿过下支撑线或者剩余交易次数不足，那么可以认为当前的交易可以放弃了
+                            if (isKCurveUnderDownLineOrTradeCountNotEnough && 
+                                !(isOnBolleanMid || isLongUnderBMAndMayBecomeUp))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK)
+                        {
+                            //BolleanBandCfg bbCfg = (BolleanBandCfg)pci0.paramMap["BBandCfg"];
+                            //if(bbCfg == BolleanBandCfg.eNone)
+                            //    return;
+                            //else if(bbCfg == BolleanBandCfg.eBecomeLarge || bbCfg == BolleanBandCfg.eBecomeSmall)
+                            //{
+                            //    if ((int)pci0.paramMap["curMissCount"] > 3 && Math.Abs((float)pci0.paramMap["count2BMs"]) > 1)
+                            //        return;
+                            //}
+
+
+                            // k线在布林中轨 或者 k线在下支撑线
+                            bool isOnBolleanMidOrOnDownLine = isOnBolleanMid || relationShipToDownLine == 0;
+                            // 判断当前的交易是否需要取消
+                            bool isCurTradeShouldCancel =
+                                // 是否超过3次没出了
+                                (int)pci0.paramMap["curMissCount"] > 3
+                                // 且剩余次数足够
+                                && !isTradeCountLeftNotEnough
+                                // 且没有出现下面的情况(k线在布林中轨 或者 k线在下支撑线)
+                                && !isOnBolleanMidOrOnDownLine
+                                // 如果没有出现抬升转折点
+                                && !isUnderBolleanMidAndBecomeUp;
+                            if (isCurTradeShouldCancel)
+                            {
+                                return;
+                            }
+
+                            BolleanCfg bmCFG = (BolleanCfg)pci0.paramMap["BMCfg"];
+                            if (bmCFG == BolleanCfg.eNone ||
+                                bmCFG == BolleanCfg.eDown ||
+                                bmCFG == BolleanCfg.eFirstUpThenDown ||
+                                isBolleanMidBecomeDown)
+                            {
+                                if(GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                                {
+                                    if (//isOnBolleanMidOrOnDownLine == false && 
+                                        downLineSlope < 0 &&
+                                        (int)pci0.paramMap["KKeepDown"] == 1 &&
+                                        (int)pci0.paramMap["KAtBMDown"] == 1)
+                                        return;
+                                }
+                                else
+                                    return;
+                            }
+                        }
+
+                        //if ((int)pci0.paramMap["KAtBMDown"] == 1)
                         //    return;
+
+                        if (GlobalSetting.G_ENABLE_MACD_UP_CHECK)
+                        {
+                            //// 当前没有出现坚持等待的信号时
+                            //if ((int)pci0.paramMap["WaitUp"] == 0)
+                            //{
+                            //    int tradeDistToMax = tradeCountList.Count - currentTradeCountIndex;
+                            //    if (// K线在布林中轨下方下降运行，就放弃
+                            //        (int)pci0.paramMap["KKeepDown"] == 1
+                            //         ||
+                            //        // 如果K线没出现反弹信号且剩下的交易次数小于MultiTradePathCount，就放弃
+                            //        ((tradeDistToMax < MultiTradePathCount) && (int)pci0.paramMap["KKeepDown"] != 2)
+                            //         ||
+                            //        // 如果当前的遗漏超过3，且MACD柱不是上升或者触底反弹的，就放弃
+                            //        (
+                            //            (int)pci0.paramMap["MBAR"] <= 0 &&
+                            //            (int)pci0.paramMap["curMissCount"] > 3
+                            //        )
+                            //         ||
+                            //        // 如果当前的遗漏超过3，当前遗漏超过最大遗漏且K线是纯下行的话，就放弃
+                            //        (
+                            //            (float)pci0.paramMap["KGraph"] == -1.0f &&
+                            //            (int)pci0.paramMap["curMissCount"] >= (int)pci0.paramMap["maxMissCount"]
+                            //            && (int)pci0.paramMap["curMissCount"] > 3
+                            //        ))
+                            //        return;
+                            //}
+
+                            //MacdLineCfg cfg = (MacdLineCfg)pci0.paramMap["MacdCfg"];
+                            //if (//(int)pci0.paramMap["KUP"] <= 0
+                            //    //(float)pci0.paramMap["KGraph"] != 2.0f 
+                            //    //|| (float)pci0.paramMap["MacdUp"] <= 0.0f
+                            //    false == (cfg == MacdLineCfg.eGC || cfg == MacdLineCfg.eGCFHES)
+                            //    || (int)pci0.paramMap["IsMacdPUP"] != 1
+                            //    || (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1 && (int)pci0.paramMap["curMissCount"] > 2)
+                            //    //|| (int)pci0.paramMap["KUP"] <= 0
+                            //    )
+                            //    return;
+                        }
+                        */
                     }
-                    */
                 }
             }
             

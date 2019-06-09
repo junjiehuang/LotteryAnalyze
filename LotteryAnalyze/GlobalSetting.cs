@@ -91,10 +91,18 @@ namespace LotteryAnalyze
         private static bool g_ONLY_TRADE_BEST_PATH = false;
         [Parameter("筛选设定/是否开启判定这一路能否交易",false)]
         private static bool g_ENABLE_CHECK_PATH_CAN_TRADE = false;
+
         [Parameter("筛选设定/忽略设置/是否在布林下轨连续开出就忽略当前的交易",false)]
         private static bool g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE = false;
         [Parameter("筛选设定/忽略设置/是否在布林上轨连续超过3期没开出就忽略当前的交易", false)]
         private static bool g_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS = false;
+        [Parameter("筛选设定/忽略设置/是否不在布林中轨就忽略交易", false)]
+        private static bool g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID = false;
+
+        [Parameter("筛选设定/直接交易设置/是否交易布林中轨的k线", false)]
+        private static bool g_TRADE_IMMEDIATE_AT_BOLLEAN_MID = false;
+        [Parameter("筛选设定/直接交易设置/是否在触及布林下轨时交易", false)]
+        private static bool g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN = false;
 
         [Parameter("筛选设定/排序选项/是否按照MACD分析数据排序", false)]
         private static bool g_SEQ_PATH_BY_MACD_CFG = false;
@@ -613,6 +621,39 @@ namespace LotteryAnalyze
             set
             {
                 g_SEQ_PATH_BY_MACD_CFG = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_TRADE_IMMEDIATE_AT_BOLLEAN_MID
+        {
+            get
+            {
+                return g_TRADE_IMMEDIATE_AT_BOLLEAN_MID;
+            }
+            set
+            {
+                g_TRADE_IMMEDIATE_AT_BOLLEAN_MID = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN
+        {
+            get => g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN;
+            set
+            {
+                g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID
+        {
+            get => g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID;
+            set
+            {
+                g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID = value;
                 HAS_MODIFY = true;
             }
         }
