@@ -1828,7 +1828,7 @@ namespace LotteryAnalyze
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
 
             bool tradeImmediate = false;
-            // 忽略没有落在布林中轨的k线
+            // 交易落在布林中轨的k线
             if (GlobalSetting.G_TRADE_IMMEDIATE_AT_BOLLEAN_MID)
             {
                 if (GlobalSetting.G_COLLECT_BOLLEAN_ANALYZE_DATA)
@@ -1840,11 +1840,21 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            // 交易刚接触布林下轨的k线
             if (GlobalSetting.G_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN)
             {
                 int onBDCC = (int)pci0.paramMap["onDownCC"];
                 if (onBDCC > 0 && onBDCC < 2)
                     tradeImmediate = true;
+            }
+            // 交易在布林中轨之上持续上升的k线
+            if(GlobalSetting.G_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID)
+            {
+                float dist2BU = (float)pci0.paramMap["dist2BU"];
+                if (Math.Abs(dist2BU) <= 1)
+                {
+                    tradeImmediate = true;
+                }
             }
 
             if (tradeImmediate == false)
@@ -1869,6 +1879,14 @@ namespace LotteryAnalyze
                 {
                     if (Math.Abs((float)pci0.paramMap["count2BMs"]) > 1)
                         return;
+                }
+                if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID)
+                {
+                    float dist2BU = (float)pci0.paramMap["dist2BU"];
+                    if (Math.Abs(dist2BU) > 1)
+                    {
+                        return;
+                    }
                 }
 
 
@@ -3606,6 +3624,11 @@ namespace LotteryAnalyze
                 pci.paramMap["midKHCC"] = bpRight.bolleanMidKeepHorzCountContinue;
                 // 计算中轨连续向下的次数
                 pci.paramMap["midKDCC"] = bpRight.bolleanMidKeepDownCountContinue;
+
+                int index = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                float missHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[index];
+                KData kd = kdd.GetData(cdt, false);
+                pci.paramMap["dist2BU"] = kd.RelateDistTo(bpRight.upValue) / missHeight;
             }
         }
 
