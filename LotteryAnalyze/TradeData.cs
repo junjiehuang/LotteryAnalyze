@@ -1827,6 +1827,12 @@ namespace LotteryAnalyze
             FindOverTheoryProbabilityNums(item, bestNumIndex, ref maxProbilityNums);
             PathCmpInfo pci0 = trade.pathCmpInfos[bestNumIndex][0];
 
+            if(GlobalSetting.G_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH)
+            {
+                tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
+                return;
+            }
+
             bool tradeImmediate = false;
             // 交易落在布林中轨的k线
             if (GlobalSetting.G_TRADE_IMMEDIATE_AT_BOLLEAN_MID)
@@ -4791,6 +4797,15 @@ namespace LotteryAnalyze
                         if (x.pathIndex == selPathIndex)
                             return -1;
                         return 1;
+                    }
+
+                    if(GlobalSetting.G_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH)
+                    {
+                        if ((int)x.paramMap["curMissCount"] < (int)y.paramMap["curMissCount"])
+                            return -1;
+                        if ((int)x.paramMap["curMissCount"] > (int)y.paramMap["curMissCount"])
+                            return 1;
+                        return 0;
                     }
 
                     //if (GlobalSetting.G_ENABLE_BOOLEAN_DOWN_UP_CHECK)

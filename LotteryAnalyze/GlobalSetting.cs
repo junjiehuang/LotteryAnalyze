@@ -107,6 +107,8 @@ namespace LotteryAnalyze
         private static bool g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN = false;
         [Parameter("筛选设定/直接交易设置/是否在布林中轨之上连续开出时直接交易", false)]
         private static bool g_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID = false;
+        [Parameter("筛选设定/直接交易设置/是否直接交易遗漏为0的那一路", false)]
+        private static bool g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH = false;
 
         [Parameter("筛选设定/排序选项/是否按照MACD分析数据排序", false)]
         private static bool g_SEQ_PATH_BY_MACD_CFG = false;
@@ -644,7 +646,10 @@ namespace LotteryAnalyze
 
         public static bool G_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN
         {
-            get => g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN;
+            get
+            {
+                return g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN;
+            }
             set
             {
                 g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN = value;
@@ -654,7 +659,10 @@ namespace LotteryAnalyze
 
         public static bool G_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID
         {
-            get => g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID;
+            get
+            {
+                return g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID;
+            }
             set
             {
                 g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID = value;
@@ -664,7 +672,10 @@ namespace LotteryAnalyze
 
         public static bool G_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID
         {
-            get => g_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID;
+            get
+            {
+                return g_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID;
+            }
             set
             {
                 g_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID = value;
@@ -674,10 +685,27 @@ namespace LotteryAnalyze
 
         public static bool G_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID
         {
-            get => g_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID;
+            get
+            {
+                return g_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID;
+            }
             set
             {
                 g_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH
+        {
+            get
+            {
+                return g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH;
+            }
+
+            set
+            {
+                g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH = value;
                 HAS_MODIFY = true;
             }
         }
