@@ -1857,7 +1857,9 @@ namespace LotteryAnalyze
             if(GlobalSetting.G_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID)
             {
                 float dist2BU = (float)pci0.paramMap["dist2BU"];
-                if (Math.Abs(dist2BU) <= 1)
+                if (Math.Abs(dist2BU) <= 1 ||
+                    ((int)pci0.paramMap["upMC"] > 0 && 
+                     (int)pci0.paramMap["curMissCount"] < GlobalSetting.G_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT))
                 {
                     tradeImmediate = true;
                 }
@@ -1889,7 +1891,9 @@ namespace LotteryAnalyze
                 if(GlobalSetting.G_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID)
                 {
                     float dist2BU = (float)pci0.paramMap["dist2BU"];
-                    if (Math.Abs(dist2BU) > 1)
+                    if (!(Math.Abs(dist2BU) <= 1 ||
+                         ((int)pci0.paramMap["upMC"] > 0 &&
+                          (int)pci0.paramMap["curMissCount"] < GlobalSetting.G_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT)))
                     {
                         return;
                     }

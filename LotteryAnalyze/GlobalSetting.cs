@@ -107,6 +107,8 @@ namespace LotteryAnalyze
         private static bool g_TRADE_IMMEDIATE_AT_TOUCH_BOLLEAN_DOWN = false;
         [Parameter("筛选设定/直接交易设置/是否在布林中轨之上连续开出时直接交易", false)]
         private static bool g_TRADE_IMMEDIATE_ON_CONTINUE_HIT_UPON_BOLLEAN_MID = false;
+        [Parameter("筛选设定/直接交易设置/最大遗漏容忍值", 5)]
+        private static int  g_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT = 5;
         [Parameter("筛选设定/直接交易设置/是否直接交易遗漏为0的那一路", false)]
         private static bool g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH = false;
 
@@ -706,6 +708,20 @@ namespace LotteryAnalyze
             set
             {
                 g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT
+        {
+            get
+            {
+                return g_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT;
+            }
+
+            set
+            {
+                g_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT = value;
                 HAS_MODIFY = true;
             }
         }
