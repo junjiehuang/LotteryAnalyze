@@ -1892,7 +1892,8 @@ namespace LotteryAnalyze
                 {
                     float dist2BU = (float)pci0.paramMap["dist2BU"];
                     if (!(Math.Abs(dist2BU) <= 1 ||
-                         ((int)pci0.paramMap["upMC"] > 0 &&
+                         ((int)pci0.paramMap["midKUC"] > 0 &&
+                          (int)pci0.paramMap["upMC"] > 0 &&
                           (int)pci0.paramMap["curMissCount"] < GlobalSetting.G_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT)))
                     {
                         return;
@@ -4761,6 +4762,8 @@ namespace LotteryAnalyze
                 //    pci.paramMap["count2BDs"] = count2BDs[i];
                 //}
                 pci.paramMap["count2BMs"] = count2BMs[i];
+                pci.paramMap["count2BUs"] = count2BUs[i];
+
                 trade.pathCmpInfos[numIndex].Add(pci);
             }
             CalcBolleanCommonData(item, trade, numIndex);
@@ -4846,8 +4849,24 @@ namespace LotteryAnalyze
                     if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK &&
                         GlobalSetting.G_SEQ_PATH_BY_BOLLEAN_CFG)
                     {
+                        //bool isXBMUp = (int)x.paramMap["midKUCC"] > 0;
+                        //bool isYBMUp = (int)y.paramMap["midKUCC"] > 0;
+                        bool isXNearBU = (float)x.paramMap["count2BUs"] <= 1;
+                        bool isYNearBU = (float)y.paramMap["count2BUs"] <= 1;
+                        bool isXBMUp = ((int)x.paramMap["midKUC"] + (int)x.paramMap["midKHC"]) > 0;
+                        bool isYBMUp = ((int)y.paramMap["midKUC"] + (int)y.paramMap["midKHC"]) > 0;
                         bool isXPrefer = (bool)x.paramMap["isAppRatePrefer"];
                         bool isYPrefer = (bool)y.paramMap["isAppRatePrefer"];
+                        if ((isXBMUp && isXPrefer && isXNearBU) && !(isYBMUp && isYPrefer && isYNearBU))
+                            return -1;
+                        if (!(isXBMUp && isXPrefer && isXNearBU) && (isYBMUp && isYPrefer && isYNearBU))
+                            return 1;
+
+                        if ((isXBMUp && isXPrefer) && !(isYBMUp && isYPrefer))
+                            return -1;
+                        if (!(isXBMUp && isXPrefer) && (isYBMUp && isYPrefer))
+                            return 1;
+
                         if (isXPrefer && !isYPrefer)
                             return -1;
                         if (!isXPrefer && isYPrefer)
