@@ -1832,6 +1832,8 @@ namespace LotteryAnalyze
                 tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
                 return;
             }
+            if ((float)pci0.paramMap["dist2BU"] > 1.2f)
+                return;
 
             bool tradeImmediate = false;
             // 交易落在布林中轨的k线
@@ -4849,14 +4851,20 @@ namespace LotteryAnalyze
                     if (GlobalSetting.G_ENABLE_BOLLEAN_CFG_CHECK &&
                         GlobalSetting.G_SEQ_PATH_BY_BOLLEAN_CFG)
                     {
-                        //bool isXBMUp = (int)x.paramMap["midKUCC"] > 0;
-                        //bool isYBMUp = (int)y.paramMap["midKUCC"] > 0;
+                        bool isXBMUp = (int)x.paramMap["midKUCC"] > 0;
+                        bool isYBMUp = (int)y.paramMap["midKUCC"] > 0;
                         bool isXNearBU = (float)x.paramMap["count2BUs"] <= 1;
                         bool isYNearBU = (float)y.paramMap["count2BUs"] <= 1;
-                        bool isXBMUp = ((int)x.paramMap["midKUC"] + (int)x.paramMap["midKHC"]) > 0;
-                        bool isYBMUp = ((int)y.paramMap["midKUC"] + (int)y.paramMap["midKHC"]) > 0;
+                        //bool isXBMUp = ((int)x.paramMap["midKUC"] + (int)x.paramMap["midKHC"]) > 0;
+                        //bool isYBMUp = ((int)y.paramMap["midKUC"] + (int)y.paramMap["midKHC"]) > 0;
                         bool isXPrefer = (bool)x.paramMap["isAppRatePrefer"];
                         bool isYPrefer = (bool)y.paramMap["isAppRatePrefer"];
+
+                        if ((float)x.paramMap["count2BUs"] < (float)y.paramMap["count2BUs"])
+                            return -1;
+                        if ((float)x.paramMap["count2BUs"] > (float)y.paramMap["count2BUs"])
+                            return 1;
+
                         if ((isXBMUp && isXPrefer && isXNearBU) && !(isYBMUp && isYPrefer && isYNearBU))
                             return -1;
                         if (!(isXBMUp && isXPrefer && isXNearBU) && (isYBMUp && isYPrefer && isYNearBU))
