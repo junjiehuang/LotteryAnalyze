@@ -42,6 +42,12 @@ namespace LotteryAnalyze
             }
         }
 
+        static bool sIsCurrentFetchingLatestData = false;
+        public static bool IsCurrentFetchingLatestData
+        {
+            get { return sIsCurrentFetchingLatestData; }
+            set { sIsCurrentFetchingLatestData = value; }
+        }
         static bool HAS_MODIFY = false;
         
         [Parameter("数据收集设定/数据源类型", AutoUpdateUtil.DataSourceType.eCaiBow)]

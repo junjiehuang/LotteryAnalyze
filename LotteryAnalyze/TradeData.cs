@@ -6317,6 +6317,8 @@ namespace LotteryAnalyze
 
         public void Start(ref int startDateID, ref int endDateID)
         {
+            GlobalSetting.IsCurrentFetchingLatestData = false;
+
             ResetTradeInfo();
             fileIDLst.Clear();
             DataManager dm = DataManager.GetInst();

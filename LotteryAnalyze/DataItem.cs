@@ -765,6 +765,7 @@ namespace LotteryAnalyze
         {
             allDatas.Clear();
             indexs.Clear();
+            allItemMap.Clear();
         }
 
         public void ClearDatasExcept(OneDayDatas odd)

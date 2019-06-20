@@ -474,6 +474,8 @@ namespace LotteryAnalyze
                 updateTimer.Enabled = true;
                 updateTimer.Start();
             }
+            GlobalSetting.IsCurrentFetchingLatestData = true;
+            DataManager.GetInst().ClearAllDatas();
             RefreshLatestData(true);
             MessageBox.Show("更新数据完成！");
         }
@@ -502,6 +504,9 @@ namespace LotteryAnalyze
 
         void RefreshLatestData(bool forceUpdate)
         {
+            if (GlobalSetting.IsCurrentFetchingLatestData == false)
+                return;
+
             //Process p = Process.Start("AutoFetchDailyData.exe");
             //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
             if(forceUpdate == false)
@@ -515,7 +520,7 @@ namespace LotteryAnalyze
             // 更新当天的数据
             int currentFetchCount = AutoUpdateUtil.AutoFetchTodayData();
             // 如果数据没变化，直接返回
-            if (currentFetchCount == lastFetchCount)
+            if (currentFetchCount == lastFetchCount && forceUpdate == false)
                 return;
             lastFetchCount = currentFetchCount;
             
