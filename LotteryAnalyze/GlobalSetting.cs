@@ -61,6 +61,8 @@ namespace LotteryAnalyze
         private static int g_LOTTERY_GRAPH_UPDATE_INTERVAL = 1500;
         [Parameter("界面设置/模拟图刷新毫秒间隔", 1500)]
         private static int g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = 1500;
+        [Parameter("界面设置/主线程更新休眠时间", 100)]
+        private static int g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = 1500;
 
         [Parameter("自动通道线工具/是否开启", true)]
         private static bool g_EANBLE_ANALYZE_TOOL = true;
@@ -728,6 +730,16 @@ namespace LotteryAnalyze
             set
             {
                 g_TRADE_IMMEDIATE_TORANCE_MAX_MISS_COUNT = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL
+        {
+            get { return g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL; }
+            set
+            {
+                g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = value;
                 HAS_MODIFY = true;
             }
         }

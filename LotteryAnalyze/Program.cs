@@ -77,6 +77,7 @@ namespace LotteryAnalyze
                     //    System.Threading.Thread.Sleep(300);
                     //else
                     //    System.Threading.Thread.Sleep(0);
+                    System.Threading.Thread.Sleep(GlobalSetting.G_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL);
 
                     if (GlobalSetting.G_UPDATE_IN_MAIN_THREAD)
                     {

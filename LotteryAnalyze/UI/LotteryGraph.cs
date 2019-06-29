@@ -1402,6 +1402,11 @@ namespace LotteryAnalyze.UI
             this.Invalidate(true);
         }
 
+        private void refreshLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.RefreshLatestData();
+        }
+
         private void setBreakPointToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (itemSel != null)

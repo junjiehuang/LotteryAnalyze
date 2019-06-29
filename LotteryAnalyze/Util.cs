@@ -743,30 +743,43 @@ namespace LotteryAnalyze
             }
         }
 
+        static int CombineFileID(int y, int m, int d)
+        {
+            string url = y.ToString();
+            if (m < 10)
+                url += "0";
+            url += m;
+            if (d < 10)
+                url += "0";
+            url += d;
+            return int.Parse(url);
+        }
+
         public static int FetchData(DateTime date, ref string error)
         {
             int dataCount = 0;
             string filename = combineFileName(date.Year, date.Month, date.Day);
+            int fid = CombineFileID(date.Year, date.Month, date.Day);
             if (GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.e163)
             {
                 string url = combineUrlName(date.Year, date.Month, date.Day, true);
-                dataCount = FetchData(true, filename, url, ref error);
+                dataCount = FetchData(true, filename, url, ref error, fid);
             }
             else if(GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
             {
                 string url = combineUrlName(date.Year, date.Month, date.Day, true);
-                dataCount = FetchData(true, filename, url, ref error);
+                dataCount = FetchData(true, filename, url, ref error, fid);
             }
             else
             {             
                 // 先按旧版的网页数据拉取
                 string url = combineUrlName(date.Year, date.Month, date.Day, false);
-                dataCount = FetchData(false, filename, url, ref error);
+                dataCount = FetchData(false, filename, url, ref error, fid);
                 // 如果拉取到的数据是空的，就按照新版的网页数据来拉取
                 if (dataCount == 0)
                 {
                     url = combineUrlName(date.Year, date.Month, date.Day, true);
-                    dataCount = FetchData(true, filename, url, ref error);
+                    dataCount = FetchData(true, filename, url, ref error, fid);
                 }
             }
             return dataCount;
@@ -782,7 +795,7 @@ namespace LotteryAnalyze
         static Regex regexDate = new Regex(strRegexDate);
         static Regex regexNumber = new Regex(strRegexNumber);
 
-        public static int FetchData(bool newUrl, string fileName, string webUrl, ref string error)
+        public static int FetchData(bool newUrl, string fileName, string webUrl, ref string error, int fileID)
         {
             Console.WriteLine("Fetch weburl : " + webUrl);
 
@@ -853,6 +866,17 @@ namespace LotteryAnalyze
 
             //Console.WriteLine("=> " + fileName);
             //Console.WriteLine(lotteryData);
+
+
+            // check old data
+            OneDayDatas data = null;
+            if (Util.ReadFile(fileID, fileName, ref data))
+            {
+                if (data.datas.Count >= validCount)
+                    return data.datas.Count;
+            }
+            //
+
 
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);

@@ -62,6 +62,7 @@ namespace LotteryAnalyze.UI
             this.autoAllignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllAuxLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadNextBatchDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshLatestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeSimFromFirstToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeSimFromLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -201,7 +202,8 @@ namespace LotteryAnalyze.UI
             this.refreshToolStripMenuItem,
             this.autoAllignToolStripMenuItem,
             this.delAllAuxLinesToolStripMenuItem,
-            this.loadNextBatchDatasToolStripMenuItem});
+            this.loadNextBatchDatasToolStripMenuItem,
+            this.refreshLatestDataToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.operationToolStripMenuItem.Text = "操作";
@@ -233,6 +235,13 @@ namespace LotteryAnalyze.UI
             this.loadNextBatchDatasToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.loadNextBatchDatasToolStripMenuItem.Text = "读取下一批数据";
             this.loadNextBatchDatasToolStripMenuItem.Click += new System.EventHandler(this.loadNextBatchDatasToolStripMenuItem_Click);
+            // 
+            // refreshLatestDataToolStripMenuItem
+            // 
+            this.refreshLatestDataToolStripMenuItem.Name = "refreshLatestDataToolStripMenuItem";
+            this.refreshLatestDataToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.refreshLatestDataToolStripMenuItem.Text = "获取最新数据";
+            this.refreshLatestDataToolStripMenuItem.Click += new System.EventHandler(this.refreshLatestDataToolStripMenuItem_Click);
             // 
             // 设置ToolStripMenuItem
             // 
@@ -1476,6 +1485,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBoxAppearenceType;
         private System.Windows.Forms.ToolStripMenuItem loadNextBatchDatasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem refreshLatestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem setBreakPointToolStripMenuItem;
     }

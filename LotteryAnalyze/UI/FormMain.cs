@@ -480,6 +480,11 @@ namespace LotteryAnalyze
             MessageBox.Show("更新数据完成！");
         }
 
+        public static void RefreshLatestData()
+        {
+            Instance.getLatestDataToolStripMenuItem_Click(null, null);
+        }
+
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             RefreshLatestData(false);
