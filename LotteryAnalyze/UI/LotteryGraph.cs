@@ -1148,6 +1148,17 @@ namespace LotteryAnalyze.UI
 
         #endregion
 
+        private void listBoxFavoriteCharts_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (listBoxFavoriteCharts.SelectedIndex >= 0)
+                {
+                    listBoxFavoriteCharts.Items.RemoveAt(listBoxFavoriteCharts.SelectedIndex);
+                }
+            }
+        }
+
         private void listBoxFavoriteCharts_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(listBoxFavoriteCharts.SelectedIndex >= 0)

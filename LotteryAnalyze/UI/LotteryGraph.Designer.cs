@@ -547,6 +547,7 @@ namespace LotteryAnalyze.UI
             this.listBoxFavoriteCharts.Size = new System.Drawing.Size(241, 76);
             this.listBoxFavoriteCharts.TabIndex = 11;
             this.listBoxFavoriteCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxFavoriteCharts_SelectedIndexChanged);
+            this.listBoxFavoriteCharts.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.listBoxFavoriteCharts_PreviewKeyDown);
             // 
             // textBoxGridScaleH
             // 
@@ -1380,7 +1381,12 @@ namespace LotteryAnalyze.UI
 
         }
 
-#endregion
+        private void ListBoxFavoriteCharts_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
 
         private System.Windows.Forms.MenuStrip menuStripGraph;
         private System.Windows.Forms.ToolStripMenuItem operationToolStripMenuItem;
