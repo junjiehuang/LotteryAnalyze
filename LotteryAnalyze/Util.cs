@@ -112,7 +112,10 @@ namespace LotteryAnalyze
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                sr.Close();
+                if (sr != null)
+                {
+                    sr.Close();
+                }
                 return false;
             }
             while ((line = sr.ReadLine()) != null)

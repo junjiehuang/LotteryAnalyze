@@ -1932,6 +1932,12 @@ namespace LotteryAnalyze
                     }
                     else
                     {
+                        if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
+                        {
+                            if ((MacdSignal)pci0.paramMap["MacdSig"] < MacdSignal.eHalfDown)
+                                return;
+                        }
+
                         // K线是否在布林中轨
                         bool isOnBolleanMid = Math.Abs((float)pci0.paramMap["count2BMs"]) <= 1.2;
                         // 判断K值是否落在支撑线上的检测距离
@@ -3843,6 +3849,21 @@ namespace LotteryAnalyze
             }
         }
 
+        // MACD 信号
+        public enum MacdSignal
+        {
+            // 未定义
+            eUnknown = 0,
+            // 0 > 慢线 > 快线, 非常确认的下降信号
+            eFullDown,
+            // 慢线 > 0 && 快线 > 0, 预示回落的信号
+            eHalfDown,
+            // 柱体 > 快线 > 慢线,且3者呈抬升形态, 这是回升的回调信号
+            eHalfUp,
+            // 快线 > 慢线 > 柱体 > 0, 非常确认的抬升信号
+            eFullUp,
+        }
+
         void CalcPathMacdUp(DataItem item, TradeDataOneStar trade, int numIndex)
         {
             const int TOTAL_LIMIT_CHECK_COUNT = 3;
@@ -3916,6 +3937,28 @@ namespace LotteryAnalyze
                 {
                     int pathIndex = GraphDataManager.S_CDT_LIST.IndexOf(cdt) - GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
                     lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
+                }
+
+                pci.paramMap["MacdSig"] = MacdSignal.eUnknown;
+                if (mp.BAR > 0)
+                {
+                    if(mp.DIF > mp.DEA)
+                    {
+                        if (mp.DIF < mp.BAR)
+                            pci.paramMap["MacdSig"] = MacdSignal.eHalfUp;
+                        else
+                            pci.paramMap["MacdSig"] = MacdSignal.eFullUp;
+                    }
+                }
+                else
+                {
+                    if(mp.DIF < mp.DEA)
+                    {
+                        if (mp.DIF > 0)
+                            pci.paramMap["MacdSig"] = MacdSignal.eHalfDown;
+                        else
+                            pci.paramMap["MacdSig"] = MacdSignal.eFullDown;
+                    }
                 }
 
                 /*
@@ -4960,6 +5003,18 @@ namespace LotteryAnalyze
                     }
 
                     if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
+                        GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
+                    {
+                        MacdSignal msX = (MacdSignal)x.paramMap["MacdSig"];
+                        MacdSignal msY = (MacdSignal)y.paramMap["MacdSig"];
+                        if (msX > msY)
+                            return -1;
+                        else if (msX < msY)
+                            return 1;
+                        return 0;
+                    }
+
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
                         GlobalSetting.G_SEQ_PATH_BY_MACD_CFG)
                     {
                         int xCount = 0, yCount = 0;
@@ -5255,6 +5310,14 @@ namespace LotteryAnalyze
                         // 找到上一次交易所选择的那一路在这次交易中的PathCmpInfo
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
+
+
+                        if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
+                        {
+                            MacdSignal msL = (MacdSignal)lastPathCurPCI.paramMap["MacdSig"];
+                            if (msL < MacdSignal.eHalfUp)
+                                return;
+                        }
 
                         // 当上次选择的那一路在当前出号率很低的时候，就要重新选择分路了
                         if(GlobalSetting.G_CHANGE_PATH_ON_LOW_APPEARENCE_RATE)

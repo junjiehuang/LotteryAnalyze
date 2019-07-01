@@ -120,6 +120,8 @@ namespace LotteryAnalyze
         [Parameter("筛选设定/直接交易设置/是否直接交易遗漏为0的那一路", false)]
         private static bool g_TRADE_IMMEDIATE_ON_MISS_COUNT0_PATH = false;
 
+        [Parameter("筛选设定/排序选项/是否按照Macd Signal分析数据排序", false)]
+        private static bool g_SEQ_PATH_BY_MACD_SIGNAL = false;
         [Parameter("筛选设定/排序选项/是否按照MACD分析数据排序", false)]
         private static bool g_SEQ_PATH_BY_MACD_CFG = false;
         [Parameter("筛选设定/排序选项/是否按照布林分析数据排序",false)]
@@ -740,6 +742,16 @@ namespace LotteryAnalyze
             set
             {
                 g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SEQ_PATH_BY_MACD_SIGNAL
+        {
+            get { return g_SEQ_PATH_BY_MACD_SIGNAL; }
+            set
+            {
+                g_SEQ_PATH_BY_MACD_SIGNAL = value;
                 HAS_MODIFY = true;
             }
         }
