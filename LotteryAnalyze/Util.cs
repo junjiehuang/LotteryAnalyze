@@ -847,7 +847,16 @@ namespace LotteryAnalyze
                     reader = new StreamReader(stm, Encoding.Default);
                     break;
             }
-            string strWebContent = reader.ReadToEnd();
+
+            string strWebContent = "";
+            try
+            {
+                strWebContent = reader.ReadToEnd();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("FetchData failed on read web stream - " + e.ToString());
+            }
             reader.Close();
             reader.Dispose();
             response.Close();
@@ -875,7 +884,7 @@ namespace LotteryAnalyze
             OneDayDatas data = null;
             if (Util.ReadFile(fileID, fileName, ref data))
             {
-                if (data.datas.Count >= validCount)
+                if (data.datas.Count > validCount)
                     return data.datas.Count;
             }
             //
