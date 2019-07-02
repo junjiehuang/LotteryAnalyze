@@ -1154,6 +1154,8 @@ namespace LotteryAnalyze.UI
             {
                 if (listBoxFavoriteCharts.SelectedIndex >= 0)
                 {
+                    string tag = listBoxFavoriteCharts.SelectedItem as string;
+                    graphMgr.RemoveFavoriteChart(tag);
                     listBoxFavoriteCharts.Items.RemoveAt(listBoxFavoriteCharts.SelectedIndex);
                 }
             }

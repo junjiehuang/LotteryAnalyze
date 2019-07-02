@@ -2809,6 +2809,17 @@ namespace LotteryAnalyze
         {
             favoriteCharts.Clear();
         }
+        public void RemoveFavoriteChart(string tag)
+        {
+            for( int i = 0; i < favoriteCharts.Count; ++i )
+            {
+                if(favoriteCharts[i].tag == tag)
+                {
+                    favoriteCharts.RemoveAt(i);
+                    return;
+                }
+            }
+        }
     }
 
 #endregion
