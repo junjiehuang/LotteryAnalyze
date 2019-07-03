@@ -146,7 +146,8 @@ namespace LotteryAnalyze
 
         [Parameter("数据统计设置/当遗漏值超过多少期就记录其信息", 7)]
         private static int g_OVER_SPEC_MISS_COUNT = 7;
-
+        [Parameter("数据统计设置/是否计算布林分析数据", true)]
+        private static bool g_CALC_BOOLEAN_ANALYSE_DATA = true;
 
 
         public static List<string> TradeTags = new List<string>();
@@ -761,6 +762,20 @@ namespace LotteryAnalyze
         {
             get { return g_OVER_SPEC_MISS_COUNT; }
             set { g_OVER_SPEC_MISS_COUNT = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_CALC_BOOLEAN_ANALYSE_DATA
+        {
+            get
+            {
+                return g_CALC_BOOLEAN_ANALYSE_DATA;
+            }
+
+            set
+            {
+                g_CALC_BOOLEAN_ANALYSE_DATA = value;
+                HAS_MODIFY = true;
+            }
         }
 
         static GlobalSetting()

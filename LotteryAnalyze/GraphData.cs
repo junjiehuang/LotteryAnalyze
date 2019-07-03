@@ -618,9 +618,12 @@ namespace LotteryAnalyze
                     bp.downValue = MA - scale * SD;
 
 #if RECORD_BOLLEAN_MID_COUNTS
-                    CalcBolleanMidCount(bp, bpm, prevBPM, cdt, missHeight, kd);
-                    CalcBolleanMidDirectionCount(bp, bpm, prevBPM, cdt, missHeight, kd);
-                    CalcBolleanDownCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    if (GlobalSetting.G_CALC_BOOLEAN_ANALYSE_DATA)
+                    {
+                        CalcBolleanMidCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                        CalcBolleanMidDirectionCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                        CalcBolleanDownCount(bp, bpm, prevBPM, cdt, missHeight, kd);
+                    }
 #endif
                 }
             }

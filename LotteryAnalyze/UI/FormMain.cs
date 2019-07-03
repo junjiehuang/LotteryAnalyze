@@ -590,6 +590,43 @@ namespace LotteryAnalyze
             LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh(newAddItemIndex != -1);
         }
 
+        public void ShowSpecData(int spedDate)
+        {
+            GlobalSetting.IsCurrentFetchingLatestData = false;
+            DataManager.GetInst().ClearAllDatas();
+
+            DataManager dataMgr = DataManager.GetInst();
+            ListViewItem[] res = listViewFileList.Items.Find(spedDate.ToString(), true);
+            if(res.Length > 0)
+            {
+                int endID = listViewFileList.Items.IndexOf(res[0]);
+                int startID = endID;
+                if(startID > 0)
+                {
+                    startID--;
+                }
+                int newAddItemIndex = -1, tmpAddItemIndex = -1;
+                OneDayDatas newAddODD = null, tmpAddODD = null;
+                for (int i = startID; i <= endID; ++i)
+                {
+                    ListViewItem item = listViewFileList.Items[i];
+                    int key = (int)(item.Tag);
+                    dataMgr.LoadDataExt(key, ref tmpAddODD, ref tmpAddItemIndex);
+                    if (newAddItemIndex == -1 && tmpAddItemIndex != -1)
+                    {
+                        newAddODD = tmpAddODD;
+                        newAddItemIndex = tmpAddItemIndex;
+                    }
+                }
+                Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
+                RefreshDataView();
+
+                GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+                LotteryAnalyze.UI.LotteryGraph.Open(false);
+                LotteryAnalyze.UI.LotteryGraph.NotifyAllGraphsRefresh(newAddItemIndex != -1);
+            }
+        }
+
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             RemoveWindow(this);

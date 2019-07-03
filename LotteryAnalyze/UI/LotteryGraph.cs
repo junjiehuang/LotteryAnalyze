@@ -552,6 +552,13 @@ namespace LotteryAnalyze.UI
             //    UnselectItem();
             //}
         }
+        public static void G_SelItem(int selID)
+        {
+            for (int i = 0; i < instLst.Count; ++i)
+            {
+                instLst[i].SelItem(selID);
+            }
+        }
         void ProcAddAuxLine(Point mousePos)
         {
             if (graphMgr.kvalueGraph.enableAuxiliaryLine)
