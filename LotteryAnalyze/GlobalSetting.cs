@@ -11,9 +11,6 @@ namespace LotteryAnalyze
     {
         public string name = "";
         public object defV;
-        //public int defI = 0;
-        //public float defF = 0;
-        //public bool defB;
 
         public Parameter(string _name, object _defV)
         {
@@ -146,6 +143,10 @@ namespace LotteryAnalyze
         private static int g_DAYS_PER_BATCH = 3;
         [Parameter("数据设置/是否记录交易数据",true)]
         private static bool g_ENABLE_REC_TRADE_DATAS = true;
+
+        [Parameter("数据统计设置/当遗漏值超过多少期就记录其信息", 7)]
+        private static int g_OVER_SPEC_MISS_COUNT = 7;
+
 
 
         public static List<string> TradeTags = new List<string>();
@@ -754,6 +755,12 @@ namespace LotteryAnalyze
                 g_SEQ_PATH_BY_MACD_SIGNAL = value;
                 HAS_MODIFY = true;
             }
+        }
+
+        public static int G_OVER_SPEC_MISS_COUNT
+        {
+            get { return g_OVER_SPEC_MISS_COUNT; }
+            set { g_OVER_SPEC_MISS_COUNT = value; HAS_MODIFY = true; }
         }
 
         static GlobalSetting()
