@@ -282,7 +282,7 @@ namespace LotteryAnalyze.UI
                                 //    missCountNumMap[lastMissCount] = 1;
 
                                 // 判断当前这一期是否在触及布林中轨
-                                bool isCurrentHitBooleanUp = CheckIsTouchBolleanUp(i, cdt, cItem);
+                                bool isCurrentHitBooleanUp = CheckIsFullUp(i, cdt, cItem);
 
                                 // 上次记录的遗漏值如果超过指定的遗漏值,就记录之
                                 if (lastMissCount > GlobalSetting.G_OVER_SPEC_MISS_COUNT)
@@ -375,12 +375,34 @@ namespace LotteryAnalyze.UI
 
         bool CheckIsTouchBolleanUp(int numIndex, CollectDataType cdt, DataItem testItem)
         {
-            DataItem pItem = testItem;// DataManager.GetInst().FindDataItem( cItem.idGlobal - missCount );
+            DataItem pItem = testItem;
             KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
             KDataDict kdd = kddc.GetKDataDict(pItem);
             KData kd = kdd.GetData(cdt, false);
             BollinPoint bp = kddc.GetBollinPointMap(kdd).GetData(cdt, false);
             return (kd.RelateDistTo(bp.upValue) <= 0);
+        }
+
+        bool CheckIsFullUp(int numIndex, CollectDataType cdt, DataItem testItem)
+        {
+            DataItem prevItem = testItem.parent.GetPrevItem(testItem);
+            if (prevItem == null)
+                return false;
+
+            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+            KDataDict kddCur = kddc.GetKDataDict(testItem);
+            KData kdCur = kddCur.GetData(cdt, false);
+            BollinPoint bpCur = kddc.GetBollinPointMap(kddCur).GetData(cdt, false);
+            MACDPoint macdCur = kddc.GetMacdPointMap(kddCur).GetData(cdt, false);
+            bool isCurTouchBU = kdCur.RelateDistTo(bpCur.upValue) <= 0;
+
+            KDataDict kddPrv = kddc.GetKDataDict(prevItem);
+            KData kdPrv = kddCur.GetData(cdt, false);
+            BollinPoint bpPrv = kddc.GetBollinPointMap(kddPrv).GetData(cdt, false);
+            MACDPoint macdPrv = kddc.GetMacdPointMap(kddPrv).GetData(cdt, false);
+            bool isPrvTouchBU = kdPrv.RelateDistTo(bpPrv.upValue) <= 0;
+
+            return isCurTouchBU && isPrvTouchBU && macdCur.BAR > macdPrv.BAR && macdCur.DIF > macdPrv.DIF; 
         }
 
         void DoUpdate()
@@ -557,7 +579,7 @@ namespace LotteryAnalyze.UI
                     sw.Write(info);
 
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
-                    missCountTreeNodeMap = cdtMissCountTreeNodeMap[cdt];
+                    //missCountTreeNodeMap = cdtMissCountTreeNodeMap[cdt];
                     missCountNumMap = cdtMissCountNumMap[cdt];
 
                     foreach (int key in missCountNumMap.Keys)
