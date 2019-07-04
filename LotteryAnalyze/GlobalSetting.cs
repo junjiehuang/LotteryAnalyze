@@ -105,6 +105,8 @@ namespace LotteryAnalyze
         private static bool g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_MID = false;
         [Parameter("筛选设定/忽略设置/是否不在布林上轨连续开出就忽略交易", false)]
         private static bool g_IGNORE_CUR_TRADE_ON_NOT_CONTINUE_HIT_UPON_BOLLEAN_MID = false;
+        [Parameter("筛选设定/忽略设置/是否不在布林上轨就忽略交易", false)]
+        private static bool g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP = false;
 
         [Parameter("筛选设定/直接交易设置/是否交易布林中轨的k线", false)]
         private static bool g_TRADE_IMMEDIATE_AT_BOLLEAN_MID = false;
@@ -774,6 +776,16 @@ namespace LotteryAnalyze
             set
             {
                 g_CALC_BOOLEAN_ANALYSE_DATA = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP
+        {
+            get { return g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP; }
+            set
+            {
+                g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP = value;
                 HAS_MODIFY = true;
             }
         }

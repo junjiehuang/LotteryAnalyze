@@ -1832,8 +1832,11 @@ namespace LotteryAnalyze
                 tn.SelPath012Number(pci0.pathIndex, tradeCount, ref maxProbilityNums);
                 return;
             }
-            if ((float)pci0.paramMap["dist2BU"] > 1.2f)
-                return;
+            if (GlobalSetting.G_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP)
+            {
+                if ((float)pci0.paramMap["dist2BU"] > 1.2f)
+                    return;
+            }
 
             bool tradeImmediate = false;
             // 交易落在布林中轨的k线
@@ -5294,6 +5297,13 @@ namespace LotteryAnalyze
                     {
                         // 如果当前表现为提升的类型等于大于3，那么就选择这一路
                         if ((int)pciOpt0.paramMap["AnaCount"] >= 3)
+                            return;
+                    }
+
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
+                    {
+                        MacdSignal msL = (MacdSignal)pciOpt0.paramMap["MacdSig"];
+                        if (msL == MacdSignal.eFullUp)
                             return;
                     }
                 }
