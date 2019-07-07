@@ -1348,6 +1348,7 @@ namespace LotteryAnalyze.UI
             this.Text = "LotteryGraph";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LotteryGraph_FormClosed);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
             this.menuStripGraph.ResumeLayout(false);
             this.menuStripGraph.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);

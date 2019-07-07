@@ -5300,12 +5300,12 @@ namespace LotteryAnalyze
                             return;
                     }
 
-                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
-                    {
-                        MacdSignal msL = (MacdSignal)pciOpt0.paramMap["MacdSig"];
-                        if (msL == MacdSignal.eFullUp)
-                            return;
-                    }
+                    //if (GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
+                    //{
+                    //    MacdSignal msL = (MacdSignal)pciOpt0.paramMap["MacdSig"];
+                    //    if (msL == MacdSignal.eFullUp)
+                    //        return;
+                    //}
                 }
 
                 TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
@@ -5325,7 +5325,7 @@ namespace LotteryAnalyze
                         if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
                         {
                             MacdSignal msL = (MacdSignal)lastPathCurPCI.paramMap["MacdSig"];
-                            if (msL < MacdSignal.eHalfUp)
+                            if (msL < MacdSignal.eHalfDown)
                                 return;
                         }
 

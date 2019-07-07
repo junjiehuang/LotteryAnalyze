@@ -1350,6 +1350,23 @@ namespace LotteryAnalyze.UI
             }
         }
 
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Oemplus)
+            {
+                GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT++;
+                this.Invalidate(true);
+            }
+            else if (e.KeyCode == Keys.OemMinus)
+            {
+                if (GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT > 1)
+                {
+                    GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT--;
+                    this.Invalidate(true);
+                }
+            }
+        }
+
         private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if(e.Control)
@@ -1364,6 +1381,19 @@ namespace LotteryAnalyze.UI
                     TradeDataManager.Instance.StopAutoTradeJob();
                 else if (e.KeyCode == Keys.O)
                     TradeDataManager.Instance.SimTradeOneStep();
+                //else if (e.KeyCode == Keys.Oemplus)
+                //{
+                //    GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT++;
+                //    this.Invalidate(true);
+                //}
+                //else if (e.KeyCode == Keys.OemMinus)
+                //{
+                //    if (GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT > 1)
+                //    {
+                //        GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT--;
+                //        this.Invalidate(true);
+                //    }
+                //}
             }
         }
 
