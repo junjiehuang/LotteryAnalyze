@@ -150,6 +150,10 @@ namespace LotteryAnalyze
         private static int g_OVER_SPEC_MISS_COUNT = 7;
         [Parameter("数据统计设置/是否计算布林分析数据", true)]
         private static bool g_CALC_BOOLEAN_ANALYSE_DATA = true;
+        [Parameter("数据统计设置/首次长遗漏值", 7)]
+        private static int g_MISS_COUNT_FIRST =7;
+        [Parameter("数据统计设置/二次长遗漏值", 7)]
+        private static int g_MISS_COUNT_SECOND = 7;
 
 
         public static List<string> TradeTags = new List<string>();
@@ -786,6 +790,24 @@ namespace LotteryAnalyze
             set
             {
                 g_IGNORE_CUR_TRADE_ON_NOT_AT_BOLLEAN_UP = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_MISS_COUNT_FIRST
+        {
+            get { return g_MISS_COUNT_FIRST; }
+            set { g_MISS_COUNT_FIRST = value; HAS_MODIFY = true; }
+        }
+
+        public static int G_MISS_COUNT_SECOND
+        {
+            get
+            { return g_MISS_COUNT_SECOND; }
+
+            set
+            {
+                g_MISS_COUNT_SECOND = value;
                 HAS_MODIFY = true;
             }
         }

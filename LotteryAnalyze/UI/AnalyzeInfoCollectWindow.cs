@@ -19,16 +19,20 @@ namespace LotteryAnalyze.UI
             eDAT_MissCountTotal,
             // 统计K线触碰到布林上轨后的遗漏值
             eDAT_MissCountOnTouchBolleanUp,
+            // 开出长遗漏后继续开出长遗漏的信息
+            eDAT_ContinueLongMissCount,
         }
         static String[] DataAnalyseTypeStrs =
         {
             "所有的遗漏数据",
             "K线触碰到布林上轨后的遗漏值",
+            "连续开出长遗漏的统计信息",
         };
         static String[] ExportDataPaths =
         {
             "..\\tools\\遗漏统计结果.xml",
             "..\\tools\\从布林上轨连续遗漏的统计结果.xml",
+            "..\\tools\\连续开出长遗漏的统计信息.xml",
         };
         public DataAnalyseType currentDataAnalyseType = DataAnalyseType.eDAT_MissCountTotal;
 
@@ -71,6 +75,9 @@ namespace LotteryAnalyze.UI
         List<Dictionary<CollectDataType, int>> numberPathMissCount = new List<Dictionary<CollectDataType, int>>();
         List<Dictionary<CollectDataType, Dictionary<int, List<string>>>> overMissCountAndTouchBolleanUpInfos = new List<Dictionary<CollectDataType, Dictionary<int, List<string>>>>();
 
+        List<Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>> continueMissCountInfos = new List<Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>>();
+        List<Dictionary<CollectDataType, int>> lastLongMissCountInfo = new List<Dictionary<CollectDataType, int>>();
+        List<Dictionary<CollectDataType, int>> currentLongMissCountInfo = new List<Dictionary<CollectDataType, int>>();
 
         static AnalyzeInfoCollectWindow sInst;
         public static void Open()
@@ -118,7 +125,8 @@ namespace LotteryAnalyze.UI
             if (dataMgr.GetAllDataItemCount() > 0)
             {
                 Util.CollectPath012Info(null);
-                if(currentDataAnalyseType == DataAnalyseType.eDAT_MissCountOnTouchBolleanUp)
+                if (currentDataAnalyseType == DataAnalyseType.eDAT_MissCountOnTouchBolleanUp ||
+                    currentDataAnalyseType == DataAnalyseType.eDAT_ContinueLongMissCount)
                 {
                     GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
                 }
@@ -137,41 +145,8 @@ namespace LotteryAnalyze.UI
                 status = ProcStatus.ePrepBatch;
             progressBarSub.Value = 0;
             progressBarMain.Value = (int)(100.0f * ((float)(endIndex + 1) / dateIDLst.Count));
-
-            //RefreshTree();
+            
             this.Invalidate(true);
-        }
-
-        void RefreshTree()
-        {
-            //for (int i = 0; i < 5; ++i)
-            //{
-            //    //cdtMissCountTreeNodeMap = allCDTMissCountTreeNodeMap[i];
-            //    cdtMissCountNumMap = allCDTMissCountNumMap[i];
-            //    numNode = treeViewMissCount.Nodes[i];
-
-            //    for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
-            //    {
-            //        CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
-            //        missCountTreeNodeMap = cdtMissCountTreeNodeMap[cdt];
-            //        missCountNumMap = cdtMissCountNumMap[cdt];
-            //        cdtNode = numNode.Nodes[j];
-
-            //        foreach (int key in missCountNumMap.Keys)
-            //        {
-            //            if (missCountTreeNodeMap.ContainsKey(key))
-            //            {
-            //                missCountTreeNodeMap[key].Text = key + " - " + missCountNumMap[key];
-            //            }
-            //            else
-            //            {
-            //                TreeNode subNode = new TreeNode(key + " - " + missCountNumMap[key]);
-            //                cdtNode.Nodes.Add(subNode);
-            //                missCountTreeNodeMap.Add(key, subNode);
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         void DoBatch()
@@ -184,7 +159,120 @@ namespace LotteryAnalyze.UI
                 case DataAnalyseType.eDAT_MissCountOnTouchBolleanUp:
                     AnalyseForMissCountOnTouchBolleanUp();
                     break;
+                case DataAnalyseType.eDAT_ContinueLongMissCount:
+                    AnalyseContinueLongMissCount();
+                    break;
             }
+        }
+
+        void RecordContinueLongMissCount(int numIndex, CollectDataType cdt, int lastMissCount, int curMissCount, string idTag)
+        {
+            Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>> numInfo = continueMissCountInfos[numIndex];
+            Dictionary<int, Dictionary<int, List<string>>> cdtInfo = null;
+            if (numInfo.ContainsKey(cdt))
+                cdtInfo = numInfo[cdt];
+            else
+            {
+                cdtInfo = new Dictionary<int, Dictionary<int, List<string>>>();
+                numInfo[cdt] = cdtInfo;
+            }
+            Dictionary<int, List<string>> lastInfo = null;
+            if (cdtInfo.ContainsKey(lastMissCount))
+                lastInfo = cdtInfo[lastMissCount];
+            else
+            {
+                lastInfo = new Dictionary<int, List<string>>();
+                cdtInfo[lastMissCount] = lastInfo;
+            }
+
+            List<string> curInfo = null;
+            if (lastInfo.ContainsKey(curMissCount))
+                curInfo = lastInfo[curMissCount];
+            else
+            {
+                curInfo = new List<string>();
+                lastInfo[curMissCount] = curInfo;
+            }
+
+            curInfo.Add(idTag);
+        }
+
+        void AnalyseContinueLongMissCount()
+        {
+            int loop = CALC_PER_COUNT;
+            while (cItem != null && loop-- > 0)
+            {
+                if (cItem != null)
+                {
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        sum = cItem.statisticInfo.allStatisticInfo[i];
+
+                        for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                        {
+                            CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                            su = sum.statisticUnitMap[cdt];
+
+                            if (su.missCount == 0)
+                            {
+                                int currentLongMissCount = currentLongMissCountInfo[i][cdt];
+                                int lastLongMissCount = lastLongMissCountInfo[i][cdt];
+                                if (lastLongMissCount == 0)
+                                {
+                                    if (currentLongMissCount >= GlobalSetting.G_MISS_COUNT_FIRST)
+                                        lastLongMissCountInfo[i][cdt] = currentLongMissCount;
+                                    currentLongMissCountInfo[i][cdt] = 0;
+                                }
+                                else
+                                {
+                                    if(currentLongMissCount >= GlobalSetting.G_MISS_COUNT_SECOND)
+                                    {
+                                        // record
+                                        RecordContinueLongMissCount(i, cdt, lastLongMissCount, currentLongMissCount, cItem.idTag);
+                                    }
+
+                                    if(currentLongMissCount >= GlobalSetting.G_MISS_COUNT_FIRST)
+                                    {
+                                        lastLongMissCountInfo[i][cdt] = currentLongMissCount;
+                                    }
+                                    else
+                                    {
+                                        lastLongMissCountInfo[i][cdt] = 0;
+                                    }
+                                    currentLongMissCountInfo[i][cdt] = 0;
+                                }
+                            }
+                            // 只有当上次记录的值>=0时才记录
+                            else
+                            {
+                                currentLongMissCountInfo[i][cdt] = su.missCount;
+                            }
+                        }
+                    }
+                    lastDataItemTag = cItem.idTag;
+                    cItem = cItem.parent.GetNextItem(cItem);
+
+                    if (cItem == null)
+                    {
+                        if (endIndex == dateIDLst.Count - 1)
+                        {
+                            hasFinished = true;
+                            lastDataItemTag = "";
+                            status = ProcStatus.eCompleted;
+                        }
+                        else
+                        {
+                            startIndex = endIndex;
+                            status = ProcStatus.ePrepBatch;
+                        }
+                        RefreshProgress();
+                        this.Invalidate(true);
+                        return;
+                    }
+                    RefreshProgress();
+                }
+            }
+            this.Invalidate(true);
         }
 
         void AnalyseForMissCountTotal()
@@ -235,8 +323,6 @@ namespace LotteryAnalyze.UI
                             hasFinished = true;
                             lastDataItemTag = "";
                             status = ProcStatus.eCompleted;
-
-                            RefreshTree();
                         }
                         else
                         {
@@ -263,23 +349,16 @@ namespace LotteryAnalyze.UI
                 {
                     for (int i = 0; i < 5; ++i)
                     {
-                        //cdtMissCountNumMap = allCDTMissCountNumMap[i];
                         sum = cItem.statisticInfo.allStatisticInfo[i];
 
                         for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
                         {
                             CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
-                            //missCountNumMap = cdtMissCountNumMap[cdt];
                             su = sum.statisticUnitMap[cdt];
 
                             if (su.missCount == 0)
                             {
                                 int lastMissCount = numberPathMissCount[i][cdt];
-                                //numberPathMissCount[i][cdt] = 0;
-                                //if (missCountNumMap.ContainsKey(lastMissCount))
-                                //    missCountNumMap[lastMissCount] = missCountNumMap[lastMissCount] + 1;
-                                //else
-                                //    missCountNumMap[lastMissCount] = 1;
 
                                 // 判断当前这一期是否在触及布林中轨
                                 bool isCurrentHitBooleanUp = CheckIsFullUp(i, cdt, cItem);
@@ -333,8 +412,6 @@ namespace LotteryAnalyze.UI
                             hasFinished = true;
                             lastDataItemTag = "";
                             status = ProcStatus.eCompleted;
-
-                            RefreshTree();
                         }
                         else
                         {
@@ -452,14 +529,11 @@ namespace LotteryAnalyze.UI
             hasFinished = false;
             numberPathMissCount.Clear();
             overMissCountAndTouchBolleanUpInfos.Clear();
+            continueMissCountInfos.Clear();
+            lastLongMissCountInfo.Clear();
+            currentLongMissCountInfo.Clear();
             for (int i = 0; i < 5; ++i)
             {
-                //TreeNode posNode = new TreeNode(KDataDictContainer.C_TAGS[i]);
-                //posNode.Tag = i;
-                //treeViewMissCount.Nodes.Add(posNode);
-                //Dictionary<CollectDataType, Dictionary<int, TreeNode>> cid = new Dictionary<CollectDataType, Dictionary<int, TreeNode>>();
-                //allCDTMissCountTreeNodeMap.Add(cid);
-
                 Dictionary<CollectDataType, Dictionary<int, int>> dct = new Dictionary<CollectDataType, Dictionary<int, int>>();
                 allCDTMissCountNumMap.Add(dct);
 
@@ -468,16 +542,21 @@ namespace LotteryAnalyze.UI
 
                 overMissCountAndTouchBolleanUpInfos.Add(new Dictionary<CollectDataType, Dictionary<int, List<string>>>());
 
+                continueMissCountInfos.Add(new Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>());
+                Dictionary<CollectDataType, int> lastLongMissCount = new Dictionary<CollectDataType, int>();
+                Dictionary<CollectDataType, int> currentLongMissCount = new Dictionary<CollectDataType, int>();
+                lastLongMissCountInfo.Add(lastLongMissCount);
+                currentLongMissCountInfo.Add(currentLongMissCount);
+
                 for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
                 {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
                     TreeNode cdtNode = new TreeNode(GraphDataManager.S_CDT_TAG_LIST[j]);
-                    cdtNode.Tag = GraphDataManager.S_CDT_LIST[j];
-                    //posNode.Nodes.Add(cdtNode);
-
-                    dct.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, int>());
-                    //cid.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, TreeNode>());
-
-                    cdtMissCountMap.Add(GraphDataManager.S_CDT_LIST[j], 0);
+                    cdtNode.Tag = cdt;
+                    dct.Add(cdt, new Dictionary<int, int>());
+                    cdtMissCountMap.Add(cdt, 0);
+                    lastLongMissCount.Add(cdt, 0);
+                    currentLongMissCount.Add(cdt, 0);
                 }
             }
             this.Invalidate(true);
@@ -499,14 +578,11 @@ namespace LotteryAnalyze.UI
             hasFinished = false;
             numberPathMissCount.Clear();
             overMissCountAndTouchBolleanUpInfos.Clear();
+            continueMissCountInfos.Clear();
+            lastLongMissCountInfo.Clear();
+            currentLongMissCountInfo.Clear();
             for (int i = 0; i < 5; ++i )
-            {
-                //TreeNode posNode = new TreeNode(KDataDictContainer.C_TAGS[i]);
-                //posNode.Tag = i;
-                //treeViewMissCount.Nodes.Add(posNode);
-                //Dictionary<CollectDataType, Dictionary<int, TreeNode>> cid = new Dictionary<CollectDataType, Dictionary<int, TreeNode>>();
-                //allCDTMissCountTreeNodeMap.Add(cid);
-
+            { 
                 Dictionary<CollectDataType, Dictionary<int, int>> dct = new Dictionary<CollectDataType, Dictionary<int, int>>();
                 allCDTMissCountNumMap.Add(dct);
 
@@ -515,16 +591,21 @@ namespace LotteryAnalyze.UI
 
                 overMissCountAndTouchBolleanUpInfos.Add(new Dictionary<CollectDataType, Dictionary<int, List<string>>>());
 
+                continueMissCountInfos.Add(new Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>());
+                Dictionary<CollectDataType, int> lastLongMissCount = new Dictionary<CollectDataType, int>();
+                Dictionary<CollectDataType, int> currentLongMissCount = new Dictionary<CollectDataType, int>();
+                lastLongMissCountInfo.Add(lastLongMissCount);
+                currentLongMissCountInfo.Add(currentLongMissCount);
+
                 for ( int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j )
                 {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
                     TreeNode cdtNode = new TreeNode(GraphDataManager.S_CDT_TAG_LIST[j]);
-                    cdtNode.Tag = GraphDataManager.S_CDT_LIST[j];
-                    //posNode.Nodes.Add(cdtNode);
-
-                    dct.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, int>());
-                    //cid.Add(GraphDataManager.S_CDT_LIST[j], new Dictionary<int, TreeNode>());
-
-                    cdtMissCountMap.Add(GraphDataManager.S_CDT_LIST[j], 0);
+                    cdtNode.Tag = cdt;
+                    dct.Add(cdt, new Dictionary<int, int>());
+                    cdtMissCountMap.Add(cdt, 0);
+                    lastLongMissCount.Add(cdt, 0);
+                    currentLongMissCount.Add(cdt, 0);
                 }
             }
             this.Invalidate(true);
@@ -547,6 +628,9 @@ namespace LotteryAnalyze.UI
                 case DataAnalyseType.eDAT_MissCountOnTouchBolleanUp:
                     ExportForMissCountOnTouchBolleanUp();
                     break;
+                case DataAnalyseType.eDAT_ContinueLongMissCount:
+                    ExportForContinueLongMissCount();
+                    break;
             }
         }
 
@@ -555,10 +639,79 @@ namespace LotteryAnalyze.UI
             currentDataAnalyseType = (DataAnalyseType)comboBoxDataAnalyseType.SelectedIndex;
         }
 
+        void ExportForContinueLongMissCount()
+        {
+            string fileName = ExportDataPaths[(int)currentDataAnalyseType];
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
+            string info = "<root type=\"" + currentDataAnalyseType.ToString() + "\">\n";
+            sw.Write(info);
+
+            for (int i = 0; i < 5; ++i)
+            {
+                info = "\t<Num pos=\"" + KDataDictContainer.C_TAGS[i] + "\">\n";
+                sw.Write(info);
+
+                Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>> numInfo = continueMissCountInfos[i];
+                for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                    Dictionary<int, Dictionary<int, List<string>>> cdtInfo = null;
+                    if (numInfo.ContainsKey(cdt) == false)
+                        continue;
+                    cdtInfo = numInfo[cdt];
+
+                    info = "\t\t<CDT name=\"" + GraphDataManager.S_CDT_TAG_LIST[j] + "\">\n";
+                    sw.Write(info);
+                    
+                    foreach (int firstMissCount in cdtInfo.Keys)
+                    {
+                        Dictionary<int, List<string>> curMissCountInfo = cdtInfo[firstMissCount];
+                        info = "\t\t\t<FirstMissCount count=\"" + firstMissCount + "\">\n";
+                        sw.Write(info);
+
+                        foreach(int secMissCount in curMissCountInfo.Keys)
+                        {
+                            List<string> tags = curMissCountInfo[secMissCount];
+                            info = "\t\t\t\t<SecondMissCount count=\"" + secMissCount + "\">\n";
+                            sw.Write(info);
+
+                            for(int t = 0; t < tags.Count; ++t)
+                            {
+                                info = "\t\t\t\t\t<MissCountInfo>" + tags[t] + "</MissCountInfo>\n";
+                                sw.Write(info);
+                            }
+
+                            info = "\t\t\t\t</SecondMissCount>\n";
+                            sw.Write(info);
+                        }
+
+                        info = "\t\t\t</FirstMissCount>\n";
+                        sw.Write(info);
+                    }
+
+                    info = "\t\t</CDT>\n";
+                    sw.Write(info);
+                }
+
+                info = "\t</Num>\n";
+                sw.Write(info);
+            }
+
+            info = "</root>";
+            sw.Write(info);
+
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+        }
+
         void ExportForMissCountTotal()
         {
             string fileName = ExportDataPaths[(int)currentDataAnalyseType];
-            //string fileName = "..\\tools\\遗漏统计结果.xml";
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
@@ -681,6 +834,9 @@ namespace LotteryAnalyze.UI
                 case DataAnalyseType.eDAT_MissCountTotal:
                     ImportFromMissCountTotal();
                     break;
+                case DataAnalyseType.eDAT_ContinueLongMissCount:
+                    ImportFromContinueLongMissCount();
+                    break;
             }
         }
 
@@ -731,6 +887,60 @@ namespace LotteryAnalyze.UI
 
                             int date = int.Parse(tnMiss.Text.Split('-')[0]);
                             tnMiss.Tag = date;
+                        }
+                    }
+                }
+            }
+        }
+
+        void ImportFromContinueLongMissCount()
+        {
+            string fileName = ExportDataPaths[(int)currentDataAnalyseType];
+
+            XmlDocument x = new XmlDocument();
+            try
+            {
+                x.Load(fileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return;
+            }
+
+            XmlNode pNode = x.SelectSingleNode("root");
+            if (pNode == null)
+                return;
+
+            treeViewMissCount.Nodes.Clear();
+            foreach (XmlNode numNode in pNode.ChildNodes)
+            {
+                TreeNode tnNum = new TreeNode(numNode.Attributes[0].Value);
+                treeViewMissCount.Nodes.Add(tnNum);
+
+                foreach (XmlNode cdtNode in numNode.ChildNodes)
+                {
+                    TreeNode tnCDT = new TreeNode(cdtNode.Attributes[0].Value);
+                    tnNum.Nodes.Add(tnCDT);
+
+                    foreach (XmlNode firstNode in cdtNode.ChildNodes)
+                    {
+                        TreeNode tnFirst = new TreeNode(firstNode.Attributes[0].Value);
+                        tnCDT.Nodes.Add(tnFirst);
+
+                        foreach (XmlNode secNode in firstNode.ChildNodes)
+                        {
+                            TreeNode tnSec = new TreeNode(secNode.Attributes[0].Value);
+                            tnFirst.Nodes.Add(tnSec);
+
+                            foreach (XmlNode missNode in secNode.ChildNodes)
+                            {
+                                TreeNode tnMiss = new TreeNode(missNode.InnerXml);
+                                tnSec.Nodes.Add(tnMiss);
+
+                                int date = int.Parse(tnMiss.Text.Split('-')[0]);
+                                tnMiss.Tag = date;
+                            }
                         }
                     }
                 }
