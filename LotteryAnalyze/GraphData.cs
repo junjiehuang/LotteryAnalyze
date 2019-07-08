@@ -1699,7 +1699,8 @@ namespace LotteryAnalyze
         public static List<float> S_CDT_MISS_REL_LENGTH_LIST = new List<float>();
         public static List<Color> S_CDT_COLOR_LIST = new List<Color>();
         public static Dictionary<GraphType, GraphDataContainerBase> S_GRAPH_DATA_CONTS = new Dictionary<GraphType, GraphDataContainerBase>();
-
+        public static Dictionary<string, int> S_CDT_NAME_INDEX_MAP = new Dictionary<string, int>();
+        public static Dictionary<string, int> S_NUM_NAME_INDEX_MAP = new Dictionary<string, int>();
         public static KGraphDataContainer KGDC;
         public static BarGraphDataContianer BGDC;
 
@@ -1727,11 +1728,17 @@ namespace LotteryAnalyze
 
             S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
             S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new BarGraphDataContianer());
+
+            for( int i = 0; i < KDataDictContainer.C_TAGS.Length; ++i )
+            {
+                S_NUM_NAME_INDEX_MAP.Add(KDataDictContainer.C_TAGS[i], i);
+            }
         }
         static void AddPreInfo(CollectDataType cdt, string name, float probability, Color col)
         {
             S_CDT_LIST.Add(cdt);
             S_CDT_TAG_LIST.Add(name);
+            S_CDT_NAME_INDEX_MAP.Add(name, S_CDT_NAME_INDEX_MAP.Count);
             S_CDT_PROBABILITY_LIST.Add(probability);
             S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
             S_CDT_COLOR_LIST.Add(col);
@@ -1750,6 +1757,14 @@ namespace LotteryAnalyze
         {
             int index = S_CDT_LIST.IndexOf(cdt);
             return S_CDT_MISS_REL_LENGTH_LIST[index];
+        }
+        public static int GetCdtIndex(string cdtSTR)
+        {
+            return S_CDT_NAME_INDEX_MAP[cdtSTR];
+        }
+        public static int GetNumIndex(string numSTR)
+        {
+            return S_NUM_NAME_INDEX_MAP[numSTR];
         }
 
         static GraphDataManager sInst = null;

@@ -510,19 +510,19 @@ namespace LotteryAnalyze.UI
         }
         void SelItemByItemID(int kdIndex)
         {
-            if (graphMgr.CurrentGraphType != GraphType.eKCurveGraph)
+            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
             {
                 SelItemForKCurveGraph(kdIndex);
             }
-            if (graphMgr.CurrentGraphType != GraphType.eAppearenceGraph)
+            if (graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
             {
                 SelItemForAppearenceGraph(kdIndex);
             }
-            if (graphMgr.CurrentGraphType != GraphType.eMissCountGraph)
+            if (graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
             {
                 SelItemForMissCountGraph(kdIndex);
             }
-            if (graphMgr.CurrentGraphType != GraphType.eTradeGraph)
+            if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
                 SelItemForTradeGraph(kdIndex, false);
             }
@@ -831,6 +831,32 @@ namespace LotteryAnalyze.UI
             if (m.Msg == 0x0014) // 禁掉清除背景消息
                 return;
             base.WndProc(ref m);
+        }
+
+
+        public static void G_SetSelNumIndex(int _numIndex)
+        {
+            for (int i = 0; i < instLst.Count; ++i)
+            {
+                instLst[i].SetSelNumIndex(_numIndex);
+            }
+        }
+        public static void G_SetSelCollectDataType(int _cdtIndex)
+        {
+            for (int i = 0; i < instLst.Count; ++i)
+            {
+                instLst[i].SetSelCollectDataType(_cdtIndex);
+            }
+        }
+        void SetSelNumIndex(int _numIndex)
+        {
+            comboBoxNumIndex.SelectedIndex = _numIndex;
+            comboBoxNumIndex_SelectedIndexChanged(null, null);
+        }
+        void SetSelCollectDataType(int _cdtIndex)
+        {
+            comboBoxCollectionDataType.SelectedIndex = _cdtIndex;
+            comboBoxCollectionDataType_SelectedIndexChanged(null, null);
         }
 
         private void comboBoxNumIndex_SelectedIndexChanged(object sender, EventArgs e)
