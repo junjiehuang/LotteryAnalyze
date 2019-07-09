@@ -664,15 +664,25 @@ namespace LotteryAnalyze.UI
 
                     info = "\t\t<CDT name=\"" + GraphDataManager.S_CDT_TAG_LIST[j] + "\">\n";
                     sw.Write(info);
-                    
-                    foreach (int firstMissCount in cdtInfo.Keys)
+
+                    List<int> mcFirstLst = new List<int>();
+                    mcFirstLst.AddRange(cdtInfo.Keys);
+                    mcFirstLst.Sort((x, y) => { if (x < y) return -1; return 1; });
+                    for( int fi = 0; fi < mcFirstLst.Count; ++fi )
+                    //foreach (int firstMissCount in cdtInfo.Keys)
                     {
+                        int firstMissCount = mcFirstLst[fi];
                         Dictionary<int, List<string>> curMissCountInfo = cdtInfo[firstMissCount];
                         info = "\t\t\t<FirstMissCount count=\"" + firstMissCount + "\">\n";
                         sw.Write(info);
 
-                        foreach(int secMissCount in curMissCountInfo.Keys)
+                        List<int> mcSecondLst = new List<int>();
+                        mcSecondLst.AddRange(curMissCountInfo.Keys);
+                        mcSecondLst.Sort((x, y) => { if (x < y) return -1; return 1; });
+                        for (int si = 0; si < mcSecondLst.Count; ++si)
+                        //foreach(int secMissCount in curMissCountInfo.Keys)
                         {
+                            int secMissCount = mcSecondLst[si];
                             List<string> tags = curMissCountInfo[secMissCount];
                             info = "\t\t\t\t<SecondMissCount count=\"" + secMissCount + "\">\n";
                             sw.Write(info);
