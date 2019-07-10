@@ -519,6 +519,7 @@ namespace LotteryAnalyze
         SolidBrush cyanBrush = new SolidBrush(Color.Cyan);
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.Green);
+        SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
         SolidBrush tmpBrush;
 
         Dictionary<Pen, List<PointF>> segPools = new Dictionary<Pen, List<PointF>>();
@@ -630,7 +631,7 @@ namespace LotteryAnalyze
                         KData data = kdDict.GetData(cdt, false);
                         if (data == null)
                             continue;
-                        DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos);
+                        DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos, kddc, cdt);
                     }
 
                     if(enableKRuler)
@@ -1089,7 +1090,7 @@ namespace LotteryAnalyze
         }
 
 
-        void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos)
+        void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos, KDataDictContainer kddc, CollectDataType cdt)
         {
             KData prevData = data.GetPrevKData();
             if (prevData != null)
@@ -1144,6 +1145,20 @@ namespace LotteryAnalyze
             {
                 g.DrawLine(yellowLinePen, standX, 0, standX, winH);
                 g.DrawLine(yellowLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
+            }
+
+            if (prevData != null)
+            {
+                MACDPoint mpC = kddc.GetMacdPointMap(data.index).GetData(cdt, false);
+                MACDPoint mpP = kddc.GetMacdPointMap(prevData.index).GetData(cdt, false);
+                if (mpC.BAR > mpP.BAR)
+                {
+                    g.FillRectangle(redBrush, standX, winH-gridScaleH, gridScaleW, winH);
+                }
+                else if(mpC.DIF > 0)
+                {
+                    g.FillRectangle(yellowBrush, standX, winH - gridScaleH, gridScaleW, winH);
+                }
             }
         }
         void DrawAvgLineGraph(Graphics g, AvgPointMap apm, int winW, int winH, CollectDataType cdt, Pen pen)
