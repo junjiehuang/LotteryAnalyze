@@ -1396,6 +1396,7 @@ namespace LotteryAnalyze
             float by = lineData.dataSharp.KValue * gridScaleH, sy;
             bx = StandToCanvas(bx, true);
             by = StandToCanvas(by, false);
+            g.DrawLine(grayDotLinePen, 0, by, winW, by);
             g.DrawRectangle(pen, bx - rcHalfSize, by - rcHalfSize, rcSize, rcSize);
 
             if (lineData.dataPrevSharp != null)
@@ -1407,6 +1408,7 @@ namespace LotteryAnalyze
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
+                g.DrawLine(grayDotLinePen, 0, sy, winW, sy);
                 g.DrawLine(prevPen, 0, fyl, winW, fyr);
                 g.DrawRectangle(prevPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
             }
@@ -1419,6 +1421,7 @@ namespace LotteryAnalyze
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
+                g.DrawLine(grayDotLinePen, 0, sy, winW, sy);
                 g.DrawLine(nextPen, 0, fyl, winW, fyr);
                 g.DrawRectangle(nextPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
             }
