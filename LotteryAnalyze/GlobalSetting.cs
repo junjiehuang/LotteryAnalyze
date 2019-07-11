@@ -66,6 +66,9 @@ namespace LotteryAnalyze
         [Parameter("界面设置/主线程更新休眠时间", 100)]
         private static int g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = 1500;
 
+        [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
+        private static bool g_SHOW_KCURVE_DETAIL = true;
+
 
         [Parameter("自动通道线工具/是否开启", true)]
         private static bool g_EANBLE_ANALYZE_TOOL = true;
@@ -834,6 +837,12 @@ namespace LotteryAnalyze
         {
             get { return g_AUTO_REFRESH_LATEST_DATA_INTERVAL; }
             set { g_AUTO_REFRESH_LATEST_DATA_INTERVAL = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_SHOW_KCURVE_DETAIL
+        {
+            get { return g_SHOW_KCURVE_DETAIL; }
+            set { g_SHOW_KCURVE_DETAIL = value; HAS_MODIFY = true; }
         }
 
         static GlobalSetting()

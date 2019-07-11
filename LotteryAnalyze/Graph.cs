@@ -685,25 +685,28 @@ namespace LotteryAnalyze
                             DrawBollinLineGraph(g, kddc.bollinDataLst.bollinMapLst[i], winW, winH, cdt);
                             if(i == preViewDataIndex)
                             {
-                                int index = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-                                float missHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[index];
-                                BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[i];
-                                BollinPoint bp = bpm.GetData(cdt, false);
-                                float bandSize = bp.upValue - bp.downValue;
-                                float bandCount = bandSize / missHeight;
-                                string info = "Boll值 = (" + bp.upValue + ", " + bp.midValue + ", " + bp.downValue + ") [" + bandSize + ", " + bandCount + "]";
-                                KData kd = bpm.kdd.GetData(cdt, false);
-                                float bollUpCount = kd.RelateDistTo(bp.upValue) / missHeight;
-                                float bollMidCount = kd.RelateDistTo(bp.midValue) / missHeight;
-                                float bollDownCount = kd.RelateDistTo(bp.downValue) / missHeight;
-                                info += "\nBUpC = " + bollUpCount + ", BMdC = " + bollMidCount + ", BDnC = " + bollDownCount;
-                                info += "\nUpMC = " + bp.uponBolleanMidCount + ", OnMC = " + bp.onBolleanMidCount + ", DnMC = " + bp.underBolleanMidCount;
-                                info += "\nUpMCC = " + bp.uponBolleanMidCountContinue + ", OnMCC = " + bp.onBolleanMidCountContinue + ", DnMCC = " + bp.underBolleanMidCountContinue;
-                                info += "\nBMKUC = " + bp.bolleanMidKeepUpCount + ", BMKHC = " + bp.bolleanMidKeepHorzCount + ", BMKDC = " + bp.bolleanMidKeepDownCount;
-                                info += "\nBMKUCC = " + bp.bolleanMidKeepUpCountContinue + ", BMKHCC = " + bp.bolleanMidKeepHorzCountContinue + ", BMKDCC = " + bp.bolleanMidKeepDownCountContinue;
-                                info += "\nOnDownCC = " + bp.onBolleanDownCountContinue;
-                                graphInfo += "\n" + info;
-                                //g.DrawString(info, selDataFont, whiteBrush, 5, 45);
+                                if (GlobalSetting.G_SHOW_KCURVE_DETAIL)
+                                {
+                                    int index = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                                    float missHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[index];
+                                    BollinPointMap bpm = kddc.bollinDataLst.bollinMapLst[i];
+                                    BollinPoint bp = bpm.GetData(cdt, false);
+                                    float bandSize = bp.upValue - bp.downValue;
+                                    float bandCount = bandSize / missHeight;
+                                    string info = "Boll值 = (" + bp.upValue + ", " + bp.midValue + ", " + bp.downValue + ") [" + bandSize + ", " + bandCount + "]";
+                                    KData kd = bpm.kdd.GetData(cdt, false);
+                                    float bollUpCount = kd.RelateDistTo(bp.upValue) / missHeight;
+                                    float bollMidCount = kd.RelateDistTo(bp.midValue) / missHeight;
+                                    float bollDownCount = kd.RelateDistTo(bp.downValue) / missHeight;
+                                    info += "\nBUpC = " + bollUpCount + ", BMdC = " + bollMidCount + ", BDnC = " + bollDownCount;
+                                    info += "\nUpMC = " + bp.uponBolleanMidCount + ", OnMC = " + bp.onBolleanMidCount + ", DnMC = " + bp.underBolleanMidCount;
+                                    info += "\nUpMCC = " + bp.uponBolleanMidCountContinue + ", OnMCC = " + bp.onBolleanMidCountContinue + ", DnMCC = " + bp.underBolleanMidCountContinue;
+                                    info += "\nBMKUC = " + bp.bolleanMidKeepUpCount + ", BMKHC = " + bp.bolleanMidKeepHorzCount + ", BMKDC = " + bp.bolleanMidKeepDownCount;
+                                    info += "\nBMKUCC = " + bp.bolleanMidKeepUpCountContinue + ", BMKHCC = " + bp.bolleanMidKeepHorzCountContinue + ", BMKDCC = " + bp.bolleanMidKeepDownCountContinue;
+                                    info += "\nOnDownCC = " + bp.onBolleanDownCountContinue;
+                                    graphInfo += "\n" + info;
+                                    //g.DrawString(info, selDataFont, whiteBrush, 5, 45);
+                                }
                             }
                         }
                     }
