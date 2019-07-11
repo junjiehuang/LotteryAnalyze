@@ -40,7 +40,7 @@ namespace LotteryAnalyze
         }
         System.Windows.Forms.Timer updateTimer;
         int lastFetchCount = -1;
-        long lastUpdateTime = 0;
+        double lastUpdateTime = 0;
 
         public FormMain()
         {
@@ -509,17 +509,20 @@ namespace LotteryAnalyze
 
         void RefreshLatestData(bool forceUpdate)
         {
+            // 如果当前不是在获取最新数据，返回
             if (GlobalSetting.IsCurrentFetchingLatestData == false)
                 return;
-
-            //Process p = Process.Start("AutoFetchDailyData.exe");
-            //p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+            
             if(forceUpdate == false)
             {
-                int minute = DateTime.Now.Minute;
-                int minGap = minute % 5;
-                if (minGap > 2 || minGap < 1)
+                // 如果不是自动获取，返回
+                if (GlobalSetting.G_AUTO_REFRESH_LATEST_DATA == false)
                     return;
+
+                // 间隔时间满足才执行刷新
+                if (Program.TimeSinceStartUp - lastUpdateTime < GlobalSetting.G_AUTO_REFRESH_LATEST_DATA_INTERVAL)
+                    return;
+                lastUpdateTime = Program.TimeSinceStartUp;
             }
 
             // 更新当天的数据

@@ -49,6 +49,11 @@ namespace LotteryAnalyze
         
         [Parameter("数据收集设定/数据源类型", AutoUpdateUtil.DataSourceType.eCaiBow)]
         private static AutoUpdateUtil.DataSourceType g_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
+        [Parameter("数据收集设定/是否自动刷新最新数据", true)]
+        private static bool g_AUTO_REFRESH_LATEST_DATA = true;
+        [Parameter("数据收集设定/自动刷新最新数据时间间隔（秒）", 60.0f)]
+        private static float g_AUTO_REFRESH_LATEST_DATA_INTERVAL = 60.0f;
+
 
         [Parameter("界面设置/是否在主线程刷新", true)]
         private static bool g_UPDATE_IN_MAIN_THREAD = true;
@@ -61,17 +66,20 @@ namespace LotteryAnalyze
         [Parameter("界面设置/主线程更新休眠时间", 100)]
         private static int g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = 1500;
 
+
         [Parameter("自动通道线工具/是否开启", true)]
         private static bool g_EANBLE_ANALYZE_TOOL = true;
         [Parameter("自动通道线工具/取样数", 30)]
         private static int g_ANALYZE_TOOL_SAMPLE_COUNT = 30;
         
+
         [Parameter("分析数据收集/是否统计MACD走势分析数据", false)]
         private static bool g_COLLECT_MACD_ANALYZE_DATA = false;
         [Parameter("分析数据收集/是否统计布林走势分析数据", false)]
         private static bool g_COLLECT_BOLLEAN_ANALYZE_DATA = false;
         [Parameter("分析数据收集/是否统计通道线分析数据", false)]
         private static bool g_COLLECT_ANALYZE_TOOL_DATA = false;
+
 
         [Parameter("筛选设定/是否开启同路保持检测", true)]
         private static bool g_ENABLE_CHECK_AND_KEEP_SAME_PATH = true;
@@ -810,6 +818,22 @@ namespace LotteryAnalyze
                 g_MISS_COUNT_SECOND = value;
                 HAS_MODIFY = true;
             }
+        }
+
+        public static bool G_AUTO_REFRESH_LATEST_DATA
+        {
+            get { return g_AUTO_REFRESH_LATEST_DATA; }
+            set
+            {
+                g_AUTO_REFRESH_LATEST_DATA = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static float G_AUTO_REFRESH_LATEST_DATA_INTERVAL
+        {
+            get { return g_AUTO_REFRESH_LATEST_DATA_INTERVAL; }
+            set { g_AUTO_REFRESH_LATEST_DATA_INTERVAL = value; HAS_MODIFY = true; }
         }
 
         static GlobalSetting()

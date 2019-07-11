@@ -1222,6 +1222,12 @@ namespace LotteryAnalyze
         void DrawMACDGraph(Graphics g, MACDPointMap mpm, int winW, int winH, CollectDataType cdt, bool drawSelectedLine)
         {
             MACDPoint mp = mpm.macdpMap[cdt];
+            bool isUp = mp.BAR > 0;
+            MACDPointMap prevMPM = mp.parent.GetPrevMACDPM();
+            if(prevMPM != null)
+            {
+                isUp = mp.BAR > prevMPM.GetData(cdt, false).BAR;
+            }
             float standX = (mpm.index + 0.5f) * gridScaleW;
             float halfW = gridScaleW * 0.5f;
             float cx = StandToCanvas(standX, true);
@@ -1236,8 +1242,8 @@ namespace LotteryAnalyze
             float cyDEA = StandToCanvas((mp.DEA * gridScaleH), false);
             float cyBAR = StandToCanvas(standY, false);
             float rcY = StandToCanvas(standY > 0 ? standY : 0, false);
-            g.FillRectangle(mp.BAR > 0 ? redBrush : cyanBrush, cx - halfW, rcY, gridScaleW, Math.Abs(standY));
-            MACDPointMap prevMPM = mpm.GetPrevMACDPM();
+            g.FillRectangle(isUp? redBrush : cyanBrush, cx - halfW, rcY, gridScaleW, Math.Abs(standY));
+            //MACDPointMap prevMPM = mpm.GetPrevMACDPM();
             if (prevMPM != null)
             {
                 MACDPoint prevMP = prevMPM.macdpMap[cdt];
