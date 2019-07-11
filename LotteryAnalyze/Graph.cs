@@ -1823,6 +1823,7 @@ namespace LotteryAnalyze
             
             for (int i = 0; i < dul.dataLst.Count; ++i)
             {
+                float r = 0;
                 Brush brush = greenBrush;
                 float rate = ((float)(dul.dataLst[i].data) / (float)bgdc.totalCollectCount);
                 if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountPath012)
@@ -1831,11 +1832,33 @@ namespace LotteryAnalyze
                         brush = redBrush;
                     else if (i > 0 && rate > 0.3f)
                         brush = redBrush;
+
+                    if (i == 0)
+                        r = (rate - 0.4f) / 0.4f;
+                    else
+                        r = (rate - 0.3f) / 0.3f;
                 }
                 else if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountFrom0To9)
                 {
+                    r = (rate - 0.1f) / 0.1f;
                     if(rate > 0.1f)
                         brush = redBrush;
+                }
+                string brand = "";
+                Brush brandBrush = tagBrush;
+                if (r > 0.5f)
+                {
+                    brand = "热";
+                    brandBrush = redBrush;
+                }
+                else if (r < -0.5f)
+                {
+                    brand = "冷";
+                    brandBrush = greenBrush;
+                }
+                else
+                {
+                    brand = "温";
                 }
 
                 float rcH = MaxRcH * rate;
@@ -1843,6 +1866,7 @@ namespace LotteryAnalyze
                 g.FillRectangle(brush, startX, startY, gap * 0.9f, rcH);
                 g.DrawString(dul.dataLst[i].tag, tagFont, tagBrush, startX, bottom);
                 g.DrawString(dul.dataLst[i].data.ToString(), tagFont, tagBrush, startX, startY - 30);
+                g.DrawString(brand, tagFont, brandBrush, startX, 60);
                 startX += gap;
             }
 
