@@ -34,6 +34,8 @@ namespace LotteryAnalyze.UI
         double updateCountDown = 0;
         DataItem itemSel = null;
 
+        bool isAddingAuxLine = false;
+
         #region ctor and common
 
         public static void Open(bool forceCreateNewOne)
@@ -561,6 +563,7 @@ namespace LotteryAnalyze.UI
         }
         void ProcAddAuxLine(Point mousePos)
         {
+            isAddingAuxLine = false;
             if (graphMgr.kvalueGraph.enableAuxiliaryLine)
             {
                 graphMgr.kvalueGraph.SelectAuxLine(mousePos, numberIndex, curCDT);
@@ -577,12 +580,14 @@ namespace LotteryAnalyze.UI
                             {
                                 graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT);
                                 graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eVertLine:
                             {
                                 graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT);
                                 graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eSingleLine:
@@ -595,6 +600,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eChannelLine:
@@ -608,6 +614,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eGoldSegmentedLine:
@@ -620,6 +627,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eCircleLine:
@@ -632,6 +640,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eArrowLine:
@@ -644,6 +653,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eRectLine:
@@ -656,6 +666,7 @@ namespace LotteryAnalyze.UI
                                         graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
                                     graphMgr.kvalueGraph.mouseHitPts.Clear();
                                 }
+                                isAddingAuxLine = true;
                             }
                             break;
                     }
@@ -721,7 +732,9 @@ namespace LotteryAnalyze.UI
                 {
                     // 处理辅助线的添加
                     ProcAddAuxLine(e.Location);
-                    if (graphMgr.kvalueGraph.selAuxLine == null && hasMouseMoveOnUpPanel == false)
+                    if (graphMgr.kvalueGraph.selAuxLine == null && 
+                        hasMouseMoveOnUpPanel == false &&
+                        isAddingAuxLine == false)
                     {
                         int kdataID = -1;
                         // 鼠标没有移动
