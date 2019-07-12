@@ -1098,7 +1098,7 @@ namespace LotteryAnalyze.UI
 
         private void autoAddAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            graphMgr.kvalueGraph.needAutoAddAuxLine = true;
         }
 
         #endregion

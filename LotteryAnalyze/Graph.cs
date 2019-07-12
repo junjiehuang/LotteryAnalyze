@@ -545,6 +545,8 @@ namespace LotteryAnalyze
 
         string graphInfo = "";
 
+        public bool needAutoAddAuxLine = false;
+
         public GraphKCurve()
         {
             selDataFont = new Font(FontFamily.GenericSerif, 12);
@@ -1294,9 +1296,65 @@ namespace LotteryAnalyze
             if (preViewDataIndex != -1)
             {
                 TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
-                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
-
                 AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.curPreviewAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+
+                if (needAutoAddAuxLine)
+                {
+                    needAutoAddAuxLine = false;
+                    if(sali.upLineData.valid)
+                    {
+                        if(sali.upLineData.dataPrevSharp != null && sali.upLineData.dataSharp != null)
+                        {
+                            int px = (int)StandToCanvas(sali.upLineData.dataPrevSharp.index * gridScaleW, true);
+                            int py = (int)StandToCanvas(sali.upLineData.dataPrevSharp.KValue * gridScaleH, false);
+                            int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
+                            int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                            AddSingleLine(
+                                new Point(px,py),
+                                new Point(x,y),
+                                numIndex, cdt);
+                        }
+                        if (sali.upLineData.dataNextSharp != null && sali.upLineData.dataSharp != null)
+                        {
+                            int px = (int)StandToCanvas(sali.upLineData.dataNextSharp.index * gridScaleW, true);
+                            int py = (int)StandToCanvas(sali.upLineData.dataNextSharp.KValue * gridScaleH, false);
+                            int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
+                            int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                            AddSingleLine(
+                                new Point(px, py),
+                                new Point(x, y),
+                                numIndex, cdt);
+                        }
+                    }
+
+                    if (sali.downLineData.valid)
+                    {
+                        if (sali.downLineData.dataPrevSharp != null && sali.downLineData.dataSharp != null)
+                        {
+                            int px = (int)StandToCanvas(sali.downLineData.dataPrevSharp.index * gridScaleW, true);
+                            int py = (int)StandToCanvas(sali.downLineData.dataPrevSharp.KValue * gridScaleH, false);
+                            int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
+                            int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                            AddSingleLine(
+                                new Point(px, py),
+                                new Point(x, y),
+                                numIndex, cdt);
+                        }
+                        if (sali.downLineData.dataNextSharp != null && sali.downLineData.dataSharp != null)
+                        {
+                            int px = (int)StandToCanvas(sali.downLineData.dataNextSharp.index * gridScaleW, true);
+                            int py = (int)StandToCanvas(sali.downLineData.dataNextSharp.KValue * gridScaleH, false);
+                            int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
+                            int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                            AddSingleLine(
+                                new Point(px, py),
+                                new Point(x, y),
+                                numIndex, cdt);
+                        }
+                    }
+                }
+
+                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
                 if(sali.downLineData.valid)
                 {
                     KGraphDataContainer kgdc = GraphDataManager.KGDC;
