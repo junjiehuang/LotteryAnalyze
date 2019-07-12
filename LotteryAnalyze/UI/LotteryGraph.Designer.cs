@@ -84,6 +84,7 @@ namespace LotteryAnalyze.UI
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonVertExpand = new System.Windows.Forms.Button();
             this.buttonHorzExpand = new System.Windows.Forms.Button();
             this.panelDown = new System.Windows.Forms.Panel();
@@ -423,6 +424,7 @@ namespace LotteryAnalyze.UI
             this.delAllLinesToolStripMenuItem,
             this.cancelAddAuxLineToolStripMenuItem,
             this.modifyAuxLineColorToolStripMenuItem,
+            this.autoAddAuxLineToolStripMenuItem,
             this.toolStripSeparator3,
             this.setBreakPointToolStripMenuItem});
             this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
@@ -455,6 +457,13 @@ namespace LotteryAnalyze.UI
             this.modifyAuxLineColorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.modifyAuxLineColorToolStripMenuItem.Text = "修改辅助线颜色";
             this.modifyAuxLineColorToolStripMenuItem.Click += new System.EventHandler(this.modifyAuxLineColorToolStripMenuItem_Click);
+            // 
+            // autoAddAuxLineToolStripMenuItem
+            // 
+            this.autoAddAuxLineToolStripMenuItem.Name = "autoAddAuxLineToolStripMenuItem";
+            this.autoAddAuxLineToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.autoAddAuxLineToolStripMenuItem.Text = "自动添加辅助线";
+            this.autoAddAuxLineToolStripMenuItem.Click += new System.EventHandler(this.autoAddAuxLineToolStripMenuItem_Click);
             // 
             // buttonVertExpand
             // 
@@ -1467,6 +1476,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem globalSimTradeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyAuxLineColorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoAddAuxLineToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxKRuler;
         private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
         private System.Windows.Forms.ListBox listBoxFavoriteCharts;

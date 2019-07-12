@@ -734,7 +734,9 @@ namespace LotteryAnalyze.UI
                     ProcAddAuxLine(e.Location);
                     if (graphMgr.kvalueGraph.selAuxLine == null && 
                         hasMouseMoveOnUpPanel == false &&
-                        isAddingAuxLine == false)
+                        isAddingAuxLine == false &&
+                        graphMgr.kvalueGraph.enableAuxiliaryLine && graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone
+                        )
                     {
                         int kdataID = -1;
                         // 鼠标没有移动
@@ -1092,6 +1094,11 @@ namespace LotteryAnalyze.UI
                     }
                 }
             }
+        }
+
+        private void autoAddAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
