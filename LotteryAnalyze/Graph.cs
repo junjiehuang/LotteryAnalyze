@@ -445,7 +445,7 @@ namespace LotteryAnalyze
 
         }
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
-        public virtual void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0) { }
+        public virtual void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0, bool needScrollToData=true) { }
     }
 
     // K线图
@@ -822,13 +822,16 @@ namespace LotteryAnalyze
             }
             EndDraw(g);
         }
-        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0, bool needScrollToData = true)
         {
             if (needSelect)
                 selectKDataIndex = index;
             else
                 selectKDataIndex = -1;
-            canvasOffset.X = index * gridScaleW + xOffset;
+            if (needScrollToData)
+            {
+                canvasOffset.X = index * gridScaleW + xOffset;
+            }
             autoAllign = true;
         }
 
@@ -2194,13 +2197,16 @@ namespace LotteryAnalyze
             maxIndex = TradeDataManager.Instance.historyTradeDatas.Count;
         }
 
-        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0, bool needScrollToData = true)
         {
             if (needSelect)
                 selectTradeIndex = index;
             else
                 selectTradeIndex = -1;
-            canvasOffset.X = index * gridScaleW + xOffset;// (index + 1) * gridScaleW + xOffset;
+            if (needScrollToData)
+            {
+                canvasOffset.X = index * gridScaleW + xOffset;// (index + 1) * gridScaleW + xOffset;
+            }
             autoAllign = true;
         }
 
@@ -2467,13 +2473,16 @@ namespace LotteryAnalyze
         {
 
         }
-        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0)
+        public override void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0, bool needScrollToData = true)
         {
             if (needSelect)
                 selectDataIndex = index;
             else
                 selectDataIndex = -1;
-            canvasOffset.X = index * gridScaleW + xOffset;
+            if (needScrollToData)
+            {
+                canvasOffset.X = index * gridScaleW + xOffset;
+            }
             autoAllign = true;
         }
 

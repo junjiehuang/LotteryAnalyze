@@ -472,7 +472,7 @@ namespace LotteryAnalyze.UI
             GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
         }
 
-        void SelItemForGraph(int selID, GraphBase graph)
+        void SelItemForGraph(int selID, GraphBase graph, bool needScrollToData = true)
         {
             int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
             int xOffset = 0;
@@ -480,21 +480,21 @@ namespace LotteryAnalyze.UI
                 xOffset = -checkW;
             else
                 xOffset = -(int)(selID * graph.gridScaleW);
-            graph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset);
+            graph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset, needScrollToData);
         }
-        void SelItemForKCurveGraph(int selID)
+        void SelItemForKCurveGraph(int selID, bool needScrollToData = true)
         {
-            SelItemForGraph(selID, graphMgr.kvalueGraph);
+            SelItemForGraph(selID, graphMgr.kvalueGraph, needScrollToData);
         }
-        void SelItemForAppearenceGraph(int selID)
+        void SelItemForAppearenceGraph(int selID, bool needScrollToData = true)
         {
-            SelItemForGraph(selID, graphMgr.appearenceGraph);
+            SelItemForGraph(selID, graphMgr.appearenceGraph, needScrollToData);
         }
-        void SelItemForMissCountGraph(int selID)
+        void SelItemForMissCountGraph(int selID, bool needScrollToData = true)
         {
-            SelItemForGraph(selID, graphMgr.missCountGraph);
+            SelItemForGraph(selID, graphMgr.missCountGraph, needScrollToData);
         }
-        void SelItemForTradeGraph(int selID, bool isTradeID)
+        void SelItemForTradeGraph(int selID, bool isTradeID, bool needScrollToData = true)
         {
             if (isTradeID)
             {
@@ -508,26 +508,14 @@ namespace LotteryAnalyze.UI
                     return;
                 selID = tradeID;
             }
-            SelItemForGraph(selID, graphMgr.tradeGraph);
+            SelItemForGraph(selID, graphMgr.tradeGraph, needScrollToData);
         }
-        void SelItemByItemID(int kdIndex)
+        void SelItemByItemID(int kdIndex, bool needScrollToData = true)
         {
-            if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
-            {
-                SelItemForKCurveGraph(kdIndex);
-            }
-            if (graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
-            {
-                SelItemForAppearenceGraph(kdIndex);
-            }
-            if (graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
-            {
-                SelItemForMissCountGraph(kdIndex);
-            }
-            if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
-            {
-                SelItemForTradeGraph(kdIndex, false);
-            }
+            SelItemForKCurveGraph(kdIndex, !(graphMgr.CurrentGraphType == GraphType.eKCurveGraph));
+            SelItemForAppearenceGraph(kdIndex, !(graphMgr.CurrentGraphType == GraphType.eAppearenceGraph));
+            SelItemForMissCountGraph(kdIndex, !(graphMgr.CurrentGraphType == GraphType.eMissCountGraph));
+            SelItemForTradeGraph(kdIndex, false, !(graphMgr.CurrentGraphType == GraphType.eTradeGraph));
             FormMain.Instance.SelectDataItem(kdIndex);
             DataItem item = DataManager.GetInst().FindDataItem(kdIndex);
             CollectBarGraphData(item);
@@ -543,11 +531,11 @@ namespace LotteryAnalyze.UI
             CollectBarGraphData(null);
             itemSel = null;
         }
-        void SelItem(int selID)
+        void SelItem(int selID, bool needScrollToData = true)
         {
             if (selID != -1)
             {
-                SelItemByItemID(selID);
+                SelItemByItemID(selID, needScrollToData);
             }
             //else
             //{
@@ -744,7 +732,7 @@ namespace LotteryAnalyze.UI
                         {
                             // 计算点击选中的K值
                             int selID = graphMgr.kvalueGraph.SelectKData(e.Location);
-                            SelItem(selID);
+                            SelItem(selID, false);
                         }
                     }
                 }
