@@ -448,6 +448,7 @@ namespace LotteryAnalyze.UI
 
         private void panelUp_MouseDown(object sender, MouseEventArgs e)
         {
+            this.panelUp.Focus();
             hasMouseMoveOnUpPanel = false;
             if (hasNewDataUpdate)
                 hasNewDataUpdate = false;
@@ -537,10 +538,11 @@ namespace LotteryAnalyze.UI
             {
                 SelItemByItemID(selID, needScrollToData);
             }
-            //else
-            //{
-            //    UnselectItem();
-            //}
+            else
+            {
+                CollectBarGraphData(null);
+                //UnselectItem();
+            }
         }
         public static void G_SelItem(int selID)
         {
@@ -764,6 +766,8 @@ namespace LotteryAnalyze.UI
         private void panelDown_MouseDown(object sender, MouseEventArgs e)
         {
             downPanelMousePosLastDrag = e.Location;
+
+            this.panelDown.Focus();
         }
         private void panelDown_MouseUp(object sender, MouseEventArgs e)
         {

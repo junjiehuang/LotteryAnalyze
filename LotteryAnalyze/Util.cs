@@ -820,6 +820,7 @@ namespace LotteryAnalyze
             {
                 error = "Request url <" + webUrl + "> failed! info = " + e.ToString();
                 Console.WriteLine(error);
+                return 0;
             }
 
             if (response == null)

@@ -183,6 +183,22 @@ namespace LotteryAnalyze
                 return 1;
             return -1;
         }
+        public static int SortByRate(NumberCmpInfo a, NumberCmpInfo b)
+        {
+            if (a == null || b == null)
+                return 0;
+            if (a == b)
+                return 0;
+            if (a.rate > b.rate)
+                return -1;
+            if (a.rate < b.rate)
+                return 1;
+            if (a.appearCount > b.appearCount)
+                return -1;
+            if (a.appearCount < b.appearCount)
+                return 1;
+            return 0;
+        }
     }
 
     public class TradeNumbers
@@ -240,6 +256,17 @@ namespace LotteryAnalyze
                         break;
                 }
             }
+        }
+        public void SetHotNumber(int tradeCount, ref List<NumberCmpInfo> nums)
+        {
+            for (int i = 0; i < nums.Count; ++i)
+            {
+                if (nums[i].rate > 0.5f)
+                {
+                    tradeNumbers.Add(nums[i]);
+                }
+            }
+            this.tradeCount = tradeNumbers.Count > 0 ? tradeCount : 0;
         }
         public void AddProbabilityNumber(NumberCmpInfo nci)
         {
@@ -848,6 +875,9 @@ namespace LotteryAnalyze
             // 只要哪个数字位的最优012路满足就进行交易
             eMultiNumPath,
 
+            // 选择某个数字位的热号
+            eSinglePositionHotestNums,
+
             // 选择某个数字位连续N期出号概率最高的几个数
             eSingleMostPosibilityNums,
             // 所有数字位都选择连续N期出号概率最高的几个数
@@ -870,8 +900,10 @@ namespace LotteryAnalyze
             "eSinglePositionPathOnArea",
             "eSinglePositionSmallestMissCountArea",
             "eSinglePositionPathByAppearencePosibility",
-
             "eMultiNumPath",
+
+            "eSinglePositionHotestNums",
+
             "eSingleMostPosibilityNums",
             "eMultiMostPosibilityNums",
             "eSingleShortLongMostPosibilityNums",
@@ -1338,6 +1370,9 @@ namespace LotteryAnalyze
                     break;
                 case TradeStrategy.eMultiNumPath:
                     TradeMultiNumPath(item, trade);
+                    break;
+                case TradeStrategy.eSinglePositionHotestNums:
+                    TradeSinglePositionHotestNums(item, trade);
                     break;
                 case TradeStrategy.eSingleMostPosibilityNums:
                     TradeSingleMostPosibilityNums(item, trade);
@@ -1935,6 +1970,12 @@ namespace LotteryAnalyze
                     }
                     else
                     {
+                        if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_LINE)
+                        {
+                            if ((int)pci0.paramMap["MacdUp"] == 0)
+                                return;
+                        }
+
                         if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
                         {
                             if ((MacdSignal)pci0.paramMap["MacdSig"] < MacdSignal.eHalfDown)
@@ -2260,6 +2301,47 @@ namespace LotteryAnalyze
                     trade.tradeInfo.Add(bestNumIndex, tn);
                 }
             }
+        }
+
+        void TradeSinglePositionHotestNums(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+            int numID = 0;
+            if (simSelNumIndex != -1)
+                numID = simSelNumIndex;
+
+            maxProbilityNums.Clear();
+            {
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+                int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+                int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+                for (int num = startIndex; num <= endIndex; ++num)
+                {
+                    CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
+                    SByte number = (SByte)(num - startIndex);
+                    NumberCmpInfo info = GetNumberCmpInfo(ref maxProbilityNums, number, true);
+                    info.appearCount = sum.statisticUnitMap[cdt].shortData.appearCount;
+                    info.rate = sum.statisticUnitMap[cdt].shortData.appearProbabilityDiffWithTheory;
+                    info.largerThanTheoryProbability = info.rate > 0.5f;
+                }
+            }
+            maxProbilityNums.Sort(NumberCmpInfo.SortByRate);
+
+            TradeNumbers tn = new TradeNumbers();
+            tn.tradeCount = tradeCount;
+            tn.SetHotNumber(tradeCount, ref maxProbilityNums);
+            trade.tradeInfo.Add(numID, tn);
         }
 
         void TradeSingleMostPosibilityNums(DataItem item, TradeDataOneStar trade)
@@ -3942,10 +4024,25 @@ namespace LotteryAnalyze
                     lastPCI = lastTrade.FindInfoByPathIndex(numIndex, pathIndex);
                 }
 
+                pci.paramMap["DIF"] = mp.DIF;
+                pci.paramMap["DEA"] = mp.DEA;
+                pci.paramMap["BAR"] = mp.BAR;
+                pci.paramMap["MacdUp"] = 0;
+                MACDPointMap lastMPM = mp.parent.GetPrevMACDPM();
+                if(lastMPM != null)
+                {
+                    lastMP = lastMPM.GetData(cdt, false);
+                    bool isup = mp.DIF > lastMP.DIF && mp.DEA > lastMP.DEA;
+                    if (isup)
+                    {
+                        pci.paramMap["MacdUp"] = mp.DIF > 0 ? 2 : 1;
+                    }
+                }
+
                 pci.paramMap["MacdSig"] = MacdSignal.eUnknown;
                 if (mp.BAR > 0)
                 {
-                    if(mp.DIF > mp.DEA)
+                    if (mp.DIF > mp.DEA)
                     {
                         if (mp.DIF < mp.BAR)
                             pci.paramMap["MacdSig"] = MacdSignal.eHalfUp;
@@ -3955,7 +4052,7 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    if(mp.DIF < mp.DEA)
+                    if (mp.DIF < mp.DEA)
                     {
                         if (mp.DIF > 0)
                             pci.paramMap["MacdSig"] = MacdSignal.eHalfDown;
@@ -5006,6 +5103,41 @@ namespace LotteryAnalyze
                     }
 
                     if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
+                        GlobalSetting.G_SEQ_PATH_BY_MACD_LINE)
+                    {
+                        float xDIF = (float)x.paramMap["DIF"];
+                        float xDEA = (float)x.paramMap["DEA"];
+                        float xBAR = (float)x.paramMap["BAR"];
+                        int xmacdup = (int)x.paramMap["MacdUp"];
+
+                        float yDIF = (float)y.paramMap["DIF"];
+                        float yDEA = (float)y.paramMap["DEA"];
+                        float yBAR = (float)y.paramMap["BAR"];
+                        int ymacdup = (int)y.paramMap["MacdUp"];
+
+                        bool isxup = xDIF > xDEA && xmacdup == 1;
+                        bool isyup = yDIF > yDEA && ymacdup == 1;
+                        bool isxFullUp = xDIF > xDEA && xmacdup == 2;
+                        bool isyFullUp = yDIF > yDEA && ymacdup == 2;
+
+                        if (isxFullUp && !isyFullUp)
+                            return -1;
+                        if (!isxFullUp && isyFullUp)
+                            return 1;
+
+                        if (isxup && !isyup)
+                            return -1;
+                        if (!isxup && isyup)
+                            return 1;
+
+                        if (xDIF > 0 && yDIF <= 0)
+                            return -1;
+                        if (xDIF <= 0 && yDIF > 0)
+                            return 1;
+                        return 0;
+                    }
+
+                    if (GlobalSetting.G_ENABLE_MACD_UP_CHECK &&
                         GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
                     {
                         MacdSignal msX = (MacdSignal)x.paramMap["MacdSig"];
@@ -5321,6 +5453,12 @@ namespace LotteryAnalyze
                         int lastPathCurIndex = trade.FindIndex(numIndex, lastTradePath);
                         PathCmpInfo lastPathCurPCI = trade.pathCmpInfos[numIndex][lastPathCurIndex];
 
+                        if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_LINE)
+                        {
+                            int macdupL = (int)lastPathCurPCI.paramMap["MacdUp"];
+                            if (macdupL == 0)
+                                return;
+                        }
 
                         if(GlobalSetting.G_ENABLE_MACD_UP_CHECK && GlobalSetting.G_SEQ_PATH_BY_MACD_SIGNAL)
                         {

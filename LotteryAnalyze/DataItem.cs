@@ -325,13 +325,13 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = statisticUnitMap[cdt];
-                su.fastData.appearProbability = su.fastData.appearCount * 100 / parent.validFastCount;                
-                su.shortData.appearProbability = su.shortData.appearCount * 100 / parent.validShortCount;
-                su.longData.appearProbability = su.longData.appearCount * 100 / parent.validLongCount;
+                su.fastData.appearProbability = (float)su.fastData.appearCount * 100.0f / parent.validFastCount;                
+                su.shortData.appearProbability = (float)su.shortData.appearCount * 100.0f / parent.validShortCount;
+                su.longData.appearProbability = (float)su.longData.appearCount * 100.0f / parent.validLongCount;
                 float theoryProbability = GraphDataManager.GetTheoryProbability(cdt);
-                su.fastData.appearProbabilityDiffWithTheory = su.fastData.appearProbability - theoryProbability;
-                su.shortData.appearProbabilityDiffWithTheory = su.shortData.appearProbability - theoryProbability;
-                su.longData.appearProbabilityDiffWithTheory = su.longData.appearProbability - theoryProbability;
+                su.fastData.appearProbabilityDiffWithTheory = (su.fastData.appearProbability - theoryProbability) / theoryProbability;
+                su.shortData.appearProbabilityDiffWithTheory = (su.shortData.appearProbability - theoryProbability) / theoryProbability;
+                su.longData.appearProbabilityDiffWithTheory = (su.longData.appearProbability - theoryProbability) / theoryProbability;
             }
         }
     }
