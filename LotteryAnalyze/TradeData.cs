@@ -4037,6 +4037,11 @@ namespace LotteryAnalyze
                     {
                         pci.paramMap["MacdUp"] = mp.DIF > 0 ? 2 : 1;
                     }
+                    else
+                    {
+                        if(mp.BAR > lastMP.BAR || mp.DIF > lastMP.DIF)
+                            pci.paramMap["MacdUp"] = 1;
+                    }
                 }
 
                 pci.paramMap["MacdSig"] = MacdSignal.eUnknown;
