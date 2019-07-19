@@ -1,0 +1,262 @@
+<root>
+	<TradeStrategy>
+		<batch>10</batch>
+		<startMoney>2000</startMoney>
+		<tradeCountLstStr>1,2,4,8,16,32,64,128,256,512,1000,2000,4000,8000,16000,32000</tradeCountLstStr>
+		<strongUpStartIndex>30</strongUpStartIndex>
+		<simSelNumIndex>0</simSelNumIndex>
+		<curTradeStrategy>eSinglePositionPathByAppearencePosibility</curTradeStrategy>
+		<forceTradeByMaxNumCount>False</forceTradeByMaxNumCount>
+		<maxNumCount>5</maxNumCount>
+		<specNumIndex>True</specNumIndex>
+		<onlyTradeOnStrongUpPath>False</onlyTradeOnStrongUpPath>
+		<riskControl>0</riskControl>
+		<uponValue>10</uponValue>
+		<MultiTradePathCount>0</MultiTradePathCount>
+		<killLastNumber>False</killLastNumber>
+		<procOnNegMoney>0</procOnNegMoney>
+	</TradeStrategy>
+	<Simple>
+		<StartMoney>2000</StartMoney>
+		<CurrentMoney>4069300</CurrentMoney>
+		<MaxMoney>4279796</MaxMoney>
+		<MinMoney>-432718.5</MinMoney>
+		<EarnMoney>4067300</EarnMoney>
+		<TradeTotalCount>380931</TradeTotalCount>
+		<TradeRightCount>132746</TradeRightCount>
+		<TradeWrongCount>248095</TradeWrongCount>
+		<UnTradeCount>90</UnTradeCount>
+	</Simple>
+	<TradeBeief>
+		<MissCount count="1">30196</MissCount>
+		<MissCount count="2">19314</MissCount>
+		<MissCount count="3">12431</MissCount>
+		<MissCount count="4">8121</MissCount>
+		<MissCount count="5">5229</MissCount>
+		<MissCount count="6">3552</MissCount>
+		<MissCount count="7">2234</MissCount>
+		<MissCount count="8">1482</MissCount>
+		<MissCount count="9">1019</MissCount>
+		<MissCount count="10">673</MissCount>
+		<MissCount count="11">446</MissCount>
+		<MissCount count="12">313</MissCount>
+		<MissCount count="13">233</MissCount>
+		<MissCount count="14">135</MissCount>
+		<MissCount count="15">81</MissCount>
+		<MissCount count="16">59</MissCount>
+		<MissCount count="17">38</MissCount>
+		<MissCount count="18">25</MissCount>
+		<MissCount count="19">11</MissCount>
+		<MissCount count="20">7</MissCount>
+		<MissCount count="21">10</MissCount>
+		<MissCount count="22">7</MissCount>
+		<MissCount count="23">8</MissCount>
+		<MissCount count="24">2</MissCount>
+		<MissCount count="25">2</MissCount>
+		<MissCount count="26">2</MissCount>
+		<MissCount count="28">1</MissCount>
+		<MissCount count="29">2</MissCount>
+	</TradeBeief>
+	<LongMissTradeInfos>
+		<trade name="29-2">
+			<detail>20100408-107,20100409-016,1166084</detail>
+			<detail>20110109-039,20110109-068,1199136</detail>
+		</trade>
+		<trade name="28-1">
+			<detail>20131106-083,20131106-111,1320284</detail>
+		</trade>
+		<trade name="26-2">
+			<detail>20110122-022,20110122-048,1200676</detail>
+			<detail>20111104-107,20111105-013,1234234</detail>
+		</trade>
+		<trade name="25-2">
+			<detail>20140921-003,20140921-028,1357483</detail>
+			<detail>20150406-020,20150406-045,1380181</detail>
+		</trade>
+		<trade name="24-2">
+			<detail>20100628-068,20100628-092,1175760</detail>
+			<detail>20100630-046,20100630-070,1175978</detail>
+		</trade>
+		<trade name="23-8">
+			<detail>20101021-003,20101021-026,1189494</detail>
+			<detail>20110625-113,20110626-016,1218400</detail>
+			<detail>20110828-019,20110828-042,1225986</detail>
+			<detail>20120827-072,20120827-095,1268808</detail>
+			<detail>20140508-114,20140509-017,1341299</detail>
+			<detail>20141228-032,20141228-055,1369262</detail>
+			<detail>20150408-111,20150409-014,1380489</detail>
+			<detail>20151104-076,20151104-099,1405189</detail>
+		</trade>
+		<trade name="22-7">
+			<detail>20100605-070,20100605-092,1173000</detail>
+			<detail>20120530-068,20120530-090,1258124</detail>
+			<detail>20150426-110,20150427-012,1382579</detail>
+			<detail>20150803-119,20150804-021,1394124</detail>
+			<detail>20160526-031,20160526-053,1428736</detail>
+			<detail>20161110-070,20161110-092,1448922</detail>
+			<detail>20171219-070,20171219-092,1496527</detail>
+		</trade>
+		<trade name="21-10">
+			<detail>20100317-031,20100317-052,1163360</detail>
+			<detail>20100819-028,20100819-049,1181957</detail>
+			<detail>20110723-019,20110723-040,1221664</detail>
+			<detail>20110904-012,20110904-033,1226817</detail>
+			<detail>20120404-113,20120405-014,1251457</detail>
+			<detail>20130612-089,20130612-110,1302658</detail>
+			<detail>20140519-024,20140519-045,1342527</detail>
+			<detail>20160405-098,20160405-120,1422700</detail>
+			<detail>20160609-064,20160609-085,1430444</detail>
+			<detail>20171208-023,20171208-044,1495181</detail>
+		</trade>
+		<trade name="20-7">
+			<detail>20120926-026,20120926-046,1272359</detail>
+			<detail>20121011-077,20121011-097,1274210</detail>
+			<detail>20130430-030,20130430-050,1297443</detail>
+			<detail>20130522-082,20130522-102,1300130</detail>
+			<detail>20130813-042,20130813-062,1310050</detail>
+			<detail>20151230-060,20151230-080,1411869</detail>
+			<detail>20170305-095,20170305-115,1461903</detail>
+		</trade>
+		<trade name="19-11">
+			<detail>20100314-107,20100315-006,1163074</detail>
+			<detail>20110516-020,20110516-039,1213503</detail>
+			<detail>20120331-064,20120331-083,1250926</detail>
+			<detail>20121026-052,20121026-071,1275984</detail>
+			<detail>20140829-083,20140829-102,1354798</detail>
+			<detail>20141122-100,20141122-119,1365014</detail>
+			<detail>20160411-074,20160411-093,1423393</detail>
+			<detail>20161110-108,20161111-007,1448957</detail>
+			<detail>20170522-007,20170522-026,1471173</detail>
+			<detail>20180118-115,20180119-014,1500122</detail>
+			<detail>20180701-040,20180701-059,1518719</detail>
+		</trade>
+		<trade name="18-25">
+			<detail>20100707-092,20100707-110,1176858</detail>
+			<detail>20101102-093,20101102-111,1191019</detail>
+			<detail>20101119-028,20101119-046,1192994</detail>
+			<detail>20101125-015,20101125-033,1193701</detail>
+			<detail>20110515-099,20110515-117,1213461</detail>
+			<detail>20110619-044,20110619-062,1217606</detail>
+			<detail>20120509-017,20120509-036,1255553</detail>
+			<detail>20121006-039,20121006-057,1273570</detail>
+			<detail>20121104-041,20121104-059,1277052</detail>
+			<detail>20130720-010,20130720-028,1307136</detail>
+			<detail>20131226-098,20131226-116,1326289</detail>
+			<detail>20140916-032,20140916-050,1356905</detail>
+			<detail>20150307-010,20150307-040,1376643</detail>
+			<detail>20150607-100,20150607-118,1387451</detail>
+			<detail>20151031-040,20151031-058,1404668</detail>
+			<detail>20160411-100,20160411-118,1423418</detail>
+			<detail>20160704-023,20160704-041,1433397</detail>
+			<detail>20160725-065,20160725-083,1435954</detail>
+			<detail>20170317-039,20170317-057,1463285</detail>
+			<detail>20170513-057,20170513-075,1470142</detail>
+			<detail>20170822-042,20170822-060,1482247</detail>
+			<detail>20180116-026,20180116-044,1499792</detail>
+			<detail>20180402-066,20180402-084,1507944</detail>
+			<detail>20180906-105,20180907-005,1526310</detail>
+			<detail>20181117-029,20181117-047,1534591</detail>
+		</trade>
+		<trade name="17-38">
+			<detail>20100612-015,20100612-032,1173780</detail>
+			<detail>20100727-098,20100727-115,1179263</detail>
+			<detail>20110729-095,20110729-112,1222456</detail>
+			<detail>20110805-096,20110805-113,1223297</detail>
+			<detail>20111212-085,20111212-102,1238643</detail>
+			<detail>20120202-104,20120203-001,1244053</detail>
+			<detail>20120203-059,20120203-076,1244128</detail>
+			<detail>20120223-075,20120223-092,1246544</detail>
+			<detail>20120616-112,20120617-009,1260203</detail>
+			<detail>20120713-089,20120713-106,1263419</detail>
+			<detail>20130305-120,20130306-017,1290810</detail>
+			<detail>20130329-096,20130329-113,1293666</detail>
+			<detail>20130330-070,20130330-087,1293760</detail>
+			<detail>20130619-052,20130619-069,1303457</detail>
+			<detail>20140410-072,20140410-089,1337891</detail>
+			<detail>20140506-104,20140507-001,1341043</detail>
+			<detail>20140530-101,20140530-118,1343912</detail>
+			<detail>20140805-099,20140805-116,1351950</detail>
+			<detail>20140901-071,20140901-088,1355144</detail>
+			<detail>20150610-014,20150610-031,1387724</detail>
+			<detail>20151215-066,20151215-083,1410076</detail>
+			<detail>20160112-009,20160112-026,1413375</detail>
+			<detail>20160407-120,20160408-017,1422957</detail>
+			<detail>20160430-086,20160430-103,1425681</detail>
+			<detail>20160516-006,20160516-023,1427506</detail>
+			<detail>20160625-076,20160625-093,1432370</detail>
+			<detail>20161019-013,20161019-030,1446220</detail>
+			<detail>20161227-009,20161227-026,1454496</detail>
+			<detail>20170716-119,20170717-016,1477883</detail>
+			<detail>20170807-091,20170807-108,1480495</detail>
+			<detail>20170812-106,20170813-003,1481110</detail>
+			<detail>20171001-109,20171002-006,1487103</detail>
+			<detail>20171011-085,20171011-102,1488279</detail>
+			<detail>20180303-050,20180303-067,1504327</detail>
+			<detail>20180317-041,20180317-058,1505998</detail>
+			<detail>20180525-118,20180526-015,1514355</detail>
+			<detail>20180806-114,20180807-011,1522991</detail>
+			<detail>20180830-029,20180830-046,1525480</detail>
+		</trade>
+		<trade name="16-59">
+			<detail>20100706-077,20100706-093,1176721</detail>
+			<detail>20100727-002,20100727-018,1179166</detail>
+			<detail>20101009-120,20101010-016,1188164</detail>
+			<detail>20101014-107,20101015-003,1188751</detail>
+			<detail>20101030-108,20101031-004,1190672</detail>
+			<detail>20101031-093,20101031-109,1190777</detail>
+			<detail>20101220-008,20101220-024,1196692</detail>
+			<detail>20110519-096,20110519-112,1213936</detail>
+			<detail>20110903-018,20110903-034,1226698</detail>
+			<detail>20110913-066,20110913-082,1227946</detail>
+			<detail>20110923-081,20110923-097,1229161</detail>
+			<detail>20111018-098,20111018-114,1232175</detail>
+			<detail>20111225-043,20111225-059,1240160</detail>
+			<detail>20120511-052,20120511-068,1255825</detail>
+			<detail>20121011-019,20121011-035,1274148</detail>
+			<detail>20121014-086,20121014-102,1274575</detail>
+			<detail>20121017-034,20121017-050,1274883</detail>
+			<detail>20121113-066,20121113-082,1278155</detail>
+			<detail>20121205-021,20121205-037,1280750</detail>
+			<detail>20121209-005,20121209-021,1281214</detail>
+			<detail>20130301-118,20130302-014,1290327</detail>
+			<detail>20130906-052,20130906-068,1312927</detail>
+			<detail>20130924-039,20130924-055,1315074</detail>
+			<detail>20131205-037,20131205-053,1323706</detail>
+			<detail>20131215-108,20131216-004,1324977</detail>
+			<detail>20140318-092,20140318-108,1335152</detail>
+			<detail>20140707-102,20140707-118,1348472</detail>
+			<detail>20140709-052,20140709-068,1348662</detail>
+			<detail>20140815-106,20140816-002,1353156</detail>
+			<detail>20140915-014,20140915-030,1356765</detail>
+			<detail>20141108-036,20141108-052,1363267</detail>
+			<detail>20150114-013,20150114-029,1371276</detail>
+			<detail>20150115-116,20150116-012,1371499</detail>
+			<detail>20150126-053,20150126-069,1372756</detail>
+			<detail>20150513-003,20150513-019,1384454</detail>
+			<detail>20160103-075,20160103-091,1412360</detail>
+			<detail>20160105-037,20160105-053,1412562</detail>
+			<detail>20160402-005,20160402-021,1422242</detail>
+			<detail>20160415-074,20160415-090,1423870</detail>
+			<detail>20160601-038,20160601-054,1429453</detail>
+			<detail>20160910-120,20160911-016,1441646</detail>
+			<detail>20161101-028,20161101-044,1447794</detail>
+			<detail>20170521-103,20170521-119,1471146</detail>
+			<detail>20170615-039,20170615-055,1474082</detail>
+			<detail>20170622-027,20170622-043,1474910</detail>
+			<detail>20170717-107,20170718-003,1477990</detail>
+			<detail>20170815-078,20170815-094,1481441</detail>
+			<detail>20171015-008,20171015-024,1488681</detail>
+			<detail>20171017-010,20171017-026,1488923</detail>
+			<detail>20171212-079,20171212-095,1495712</detail>
+			<detail>20171215-077,20171215-093,1496070</detail>
+			<detail>20180128-030,20180128-046,1501211</detail>
+			<detail>20180211-020,20180211-036,1502858</detail>
+			<detail>20180302-065,20180302-081,1504221</detail>
+			<detail>20180412-048,20180412-064,1509124</detail>
+			<detail>20180516-023,20180516-039,1513179</detail>
+			<detail>20180523-048,20180523-064,1514044</detail>
+			<detail>20180725-029,20180725-045,1521465</detail>
+			<detail>20181017-069,20181017-085,1530980</detail>
+		</trade>
+	</LongMissTradeInfos>
+</root>

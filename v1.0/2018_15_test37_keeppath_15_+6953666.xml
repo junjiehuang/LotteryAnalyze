@@ -1,0 +1,1059 @@
+<root>
+	<TradeStrategy>
+		<batch>10</batch>
+		<startMoney>2000</startMoney>
+		<tradeCountLstStr>1,2,4,8,16,32,64,128,256,512,1024,2048,4096,9000,18000</tradeCountLstStr>
+		<strongUpStartIndex>30</strongUpStartIndex>
+		<simSelNumIndex>0</simSelNumIndex>
+		<curTradeStrategy>eSinglePositionPathByAppearencePosibility</curTradeStrategy>
+		<forceTradeByMaxNumCount>False</forceTradeByMaxNumCount>
+		<maxNumCount>5</maxNumCount>
+		<specNumIndex>True</specNumIndex>
+		<onlyTradeOnStrongUpPath>False</onlyTradeOnStrongUpPath>
+		<riskControl>0</riskControl>
+		<uponValue>10</uponValue>
+		<MultiTradePathCount>0</MultiTradePathCount>
+		<killLastNumber>False</killLastNumber>
+		<procOnNegMoney>0</procOnNegMoney>
+	</TradeStrategy>
+	<Simple>
+		<StartMoney>2000</StartMoney>
+		<CurrentMoney>6955666</CurrentMoney>
+		<MaxMoney>9548718</MaxMoney>
+		<MinMoney>-105707.9</MinMoney>
+		<EarnMoney>6953666</EarnMoney>
+		<TradeTotalCount>395439</TradeTotalCount>
+		<TradeRightCount>136046</TradeRightCount>
+		<TradeWrongCount>259303</TradeWrongCount>
+		<UnTradeCount>90</UnTradeCount>
+	</Simple>
+	<GlobalSetting>
+		<g_DATA_SOURCE_TYPE desc="数据收集设定/数据源类型">eCaiBow</g_DATA_SOURCE_TYPE>
+		<g_UPDATE_IN_MAIN_THREAD desc="界面设置/是否在主线程刷新">True</g_UPDATE_IN_MAIN_THREAD>
+		<g_WINDOW_OPACITY desc="界面设置/窗口透明度">1</g_WINDOW_OPACITY>
+		<g_LOTTERY_GRAPH_UPDATE_INTERVAL desc="界面设置/曲线图刷新毫秒间隔">1500</g_LOTTERY_GRAPH_UPDATE_INTERVAL>
+		<g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL desc="界面设置/模拟图刷新毫秒间隔">1500</g_GLOBAL_SIM_TRADE_UPDATE_INTERVAL>
+		<g_EANBLE_ANALYZE_TOOL desc="自动通道线工具/是否开启">False</g_EANBLE_ANALYZE_TOOL>
+		<g_ANALYZE_TOOL_SAMPLE_COUNT desc="自动通道线工具/取样数">50</g_ANALYZE_TOOL_SAMPLE_COUNT>
+		<g_COLLECT_MACD_ANALYZE_DATA desc="分析数据收集/是否统计MACD走势分析数据">False</g_COLLECT_MACD_ANALYZE_DATA>
+		<g_COLLECT_BOLLEAN_ANALYZE_DATA desc="分析数据收集/是否统计布林走势分析数据">True</g_COLLECT_BOLLEAN_ANALYZE_DATA>
+		<g_COLLECT_ANALYZE_TOOL_DATA desc="分析数据收集/是否统计通道线分析数据">False</g_COLLECT_ANALYZE_TOOL_DATA>
+		<g_ENABLE_CHECK_AND_KEEP_SAME_PATH desc="筛选设定/是否开启同路保持检测">True</g_ENABLE_CHECK_AND_KEEP_SAME_PATH>
+		<g_CHANGE_PATH_ON_LOW_APPEARENCE_RATE desc="筛选设定/是否在本路出号率很低的时候切换分路">False</g_CHANGE_PATH_ON_LOW_APPEARENCE_RATE>
+		<g_CHANGE_PATH_ON_ALL_TRADE_MISS desc="筛选设定/是否在计划次数全部失败的时候才切换分路">False</g_CHANGE_PATH_ON_ALL_TRADE_MISS>
+		<g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL desc="筛选设定/是否开启同路支撑压力检测">False</g_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL>
+		<g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE desc="筛选设定/是否开启同路布林通道检测">False</g_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE>
+		<g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK desc="筛选设定/是否开启布林下轨提升检测">False</g_ENABLE_BOOLEAN_DOWN_UPWARD_CHECK>
+		<g_ENABLE_MAX_APPEARENCE_FIRST_CHECK desc="筛选设定/是否开启最大出现率检测">False</g_ENABLE_MAX_APPEARENCE_FIRST_CHECK>
+		<g_ENABLE_MACD_UP_CHECK desc="筛选设定/是否开启MACD上升检测">False</g_ENABLE_MACD_UP_CHECK>
+		<g_ENABLE_BOLLEAN_CFG_CHECK desc="筛选设定/是否开启布林线形态检测">False</g_ENABLE_BOLLEAN_CFG_CHECK>
+		<g_ONLY_TRADE_BEST_PATH desc="筛选设定/是否只在最佳的012路交易">False</g_ONLY_TRADE_BEST_PATH>
+		<g_ENABLE_CHECK_PATH_CAN_TRADE desc="筛选设定/是否开启判定这一路能否交易">False</g_ENABLE_CHECK_PATH_CAN_TRADE>
+		<g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE desc="筛选设定/是否在布林下轨连续开出就忽略当前的交易">False</g_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE>
+		<g_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS desc="筛选设定/是否在布林上轨连续超过3期没开出就忽略当前的交易">False</g_IGNORE_CUR_TRADE_ON_BOLLEAN_UP_CONTINUE_MISS>
+		<g_SEQ_PATH_BY_APPEARENCE_RATE desc="筛选设定/是否按照出现率排序">False</g_SEQ_PATH_BY_APPEARENCE_RATE>
+		<g_AppearenceCheckType desc="筛选设定/出现率检查类型">eUseFastAndShort</g_AppearenceCheckType>
+		<g_ONLY_TRADE_SPEC_CDT desc="模拟交易设置/是否只交易指定的012路">False</g_ONLY_TRADE_SPEC_CDT>
+		<g_TRADE_SPEC_CDT desc="模拟交易设置/交易指定的012路">ePath0</g_TRADE_SPEC_CDT>
+		<g_ONE_STARE_TRADE_COST desc="数据设置/每注一星交易成本">2</g_ONE_STARE_TRADE_COST>
+		<g_ONE_STARE_TRADE_REWARD desc="数据设置/每注一星交易奖金">19.6</g_ONE_STARE_TRADE_REWARD>
+		<g_CUR_TRADE_INDEX desc="数据设置/选择交易策略ID">-1</g_CUR_TRADE_INDEX>
+		<g_DAYS_PER_BATCH desc="数据设置/每批加载多少天的数据">3</g_DAYS_PER_BATCH>
+		<g_ENABLE_REC_TRADE_DATAS desc="数据设置/是否记录交易数据">False</g_ENABLE_REC_TRADE_DATAS>
+	</GlobalSetting>
+	<TradeBeief>
+		<MissCount count="1">30657</MissCount>
+		<MissCount count="2">19870</MissCount>
+		<MissCount count="3">12939</MissCount>
+		<MissCount count="4">8340</MissCount>
+		<MissCount count="5">5413</MissCount>
+		<MissCount count="6">3717</MissCount>
+		<MissCount count="7">2356</MissCount>
+		<MissCount count="8">1607</MissCount>
+		<MissCount count="9">1060</MissCount>
+		<MissCount count="10">750</MissCount>
+		<MissCount count="11">497</MissCount>
+		<MissCount count="12">358</MissCount>
+		<MissCount count="13">226</MissCount>
+		<MissCount count="14">171</MissCount>
+		<MissCount count="15">113</MissCount>
+		<MissCount count="16">60</MissCount>
+		<MissCount count="17">46</MissCount>
+		<MissCount count="18">22</MissCount>
+		<MissCount count="19">19</MissCount>
+		<MissCount count="20">12</MissCount>
+		<MissCount count="21">13</MissCount>
+		<MissCount count="22">12</MissCount>
+		<MissCount count="23">4</MissCount>
+		<MissCount count="24">2</MissCount>
+		<MissCount count="26">1</MissCount>
+		<MissCount count="28">1</MissCount>
+	</TradeBeief>
+	<LongMissTradeInfos>
+		<trade name="28-1">
+			<detail>20120223-038,20120223-066,1673123</detail>
+		</trade>
+		<trade name="26-1">
+			<detail>20180128-030,20180128-056,1927829</detail>
+		</trade>
+		<trade name="24-2">
+			<detail>20100630-046,20100630-070,1602583</detail>
+			<detail>20170515-067,20170515-091,1897005</detail>
+		</trade>
+		<trade name="23-4">
+			<detail>20110112-007,20110112-030,1626063</detail>
+			<detail>20110821-003,20110821-026,1651735</detail>
+			<detail>20140216-057,20140216-080,1758131</detail>
+			<detail>20150408-111,20150409-014,1807095</detail>
+		</trade>
+		<trade name="22-12">
+			<detail>20100114-088,20100114-110,1583424</detail>
+			<detail>20110530-094,20110530-116,1641865</detail>
+			<detail>20130511-041,20130511-063,1725376</detail>
+			<detail>20130915-052,20130915-074,1740618</detail>
+			<detail>20140326-103,20140327-005,1762735</detail>
+			<detail>20161110-070,20161110-092,1875529</detail>
+			<detail>20180527-010,20180527-032,1941219</detail>
+			<detail>20180613-114,20180614-016,1943363</detail>
+			<detail>20180710-105,20180711-007,1946594</detail>
+			<detail>20180923-054,20180923-076,1955538</detail>
+			<detail>20181128-086,20181128-108,1963477</detail>
+			<detail>20181129-015,20181129-037,1963526</detail>
+		</trade>
+		<trade name="21-13">
+			<detail>20100801-109,20100802-010,1606483</detail>
+			<detail>20100826-040,20100826-061,1609414</detail>
+			<detail>20110220-063,20110220-084,1629953</detail>
+			<detail>20110723-019,20110723-040,1648269</detail>
+			<detail>20120404-113,20120405-014,1678062</detail>
+			<detail>20130612-089,20130612-110,1729263</detail>
+			<detail>20130620-120,20130621-021,1730254</detail>
+			<detail>20130730-088,20130730-109,1735022</detail>
+			<detail>20140103-027,20140103-048,1753787</detail>
+			<detail>20150616-119,20150617-021,1815158</detail>
+			<detail>20160818-102,20160819-003,1865480</detail>
+			<detail>20171216-067,20171216-088,1922792</detail>
+			<detail>20180303-048,20180303-069,1931056</detail>
+		</trade>
+		<trade name="20-12">
+			<detail>20100518-087,20100518-107,1597460</detail>
+			<detail>20110406-063,20110406-083,1635352</detail>
+			<detail>20130302-042,20130302-062,1716980</detail>
+			<detail>20130813-042,20130813-062,1736655</detail>
+			<detail>20140709-051,20140709-071,1775271</detail>
+			<detail>20141027-117,20141028-017,1788518</detail>
+			<detail>20150526-080,20150526-100,1812649</detail>
+			<detail>20170615-039,20170615-059,1900693</detail>
+			<detail>20170724-025,20170724-045,1905359</detail>
+			<detail>20170808-106,20170809-006,1907240</detail>
+			<detail>20181127-069,20181127-089,1963338</detail>
+			<detail>20190101-002,20190101-022,1967437</detail>
+		</trade>
+		<trade name="19-19">
+			<detail>20100909-118,20100910-017,1611170</detail>
+			<detail>20110125-117,20110126-016,1627729</detail>
+			<detail>20110625-113,20110626-012,1645001</detail>
+			<detail>20111215-102,20111216-001,1665627</detail>
+			<detail>20120413-089,20120413-108,1679115</detail>
+			<detail>20121026-052,20121026-071,1702589</detail>
+			<detail>20141223-083,20141223-102,1795323</detail>
+			<detail>20160306-037,20160306-056,1845645</detail>
+			<detail>20160326-026,20160326-045,1848033</detail>
+			<detail>20160411-100,20160411-119,1850026</detail>
+			<detail>20160725-065,20160725-084,1862562</detail>
+			<detail>20160728-108,20160729-007,1862965</detail>
+			<detail>20161215-055,20161215-074,1879711</detail>
+			<detail>20170504-075,20170504-094,1895688</detail>
+			<detail>20170511-050,20170511-069,1896503</detail>
+			<detail>20170622-026,20170622-045,1901519</detail>
+			<detail>20180208-027,20180208-046,1929116</detail>
+			<detail>20180701-040,20180701-059,1945446</detail>
+			<detail>20190417-029,20190417-048,1975249</detail>
+		</trade>
+		<trade name="18-22">
+			<detail>20100127-005,20100127-023,1584897</detail>
+			<detail>20110903-018,20110903-036,1653305</detail>
+			<detail>20130218-097,20130218-115,1715593</detail>
+			<detail>20130524-025,20130524-043,1726916</detail>
+			<detail>20130822-078,20130822-096,1737760</detail>
+			<detail>20130906-113,20130907-011,1739595</detail>
+			<detail>20140430-077,20140430-095,1766903</detail>
+			<detail>20140702-078,20140702-096,1774456</detail>
+			<detail>20140819-110,20140820-008,1780248</detail>
+			<detail>20141230-108,20141231-006,1796179</detail>
+			<detail>20150910-007,20150910-025,1825131</detail>
+			<detail>20151019-016,20151019-034,1829810</detail>
+			<detail>20151031-040,20151031-058,1831274</detail>
+			<detail>20160305-072,20160305-090,1845559</detail>
+			<detail>20160601-097,20160601-115,1856121</detail>
+			<detail>20161006-095,20161006-113,1871350</detail>
+			<detail>20170922-061,20170922-079,1912583</detail>
+			<detail>20171001-087,20171001-105,1913689</detail>
+			<detail>20171019-075,20171019-093,1915837</detail>
+			<detail>20171219-070,20171219-088,1923130</detail>
+			<detail>20180125-041,20180125-059,1927472</detail>
+			<detail>20180901-085,20180901-103,1952930</detail>
+		</trade>
+		<trade name="17-46">
+			<detail>20100119-024,20100119-041,1583955</detail>
+			<detail>20100707-093,20100707-110,1603463</detail>
+			<detail>20101027-095,20101027-112,1616905</detail>
+			<detail>20110522-049,20110522-066,1640855</detail>
+			<detail>20110628-009,20110628-026,1645255</detail>
+			<detail>20111002-015,20111002-032,1656781</detail>
+			<detail>20111010-060,20111010-077,1657786</detail>
+			<detail>20111018-107,20111019-004,1658790</detail>
+			<detail>20111103-109,20111104-006,1660712</detail>
+			<detail>20120114-059,20120114-076,1669182</detail>
+			<detail>20120115-117,20120116-014,1669360</detail>
+			<detail>20120202-104,20120203-001,1670658</detail>
+			<detail>20120223-075,20120223-092,1673149</detail>
+			<detail>20120511-052,20120511-069,1682431</detail>
+			<detail>20130323-033,20130323-050,1719488</detail>
+			<detail>20130619-052,20130619-069,1730062</detail>
+			<detail>20130630-027,20130630-044,1731357</detail>
+			<detail>20130803-112,20130804-009,1735522</detail>
+			<detail>20130818-053,20130818-070,1737263</detail>
+			<detail>20131015-116,20131016-013,1744277</detail>
+			<detail>20131215-108,20131216-005,1751584</detail>
+			<detail>20140519-023,20140519-040,1769128</detail>
+			<detail>20140530-101,20140530-118,1770518</detail>
+			<detail>20140611-116,20140612-013,1771973</detail>
+			<detail>20140824-051,20140824-068,1780788</detail>
+			<detail>20140901-071,20140901-088,1781750</detail>
+			<detail>20140913-059,20140913-076,1783177</detail>
+			<detail>20141129-037,20141129-054,1792395</detail>
+			<detail>20141206-028,20141206-045,1793226</detail>
+			<detail>20150307-011,20150307-040,1803249</detail>
+			<detail>20151215-066,20151215-083,1836683</detail>
+			<detail>20160103-075,20160103-092,1838968</detail>
+			<detail>20160725-111,20160726-008,1862606</detail>
+			<detail>20160910-120,20160911-017,1868254</detail>
+			<detail>20161028-003,20161028-020,1873897</detail>
+			<detail>20170405-029,20170405-046,1892160</detail>
+			<detail>20170629-120,20170630-017,1902451</detail>
+			<detail>20170807-091,20170807-108,1907102</detail>
+			<detail>20171001-109,20171002-006,1913710</detail>
+			<detail>20171011-085,20171011-102,1914886</detail>
+			<detail>20171117-013,20171117-030,1919254</detail>
+			<detail>20171225-060,20171225-077,1923816</detail>
+			<detail>20180212-078,20180212-095,1929645</detail>
+			<detail>20180214-091,20180214-108,1929898</detail>
+			<detail>20180403-081,20180403-098,1934805</detail>
+			<detail>20181210-095,20181210-112,1964907</detail>
+		</trade>
+		<trade name="16-60">
+			<detail>20100403-013,20100403-029,1591982</detail>
+			<detail>20100414-118,20100415-014,1593407</detail>
+			<detail>20100424-020,20100424-036,1594509</detail>
+			<detail>20100612-016,20100612-032,1600385</detail>
+			<detail>20100805-117,20100806-013,1606966</detail>
+			<detail>20101022-066,20101022-082,1616275</detail>
+			<detail>20101208-023,20101208-039,1621872</detail>
+			<detail>20101223-114,20101224-010,1623763</detail>
+			<detail>20101225-109,20101226-005,1623998</detail>
+			<detail>20110805-095,20110805-111,1649900</detail>
+			<detail>20110806-033,20110806-049,1649958</detail>
+			<detail>20111104-107,20111105-003,1660829</detail>
+			<detail>20111212-086,20111212-102,1665248</detail>
+			<detail>20111215-058,20111215-074,1665580</detail>
+			<detail>20120111-102,20120111-118,1668864</detail>
+			<detail>20120403-103,20120403-119,1677927</detail>
+			<detail>20120821-037,20120821-053,1694651</detail>
+			<detail>20120908-010,20120908-026,1696784</detail>
+			<detail>20121011-019,20121011-035,1700753</detail>
+			<detail>20121014-086,20121014-102,1701180</detail>
+			<detail>20121122-087,20121122-103,1705861</detail>
+			<detail>20121205-021,20121205-037,1707355</detail>
+			<detail>20130319-103,20130319-119,1719077</detail>
+			<detail>20130810-022,20130810-038,1736271</detail>
+			<detail>20131027-115,20131028-011,1745715</detail>
+			<detail>20131108-021,20131108-037,1747056</detail>
+			<detail>20140529-108,20140530-012,1770412</detail>
+			<detail>20140712-010,20140712-026,1775586</detail>
+			<detail>20140915-014,20140915-030,1783371</detail>
+			<detail>20141005-002,20141005-018,1785759</detail>
+			<detail>20141021-010,20141021-026,1787687</detail>
+			<detail>20150114-013,20150114-029,1797882</detail>
+			<detail>20150126-052,20150126-068,1799361</detail>
+			<detail>20150406-020,20150406-036,1806778</detail>
+			<detail>20150508-009,20150508-025,1810466</detail>
+			<detail>20150513-003,20150513-019,1811060</detail>
+			<detail>20150715-029,20150715-045,1818446</detail>
+			<detail>20151019-073,20151019-089,1829865</detail>
+			<detail>20151026-006,20151026-022,1830638</detail>
+			<detail>20151210-067,20151210-083,1836083</detail>
+			<detail>20160205-016,20160205-032,1842867</detail>
+			<detail>20160429-044,20160429-060,1852125</detail>
+			<detail>20160713-058,20160713-074,1861112</detail>
+			<detail>20160724-113,20160725-009,1862487</detail>
+			<detail>20160729-044,20160729-060,1863018</detail>
+			<detail>20160807-013,20160807-029,1864066</detail>
+			<detail>20161010-066,20161010-082,1871799</detail>
+			<detail>20170717-107,20170718-003,1904597</detail>
+			<detail>20170729-039,20170729-055,1905969</detail>
+			<detail>20170821-085,20170821-101,1908775</detail>
+			<detail>20171220-012,20171220-028,1923190</detail>
+			<detail>20180525-118,20180526-014,1941081</detail>
+			<detail>20180702-025,20180702-041,1945548</detail>
+			<detail>20180811-094,20180811-110,1950417</detail>
+			<detail>20181002-095,20181002-111,1956653</detail>
+			<detail>20181007-007,20181007-023,1957165</detail>
+			<detail>20181020-066,20181020-082,1958784</detail>
+			<detail>20181106-088,20181106-104,1960844</detail>
+			<detail>20181126-019,20181126-035,1963164</detail>
+			<detail>20190517-001,20190517-017,1976988</detail>
+		</trade>
+		<trade name="15-113">
+			<detail>20100314-107,20100315-002,1589675</detail>
+			<detail>20100317-031,20100317-046,1589959</detail>
+			<detail>20100408-107,20100409-002,1592675</detail>
+			<detail>20100422-026,20100422-041,1594274</detail>
+			<detail>20100628-068,20100628-083,1602356</detail>
+			<detail>20100706-077,20100706-092,1603325</detail>
+			<detail>20100727-098,20100727-113,1605866</detail>
+			<detail>20100805-085,20100805-100,1606933</detail>
+			<detail>20100808-084,20100808-099,1607292</detail>
+			<detail>20101009-120,20101010-015,1614768</detail>
+			<detail>20101102-093,20101102-108,1617621</detail>
+			<detail>20101119-028,20101119-043,1619596</detail>
+			<detail>20101220-008,20101220-023,1623296</detail>
+			<detail>20101220-070,20101220-085,1623358</detail>
+			<detail>20110122-022,20110122-037,1627270</detail>
+			<detail>20110501-010,20110501-025,1638294</detail>
+			<detail>20110515-099,20110515-114,1640063</detail>
+			<detail>20110516-019,20110516-034,1640103</detail>
+			<detail>20110519-097,20110519-112,1640541</detail>
+			<detail>20110623-115,20110624-010,1644759</detail>
+			<detail>20110729-095,20110729-110,1649059</detail>
+			<detail>20110828-016,20110828-031,1652580</detail>
+			<detail>20110913-066,20110913-081,1654550</detail>
+			<detail>20110923-082,20110923-097,1655766</detail>
+			<detail>20110927-058,20110927-073,1656222</detail>
+			<detail>20111116-067,20111116-082,1662228</detail>
+			<detail>20111225-043,20111225-058,1666764</detail>
+			<detail>20120203-059,20120203-074,1670731</detail>
+			<detail>20120322-093,20120322-108,1676479</detail>
+			<detail>20120331-064,20120331-079,1677527</detail>
+			<detail>20120530-068,20120530-083,1684722</detail>
+			<detail>20120616-112,20120617-007,1686806</detail>
+			<detail>20120713-089,20120713-104,1690022</detail>
+			<detail>20120811-053,20120811-068,1693466</detail>
+			<detail>20120831-082,20120831-097,1695895</detail>
+			<detail>20120926-026,20120926-041,1698959</detail>
+			<detail>20120930-029,20120930-044,1699442</detail>
+			<detail>20121006-039,20121006-054,1700172</detail>
+			<detail>20121011-077,20121011-092,1700810</detail>
+			<detail>20121017-034,20121017-049,1701487</detail>
+			<detail>20121104-041,20121104-056,1703654</detail>
+			<detail>20121105-073,20121105-088,1703806</detail>
+			<detail>20121113-066,20121113-081,1704759</detail>
+			<detail>20121209-005,20121209-020,1707818</detail>
+			<detail>20130301-118,20130302-013,1716931</detail>
+			<detail>20130305-120,20130306-015,1717413</detail>
+			<detail>20130329-096,20130329-111,1720269</detail>
+			<detail>20130522-082,20130522-097,1726730</detail>
+			<detail>20131226-098,20131226-113,1752892</detail>
+			<detail>20131229-019,20131229-034,1753173</detail>
+			<detail>20140107-067,20140107-082,1754294</detail>
+			<detail>20140318-092,20140318-107,1761757</detail>
+			<detail>20140412-084,20140412-099,1764747</detail>
+			<detail>20140423-056,20140423-071,1766039</detail>
+			<detail>20140707-102,20140707-117,1775077</detail>
+			<detail>20140730-002,20140730-017,1777737</detail>
+			<detail>20140815-106,20140816-001,1779761</detail>
+			<detail>20140829-083,20140829-098,1781400</detail>
+			<detail>20141122-100,20141122-115,1791616</detail>
+			<detail>20141228-032,20141228-047,1795860</detail>
+			<detail>20141229-012,20141229-027,1795960</detail>
+			<detail>20150426-109,20150427-004,1809177</detail>
+			<detail>20150610-014,20150610-029,1814328</detail>
+			<detail>20151104-076,20151104-091,1831787</detail>
+			<detail>20151211-086,20151211-101,1836221</detail>
+			<detail>20151220-027,20151220-042,1837241</detail>
+			<detail>20151227-083,20151227-098,1838135</detail>
+			<detail>20160105-037,20160105-052,1839168</detail>
+			<detail>20160105-095,20160105-110,1839226</detail>
+			<detail>20160112-009,20160112-024,1839980</detail>
+			<detail>20160405-098,20160405-113,1849301</detail>
+			<detail>20160411-073,20160411-088,1849995</detail>
+			<detail>20160415-074,20160415-089,1850476</detail>
+			<detail>20160430-086,20160430-101,1852286</detail>
+			<detail>20160516-005,20160516-020,1854110</detail>
+			<detail>20160601-039,20160601-054,1856060</detail>
+			<detail>20160818-016,20160818-031,1865388</detail>
+			<detail>20161101-028,20161101-043,1874400</detail>
+			<detail>20161105-028,20161105-043,1874880</detail>
+			<detail>20161110-108,20161111-003,1875560</detail>
+			<detail>20161112-091,20161112-106,1875783</detail>
+			<detail>20170305-095,20170305-110,1888505</detail>
+			<detail>20170308-069,20170308-084,1888839</detail>
+			<detail>20170317-039,20170317-054,1889889</detail>
+			<detail>20170330-065,20170330-080,1891474</detail>
+			<detail>20170513-057,20170513-072,1896746</detail>
+			<detail>20170522-007,20170522-022,1897776</detail>
+			<detail>20170812-106,20170813-001,1907715</detail>
+			<detail>20170822-042,20170822-057,1908851</detail>
+			<detail>20171001-016,20171001-031,1913615</detail>
+			<detail>20171015-008,20171015-023,1915287</detail>
+			<detail>20171017-010,20171017-025,1915529</detail>
+			<detail>20171031-105,20171031-120,1917304</detail>
+			<detail>20171212-079,20171212-094,1922318</detail>
+			<detail>20180116-026,20180116-041,1926397</detail>
+			<detail>20180123-075,20180123-090,1927286</detail>
+			<detail>20180228-037,20180228-052,1930679</detail>
+			<detail>20180317-041,20180317-056,1932723</detail>
+			<detail>20180402-066,20180402-081,1934668</detail>
+			<detail>20180412-048,20180412-063,1935850</detail>
+			<detail>20180504-023,20180504-038,1938465</detail>
+			<detail>20180516-023,20180516-038,1939905</detail>
+			<detail>20180523-049,20180523-064,1940771</detail>
+			<detail>20180602-049,20180602-064,1941971</detail>
+			<detail>20180830-029,20180830-044,1952631</detail>
+			<detail>20181110-007,20181110-022,1961242</detail>
+			<detail>20181117-029,20181117-044,1962093</detail>
+			<detail>20181208-023,20181208-038,1964602</detail>
+			<detail>20181227-054,20181227-069,1966884</detail>
+			<detail>20190111-071,20190111-086,1968690</detail>
+			<detail>20190117-060,20190117-075,1969399</detail>
+			<detail>20190321-008,20190321-023,1973734</detail>
+			<detail>20190327-059,20190328-015,1974139</detail>
+		</trade>
+	</LongMissTradeInfos>
+	<LongMissTradeDatas>
+		<TradeMissCount name="22">
+			<TradeDatas startDataItemTag="20100114-088" endDataItemTag="20100114-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110530-094" endDataItemTag="20110530-116">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130511-041" endDataItemTag="20130511-063">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130915-052" endDataItemTag="20130915-074">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140326-103" endDataItemTag="20140327-005">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161110-070" endDataItemTag="20161110-092">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180527-010" endDataItemTag="20180527-032">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180613-114" endDataItemTag="20180614-016">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180710-105" endDataItemTag="20180711-007">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180923-054" endDataItemTag="20180923-076">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181128-086" endDataItemTag="20181128-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181129-015" endDataItemTag="20181129-037">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="17">
+			<TradeDatas startDataItemTag="20100119-024" endDataItemTag="20100119-041">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100707-093" endDataItemTag="20100707-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101027-095" endDataItemTag="20101027-112">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110522-049" endDataItemTag="20110522-066">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110628-009" endDataItemTag="20110628-026">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111002-015" endDataItemTag="20111002-032">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111010-060" endDataItemTag="20111010-077">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111018-107" endDataItemTag="20111019-004">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111103-109" endDataItemTag="20111104-006">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120114-059" endDataItemTag="20120114-076">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120115-117" endDataItemTag="20120116-014">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120202-104" endDataItemTag="20120203-001">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120223-075" endDataItemTag="20120223-092">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120511-052" endDataItemTag="20120511-069">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130323-033" endDataItemTag="20130323-050">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130619-052" endDataItemTag="20130619-069">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130630-027" endDataItemTag="20130630-044">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130803-112" endDataItemTag="20130804-009">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130818-053" endDataItemTag="20130818-070">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131015-116" endDataItemTag="20131016-013">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131215-108" endDataItemTag="20131216-005">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140519-023" endDataItemTag="20140519-040">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140530-101" endDataItemTag="20140530-118">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140611-116" endDataItemTag="20140612-013">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140824-051" endDataItemTag="20140824-068">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140901-071" endDataItemTag="20140901-088">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140913-059" endDataItemTag="20140913-076">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141129-037" endDataItemTag="20141129-054">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141206-028" endDataItemTag="20141206-045">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150307-011" endDataItemTag="20150307-040">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151215-066" endDataItemTag="20151215-083">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160103-075" endDataItemTag="20160103-092">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160725-111" endDataItemTag="20160726-008">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160910-120" endDataItemTag="20160911-017">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161028-003" endDataItemTag="20161028-020">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170405-029" endDataItemTag="20170405-046">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170629-120" endDataItemTag="20170630-017">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170807-091" endDataItemTag="20170807-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171001-109" endDataItemTag="20171002-006">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171011-085" endDataItemTag="20171011-102">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171117-013" endDataItemTag="20171117-030">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171225-060" endDataItemTag="20171225-077">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180212-078" endDataItemTag="20180212-095">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180214-091" endDataItemTag="20180214-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180403-081" endDataItemTag="20180403-098">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181210-095" endDataItemTag="20181210-112">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="18">
+			<TradeDatas startDataItemTag="20100127-005" endDataItemTag="20100127-023">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110903-018" endDataItemTag="20110903-036">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130218-097" endDataItemTag="20130218-115">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130524-025" endDataItemTag="20130524-043">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130822-078" endDataItemTag="20130822-096">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130906-113" endDataItemTag="20130907-011">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140430-077" endDataItemTag="20140430-095">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140702-078" endDataItemTag="20140702-096">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140819-110" endDataItemTag="20140820-008">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141230-108" endDataItemTag="20141231-006">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150910-007" endDataItemTag="20150910-025">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151019-016" endDataItemTag="20151019-034">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151031-040" endDataItemTag="20151031-058">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160305-072" endDataItemTag="20160305-090">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160601-097" endDataItemTag="20160601-115">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161006-095" endDataItemTag="20161006-113">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170922-061" endDataItemTag="20170922-079">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171001-087" endDataItemTag="20171001-105">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171019-075" endDataItemTag="20171019-093">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171219-070" endDataItemTag="20171219-088">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180125-041" endDataItemTag="20180125-059">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180901-085" endDataItemTag="20180901-103">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="15">
+			<TradeDatas startDataItemTag="20100314-107" endDataItemTag="20100315-002">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100317-031" endDataItemTag="20100317-046">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100408-107" endDataItemTag="20100409-002">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100422-026" endDataItemTag="20100422-041">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100628-068" endDataItemTag="20100628-083">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100706-077" endDataItemTag="20100706-092">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100727-098" endDataItemTag="20100727-113">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100805-085" endDataItemTag="20100805-100">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100808-084" endDataItemTag="20100808-099">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101009-120" endDataItemTag="20101010-015">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101102-093" endDataItemTag="20101102-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101119-028" endDataItemTag="20101119-043">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101220-008" endDataItemTag="20101220-023">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101220-070" endDataItemTag="20101220-085">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110122-022" endDataItemTag="20110122-037">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110501-010" endDataItemTag="20110501-025">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110515-099" endDataItemTag="20110515-114">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110516-019" endDataItemTag="20110516-034">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110519-097" endDataItemTag="20110519-112">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110623-115" endDataItemTag="20110624-010">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110729-095" endDataItemTag="20110729-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110828-016" endDataItemTag="20110828-031">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110913-066" endDataItemTag="20110913-081">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110923-082" endDataItemTag="20110923-097">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110927-058" endDataItemTag="20110927-073">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111116-067" endDataItemTag="20111116-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111225-043" endDataItemTag="20111225-058">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120203-059" endDataItemTag="20120203-074">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120322-093" endDataItemTag="20120322-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120331-064" endDataItemTag="20120331-079">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120530-068" endDataItemTag="20120530-083">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120616-112" endDataItemTag="20120617-007">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120713-089" endDataItemTag="20120713-104">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120811-053" endDataItemTag="20120811-068">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120831-082" endDataItemTag="20120831-097">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120926-026" endDataItemTag="20120926-041">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120930-029" endDataItemTag="20120930-044">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121006-039" endDataItemTag="20121006-054">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121011-077" endDataItemTag="20121011-092">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121017-034" endDataItemTag="20121017-049">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121104-041" endDataItemTag="20121104-056">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121105-073" endDataItemTag="20121105-088">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121113-066" endDataItemTag="20121113-081">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121209-005" endDataItemTag="20121209-020">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130301-118" endDataItemTag="20130302-013">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130305-120" endDataItemTag="20130306-015">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130329-096" endDataItemTag="20130329-111">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130522-082" endDataItemTag="20130522-097">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131226-098" endDataItemTag="20131226-113">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131229-019" endDataItemTag="20131229-034">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140107-067" endDataItemTag="20140107-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140318-092" endDataItemTag="20140318-107">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140412-084" endDataItemTag="20140412-099">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140423-056" endDataItemTag="20140423-071">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140707-102" endDataItemTag="20140707-117">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140730-002" endDataItemTag="20140730-017">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140815-106" endDataItemTag="20140816-001">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140829-083" endDataItemTag="20140829-098">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141122-100" endDataItemTag="20141122-115">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141228-032" endDataItemTag="20141228-047">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141229-012" endDataItemTag="20141229-027">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150426-109" endDataItemTag="20150427-004">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150610-014" endDataItemTag="20150610-029">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151104-076" endDataItemTag="20151104-091">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151211-086" endDataItemTag="20151211-101">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151220-027" endDataItemTag="20151220-042">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151227-083" endDataItemTag="20151227-098">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160105-037" endDataItemTag="20160105-052">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160105-095" endDataItemTag="20160105-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160112-009" endDataItemTag="20160112-024">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160405-098" endDataItemTag="20160405-113">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160411-073" endDataItemTag="20160411-088">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160415-074" endDataItemTag="20160415-089">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160430-086" endDataItemTag="20160430-101">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160516-005" endDataItemTag="20160516-020">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160601-039" endDataItemTag="20160601-054">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160818-016" endDataItemTag="20160818-031">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161101-028" endDataItemTag="20161101-043">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161105-028" endDataItemTag="20161105-043">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161110-108" endDataItemTag="20161111-003">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161112-091" endDataItemTag="20161112-106">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170305-095" endDataItemTag="20170305-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170308-069" endDataItemTag="20170308-084">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170317-039" endDataItemTag="20170317-054">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170330-065" endDataItemTag="20170330-080">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170513-057" endDataItemTag="20170513-072">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170522-007" endDataItemTag="20170522-022">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170812-106" endDataItemTag="20170813-001">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170822-042" endDataItemTag="20170822-057">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171001-016" endDataItemTag="20171001-031">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171015-008" endDataItemTag="20171015-023">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171017-010" endDataItemTag="20171017-025">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171031-105" endDataItemTag="20171031-120">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171212-079" endDataItemTag="20171212-094">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180116-026" endDataItemTag="20180116-041">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180123-075" endDataItemTag="20180123-090">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180228-037" endDataItemTag="20180228-052">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180317-041" endDataItemTag="20180317-056">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180402-066" endDataItemTag="20180402-081">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180412-048" endDataItemTag="20180412-063">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180504-023" endDataItemTag="20180504-038">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180516-023" endDataItemTag="20180516-038">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180523-049" endDataItemTag="20180523-064">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180602-049" endDataItemTag="20180602-064">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180830-029" endDataItemTag="20180830-044">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181110-007" endDataItemTag="20181110-022">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181117-029" endDataItemTag="20181117-044">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181208-023" endDataItemTag="20181208-038">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181227-054" endDataItemTag="20181227-069">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190111-071" endDataItemTag="20190111-086">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190117-060" endDataItemTag="20190117-075">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190321-008" endDataItemTag="20190321-023">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190327-059" endDataItemTag="20190328-015">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="16">
+			<TradeDatas startDataItemTag="20100403-013" endDataItemTag="20100403-029">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100414-118" endDataItemTag="20100415-014">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100424-020" endDataItemTag="20100424-036">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100612-016" endDataItemTag="20100612-032">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100805-117" endDataItemTag="20100806-013">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101022-066" endDataItemTag="20101022-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101208-023" endDataItemTag="20101208-039">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101223-114" endDataItemTag="20101224-010">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20101225-109" endDataItemTag="20101226-005">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110805-095" endDataItemTag="20110805-111">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110806-033" endDataItemTag="20110806-049">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111104-107" endDataItemTag="20111105-003">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111212-086" endDataItemTag="20111212-102">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111215-058" endDataItemTag="20111215-074">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120111-102" endDataItemTag="20120111-118">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120403-103" endDataItemTag="20120403-119">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120821-037" endDataItemTag="20120821-053">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120908-010" endDataItemTag="20120908-026">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121011-019" endDataItemTag="20121011-035">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121014-086" endDataItemTag="20121014-102">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121122-087" endDataItemTag="20121122-103">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121205-021" endDataItemTag="20121205-037">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130319-103" endDataItemTag="20130319-119">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130810-022" endDataItemTag="20130810-038">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131027-115" endDataItemTag="20131028-011">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20131108-021" endDataItemTag="20131108-037">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140529-108" endDataItemTag="20140530-012">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140712-010" endDataItemTag="20140712-026">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140915-014" endDataItemTag="20140915-030">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141005-002" endDataItemTag="20141005-018">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141021-010" endDataItemTag="20141021-026">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150114-013" endDataItemTag="20150114-029">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150126-052" endDataItemTag="20150126-068">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150406-020" endDataItemTag="20150406-036">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150508-009" endDataItemTag="20150508-025">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150513-003" endDataItemTag="20150513-019">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150715-029" endDataItemTag="20150715-045">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151019-073" endDataItemTag="20151019-089">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151026-006" endDataItemTag="20151026-022">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20151210-067" endDataItemTag="20151210-083">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160205-016" endDataItemTag="20160205-032">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160429-044" endDataItemTag="20160429-060">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160713-058" endDataItemTag="20160713-074">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160724-113" endDataItemTag="20160725-009">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160729-044" endDataItemTag="20160729-060">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160807-013" endDataItemTag="20160807-029">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161010-066" endDataItemTag="20161010-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170717-107" endDataItemTag="20170718-003">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170729-039" endDataItemTag="20170729-055">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170821-085" endDataItemTag="20170821-101">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171220-012" endDataItemTag="20171220-028">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180525-118" endDataItemTag="20180526-014">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180702-025" endDataItemTag="20180702-041">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180811-094" endDataItemTag="20180811-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181002-095" endDataItemTag="20181002-111">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181007-007" endDataItemTag="20181007-023">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181020-066" endDataItemTag="20181020-082">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181106-088" endDataItemTag="20181106-104">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181126-019" endDataItemTag="20181126-035">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190517-001" endDataItemTag="20190517-017">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="20">
+			<TradeDatas startDataItemTag="20100518-087" endDataItemTag="20100518-107">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110406-063" endDataItemTag="20110406-083">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130302-042" endDataItemTag="20130302-062">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130813-042" endDataItemTag="20130813-062">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140709-051" endDataItemTag="20140709-071">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141027-117" endDataItemTag="20141028-017">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150526-080" endDataItemTag="20150526-100">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170615-039" endDataItemTag="20170615-059">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170724-025" endDataItemTag="20170724-045">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170808-106" endDataItemTag="20170809-006">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20181127-069" endDataItemTag="20181127-089">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190101-002" endDataItemTag="20190101-022">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="24">
+			<TradeDatas startDataItemTag="20100630-046" endDataItemTag="20100630-070">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170515-067" endDataItemTag="20170515-091">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="21">
+			<TradeDatas startDataItemTag="20100801-109" endDataItemTag="20100802-010">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20100826-040" endDataItemTag="20100826-061">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110220-063" endDataItemTag="20110220-084">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110723-019" endDataItemTag="20110723-040">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120404-113" endDataItemTag="20120405-014">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130612-089" endDataItemTag="20130612-110">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130620-120" endDataItemTag="20130621-021">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20130730-088" endDataItemTag="20130730-109">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140103-027" endDataItemTag="20140103-048">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150616-119" endDataItemTag="20150617-021">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160818-102" endDataItemTag="20160819-003">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20171216-067" endDataItemTag="20171216-088">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180303-048" endDataItemTag="20180303-069">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="19">
+			<TradeDatas startDataItemTag="20100909-118" endDataItemTag="20100910-017">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110125-117" endDataItemTag="20110126-016">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110625-113" endDataItemTag="20110626-012">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20111215-102" endDataItemTag="20111216-001">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20120413-089" endDataItemTag="20120413-108">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20121026-052" endDataItemTag="20121026-071">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20141223-083" endDataItemTag="20141223-102">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160306-037" endDataItemTag="20160306-056">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160326-026" endDataItemTag="20160326-045">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160411-100" endDataItemTag="20160411-119">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160725-065" endDataItemTag="20160725-084">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20160728-108" endDataItemTag="20160729-007">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20161215-055" endDataItemTag="20161215-074">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170504-075" endDataItemTag="20170504-094">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170511-050" endDataItemTag="20170511-069">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20170622-026" endDataItemTag="20170622-045">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180208-027" endDataItemTag="20180208-046">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20180701-040" endDataItemTag="20180701-059">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20190417-029" endDataItemTag="20190417-048">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="23">
+			<TradeDatas startDataItemTag="20110112-007" endDataItemTag="20110112-030">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20110821-003" endDataItemTag="20110821-026">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20140216-057" endDataItemTag="20140216-080">
+			</TradeDatas>
+			<TradeDatas startDataItemTag="20150408-111" endDataItemTag="20150409-014">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="28">
+			<TradeDatas startDataItemTag="20120223-038" endDataItemTag="20120223-066">
+			</TradeDatas>
+		</TradeMissCount>
+		<TradeMissCount name="26">
+			<TradeDatas startDataItemTag="20180128-030" endDataItemTag="20180128-056">
+			</TradeDatas>
+		</TradeMissCount>
+	</LongMissTradeDatas>
+</root>
