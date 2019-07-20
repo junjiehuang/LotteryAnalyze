@@ -55,32 +55,40 @@ namespace LotteryAnalyze
             set
             {
                 kvalue = value;
-                RefreshUpDownValue();
+                //RefreshUpDownValue();
             }
         }
 
         //string info = null;
-        bool hasRefreshUpDownValue = false;
-        float upValue;
-        float downValue;
-        float kvalue;
+        //bool hasRefreshUpDownValue = false;
+        float upValue = 0;
+        float downValue = 0;
+        float kvalue = 0;
+        float startValue = 0;
+        float endValue = 0;
+
+        public float StartValue
+        {
+            get { return startValue; }
+            set { startValue = value; }
+        }
+
+        public float EndValue
+        {
+            get { return endValue; }
+            set { endValue = value; }
+        }
 
         public float UpValue
         {
-            get
-            {
-                //RefreshUpDownValue();
-                return upValue;
-            }
+            get { return upValue; }
+            set { upValue = value; }
         }
 
         public float DownValue
         {
-            get
-            {
-                //RefreshUpDownValue();
-                return downValue;
-            }
+            get { return downValue; }
+            set { downValue = value; }
         }
 
 
@@ -121,25 +129,22 @@ namespace LotteryAnalyze
             }
         }
 
-        void RefreshUpDownValue()
-        {
-            //if (hasRefreshUpDownValue)
-            //    return;
-            //hasRefreshUpDownValue = true;
-            int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-            float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
-            float missV = MissValue * missRelHeight;
-            if (HitValue > MissValue)
-            {
-                upValue = kvalue;
-                downValue = kvalue - HitValue;
-            }
-            else
-            {
-                upValue = kvalue + missV;
-                downValue = kvalue;
-            }
-        }
+        //void RefreshUpDownValue()
+        //{
+        //    int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+        //    float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+        //    float missV = MissValue * missRelHeight;
+        //    if (HitValue > MissValue)
+        //    {
+        //        upValue = kvalue;
+        //        downValue = kvalue - HitValue;
+        //    }
+        //    else
+        //    {
+        //        upValue = kvalue + missV;
+        //        downValue = kvalue;
+        //    }
+        //}
 
         public string GetInfo()
         {
@@ -1131,7 +1136,7 @@ namespace LotteryAnalyze
         static KGraphDataContainer()
         {
             AddAvgLineSetting("5", 5, Color.Red, true);
-            AddAvgLineSetting("10", 10, Color.Purple, true);
+            AddAvgLineSetting("10", 10, Color.Pink, true);
             AddAvgLineSetting("20", 20, Color.Orange, true);
             AddAvgLineSetting("30", 30, Color.Yellow, true);
             AddAvgLineSetting("50", 50, Color.Green, true);
@@ -1149,20 +1154,20 @@ namespace LotteryAnalyze
             als.cycle = cycle;
             als.color = col;
             als.enable = enable;
-            als.pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 1);
+            als.pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 2);
             S_AVG_LINE_SETTINGS.Add(als);
         }
 #endregion
 
         int dataLength = 0;
-        int cycleLength = 1;
+        int cycleLength = 5;
         int bollinBandCycleLength = 20;
         int macdEMAShortCycle = 5;//10;
         int macdEMALongCycle = 10;//20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
 
-        static List<Dictionary<CollectDataType, float>> G_CUR_KVALUE_MAP = new List<Dictionary<CollectDataType, float>>();
-        public static void ResetCurKValueMap()
+        List<Dictionary<CollectDataType, float>> G_CUR_KVALUE_MAP = new List<Dictionary<CollectDataType, float>>();
+        public void ResetCurKValueMap()
         {
             for(int i = 0; i < G_CUR_KVALUE_MAP.Count; ++i)
             {
@@ -1175,6 +1180,11 @@ namespace LotteryAnalyze
                     }
                 }
             }
+        }
+
+        public KGraphDataContainer(int _circle)
+        {
+            cycleLength = _circle;
         }
 
         public void Clear()
@@ -1253,6 +1263,7 @@ namespace LotteryAnalyze
                     DataItem item = odd.datas[j];
                     if (curDatas == null)
                         curDatas = CreateKDataDicts();
+
                     for (int numIndex = 0; numIndex < 5; ++numIndex)
                     {
                         CollectItem(numIndex, item, curDatas[numIndex]);
@@ -1267,9 +1278,7 @@ namespace LotteryAnalyze
                 }
             }
             dataLength = allKDatas[0].dataLst.Count;
-
-            //Dictionary<CollectDataType, float> valueMap = new Dictionary<CollectDataType, float>();
-
+            
             for (int i = 0; i < allKDatas.Count; ++i)
             {
                 Dictionary<CollectDataType, float> valueMap = null;
@@ -1282,8 +1291,7 @@ namespace LotteryAnalyze
                 {
                     valueMap = G_CUR_KVALUE_MAP[i];
                 }
-
-                //valueMap.Clear();
+                
                 KDataDictContainer kddc = allKDatas[i];
                 for (int j = 0; j < kddc.dataLst.Count; ++j)
                 {
@@ -1292,21 +1300,31 @@ namespace LotteryAnalyze
                     {
                         float lastValue = 0;
                         KData kd = kdd.dataDict[cdt];
-                        int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-                        float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
-                        float valueChange = kd.HitValue - kd.MissValue * missRelHeight;
+                        //int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+                        //float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+                        //float valueChange = kd.HitValue - kd.MissValue * missRelHeight;
+                        float valueChange = kd.EndValue - kd.StartValue;
+                        //if (valueMap.ContainsKey(cdt))
+                        //{
+                        //    lastValue = valueMap[cdt];
+                        //    lastValue += valueChange;
+                        //    valueMap[cdt] = lastValue;
+                        //}
+                        //else
+                        //{
+                        //    lastValue = valueChange;
+                        //    valueMap.Add(cdt, lastValue);
+                        //}
                         if (valueMap.ContainsKey(cdt))
-                        {
                             lastValue = valueMap[cdt];
-                            lastValue += valueChange;
-                            valueMap[cdt] = lastValue;
-                        }
-                        else
-                        {
-                            lastValue = valueChange;
-                            valueMap.Add(cdt, lastValue);
-                        }
-                        kd.KValue = lastValue;
+                        kd.KValue += lastValue;
+                        kd.UpValue += lastValue;
+                        kd.DownValue += lastValue;
+                        kd.StartValue += lastValue;
+                        kd.EndValue += lastValue;
+
+                        lastValue += valueChange;
+                        valueMap[cdt] = lastValue;
                     }
                 }
             }
@@ -1379,6 +1397,25 @@ namespace LotteryAnalyze
                 }
             }
         }
+
+        void RecordValue(bool hit, KData data, float missHeight)
+        {
+            if(hit)
+            {
+                data.HitValue++;
+                data.KValue += 1;
+                data.UpValue += 1;
+                data.EndValue += 1;
+            }
+            else
+            {
+                data.MissValue++;
+                data.KValue -= missHeight;
+                data.DownValue -= missHeight;
+                data.EndValue -= missHeight;
+            }
+        }
+
         void CollectItem(int NUM_INDEX, DataItem item, KDataDict kd)
         {
             if (kd.startItem == null)
@@ -1389,122 +1426,65 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 KData data = kd.GetData(cdt, true);
-                //data.index = kd.index;
+                float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[i];
                 switch (cdt)
                 {
                     case CollectDataType.ePath0:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 0)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.path012OfEachSingle[NUM_INDEX] == 0), data, missRelHeight);
                         break;
                     case CollectDataType.ePath1:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 1)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.path012OfEachSingle[NUM_INDEX] == 1), data, missRelHeight);
                         break;
                     case CollectDataType.ePath2:
-                        if (item.path012OfEachSingle[NUM_INDEX] == 2)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.path012OfEachSingle[NUM_INDEX] == 2), data, missRelHeight);
                         break;
                     case CollectDataType.eBigNum:
-                        if (item.bigOfEachSingle[NUM_INDEX])
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.bigOfEachSingle[NUM_INDEX]), data, missRelHeight);
                         break;
                     case CollectDataType.eSmallNum:
-                        if (item.bigOfEachSingle[NUM_INDEX] == false)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.bigOfEachSingle[NUM_INDEX] == false), data, missRelHeight);
                         break;
                     case CollectDataType.eOddNum:
-                        if (item.oddOfEachSingle[NUM_INDEX])
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.oddOfEachSingle[NUM_INDEX]), data, missRelHeight);
                         break;
                     case CollectDataType.eEvenNum:
-                        if (item.oddOfEachSingle[NUM_INDEX] == false)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.oddOfEachSingle[NUM_INDEX] == false), data, missRelHeight);
                         break;
                     case CollectDataType.ePrimeNum:
-                        if (item.primeOfEachSingle[NUM_INDEX])
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.primeOfEachSingle[NUM_INDEX]), data, missRelHeight);
                         break;
                     case CollectDataType.eCompositeNum:
-                        if (item.primeOfEachSingle[NUM_INDEX] == false)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.primeOfEachSingle[NUM_INDEX] == false), data, missRelHeight);
                         break;
                     case CollectDataType.eNum0:
-                        if (item.fiveNumLst[NUM_INDEX] == 0)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 0), data, missRelHeight);
                         break;
                     case CollectDataType.eNum1:
-                        if (item.fiveNumLst[NUM_INDEX] == 1)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 1), data, missRelHeight);
                         break;
                     case CollectDataType.eNum2:
-                        if (item.fiveNumLst[NUM_INDEX] == 2)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 2), data, missRelHeight);
                         break;
                     case CollectDataType.eNum3:
-                        if (item.fiveNumLst[NUM_INDEX] == 3)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 3), data, missRelHeight);
                         break;
                     case CollectDataType.eNum4:
-                        if (item.fiveNumLst[NUM_INDEX] == 4)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 4), data, missRelHeight);
                         break;
                     case CollectDataType.eNum5:
-                        if (item.fiveNumLst[NUM_INDEX] == 5)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 5), data, missRelHeight);
                         break;
                     case CollectDataType.eNum6:
-                        if (item.fiveNumLst[NUM_INDEX] == 6)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 6), data, missRelHeight);
                         break;
                     case CollectDataType.eNum7:
-                        if (item.fiveNumLst[NUM_INDEX] == 7)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 7), data, missRelHeight);
                         break;
                     case CollectDataType.eNum8:
-                        if (item.fiveNumLst[NUM_INDEX] == 8)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 8), data, missRelHeight);
                         break;
                     case CollectDataType.eNum9:
-                        if (item.fiveNumLst[NUM_INDEX] == 9)
-                            data.HitValue++;
-                        else
-                            data.MissValue++;
+                        RecordValue((item.fiveNumLst[NUM_INDEX] == 9), data, missRelHeight);
                         break;
                 }
             }
@@ -1583,6 +1563,23 @@ namespace LotteryAnalyze
         {
             get { return currentSelectItem; }
             set { currentSelectItem = value; }
+        }
+
+        public int StatisticRangeCount
+        {
+            get
+            {
+                int CollectCount = customStatisticsRange;
+                switch (curStatisticsRange)
+                {
+                    case StatisticsRange.e10: CollectCount = 10; break;
+                    case StatisticsRange.e20: CollectCount = 20; break;
+                    case StatisticsRange.e30: CollectCount = 30; break;
+                    case StatisticsRange.e50: CollectCount = 50; break;
+                    case StatisticsRange.e100: CollectCount = 100; break;
+                }
+                return CollectCount;
+            }
         }
 
         public BarGraphDataContianer()
@@ -1665,15 +1662,7 @@ namespace LotteryAnalyze
             if (count == 0) return;
             Init();
 
-            int CollectCount = customStatisticsRange;
-            switch (curStatisticsRange)
-            {
-                case StatisticsRange.e10: CollectCount = 10; break;
-                case StatisticsRange.e20: CollectCount = 20; break;
-                case StatisticsRange.e30: CollectCount = 30; break;
-                case StatisticsRange.e50: CollectCount = 50; break;
-                case StatisticsRange.e100: CollectCount = 100; break;
-            }
+            int CollectCount = StatisticRangeCount;
             DataItem currentItem = DataManager.GetInst().GetLatestItem();
             if (CurrentSelectItem != null)
                 currentItem = CurrentSelectItem;
@@ -1701,8 +1690,20 @@ namespace LotteryAnalyze
         public static Dictionary<GraphType, GraphDataContainerBase> S_GRAPH_DATA_CONTS = new Dictionary<GraphType, GraphDataContainerBase>();
         public static Dictionary<string, int> S_CDT_NAME_INDEX_MAP = new Dictionary<string, int>();
         public static Dictionary<string, int> S_NUM_NAME_INDEX_MAP = new Dictionary<string, int>();
-        public static KGraphDataContainer KGDC;
+        public static KGraphDataContainer KGDC
+        {
+            get
+            {
+                return MultiKGDCMap[CurrentCircle];
+            }
+        }
         public static BarGraphDataContianer BGDC;
+
+        public static int CurrentCircle = 1;
+        public static Dictionary<int, KGraphDataContainer> MultiKGDCMap = new Dictionary<int, KGraphDataContainer>();
+
+        public static int[] G_Circles = new int[] { 1, 3, 5, 10, };
+        public static string[] G_Circles_STRs = new string[] { "1", "3", "5", "10", };
 
         static GraphDataManager()
         {
@@ -1726,12 +1727,17 @@ namespace LotteryAnalyze
             AddPreInfo(CollectDataType.eNum8, "数字8", 1.0f / 10, Color.DeepPink);
             AddPreInfo(CollectDataType.eNum9, "数字9", 1.0f / 10, Color.DodgerBlue);
 
-            S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
+            //S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new KGraphDataContainer());
             S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new BarGraphDataContianer());
 
             for( int i = 0; i < KDataDictContainer.C_TAGS.Length; ++i )
             {
                 S_NUM_NAME_INDEX_MAP.Add(KDataDictContainer.C_TAGS[i], i);
+            }
+            
+            for(int i = 0; i < G_Circles.Length; ++i )
+            {
+                MultiKGDCMap.Add(G_Circles[i], new KGraphDataContainer(G_Circles[i]));
             }
         }
         static void AddPreInfo(CollectDataType cdt, string name, float probability, Color col)
@@ -1779,6 +1785,10 @@ namespace LotteryAnalyze
 
         public static GraphDataContainerBase GetGraphDataContianer(GraphType gt)
         {
+            if(gt == GraphType.eKCurveGraph)
+            {
+                return KGDC;
+            }
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 return (S_GRAPH_DATA_CONTS[gt]);
             return null;
@@ -1786,6 +1796,10 @@ namespace LotteryAnalyze
 
         public int DataLength(GraphType gt)
         {
+            if(gt == GraphType.eKCurveGraph)
+            {
+                return KGDC.DataLength();
+            }
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 return S_GRAPH_DATA_CONTS[gt].DataLength();
             return 0;
@@ -1793,6 +1807,10 @@ namespace LotteryAnalyze
 
         public bool HasData(GraphType gt)
         {
+            if(gt == GraphType.eKCurveGraph)
+            {
+                return KGDC.HasData();
+            }
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 return S_GRAPH_DATA_CONTS[gt].HasData();
             return false;
@@ -1800,12 +1818,28 @@ namespace LotteryAnalyze
 
         public void CollectGraphData(GraphType gt)
         {
+            if(gt == GraphType.eKCurveGraph)
+            {
+                foreach( KGraphDataContainer kgdc in MultiKGDCMap.Values )
+                {
+                    kgdc.CollectGraphData();
+                }
+                return;
+            }
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 S_GRAPH_DATA_CONTS[gt].CollectGraphData();
         }
 
         public void CollectGraphDataExcept(GraphType gt, OneDayDatas odd)
         {
+            if (gt == GraphType.eKCurveGraph)
+            {
+                foreach (KGraphDataContainer kgdc in MultiKGDCMap.Values)
+                {
+                    kgdc.CollectGraphDataExcept(odd);
+                }
+                return;
+            }
             if (S_GRAPH_DATA_CONTS.ContainsKey(gt))
                 S_GRAPH_DATA_CONTS[gt].CollectGraphDataExcept(odd);
         }
@@ -1814,6 +1848,14 @@ namespace LotteryAnalyze
         {
             KGDC.Clear();
             BGDC.Clear();
+        }
+
+        public static void ResetCurKValueMap()
+        {
+            foreach( KGraphDataContainer kgdc in MultiKGDCMap.Values )
+            {
+                kgdc.ResetCurKValueMap();
+            }
         }
     }
 

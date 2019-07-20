@@ -531,7 +531,8 @@ namespace LotteryAnalyze.UI
             textBoxTradeCountLst.Enabled = true;
 
             // 重置K线的起点值
-            KGraphDataContainer.ResetCurKValueMap();
+            GraphDataManager.ResetCurKValueMap();
+            //KGraphDataContainer.ResetCurKValueMap();
         }
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)

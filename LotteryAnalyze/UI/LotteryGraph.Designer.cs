@@ -123,7 +123,6 @@ namespace LotteryAnalyze.UI
             this.buttonAvg5 = new System.Windows.Forms.Button();
             this.checkBoxAvg5 = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBoxCycleLength = new System.Windows.Forms.TextBox();
             this.tabPageBarGraph = new System.Windows.Forms.TabPage();
             this.textBoxCustomCollectRange = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -161,6 +160,7 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.comboBoxKDataCircle = new System.Windows.Forms.ComboBox();
             this.setBreakPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             CreateUpAndDownPanel();
@@ -611,6 +611,7 @@ namespace LotteryAnalyze.UI
             // 
             // tabPageKGraph
             // 
+            this.tabPageKGraph.Controls.Add(this.comboBoxKDataCircle);
             this.tabPageKGraph.Controls.Add(this.checkBoxKRuler);
             this.tabPageKGraph.Controls.Add(this.trackBarKData);
             this.tabPageKGraph.Controls.Add(this.checkBoxShowAuxLines);
@@ -623,7 +624,6 @@ namespace LotteryAnalyze.UI
             this.tabPageKGraph.Controls.Add(this.label8);
             this.tabPageKGraph.Controls.Add(this.groupBoxAvgSettings);
             this.tabPageKGraph.Controls.Add(this.label3);
-            this.tabPageKGraph.Controls.Add(this.textBoxCycleLength);
             this.tabPageKGraph.Location = new System.Drawing.Point(4, 22);
             this.tabPageKGraph.Name = "tabPageKGraph";
             this.tabPageKGraph.Padding = new System.Windows.Forms.Padding(3);
@@ -905,17 +905,6 @@ namespace LotteryAnalyze.UI
             this.label3.Size = new System.Drawing.Size(59, 12);
             this.label3.TabIndex = 4;
             this.label3.Text = "K值周期：";
-            // 
-            // textBoxCycleLength
-            // 
-            this.textBoxCycleLength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCycleLength.Enabled = false;
-            this.textBoxCycleLength.Location = new System.Drawing.Point(65, 9);
-            this.textBoxCycleLength.Name = "textBoxCycleLength";
-            this.textBoxCycleLength.Size = new System.Drawing.Size(243, 21);
-            this.textBoxCycleLength.TabIndex = 5;
-            this.textBoxCycleLength.TextChanged += new System.EventHandler(this.textBoxCycleLength_TextChanged);
             // 
             // tabPageBarGraph
             // 
@@ -1339,6 +1328,18 @@ namespace LotteryAnalyze.UI
             this.setBreakPointToolStripMenuItem.Text = "设置断点";
             this.setBreakPointToolStripMenuItem.Click += new System.EventHandler(this.setBreakPointToolStripMenuItem_Click);
             // 
+            // comboBoxKDataCircle
+            // 
+            this.comboBoxKDataCircle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxKDataCircle.FormattingEnabled = true;
+            this.comboBoxKDataCircle.Location = new System.Drawing.Point(65, 7);
+            this.comboBoxKDataCircle.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.comboBoxKDataCircle.Name = "comboBoxKDataCircle";
+            this.comboBoxKDataCircle.Size = new System.Drawing.Size(243, 38);
+            this.comboBoxKDataCircle.TabIndex = 18;
+            this.comboBoxKDataCircle.SelectedIndexChanged += new System.EventHandler(this.comboBoxKDataCircle_SelectedIndexChanged);
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -1405,7 +1406,6 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBoxCollectionDataType;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxCycleLength;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label4;
@@ -1505,5 +1505,6 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ToolStripMenuItem refreshLatestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem setBreakPointToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBoxKDataCircle;
     }
 }

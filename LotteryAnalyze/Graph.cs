@@ -495,6 +495,7 @@ namespace LotteryAnalyze
         Pen bollinLinePenMid = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 2);
         Pen bollinLinePenMidR = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         Pen bollinLinePenMidC = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Cyan, 2);
+        Pen bollinLinePenMidG = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
         Pen bollinLinePenDown = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
 
         Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
@@ -721,6 +722,8 @@ namespace LotteryAnalyze
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+                float kValueMouse = CanvasToStand(mouseRelPos.Y, false) / gridScaleH;
+                g.DrawString(kValueMouse.ToString("f3"), selDataFont, whiteBrush, winW - 80, mouseRelPos.Y - 20);
                 //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
             }
 
@@ -734,10 +737,11 @@ namespace LotteryAnalyze
         }
         public override void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
+            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+
             BeforeDraw();
-            if(enableMACD)
+            if(enableMACD && kddc != null)
             {
-                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
                 int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
                 float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
 
@@ -1101,38 +1105,59 @@ namespace LotteryAnalyze
         void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos, KDataDictContainer kddc, CollectDataType cdt)
         {
             KData prevData = data.GetPrevKData();
-            if (prevData != null)
-                lastValue = prevData.KValue;
-            else
-                lastValue = 0;
+
+            //if (prevData != null)
+            //    lastValue = prevData.KValue;
+            //else
+            //    lastValue = 0;
+            //float standX = data.index * gridScaleW;
+            //float valudChange = data.HitValue - data.MissValue * missRelHeight;
+            //float standY = lastValue * gridScaleH;
+            //float up = standY + data.HitValue * gridScaleH;
+            //float dowm = standY - data.MissValue * missRelHeight * gridScaleH;
+            //float rcY = standY;
+            //float rcH = Math.Abs(valudChange * gridScaleH);
+            //if (rcH < 1)
+            //    rcH = 1;
+            //if (valudChange > 0)
+            //    rcY += valudChange * gridScaleH;
+            //lastValue += valudChange;
+            //standX = StandToCanvas(standX, true);
+            //if (standX < 0 || standX > winW)
+            //    return;
+            //standY = StandToCanvas(standY, false);
+            //up = StandToCanvas(up, false);
+            //dowm = StandToCanvas(dowm, false);
+            //rcY = StandToCanvas(rcY, false);
+            //tmpBrush = valudChange > 0 ? redBrush : (valudChange < 0 ? cyanBrush : whiteBrush);
+            //Pen linePen = valudChange > 0 ? redLinePen : (valudChange < 0 ? cyanLinePen : whiteLinePen);
+            //float midX = standX + gridScaleW * 0.5f;
+            //g.DrawLine(linePen, midX, up, midX, dowm);
+            ////g.FillRectangle(tmpBrush, standX, rcY, gridScaleW, rcH);
+            ////PushLinePts(linePen, midX, up, midX, dowm);
+            //PushRcPts(tmpBrush, standX, rcY, gridScaleW, rcH);
 
             float standX = data.index * gridScaleW;
-            float valudChange = data.HitValue - data.MissValue * missRelHeight;
-            float standY = lastValue * gridScaleH;
-            float up = standY + data.HitValue * gridScaleH;
-            float dowm = standY - data.MissValue * missRelHeight * gridScaleH;
-            float rcY = standY;
-            float rcH = Math.Abs(valudChange * gridScaleH);
+            float midX = standX + gridScaleW * 0.5f;
+            float up = data.UpValue * gridScaleH;
+            float down = data.DownValue * gridScaleH;
+            float start = data.StartValue * gridScaleH;
+            float end = data.EndValue * gridScaleH;
+            standX = StandToCanvas(standX, true);
+            midX = StandToCanvas(midX, true);
+            up = StandToCanvas(up, false);
+            down = StandToCanvas(down, false);
+            start = StandToCanvas(start, false);
+            end = StandToCanvas(end, false);
+            float rcY = data.StartValue > data.EndValue ? start : end;
+            float rcH = Math.Abs(start - end);
             if (rcH < 1)
                 rcH = 1;
-            if (valudChange > 0)
-                rcY += valudChange * gridScaleH;
-            lastValue += valudChange;
-
-            standX = StandToCanvas(standX, true);
-            if (standX < 0 || standX > winW)
-                return;
-            standY = StandToCanvas(standY, false);
-            up = StandToCanvas(up, false);
-            dowm = StandToCanvas(dowm, false);
-            rcY = StandToCanvas(rcY, false);
-            tmpBrush = valudChange > 0 ? redBrush : (valudChange < 0 ? cyanBrush : whiteBrush);
-            Pen linePen = valudChange > 0 ? redLinePen : (valudChange < 0 ? cyanLinePen : whiteLinePen);
-            float midX = standX + gridScaleW * 0.5f;
-            g.DrawLine(linePen, midX, up, midX, dowm);
-            //g.FillRectangle(tmpBrush, standX, rcY, gridScaleW, rcH);
-            //PushLinePts(linePen, midX, up, midX, dowm);
+            tmpBrush = data.EndValue > data.StartValue ? redBrush : (data.EndValue < data.StartValue ? cyanBrush : whiteBrush);
+            Pen linePen = data.EndValue > data.StartValue ? redLinePen : (data.EndValue < data.StartValue ? cyanLinePen : whiteLinePen);
+            g.DrawLine(linePen, midX, up, midX, down);
             PushRcPts(tmpBrush, standX, rcY, gridScaleW, rcH);
+
 
             if (preViewDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
             {
@@ -1146,7 +1171,9 @@ namespace LotteryAnalyze
                 graphInfo += data.GetInfo() +
                     "K值 = " + data.KValue.ToString() + 
                     ", 上 = " + data.UpValue.ToString() + 
-                    ", 下 = " + data.DownValue.ToString();
+                    ", 下 = " + data.DownValue.ToString() + 
+                    ", 开 = " + data.StartValue.ToString() + 
+                    ", 收 = " + data.EndValue.ToString();
             }
 
             if(data.index == selectKDataIndex)
@@ -1155,19 +1182,19 @@ namespace LotteryAnalyze
                 g.DrawLine(yellowLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
             }
 
-            if (prevData != null)
-            {
-                MACDPoint mpC = kddc.GetMacdPointMap(data.index).GetData(cdt, false);
-                MACDPoint mpP = kddc.GetMacdPointMap(prevData.index).GetData(cdt, false);
-                if (mpC.BAR > mpP.BAR)
-                {
-                    g.FillRectangle(redBrush, standX, winH-gridScaleH, gridScaleW, winH);
-                }
-                else if(mpC.DIF > 0)
-                {
-                    g.FillRectangle(yellowBrush, standX, winH - gridScaleH, gridScaleW, winH);
-                }
-            }
+            //if (prevData != null)
+            //{
+            //    MACDPoint mpC = kddc.GetMacdPointMap(data.index).GetData(cdt, false);
+            //    MACDPoint mpP = kddc.GetMacdPointMap(prevData.index).GetData(cdt, false);
+            //    if (mpC.BAR > mpP.BAR)
+            //    {
+            //        g.FillRectangle(redBrush, standX, winH-gridScaleH, gridScaleW, winH);
+            //    }
+            //    else if(mpC.DIF > 0)
+            //    {
+            //        g.FillRectangle(yellowBrush, standX, winH - gridScaleH, gridScaleW, winH);
+            //    }
+            //}
         }
         void DrawAvgLineGraph(Graphics g, AvgPointMap apm, int winW, int winH, CollectDataType cdt, Pen pen)
         {
@@ -1220,7 +1247,7 @@ namespace LotteryAnalyze
             float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
             Pen midPen = bollinLinePenMid;
             if (bp.bolleanMidKeepDownCountContinue > 0)//prevBP.midValue > bp.midValue)
-                midPen = bollinLinePenMidC;
+                midPen = bollinLinePenMidG;
             else if (bp.bolleanMidKeepUpCountContinue > 0)//prevBP.midValue < bp.midValue)
                 midPen = bollinLinePenMidR;
             PushLinePts(bollinLinePenUp, px, pyU, cx, cyU);
@@ -1296,147 +1323,154 @@ namespace LotteryAnalyze
 
         void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
         {
-            if (preViewDataIndex != -1)
+            try
             {
-                TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
-                AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.curPreviewAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
-
-                if (needAutoAddAuxLine)
+                if (preViewDataIndex != -1)
                 {
-                    needAutoAddAuxLine = false;
-                    if(sali.upLineData.valid)
+                    TradeDataManager.Instance.curPreviewAnalyzeTool.Analyze(preViewDataIndex);
+                    AutoAnalyzeTool.SingleAuxLineInfo sali = TradeDataManager.Instance.curPreviewAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
+
+                    if (needAutoAddAuxLine)
                     {
-                        if(sali.upLineData.dataPrevSharp != null && sali.upLineData.dataSharp != null)
+                        needAutoAddAuxLine = false;
+                        if (sali.upLineData.valid)
                         {
-                            int px = (int)StandToCanvas(sali.upLineData.dataPrevSharp.index * gridScaleW, true);
-                            int py = (int)StandToCanvas(sali.upLineData.dataPrevSharp.KValue * gridScaleH, false);
-                            int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
-                            int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
-                            AddSingleLine(
-                                new Point(px,py),
-                                new Point(x,y),
-                                numIndex, cdt);
+                            if (sali.upLineData.dataPrevSharp != null && sali.upLineData.dataSharp != null)
+                            {
+                                int px = (int)StandToCanvas(sali.upLineData.dataPrevSharp.index * gridScaleW, true);
+                                int py = (int)StandToCanvas(sali.upLineData.dataPrevSharp.KValue * gridScaleH, false);
+                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
+                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                                AddSingleLine(
+                                    new Point(px, py),
+                                    new Point(x, y),
+                                    numIndex, cdt);
+                            }
+                            if (sali.upLineData.dataNextSharp != null && sali.upLineData.dataSharp != null)
+                            {
+                                int px = (int)StandToCanvas(sali.upLineData.dataNextSharp.index * gridScaleW, true);
+                                int py = (int)StandToCanvas(sali.upLineData.dataNextSharp.KValue * gridScaleH, false);
+                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
+                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                                AddSingleLine(
+                                    new Point(px, py),
+                                    new Point(x, y),
+                                    numIndex, cdt);
+                            }
                         }
-                        if (sali.upLineData.dataNextSharp != null && sali.upLineData.dataSharp != null)
+
+                        if (sali.downLineData.valid)
                         {
-                            int px = (int)StandToCanvas(sali.upLineData.dataNextSharp.index * gridScaleW, true);
-                            int py = (int)StandToCanvas(sali.upLineData.dataNextSharp.KValue * gridScaleH, false);
-                            int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
-                            int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
-                            AddSingleLine(
-                                new Point(px, py),
-                                new Point(x, y),
-                                numIndex, cdt);
+                            if (sali.downLineData.dataPrevSharp != null && sali.downLineData.dataSharp != null)
+                            {
+                                int px = (int)StandToCanvas(sali.downLineData.dataPrevSharp.index * gridScaleW, true);
+                                int py = (int)StandToCanvas(sali.downLineData.dataPrevSharp.KValue * gridScaleH, false);
+                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
+                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                                AddSingleLine(
+                                    new Point(px, py),
+                                    new Point(x, y),
+                                    numIndex, cdt);
+                            }
+                            if (sali.downLineData.dataNextSharp != null && sali.downLineData.dataSharp != null)
+                            {
+                                int px = (int)StandToCanvas(sali.downLineData.dataNextSharp.index * gridScaleW, true);
+                                int py = (int)StandToCanvas(sali.downLineData.dataNextSharp.KValue * gridScaleH, false);
+                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
+                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                                AddSingleLine(
+                                    new Point(px, py),
+                                    new Point(x, y),
+                                    numIndex, cdt);
+                            }
                         }
                     }
 
+                    DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
                     if (sali.downLineData.valid)
                     {
-                        if (sali.downLineData.dataPrevSharp != null && sali.downLineData.dataSharp != null)
+                        KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                        KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
+                        KDataDict kdd = kddc.dataLst[preViewDataIndex];
+                        KData kd = kdd.GetData(cdt, false);
+                        float missHeight = GraphDataManager.GetMissRelLength(cdt);
+
+                        bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
+                        float prevKV, nextKV, prevSlope, nextSlope;
+                        float prevHitPtX, prevHitPtY, nextHitPtX, nextHitPtY;
+
+                        int testID = preViewDataIndex + 1;
+                        float kdX = testID * gridScaleW;
+                        float kdY = kd.UpValue * gridScaleH;
+                        kdX = StandToCanvas(kdX, true);
+                        kdY = StandToCanvas(kdY, false);
+
+                        float lblX = winW - 100;
+                        float lblY = 20;
+                        float lblH = 20;
+
+                        // 计算当前期在下通道线上的K值
+                        sali.downLineData.GetKValue(testID, kd.UpValue, -missHeight,
+                            out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPtX, out prevHitPtY,
+                            out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPtX, out nextHitPtY);
+                        if (hasPrevKV)
                         {
-                            int px = (int)StandToCanvas(sali.downLineData.dataPrevSharp.index * gridScaleW, true);
-                            int py = (int)StandToCanvas(sali.downLineData.dataPrevSharp.KValue * gridScaleH, false);
-                            int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
-                            int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
-                            AddSingleLine(
-                                new Point(px, py),
-                                new Point(x, y),
-                                numIndex, cdt);
+                            float prevY = prevKV * gridScaleH;
+                            prevY = StandToCanvas(prevY, false);
+                            g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)prevY - 5, 10, 10));
+                            g.DrawLine(redLinePen, kdX, kdY, kdX, prevY);
+
+                            g.DrawLine(redLinePen, kdX, prevY, lblX, lblY);
+                            g.DrawString(((prevKV - kd.KValue) / missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
+                            lblY += lblH;
                         }
-                        if (sali.downLineData.dataNextSharp != null && sali.downLineData.dataSharp != null)
+                        if (hasNextKV)
                         {
-                            int px = (int)StandToCanvas(sali.downLineData.dataNextSharp.index * gridScaleW, true);
-                            int py = (int)StandToCanvas(sali.downLineData.dataNextSharp.KValue * gridScaleH, false);
-                            int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
-                            int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
-                            AddSingleLine(
-                                new Point(px, py),
-                                new Point(x, y),
-                                numIndex, cdt);
+                            float nextY = nextKV * gridScaleH;
+                            nextY = StandToCanvas(nextY, false);
+                            g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)nextY - 5, 10, 10));
+                            g.DrawLine(redLinePen, kdX, kdY, kdX, nextY);
+
+                            g.DrawLine(redLinePen, kdX, nextY, lblX, lblY);
+                            g.DrawString(((nextKV - kd.KValue) / missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
+                            lblY += lblH;
+                        }
+                        if (hasPrevHitPt)
+                        {
+                            float prevX = prevHitPtX * gridScaleW;
+                            float prevY = prevHitPtY * gridScaleH;
+                            prevX = StandToCanvas(prevX, true);
+                            prevY = StandToCanvas(prevY, false);
+                            g.DrawRectangle(greenLinePen, new Rectangle((int)prevX - 5, (int)prevY - 5, 10, 10));
+                            g.DrawLine(greenLinePen, kdX, kdY, prevX, prevY);
+
+                            g.DrawLine(greenLinePen, prevX, prevY, lblX, lblY);
+                            g.DrawString(((prevHitPtY - kd.KValue) / missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
+                            lblY += lblH;
+                        }
+                        if (hasNextHitPt)
+                        {
+                            float nextX = nextHitPtX * gridScaleW;
+                            float nextY = nextHitPtY * gridScaleH;
+                            nextX = StandToCanvas(nextX, true);
+                            nextY = StandToCanvas(nextY, false);
+                            g.DrawRectangle(greenLinePen, new Rectangle((int)nextX - 5, (int)nextY - 5, 10, 10));
+                            g.DrawLine(greenLinePen, kdX, kdY, nextX, nextY);
+
+                            g.DrawLine(greenLinePen, nextX, nextY, lblX, lblY);
+                            g.DrawString(((nextHitPtY - kd.KValue) / missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
+                            lblY += lblH;
                         }
                     }
                 }
-
-                DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
-                if(sali.downLineData.valid)
+                else
                 {
-                    KGraphDataContainer kgdc = GraphDataManager.KGDC;
-                    KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-                    KDataDict kdd = kddc.dataLst[preViewDataIndex];
-                    KData kd = kdd.GetData(cdt, false);
-                    float missHeight = GraphDataManager.GetMissRelLength(cdt);
-
-                    bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
-                    float prevKV, nextKV, prevSlope, nextSlope;
-                    float prevHitPtX, prevHitPtY, nextHitPtX, nextHitPtY;
-
-                    int testID = preViewDataIndex + 1;
-                    float kdX = testID * gridScaleW;
-                    float kdY = kd.UpValue * gridScaleH;
-                    kdX = StandToCanvas(kdX, true);
-                    kdY = StandToCanvas(kdY, false);
-
-                    float lblX = winW - 100;
-                    float lblY = 20;
-                    float lblH = 20;
-
-                    // 计算当前期在下通道线上的K值
-                    sali.downLineData.GetKValue(testID, kd.UpValue, -missHeight,
-                        out hasPrevKV, out prevKV, out prevSlope, out hasPrevHitPt, out prevHitPtX, out prevHitPtY,
-                        out hasNextKV, out nextKV, out nextSlope, out hasNextHitPt, out nextHitPtX, out nextHitPtY);
-                    if( hasPrevKV)
-                    {
-                        float prevY = prevKV * gridScaleH;
-                        prevY = StandToCanvas(prevY, false);
-                        g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)prevY - 5, 10, 10));
-                        g.DrawLine(redLinePen, kdX, kdY, kdX, prevY);
-
-                        g.DrawLine(redLinePen, kdX, prevY, lblX, lblY);
-                        g.DrawString(((prevKV - kd.KValue)/missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
-                        lblY += lblH;
-                    }
-                    if(hasNextKV)
-                    {
-                        float nextY = nextKV * gridScaleH;
-                        nextY = StandToCanvas(nextY, false);
-                        g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)nextY - 5, 10, 10));
-                        g.DrawLine(redLinePen, kdX, kdY, kdX, nextY);
-
-                        g.DrawLine(redLinePen, kdX, nextY, lblX, lblY);
-                        g.DrawString(((nextKV - kd.KValue)/missHeight).ToString("f1"), rulerFont, redBrush, lblX, lblY);
-                        lblY += lblH;
-                    }
-                    if(hasPrevHitPt)
-                    {
-                        float prevX = prevHitPtX * gridScaleW;
-                        float prevY = prevHitPtY * gridScaleH;
-                        prevX = StandToCanvas(prevX, true);
-                        prevY = StandToCanvas(prevY, false);
-                        g.DrawRectangle(greenLinePen, new Rectangle((int)prevX - 5, (int)prevY - 5, 10, 10));
-                        g.DrawLine(greenLinePen, kdX, kdY, prevX, prevY);
-
-                        g.DrawLine(greenLinePen, prevX, prevY, lblX, lblY);
-                        g.DrawString(((prevHitPtY - kd.KValue)/missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
-                        lblY += lblH;
-                    }
-                    if (hasNextHitPt)
-                    {
-                        float nextX = nextHitPtX * gridScaleW;
-                        float nextY = nextHitPtY * gridScaleH;
-                        nextX = StandToCanvas(nextX, true);
-                        nextY = StandToCanvas(nextY, false);
-                        g.DrawRectangle(greenLinePen, new Rectangle((int)nextX - 5, (int)nextY - 5, 10, 10));
-                        g.DrawLine(greenLinePen, kdX, kdY, nextX, nextY);
-
-                        g.DrawLine(greenLinePen, nextX, nextY, lblX, lblY);
-                        g.DrawString(((nextHitPtY - kd.KValue) / missHeight).ToString("f1"), rulerFont, greenBrush, lblX, lblY);
-                        lblY += lblH;
-                    }
+                    DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt, -1);
                 }
             }
-            else
+            catch(Exception e)
             {
-                DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt, -1);
+                Console.WriteLine("Exception on DrawAutoAuxTools - " + e.ToString());
             }
         }
 
@@ -1884,7 +1918,8 @@ namespace LotteryAnalyze
 
             BarGraphDataContianer.DataUnitLst dul = bgdc.allDatas[numIndex];
             float gap = (float)winW / dul.dataLst.Count;
-            
+
+            string statisticInfo = ""; 
             for (int i = 0; i < dul.dataLst.Count; ++i)
             {
                 float r = 0;
@@ -1892,6 +1927,8 @@ namespace LotteryAnalyze
                 float rate = ((float)(dul.dataLst[i].data) / (float)bgdc.totalCollectCount);
                 if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountPath012)
                 {
+                    if(string.IsNullOrEmpty(statisticInfo))
+                        statisticInfo = "012路";
                     if (i == 0 && rate > 0.4f)
                         brush = redBrush;
                     else if (i > 0 && rate > 0.3f)
@@ -1904,6 +1941,8 @@ namespace LotteryAnalyze
                 }
                 else if(dul.dataLst[i].type == BarGraphDataContianer.StatisticsType.eAppearCountFrom0To9)
                 {
+                    if (string.IsNullOrEmpty(statisticInfo))
+                        statisticInfo = "数字0-9";
                     r = (rate - 0.1f) / 0.1f;
                     if(rate > 0.1f)
                         brush = redBrush;
@@ -1937,7 +1976,9 @@ namespace LotteryAnalyze
             DataItem currentItem = DataManager.GetInst().GetLatestItem();
             if (bgdc.CurrentSelectItem != null)
                 currentItem = bgdc.CurrentSelectItem;
-            string info = "[" + currentItem.idTag + "] [" + currentItem.lotteryNumber + "]";
+            string info = "[" + currentItem.idTag + "] [" + currentItem.lotteryNumber + "]\n";
+            info += "统计 " + currentItem.idTag + " " + KDataDictContainer.C_TAGS[numIndex] + " 前" + 
+                GraphDataManager.BGDC.StatisticRangeCount + "期 " + statisticInfo + "的出现概率";
             g.DrawString(info, tagFont, tagBrush, 5, 5);
         }
 
@@ -1980,7 +2021,7 @@ namespace LotteryAnalyze
                 g.DrawString(nums[index].rate.ToString("f1") + "%", tagFont, tagBrush, startX, startY - 30);
                 startX += gap;
             }
-            g.DrawString("统计" + LotteryStatisticInfo.LONG_COUNT + "期数字0-9的出现概率", tagFont, tagBrush, 5, 5);
+            g.DrawString("统计 " + currentItem.idTag + " 前" + LotteryStatisticInfo.LONG_COUNT + "期所有位数字0-9的出现概率", tagFont, tagBrush, 5, 5);
         }
     }
 

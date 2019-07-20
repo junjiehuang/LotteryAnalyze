@@ -73,7 +73,9 @@ namespace LotteryAnalyze.UI
             comboBoxCollectionDataType.DataSource = GraphDataManager.S_CDT_TAG_LIST;
             comboBoxCollectionDataType.SelectedIndex = curCDTIndex;
             comboBoxNumIndex.SelectedIndex = numberIndex;
-            textBoxCycleLength.Text = GraphDataManager.KGDC.CycleLength.ToString();
+            comboBoxKDataCircle.DataSource = GraphDataManager.G_Circles_STRs;
+            comboBoxKDataCircle.SelectedIndex = 0;
+            //textBoxCycleLength.Text = GraphDataManager.KGDC.CycleLength.ToString();
             curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
 
             comboBoxBarCollectType.DataSource = BarGraphDataContianer.S_StatisticsType_STRS;
@@ -82,8 +84,9 @@ namespace LotteryAnalyze.UI
             comboBoxCollectRange.SelectedIndex = (int)GraphDataManager.BGDC.curStatisticsRange;
             textBoxCustomCollectRange.Text = GraphDataManager.BGDC.customStatisticsRange.ToString();
 
+            int selAvgCalcTypeID = (int)KGraphDataContainer.S_AVG_ALGORITHM;
             comboBoxAvgAlgorithm.DataSource = KGraphDataContainer.S_AVG_ALGORITHM_STRS;
-            comboBoxAvgAlgorithm.SelectedIndex = (int)KGraphDataContainer.S_AVG_ALGORITHM;
+            comboBoxAvgAlgorithm.SelectedIndex = selAvgCalcTypeID;
 
             checkBoxShowAvgLines.Checked = graphMgr.kvalueGraph.enableAvgLines;
             groupBoxAvgSettings.Enabled = graphMgr.kvalueGraph.enableAvgLines;
@@ -891,23 +894,23 @@ namespace LotteryAnalyze.UI
 
         private void textBoxCycleLength_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxCycleLength.Text) == false)
-            {
-                int value = 5;
-                if (int.TryParse(textBoxCycleLength.Text, out value))
-                {
-                    GraphDataManager.KGDC.CycleLength = value;
-                    GraphDataManager.KGDC.CollectGraphData();
-                    this.Invalidate(true);//触发Paint事件
-                }
-            }
+            //if (string.IsNullOrEmpty(textBoxCycleLength.Text) == false)
+            //{
+            //    int value = 5;
+            //    if (int.TryParse(textBoxCycleLength.Text, out value))
+            //    {
+            //        GraphDataManager.KGDC.CycleLength = value;
+            //        GraphDataManager.KGDC.CollectGraphData();
+            //        this.Invalidate(true);//触发Paint事件
+            //    }
+            //}
         }
         
         private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));
-            //if(graphMgr.CurrentGraphType == GraphType.eBarGraph)
-            //    GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             SetUIGridWH();
             this.Invalidate(true);
         }
@@ -915,21 +918,24 @@ namespace LotteryAnalyze.UI
         private void comboBoxBarCollectType_SelectedIndexChanged(object sender, EventArgs e)
         {
             GraphDataManager.BGDC.curStatisticsType = (BarGraphDataContianer.StatisticsType)comboBoxBarCollectType.SelectedIndex;
-            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             this.Invalidate(true);
         }
 
         private void comboBoxCollectRange_SelectedIndexChanged(object sender, EventArgs e)
         {
             GraphDataManager.BGDC.curStatisticsRange = (BarGraphDataContianer.StatisticsRange)comboBoxCollectRange.SelectedIndex;
-            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             this.Invalidate(true);
         }
 
         private void textBoxCustomCollectRange_TextChanged(object sender, EventArgs e)
         {
             GraphDataManager.BGDC.customStatisticsRange = int.Parse(textBoxCustomCollectRange.Text);
-            GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
+            if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
+                GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             this.Invalidate(true);
         }
 
@@ -1501,6 +1507,12 @@ namespace LotteryAnalyze.UI
                 TradeDataManager.Instance.debugInfo.dataItemTagBP = itemSel.idTag;
             TradeDebugWindow.Open();
             TradeDebugWindow.RefreshUI();
+        }
+
+        private void comboBoxKDataCircle_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GraphDataManager.CurrentCircle = GraphDataManager.G_Circles[comboBoxKDataCircle.SelectedIndex];
+            this.Invalidate(true);
         }
     }
 }
