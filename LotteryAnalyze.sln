@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryAnalyze", "LotteryAnalyze\LotteryAnalyze.csproj", "{7A78DBD0-7A36-43E5-BF9C-AB3F9CF8649F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlAgilityPack_Main", "HtmlAgilityPack1_4_0\HtmlAgilityPack\HtmlAgilityPack_Main.csproj", "{193BB801-054F-4729-9D5D-FCE1E32594BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUI", "CustomUI\CustomUI.csproj", "{CE4335D4-37D4-4C88-9D3B-7B90DA19311A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockSample", "DockSample\DockSample.csproj", "{40793A27-478B-4357-B4C3-FC8943131F3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorUIFramework", "EditorUIFramework\EditorUIFramework.csproj", "{F438D0E0-AC7D-4979-8052-D0CC520D006C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +44,22 @@ Global
 		{CE4335D4-37D4-4C88-9D3B-7B90DA19311A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE4335D4-37D4-4C88-9D3B-7B90DA19311A}.Release|x86.ActiveCfg = Release|Any CPU
 		{CE4335D4-37D4-4C88-9D3B-7B90DA19311A}.Release|x86.Build.0 = Release|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Debug|x86.Build.0 = Debug|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Release|x86.ActiveCfg = Release|Any CPU
+		{40793A27-478B-4357-B4C3-FC8943131F3D}.Release|x86.Build.0 = Release|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Debug|x86.Build.0 = Debug|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Release|x86.ActiveCfg = Release|Any CPU
+		{F438D0E0-AC7D-4979-8052-D0CC520D006C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
