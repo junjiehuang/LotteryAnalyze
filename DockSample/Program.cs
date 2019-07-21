@@ -14,7 +14,8 @@ namespace DockSample
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AirStudio.MainWindow());
+            //Application.Run(new AirStudio.MainWindow());
+            Application.Run(new MainForm());
         }
     }
 }
