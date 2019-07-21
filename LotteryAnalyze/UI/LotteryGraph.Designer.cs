@@ -4,29 +4,29 @@ namespace LotteryAnalyze.UI
 {
     partial class LotteryGraph
     {
-        void CreateUpAndDownPanel()
-        {
-#if FIX_DISIGNER
-            //this.panelUp = new System.Windows.Forms.Panel();
-#else
-            if(this.panelUp != null)
-            {
-                this.panelUp.Dispose();
-                this.panelUp = null;
-            }
-            this.panelUp = new ExtPanel();
-#endif
-#if FIX_DISIGNER
-            //this.panelDown = new System.Windows.Forms.Panel();
-#else
-            if (this.panelDown != null)
-            {
-                this.panelDown.Dispose();
-                this.panelDown = null;
-            }
-            this.panelDown = new ExtPanel();
-#endif
-        }
+//        void CreateUpAndDownPanel()
+//        {
+//#if FIX_DISIGNER
+//            //this.panelUp = new System.Windows.Forms.Panel();
+//#else
+//            if(this.panelUp != null)
+//            {
+//                this.panelUp.Dispose();
+//                this.panelUp = null;
+//            }
+//            this.panelUp = new ExtPanel();
+//#endif
+//#if FIX_DISIGNER
+//            //this.panelDown = new System.Windows.Forms.Panel();
+//#else
+//            if (this.panelDown != null)
+//            {
+//                this.panelDown.Dispose();
+//                this.panelDown = null;
+//            }
+//            this.panelDown = new ExtPanel();
+//#endif
+//        }
 
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace LotteryAnalyze.UI
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panelUp = new System.Windows.Forms.Panel();
+            this.panelUp = new CustomUI.DoubleBufferPanel();
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.delSelAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAllLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +87,7 @@ namespace LotteryAnalyze.UI
             this.autoAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonVertExpand = new System.Windows.Forms.Button();
             this.buttonHorzExpand = new System.Windows.Forms.Button();
-            this.panelDown = new System.Windows.Forms.Panel();
+            this.panelDown = new CustomUI.DoubleBufferPanel();
             this.textBoxRefreshTimeLength = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
@@ -163,7 +163,7 @@ namespace LotteryAnalyze.UI
             this.comboBoxKDataCircle = new System.Windows.Forms.ComboBox();
             this.setBreakPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            CreateUpAndDownPanel();
+            //CreateUpAndDownPanel();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1436,12 +1436,12 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxMACD;
         private System.Windows.Forms.CheckBox checkBoxBollinBand;
-        private System.Windows.Forms.Panel panelUp;
+        private CustomUI.DoubleBufferPanel panelUp;
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxGridScaleH;
         private System.Windows.Forms.TextBox textBoxGridScaleW;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Panel panelDown;
+        private CustomUI.DoubleBufferPanel panelDown;
         private System.Windows.Forms.ToolStripMenuItem autoAllignToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxOperations;
         private System.Windows.Forms.Label label10;

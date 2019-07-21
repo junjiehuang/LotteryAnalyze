@@ -192,6 +192,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CustomUI\CustomUI.csproj">
+      <Project>{ce4335d4-37d4-4c88-9d3b-7b90da19311a}</Project>
+      <Name>CustomUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HtmlAgilityPack1_4_0\HtmlAgilityPack\HtmlAgilityPack_Main.csproj">
       <Project>{193bb801-054f-4729-9d5d-fce1e32594bf}</Project>
       <Name>HtmlAgilityPack_Main</Name>
