@@ -85,6 +85,8 @@ namespace LotteryAnalyze.UI
             this.cancelAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyAuxLineColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoAddAuxLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.setBreakPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonVertExpand = new System.Windows.Forms.Button();
             this.buttonHorzExpand = new System.Windows.Forms.Button();
             this.panelDown = new CustomUI.DoubleBufferPanel();
@@ -99,6 +101,7 @@ namespace LotteryAnalyze.UI
             this.label4 = new System.Windows.Forms.Label();
             this.tabControlView = new System.Windows.Forms.TabControl();
             this.tabPageKGraph = new System.Windows.Forms.TabPage();
+            this.comboBoxKDataCircle = new System.Windows.Forms.ComboBox();
             this.checkBoxKRuler = new System.Windows.Forms.CheckBox();
             this.trackBarKData = new System.Windows.Forms.TrackBar();
             this.checkBoxShowAuxLines = new System.Windows.Forms.CheckBox();
@@ -160,10 +163,8 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxKDataCircle = new System.Windows.Forms.ComboBox();
-            this.setBreakPointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            //CreateUpAndDownPanel();
+            this.trackBarAppearRate = new System.Windows.Forms.TrackBar();
+            this.trackBarMissCount = new System.Windows.Forms.TrackBar();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -184,6 +185,8 @@ namespace LotteryAnalyze.UI
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
             this.tabPageAppearence.SuspendLayout();
             this.tabPageMissCount.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -465,6 +468,18 @@ namespace LotteryAnalyze.UI
             this.autoAddAuxLineToolStripMenuItem.Text = "自动添加辅助线";
             this.autoAddAuxLineToolStripMenuItem.Click += new System.EventHandler(this.autoAddAuxLineToolStripMenuItem_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(169, 6);
+            // 
+            // setBreakPointToolStripMenuItem
+            // 
+            this.setBreakPointToolStripMenuItem.Name = "setBreakPointToolStripMenuItem";
+            this.setBreakPointToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.setBreakPointToolStripMenuItem.Text = "设置断点";
+            this.setBreakPointToolStripMenuItem.Click += new System.EventHandler(this.setBreakPointToolStripMenuItem_Click);
+            // 
             // buttonVertExpand
             // 
             this.buttonVertExpand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -632,6 +647,18 @@ namespace LotteryAnalyze.UI
             this.tabPageKGraph.Text = "K线图";
             this.tabPageKGraph.UseVisualStyleBackColor = true;
             // 
+            // comboBoxKDataCircle
+            // 
+            this.comboBoxKDataCircle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxKDataCircle.FormattingEnabled = true;
+            this.comboBoxKDataCircle.Location = new System.Drawing.Point(65, 7);
+            this.comboBoxKDataCircle.Margin = new System.Windows.Forms.Padding(8);
+            this.comboBoxKDataCircle.Name = "comboBoxKDataCircle";
+            this.comboBoxKDataCircle.Size = new System.Drawing.Size(243, 20);
+            this.comboBoxKDataCircle.TabIndex = 18;
+            this.comboBoxKDataCircle.SelectedIndexChanged += new System.EventHandler(this.comboBoxKDataCircle_SelectedIndexChanged);
+            // 
             // checkBoxKRuler
             // 
             this.checkBoxKRuler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -647,10 +674,10 @@ namespace LotteryAnalyze.UI
             // 
             // trackBarKData
             // 
-            this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.trackBarKData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarKData.AutoSize = false;
-            this.trackBarKData.Location = new System.Drawing.Point(5, 242);
+            this.trackBarKData.Location = new System.Drawing.Point(5, 248);
             this.trackBarKData.Name = "trackBarKData";
             this.trackBarKData.Size = new System.Drawing.Size(305, 36);
             this.trackBarKData.TabIndex = 16;
@@ -928,7 +955,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxCustomCollectRange.Location = new System.Drawing.Point(3, 100);
             this.textBoxCustomCollectRange.Name = "textBoxCustomCollectRange";
-            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(285, 21);
+            this.textBoxCustomCollectRange.Size = new System.Drawing.Size(309, 21);
             this.textBoxCustomCollectRange.TabIndex = 5;
             this.textBoxCustomCollectRange.TextChanged += new System.EventHandler(this.textBoxCustomCollectRange_TextChanged);
             // 
@@ -948,7 +975,7 @@ namespace LotteryAnalyze.UI
             this.comboBoxCollectRange.FormattingEnabled = true;
             this.comboBoxCollectRange.Location = new System.Drawing.Point(3, 61);
             this.comboBoxCollectRange.Name = "comboBoxCollectRange";
-            this.comboBoxCollectRange.Size = new System.Drawing.Size(285, 20);
+            this.comboBoxCollectRange.Size = new System.Drawing.Size(309, 20);
             this.comboBoxCollectRange.TabIndex = 3;
             this.comboBoxCollectRange.SelectedIndexChanged += new System.EventHandler(this.comboBoxCollectRange_SelectedIndexChanged);
             // 
@@ -968,7 +995,7 @@ namespace LotteryAnalyze.UI
             this.comboBoxBarCollectType.FormattingEnabled = true;
             this.comboBoxBarCollectType.Location = new System.Drawing.Point(3, 23);
             this.comboBoxBarCollectType.Name = "comboBoxBarCollectType";
-            this.comboBoxBarCollectType.Size = new System.Drawing.Size(285, 20);
+            this.comboBoxBarCollectType.Size = new System.Drawing.Size(309, 20);
             this.comboBoxBarCollectType.TabIndex = 1;
             this.comboBoxBarCollectType.SelectedIndexChanged += new System.EventHandler(this.comboBoxBarCollectType_SelectedIndexChanged);
             // 
@@ -1012,7 +1039,7 @@ namespace LotteryAnalyze.UI
             this.comboBoxTradeStrategy.FormattingEnabled = true;
             this.comboBoxTradeStrategy.Location = new System.Drawing.Point(79, 133);
             this.comboBoxTradeStrategy.Name = "comboBoxTradeStrategy";
-            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(207, 20);
+            this.comboBoxTradeStrategy.Size = new System.Drawing.Size(234, 20);
             this.comboBoxTradeStrategy.TabIndex = 14;
             this.comboBoxTradeStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeStrategy_SelectedIndexChanged);
             // 
@@ -1041,16 +1068,16 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartDataItem.Location = new System.Drawing.Point(79, 191);
             this.textBoxStartDataItem.Name = "textBoxStartDataItem";
-            this.textBoxStartDataItem.Size = new System.Drawing.Size(207, 21);
+            this.textBoxStartDataItem.Size = new System.Drawing.Size(234, 21);
             this.textBoxStartDataItem.TabIndex = 11;
             // 
             // trackBarTradeData
             // 
-            this.trackBarTradeData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.trackBarTradeData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarTradeData.Location = new System.Drawing.Point(1, 214);
+            this.trackBarTradeData.Location = new System.Drawing.Point(3, 241);
             this.trackBarTradeData.Name = "trackBarTradeData";
-            this.trackBarTradeData.Size = new System.Drawing.Size(285, 45);
+            this.trackBarTradeData.Size = new System.Drawing.Size(310, 45);
             this.trackBarTradeData.TabIndex = 10;
             this.trackBarTradeData.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarTradeData.Scroll += new System.EventHandler(this.trackBarTradeData_Scroll);
@@ -1061,7 +1088,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxStartMoney.Location = new System.Drawing.Point(79, 105);
             this.textBoxStartMoney.Name = "textBoxStartMoney";
-            this.textBoxStartMoney.Size = new System.Drawing.Size(207, 21);
+            this.textBoxStartMoney.Size = new System.Drawing.Size(234, 21);
             this.textBoxStartMoney.TabIndex = 9;
             this.textBoxStartMoney.TextChanged += new System.EventHandler(this.textBoxStartMoney_TextChanged);
             // 
@@ -1081,7 +1108,7 @@ namespace LotteryAnalyze.UI
             this.comboBoxTradeNumIndex.FormattingEnabled = true;
             this.comboBoxTradeNumIndex.Location = new System.Drawing.Point(79, 79);
             this.comboBoxTradeNumIndex.Name = "comboBoxTradeNumIndex";
-            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(207, 20);
+            this.comboBoxTradeNumIndex.Size = new System.Drawing.Size(234, 20);
             this.comboBoxTradeNumIndex.TabIndex = 7;
             this.comboBoxTradeNumIndex.SelectedIndexChanged += new System.EventHandler(this.comboBoxTradeNumIndex_SelectedIndexChanged);
             // 
@@ -1111,7 +1138,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCommitTradeCount.Location = new System.Drawing.Point(1, 159);
             this.buttonCommitTradeCount.Name = "buttonCommitTradeCount";
-            this.buttonCommitTradeCount.Size = new System.Drawing.Size(285, 23);
+            this.buttonCommitTradeCount.Size = new System.Drawing.Size(312, 23);
             this.buttonCommitTradeCount.TabIndex = 4;
             this.buttonCommitTradeCount.Text = "提交交易设定";
             this.buttonCommitTradeCount.UseVisualStyleBackColor = true;
@@ -1123,7 +1150,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDefaultCount.Location = new System.Drawing.Point(79, 31);
             this.textBoxDefaultCount.Name = "textBoxDefaultCount";
-            this.textBoxDefaultCount.Size = new System.Drawing.Size(207, 21);
+            this.textBoxDefaultCount.Size = new System.Drawing.Size(234, 21);
             this.textBoxDefaultCount.TabIndex = 3;
             // 
             // label12
@@ -1141,7 +1168,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMultiCount.Location = new System.Drawing.Point(79, 4);
             this.textBoxMultiCount.Name = "textBoxMultiCount";
-            this.textBoxMultiCount.Size = new System.Drawing.Size(207, 21);
+            this.textBoxMultiCount.Size = new System.Drawing.Size(234, 21);
             this.textBoxMultiCount.TabIndex = 1;
             // 
             // label11
@@ -1155,6 +1182,7 @@ namespace LotteryAnalyze.UI
             // 
             // tabPageAppearence
             // 
+            this.tabPageAppearence.Controls.Add(this.trackBarAppearRate);
             this.tabPageAppearence.Controls.Add(this.label18);
             this.tabPageAppearence.Controls.Add(this.comboBoxAppearenceType);
             this.tabPageAppearence.Controls.Add(this.groupBoxCDTShowSetting);
@@ -1193,7 +1221,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxCDTShowSetting.Location = new System.Drawing.Point(4, 46);
             this.groupBoxCDTShowSetting.Name = "groupBoxCDTShowSetting";
-            this.groupBoxCDTShowSetting.Size = new System.Drawing.Size(310, 257);
+            this.groupBoxCDTShowSetting.Size = new System.Drawing.Size(310, 200);
             this.groupBoxCDTShowSetting.TabIndex = 1;
             this.groupBoxCDTShowSetting.TabStop = false;
             this.groupBoxCDTShowSetting.Text = "曲线显示选项";
@@ -1211,6 +1239,7 @@ namespace LotteryAnalyze.UI
             // 
             // tabPageMissCount
             // 
+            this.tabPageMissCount.Controls.Add(this.trackBarMissCount);
             this.tabPageMissCount.Controls.Add(this.label16);
             this.tabPageMissCount.Controls.Add(this.comboBoxMissCountType);
             this.tabPageMissCount.Controls.Add(this.groupBoxMissCountCDTShowSetting);
@@ -1249,7 +1278,7 @@ namespace LotteryAnalyze.UI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxMissCountCDTShowSetting.Location = new System.Drawing.Point(4, 46);
             this.groupBoxMissCountCDTShowSetting.Name = "groupBoxMissCountCDTShowSetting";
-            this.groupBoxMissCountCDTShowSetting.Size = new System.Drawing.Size(310, 238);
+            this.groupBoxMissCountCDTShowSetting.Size = new System.Drawing.Size(310, 200);
             this.groupBoxMissCountCDTShowSetting.TabIndex = 3;
             this.groupBoxMissCountCDTShowSetting.TabStop = false;
             this.groupBoxMissCountCDTShowSetting.Text = "曲线显示选项";
@@ -1321,29 +1350,29 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // setBreakPointToolStripMenuItem
+            // trackBarAppearRate
             // 
-            this.setBreakPointToolStripMenuItem.Name = "setBreakPointToolStripMenuItem";
-            this.setBreakPointToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.setBreakPointToolStripMenuItem.Text = "设置断点";
-            this.setBreakPointToolStripMenuItem.Click += new System.EventHandler(this.setBreakPointToolStripMenuItem_Click);
-            // 
-            // comboBoxKDataCircle
-            // 
-            this.comboBoxKDataCircle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.trackBarAppearRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxKDataCircle.FormattingEnabled = true;
-            this.comboBoxKDataCircle.Location = new System.Drawing.Point(65, 7);
-            this.comboBoxKDataCircle.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.comboBoxKDataCircle.Name = "comboBoxKDataCircle";
-            this.comboBoxKDataCircle.Size = new System.Drawing.Size(243, 38);
-            this.comboBoxKDataCircle.TabIndex = 18;
-            this.comboBoxKDataCircle.SelectedIndexChanged += new System.EventHandler(this.comboBoxKDataCircle_SelectedIndexChanged);
+            this.trackBarAppearRate.AutoSize = false;
+            this.trackBarAppearRate.Location = new System.Drawing.Point(4, 250);
+            this.trackBarAppearRate.Name = "trackBarAppearRate";
+            this.trackBarAppearRate.Size = new System.Drawing.Size(309, 36);
+            this.trackBarAppearRate.TabIndex = 17;
+            this.trackBarAppearRate.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarAppearRate.Scroll += new System.EventHandler(this.trackBarAppearRate_Scroll);
             // 
-            // toolStripSeparator3
+            // trackBarMissCount
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(169, 6);
+            this.trackBarMissCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarMissCount.AutoSize = false;
+            this.trackBarMissCount.Location = new System.Drawing.Point(4, 250);
+            this.trackBarMissCount.Name = "trackBarMissCount";
+            this.trackBarMissCount.Size = new System.Drawing.Size(305, 36);
+            this.trackBarMissCount.TabIndex = 17;
+            this.trackBarMissCount.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarMissCount.Scroll += new System.EventHandler(this.trackBarMissCount_Scroll);
             // 
             // LotteryGraph
             // 
@@ -1357,8 +1386,8 @@ namespace LotteryAnalyze.UI
             this.Name = "LotteryGraph";
             this.Text = "LotteryGraph";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LotteryGraph_FormClosed);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             this.menuStripGraph.ResumeLayout(false);
             this.menuStripGraph.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1387,6 +1416,8 @@ namespace LotteryAnalyze.UI
             this.tabPageAppearence.PerformLayout();
             this.tabPageMissCount.ResumeLayout(false);
             this.tabPageMissCount.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1506,5 +1537,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem setBreakPointToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBoxKDataCircle;
+        private System.Windows.Forms.TrackBar trackBarAppearRate;
+        private System.Windows.Forms.TrackBar trackBarMissCount;
     }
 }

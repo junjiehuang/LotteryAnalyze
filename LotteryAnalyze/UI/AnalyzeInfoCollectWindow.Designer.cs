@@ -119,7 +119,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDataAnalyseType.FormattingEnabled = true;
             this.comboBoxDataAnalyseType.Location = new System.Drawing.Point(98, 163);
-            this.comboBoxDataAnalyseType.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.comboBoxDataAnalyseType.Margin = new System.Windows.Forms.Padding(1);
             this.comboBoxDataAnalyseType.Name = "comboBoxDataAnalyseType";
             this.comboBoxDataAnalyseType.Size = new System.Drawing.Size(402, 20);
             this.comboBoxDataAnalyseType.TabIndex = 7;
@@ -162,6 +162,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(510, 291);
             this.Controls.Add(this.buttonImportData);
             this.Controls.Add(this.buttonStop);

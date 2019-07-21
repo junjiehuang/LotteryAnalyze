@@ -271,6 +271,11 @@ namespace LotteryAnalyze.UI
             trackBarKData.Maximum = GraphDataManager.KGDC.DataLength();
             trackBarTradeData.Minimum = 0;
             trackBarTradeData.Maximum = TradeDataManager.Instance.historyTradeDatas.Count;
+            trackBarMissCount.Minimum = 0;
+            trackBarMissCount.Maximum = DataManager.GetInst().GetAllDataItemCount();
+            trackBarAppearRate.Minimum = 0;
+            trackBarAppearRate.Maximum = DataManager.GetInst().GetAllDataItemCount();
+
             if (hasNewDataUpdate)
             {
                 if (curUpdatePen == redPen || curUpdatePen == yellowPen)
@@ -1513,6 +1518,18 @@ namespace LotteryAnalyze.UI
         {
             GraphDataManager.CurrentCircle = GraphDataManager.G_Circles[comboBoxKDataCircle.SelectedIndex];
             this.Invalidate(true);
+        }
+
+        private void trackBarAppearRate_Scroll(object sender, EventArgs e)
+        {
+            graphMgr.appearenceGraph.ScrollToData(trackBarAppearRate.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
+            this.Invalidate(true);//触发Paint事件
+        }
+
+        private void trackBarMissCount_Scroll(object sender, EventArgs e)
+        {
+            graphMgr.missCountGraph.ScrollToData(trackBarMissCount.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
+            this.Invalidate(true);//触发Paint事件
         }
     }
 }
