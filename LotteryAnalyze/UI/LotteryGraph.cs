@@ -35,6 +35,7 @@ namespace LotteryAnalyze.UI
         DataItem itemSel = null;
 
         bool isAddingAuxLine = false;
+        bool needRefresh = false;
 
         #region ctor and common
 
@@ -255,6 +256,11 @@ namespace LotteryAnalyze.UI
                     updateCountDown -= Program.DeltaTime;
                 }
             }
+            if (needRefresh)
+            {
+                this.Invalidate(true);
+            }
+            needRefresh = false;
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -449,7 +455,7 @@ namespace LotteryAnalyze.UI
                 }
             }
             if (needUpdate)
-                this.Invalidate(true);//触发Paint事件
+                RefreshPanel();//触发Paint事件
 
             lastMouseMovePos = e.Location;
         }
@@ -472,7 +478,7 @@ namespace LotteryAnalyze.UI
                         graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
                 }
             }
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         private void CollectBarGraphData(DataItem item)
@@ -751,7 +757,7 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.mouseHitPts.Clear();
             }
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
         private void panelDown_MouseMove(object sender, MouseEventArgs e)
         {
@@ -768,7 +774,7 @@ namespace LotteryAnalyze.UI
                     graphMgr.kvalueGraph.DownGraphYOffset += dy;
                 }
             }
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         private void panelDown_MouseDown(object sender, MouseEventArgs e)
@@ -808,14 +814,14 @@ namespace LotteryAnalyze.UI
         private void trackBarKData_Scroll(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         private void trackBarTradeData_Scroll(object sender, EventArgs e)
         {
             TradeDataManager tdm = TradeDataManager.Instance;
             graphMgr.tradeGraph.ScrollToData(trackBarTradeData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         #endregion
@@ -838,7 +844,7 @@ namespace LotteryAnalyze.UI
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         protected override void WndProc(ref Message m)
@@ -882,7 +888,7 @@ namespace LotteryAnalyze.UI
             {
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             }
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         private void comboBoxCollectionDataType_SelectedIndexChanged(object sender, EventArgs e)
@@ -894,7 +900,7 @@ namespace LotteryAnalyze.UI
             {
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             }
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
         }
 
         private void textBoxCycleLength_TextChanged(object sender, EventArgs e)
@@ -906,18 +912,18 @@ namespace LotteryAnalyze.UI
             //    {
             //        GraphDataManager.KGDC.CycleLength = value;
             //        GraphDataManager.KGDC.CollectGraphData();
-            //        this.Invalidate(true);//触发Paint事件
+            //        RefreshPanel();//触发Paint事件
             //    }
             //}
         }
-        
+
         private void tabControlView_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.SetCurrentGraph((GraphType)(tabControlView.SelectedIndex+1));
             if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
             SetUIGridWH();
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void comboBoxBarCollectType_SelectedIndexChanged(object sender, EventArgs e)
@@ -925,7 +931,7 @@ namespace LotteryAnalyze.UI
             GraphDataManager.BGDC.curStatisticsType = (BarGraphDataContianer.StatisticsType)comboBoxBarCollectType.SelectedIndex;
             if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void comboBoxCollectRange_SelectedIndexChanged(object sender, EventArgs e)
@@ -933,7 +939,7 @@ namespace LotteryAnalyze.UI
             GraphDataManager.BGDC.curStatisticsRange = (BarGraphDataContianer.StatisticsRange)comboBoxCollectRange.SelectedIndex;
             if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void textBoxCustomCollectRange_TextChanged(object sender, EventArgs e)
@@ -941,7 +947,7 @@ namespace LotteryAnalyze.UI
             GraphDataManager.BGDC.customStatisticsRange = int.Parse(textBoxCustomCollectRange.Text);
             if (graphMgr.CurrentGraphType == GraphType.eBarGraph)
                 GraphDataManager.Instance.CollectGraphData(graphMgr.CurrentGraphType);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void comboBoxAvgAlgorithm_SelectedIndexChanged(object sender, EventArgs e)
@@ -949,7 +955,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.S_AVG_ALGORITHM = (AvgAlgorithm)comboBoxAvgAlgorithm.SelectedIndex;
             NotifyOtherGraphRefreshUI(this);
             GraphDataManager.KGDC.CollectAvgDatas();
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg5_CheckedChanged(object sender, EventArgs e)
@@ -957,7 +963,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg5.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg5.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg10_CheckedChanged(object sender, EventArgs e)
@@ -965,7 +971,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg10.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg10.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg20_CheckedChanged(object sender, EventArgs e)
@@ -973,7 +979,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg20.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg20.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg30_CheckedChanged(object sender, EventArgs e)
@@ -981,7 +987,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg30.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg30.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg50_CheckedChanged(object sender, EventArgs e)
@@ -989,7 +995,7 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg50.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg50.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxAvg100_CheckedChanged(object sender, EventArgs e)
@@ -997,19 +1003,19 @@ namespace LotteryAnalyze.UI
             KGraphDataContainer.AvgLineSetting als = checkBoxAvg100.Tag as KGraphDataContainer.AvgLineSetting;
             als.enable = checkBoxAvg100.Checked;
             NotifyOtherGraphRefreshUI(this);
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxBollinBand_CheckedChanged(object sender, EventArgs e)
         {
-           graphMgr.kvalueGraph.enableBollinBand = checkBoxBollinBand.Checked;
-            this.Invalidate(true);
+            graphMgr.kvalueGraph.enableBollinBand = checkBoxBollinBand.Checked;
+            RefreshPanel();
         }
 
         private void checkBoxMACD_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.enableMACD = checkBoxMACD.Checked;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void textBoxGridScaleH_TextChanged(object sender, EventArgs e)
@@ -1025,7 +1031,7 @@ namespace LotteryAnalyze.UI
                 graphMgr.kvalueGraph.gridScaleH = v;
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 graphMgr.tradeGraph.gridScaleH = v;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void textBoxGridScaleW_TextChanged(object sender, EventArgs e)
@@ -1041,7 +1047,7 @@ namespace LotteryAnalyze.UI
                 graphMgr.kvalueGraph.gridScaleW = v;
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 graphMgr.tradeGraph.gridScaleW = v;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void autoAllignToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1050,7 +1056,7 @@ namespace LotteryAnalyze.UI
                 graphMgr.kvalueGraph.autoAllign = true;
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
                 graphMgr.tradeGraph.autoAllign = true;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxShowAvgLines_CheckedChanged(object sender, EventArgs e)
@@ -1060,7 +1066,7 @@ namespace LotteryAnalyze.UI
             else
                 groupBoxAvgSettings.Enabled = false;
             graphMgr.kvalueGraph.enableAvgLines = checkBoxShowAvgLines.Checked;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void comboBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
@@ -1070,12 +1076,12 @@ namespace LotteryAnalyze.UI
         private void delAllAuxLinesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.RemoveAllAuxLines();
-            this.Invalidate(true);
+            RefreshPanel();
         }
         private void checkBoxShowAuxLines_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.enableAuxiliaryLine = checkBoxShowAuxLines.Checked;
-            this.Invalidate(true);
+            RefreshPanel();
         }
         private void cancelAddAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1230,7 +1236,7 @@ namespace LotteryAnalyze.UI
                     curCDTIndex = comboBoxCollectionDataType.SelectedIndex;
                     curCDT = GraphDataManager.S_CDT_LIST[curCDTIndex];
                     numberIndex = fc.numIndex;
-                    this.Invalidate(true);//触发Paint事件
+                    RefreshPanel();
                 }
             }
         }
@@ -1328,7 +1334,7 @@ namespace LotteryAnalyze.UI
             DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
             CollectBarGraphData(curItem);
 
-            //this.Invalidate(true);
+            //RefreshPanel();
         }
 
         public static void OnSelectDataItemOuter(int dataItemIndex, int tradeIndex)
@@ -1371,7 +1377,7 @@ namespace LotteryAnalyze.UI
                     true, xOffSet);
             }
             trackBarTradeData.Value = trackBarTradeData.Maximum;
-            this.Invalidate(true);
+            RefreshPanel();
             textBoxStartDataItem.Text = graphMgr.endShowDataItemIndex.ToString();
 
             DataItem curItem = DataManager.GetInst().FindDataItem(graphMgr.endShowDataItemIndex);
@@ -1381,13 +1387,13 @@ namespace LotteryAnalyze.UI
         private void buttonHorzExpand_Click(object sender, EventArgs e)
         {
             splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void buttonVertExpand_Click(object sender, EventArgs e)
         {
             splitContainer2.Panel2Collapsed = !splitContainer2.Panel2Collapsed;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void simTradeOneStepToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1404,14 +1410,14 @@ namespace LotteryAnalyze.UI
             if (e.KeyCode == Keys.Oemplus)
             {
                 GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT++;
-                this.Invalidate(true);
+                RefreshPanel();
             }
             else if (e.KeyCode == Keys.OemMinus)
             {
                 if (GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT > 1)
                 {
                     GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT--;
-                    this.Invalidate(true);
+                    RefreshPanel();
                 }
             }
         }
@@ -1433,14 +1439,14 @@ namespace LotteryAnalyze.UI
                 //else if (e.KeyCode == Keys.Oemplus)
                 //{
                 //    GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT++;
-                //    this.Invalidate(true);
+                //    RefreshPanel();
                 //}
                 //else if (e.KeyCode == Keys.OemMinus)
                 //{
                 //    if (GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT > 1)
                 //    {
                 //        GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT--;
-                //        this.Invalidate(true);
+                //        RefreshPanel();
                 //    }
                 //}
             }
@@ -1454,19 +1460,19 @@ namespace LotteryAnalyze.UI
         private void checkBoxShowSingleLine_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.appearenceGraph.onlyShowSelectCDTLine = checkBoxShowSingleLine.Checked;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void checkBoxMissCountShowSingleLine_CheckedChanged(object sender, EventArgs e)
         {
             graphMgr.missCountGraph.onlyShowSelectCDTLine = checkBoxMissCountShowSingleLine.Checked;
-            this.Invalidate(true);
+            RefreshPanel();
         }
         
         private void comboBoxMissCountType_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.missCountGraph.missCountType = (GraphMissCount.MissCountType)comboBoxMissCountType.SelectedIndex;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void textBoxRefreshTimeLength_TextChanged(object sender, EventArgs e)
@@ -1479,13 +1485,13 @@ namespace LotteryAnalyze.UI
             if (GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL < 10)
                 GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL = 10;
             textBoxRefreshTimeLength.Text = GlobalSetting.G_LOTTERY_GRAPH_UPDATE_INTERVAL.ToString();
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void comboBoxAppearenceType_SelectedIndexChanged(object sender, EventArgs e)
         {
             graphMgr.appearenceGraph.AppearenceCycleType = (GraphAppearence.AppearenceType)comboBoxAppearenceType.SelectedIndex;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void loadNextBatchDatasToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1498,7 +1504,7 @@ namespace LotteryAnalyze.UI
                 graphMgr.kvalueGraph.ScrollToData(item.idGlobal, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
             }
             graphMgr.endShowDataItemIndex = TradeDataManager.Instance.historyTradeDatas.Count - 1;
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void refreshLatestDataToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1517,19 +1523,28 @@ namespace LotteryAnalyze.UI
         private void comboBoxKDataCircle_SelectedIndexChanged(object sender, EventArgs e)
         {
             GraphDataManager.CurrentCircle = GraphDataManager.G_Circles[comboBoxKDataCircle.SelectedIndex];
-            this.Invalidate(true);
+            RefreshPanel();
         }
 
         private void trackBarAppearRate_Scroll(object sender, EventArgs e)
         {
             graphMgr.appearenceGraph.ScrollToData(trackBarAppearRate.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();
         }
 
         private void trackBarMissCount_Scroll(object sender, EventArgs e)
         {
             graphMgr.missCountGraph.ScrollToData(trackBarMissCount.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
-            this.Invalidate(true);//触发Paint事件
+            RefreshPanel();//触发Paint事件
+        }
+
+
+        void RefreshPanel()
+        {
+            //if (needRefresh)
+            //    return;
+            needRefresh = true;
+            //this.Invalidate(true);//触发Paint事件
         }
     }
 }
