@@ -394,8 +394,10 @@ namespace LotteryAnalyze
     class GraphBase
     {
         public GraphManager parent = null;
-        public float gridScaleH = 20;
-        public float gridScaleW = 5;
+        //public float gridScaleH = 20;
+        //public float gridScaleW = 5;
+        public PointF gridScaleUp = new PointF(5, 20);
+        public PointF gridScaleDown = new Point(5, 20);
         public PointF canvasOffset = new PointF(0, 0);
         public PointF downCanvasOffset = new PointF(0, 0);
 
@@ -415,32 +417,32 @@ namespace LotteryAnalyze
                 return downCanvasOffset.Y - v;
         }
 
-        public float CanvasToStand(float v, bool isX)
+        public float UpCanvasToStand(float v, bool isX)
         {
             if (isX)
                 return (v + canvasOffset.X);
             else
                 return (canvasOffset.Y) - v;
         }
-        public float StandToCanvas(float v, bool isX)
+        public float UpStandToCanvas(float v, bool isX)
         {
             if (isX)
                 return v - canvasOffset.X;
             else
                 return canvasOffset.Y - v;
         }
-        public Point CanvasToStand(Point pt)
+        public Point UpCanvasToStand(Point pt)
         {
             Point res = new Point();
-            res.X = (int)CanvasToStand((float)pt.X, true);
-            res.Y = (int)CanvasToStand((float)pt.Y, false);
+            res.X = (int)UpCanvasToStand((float)pt.X, true);
+            res.Y = (int)UpCanvasToStand((float)pt.Y, false);
             return res;
         }
-        public Point StandToCanvas(Point pt)
+        public Point UpStandToCanvas(Point pt)
         {
             Point res = new Point();
-            res.X = (int)StandToCanvas((float)pt.X, true);
-            res.Y = (int)StandToCanvas((float)pt.Y, false);
+            res.X = (int)UpStandToCanvas((float)pt.X, true);
+            res.Y = (int)UpStandToCanvas((float)pt.Y, false);
             return res;
         }
 
@@ -457,6 +459,38 @@ namespace LotteryAnalyze
             res.X = (int)DownStandToCanvas((float)pt.X, true);
             res.Y = (int)DownStandToCanvas((float)pt.Y, false);
             return res;
+        }
+
+        public float StandToCanvas(float v, bool isX, bool upPanel)
+        {
+            if (upPanel)
+                return UpStandToCanvas(v, isX);
+            else
+                return DownStandToCanvas(v, isX);
+        }
+
+        public float CanvasToStand(float v, bool isX, bool upPanel)
+        {
+            if (upPanel)
+                return UpCanvasToStand(v, isX);
+            else
+                return DownCanvasToStand(v, isX);
+        }
+
+        public Point StandToCanvas(Point pt, bool upPanel)
+        {
+            if (upPanel)
+                return UpStandToCanvas(pt);
+            else
+                return DownStandToCanvas(pt);
+        }
+
+        public Point CanvasToStand(Point pt, bool upPanel)
+        {
+            if (upPanel)
+                return UpCanvasToStand(pt);
+            else
+                return DownCanvasToStand(pt);
         }
 
 
@@ -595,7 +629,7 @@ namespace LotteryAnalyze
         {
             if (GraphDataManager.Instance.HasData(GraphType.eKCurveGraph) == false)
                 return false;
-            int curIndex = (int)((mousePos.X + canvasOffset.X) / gridScaleW);
+            int curIndex = (int)((mousePos.X + canvasOffset.X) / gridScaleUp.X);
             if (curIndex == preViewDataIndex)
                 return false;
             return true;
@@ -639,10 +673,10 @@ namespace LotteryAnalyze
             {
                 if (kddc.dataLst.Count > 0)
                 {
-                    int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                    int startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
                     if (startIndex < 0)
                         startIndex = 0;
-                    int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                    int endIndex = (int)((canvasOffset.X + winW) / gridScaleUp.X) + 1;
                     if (endIndex > kddc.dataLst.Count)
                         endIndex = kddc.dataLst.Count;
                     if(parent.endShowDataItemIndex != -1)
@@ -656,10 +690,10 @@ namespace LotteryAnalyze
                     // 自动对齐
                     if (autoAllign)
                     {
-                        float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleH;
+                        float endY = kddc.dataLst[endIndex - 1].dataDict[cdt].KValue * gridScaleUp.Y;
                         if(selectKDataIndex >= 0 && selectKDataIndex < kddc.dataLst.Count)
-                            endY = kddc.dataLst[selectKDataIndex].dataDict[cdt].KValue * gridScaleH;
-                        float relEY = StandToCanvas(endY, false);
+                            endY = kddc.dataLst[selectKDataIndex].dataDict[cdt].KValue * gridScaleUp.Y;
+                        float relEY = StandToCanvas(endY, false, true);
                         bool isEYOut = relEY < 0 || relEY > winH;
                         if (isEYOut)
                             canvasOffset.Y = endY + winH * 0.5f;
@@ -691,10 +725,10 @@ namespace LotteryAnalyze
                                 lastValue = 0;
                                 findPrevPt = false;
 
-                                startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                                startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
                                 if (startIndex < 0)
                                     startIndex = 1;
-                                endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                                endIndex = (int)((canvasOffset.X + winW) / gridScaleUp.X) + 1;
                                 if (endIndex > adc.avgPointMapLst.Count)
                                     endIndex = adc.avgPointMapLst.Count;
                                 if (parent.endShowDataItemIndex != -1)
@@ -757,11 +791,11 @@ namespace LotteryAnalyze
                 // 画辅助线
                 if(enableAuxiliaryLine)
                 {
-                    DrawAuxLineGraph(g, winW, winH, mouseRelPos, numIndex, cdt);
+                    DrawAuxLineGraph(g, winW, winH, mouseRelPos, numIndex, cdt, auxiliaryLineListUpPanel, mouseHitPtsUpPanel, true);
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
-                float kValueMouse = CanvasToStand(mouseRelPos.Y, false) / gridScaleH;
+                float kValueMouse = CanvasToStand(mouseRelPos.Y, false, true) / gridScaleUp.Y;
                 g.DrawString(kValueMouse.ToString("f3"), selDataFont, whiteBrush, winW - 80, mouseRelPos.Y - 20);
                 //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
             }
@@ -784,14 +818,14 @@ namespace LotteryAnalyze
                 int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
                 float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
 
-                float oriYOff = canvasOffset.Y;
-                canvasOffset.Y = winH * 0.5f + DownGraphYOffset;
+                float oriYOff = downCanvasOffset.Y;
+                downCanvasOffset.Y = winH * 0.5f + DownGraphYOffset;
                 lastValue = 0;
                 findPrevPt = false;
-                int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+                int startIndex = (int)(canvasOffset.X / gridScaleDown.X) - 1;
                 if (startIndex < 0)
                     startIndex = 0;
-                int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+                int endIndex = (int)((canvasOffset.X + winW) / gridScaleDown.X) + 1;
                 if (parent.endShowDataItemIndex != -1)
                 {
                     if (endIndex > parent.endShowDataItemIndex + 1)
@@ -811,8 +845,8 @@ namespace LotteryAnalyze
                     MACDPoint mp = mpm.GetData(cdt, false);
                     MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
                     float _gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
-                    float CX = StandToCanvas(preViewDataIndex * gridScaleW, true);
-                    float CY = StandToCanvas(mp.DIF * _gridScaleH, false);
+                    float CX = StandToCanvas(preViewDataIndex * gridScaleDown.X, true, false);
+                    float CY = StandToCanvas(mp.DIF * _gridScaleH, false, false);
 
                     if (mpm.index >= 1 && mp.LEFT_DIF_INDEX != -1)
                     {
@@ -840,10 +874,10 @@ namespace LotteryAnalyze
                         {
                             MACDPointMap mpm1 = kddc.macdDataLst.macdMapLst[ids[i]];
                             MACDPointMap mpm2 = kddc.macdDataLst.macdMapLst[ids[i - 1]];
-                            float x1 = StandToCanvas(mpm1.index * gridScaleW, true);
-                            float x2 = StandToCanvas(mpm2.index * gridScaleW, true);
-                            float y1 = StandToCanvas(mpm1.GetData(cdt, false).DIF * _gridScaleH, false);
-                            float y2 = StandToCanvas(mpm2.GetData(cdt, false).DIF * _gridScaleH, false);
+                            float x1 = StandToCanvas(mpm1.index * gridScaleDown.X, true, false);
+                            float x2 = StandToCanvas(mpm2.index * gridScaleDown.X, true, false);
+                            float y1 = StandToCanvas(mpm1.GetData(cdt, false).DIF * _gridScaleH, false, false);
+                            float y2 = StandToCanvas(mpm2.GetData(cdt, false).DIF * _gridScaleH, false, false);
                             g.DrawLine(greenLinePen, x1, y1, x2, y2);
                         }
                     }
@@ -855,12 +889,18 @@ namespace LotteryAnalyze
 #endif
                 }
 
-                canvasOffset.Y = oriYOff;
+                downCanvasOffset.Y = oriYOff;
 
                 if (preViewDataIndex != -1)
                 {
                     g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
-                    g.DrawLine(grayDotLinePen, selDataPtX + gridScaleW, 0, selDataPtX + gridScaleW, winH);
+                    g.DrawLine(grayDotLinePen, selDataPtX + gridScaleDown.X, 0, selDataPtX + gridScaleDown.X, winH);
+                }
+
+                // 画辅助线
+                if (enableAuxiliaryLine)
+                {
+                    DrawAuxLineGraph(g, winW, winH, mouseRelPos, numIndex, cdt, auxiliaryLineListDownPanel, mouseHitPtsDownPanel, false);
                 }
             }
             EndDraw(g);
@@ -873,17 +913,17 @@ namespace LotteryAnalyze
                 selectKDataIndex = -1;
             if (needScrollToData)
             {
-                canvasOffset.X = index * gridScaleW + xOffset;
+                canvasOffset.X = index * gridScaleDown.X + xOffset;
             }
             autoAllign = true;
         }
 
-        public int SelectKData(Point mouseRelPos)
+        public int SelectKData(Point mouseRelPos, bool upPanel)
         {
             DataManager dm = DataManager.GetInst();
             selectKDataIndex = -1;
-            Point standMousePos = CanvasToStand(mouseRelPos);
-            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+            Point standMousePos = CanvasToStand(mouseRelPos, upPanel);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleUp.X);
             if (mouseHoverID >= dm.GetAllDataItemCount())
                 mouseHoverID = -1;
             selectKDataIndex = mouseHoverID;
@@ -898,7 +938,7 @@ namespace LotteryAnalyze
 
         public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
         {
-            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
             if (startIndex < 0)
                 startIndex = 0;
             maxIndex = GraphDataManager.KGDC.DataLength();
@@ -910,7 +950,7 @@ namespace LotteryAnalyze
             {
                 if (selAuxLineUpPanel != null && selAuxLinePointIndexUpPanel >= 0 && selAuxLinePointIndexUpPanel < selAuxLineUpPanel.keyPoints.Count)
                 {
-                    selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel] = CanvasToStand(mouseRelPos);
+                    selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel] = CanvasToStand(mouseRelPos, upPanel);
                     if (selAuxLineUpPanel.lineType == AuxLineType.eCircleLine)
                     {
                         (selAuxLineUpPanel as CircleLine).CalcRect();
@@ -930,7 +970,7 @@ namespace LotteryAnalyze
             {
                 if (selAuxLineDownPanel != null && selAuxLinePointIndexDownPanel >= 0 && selAuxLinePointIndexDownPanel < selAuxLineDownPanel.keyPoints.Count)
                 {
-                    selAuxLineDownPanel.keyPoints[selAuxLinePointIndexDownPanel] = CanvasToStand(mouseRelPos);
+                    selAuxLineDownPanel.keyPoints[selAuxLinePointIndexDownPanel] = CanvasToStand(mouseRelPos, upPanel);
                     if (selAuxLineDownPanel.lineType == AuxLineType.eCircleLine)
                     {
                         (selAuxLineDownPanel as CircleLine).CalcRect();
@@ -954,7 +994,7 @@ namespace LotteryAnalyze
             {
                 selAuxLineUpPanel = null;
                 selAuxLinePointIndexUpPanel = -1;
-                Point standMousePos = CanvasToStand(mouseRelPos);
+                Point standMousePos = CanvasToStand(mouseRelPos, upPanel);
                 for (int i = 0; i < auxiliaryLineListUpPanel.Count; ++i)
                 {
                     AuxiliaryLine al = auxiliaryLineListUpPanel[i];
@@ -1018,7 +1058,7 @@ namespace LotteryAnalyze
             HorzLine line = new HorzLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add( CanvasToStand(pt) );
+            line.keyPoints.Add( CanvasToStand(pt, upPanel) );
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddVertLine(Point pt, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1026,7 +1066,7 @@ namespace LotteryAnalyze
             VertLine line = new VertLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(pt));
+            line.keyPoints.Add(CanvasToStand(pt, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddSingleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1034,8 +1074,8 @@ namespace LotteryAnalyze
             SingleLine line = new SingleLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(p1));
-            line.keyPoints.Add(CanvasToStand(p2));
+            line.keyPoints.Add(CanvasToStand(p1, upPanel));
+            line.keyPoints.Add(CanvasToStand(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddChannelLine(Point line0P1, Point line0P2, Point line1P, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1043,9 +1083,9 @@ namespace LotteryAnalyze
             ChannelLine line = new ChannelLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(line0P1));
-            line.keyPoints.Add(CanvasToStand(line0P2));
-            line.keyPoints.Add(CanvasToStand(line1P));
+            line.keyPoints.Add(CanvasToStand(line0P1, upPanel));
+            line.keyPoints.Add(CanvasToStand(line0P2, upPanel));
+            line.keyPoints.Add(CanvasToStand(line1P, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddGoldSegLine(Point p1, Point P2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1053,8 +1093,8 @@ namespace LotteryAnalyze
             GoldSegmentedLine line = new GoldSegmentedLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(p1));
-            line.keyPoints.Add(CanvasToStand(P2));
+            line.keyPoints.Add(CanvasToStand(p1, upPanel));
+            line.keyPoints.Add(CanvasToStand(P2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddCircleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1062,8 +1102,8 @@ namespace LotteryAnalyze
             CircleLine line = new CircleLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(p1));
-            line.keyPoints.Add(CanvasToStand(p2));
+            line.keyPoints.Add(CanvasToStand(p1, upPanel));
+            line.keyPoints.Add(CanvasToStand(p2, upPanel));
             line.CalcRect();
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
@@ -1072,8 +1112,8 @@ namespace LotteryAnalyze
             ArrowLine line = new ArrowLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(p1));
-            line.keyPoints.Add(CanvasToStand(p2));
+            line.keyPoints.Add(CanvasToStand(p1, upPanel));
+            line.keyPoints.Add(CanvasToStand(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddRectLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1081,8 +1121,8 @@ namespace LotteryAnalyze
             RectLine line = new RectLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add(CanvasToStand(p1));
-            line.keyPoints.Add(CanvasToStand(p2));
+            line.keyPoints.Add(CanvasToStand(p1, upPanel));
+            line.keyPoints.Add(CanvasToStand(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
 
@@ -1183,50 +1223,18 @@ namespace LotteryAnalyze
         void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos, KDataDictContainer kddc, CollectDataType cdt)
         {
             KData prevData = data.GetPrevKData();
-
-            //if (prevData != null)
-            //    lastValue = prevData.KValue;
-            //else
-            //    lastValue = 0;
-            //float standX = data.index * gridScaleW;
-            //float valudChange = data.HitValue - data.MissValue * missRelHeight;
-            //float standY = lastValue * gridScaleH;
-            //float up = standY + data.HitValue * gridScaleH;
-            //float dowm = standY - data.MissValue * missRelHeight * gridScaleH;
-            //float rcY = standY;
-            //float rcH = Math.Abs(valudChange * gridScaleH);
-            //if (rcH < 1)
-            //    rcH = 1;
-            //if (valudChange > 0)
-            //    rcY += valudChange * gridScaleH;
-            //lastValue += valudChange;
-            //standX = StandToCanvas(standX, true);
-            //if (standX < 0 || standX > winW)
-            //    return;
-            //standY = StandToCanvas(standY, false);
-            //up = StandToCanvas(up, false);
-            //dowm = StandToCanvas(dowm, false);
-            //rcY = StandToCanvas(rcY, false);
-            //tmpBrush = valudChange > 0 ? redBrush : (valudChange < 0 ? cyanBrush : whiteBrush);
-            //Pen linePen = valudChange > 0 ? redLinePen : (valudChange < 0 ? cyanLinePen : whiteLinePen);
-            //float midX = standX + gridScaleW * 0.5f;
-            //g.DrawLine(linePen, midX, up, midX, dowm);
-            ////g.FillRectangle(tmpBrush, standX, rcY, gridScaleW, rcH);
-            ////PushLinePts(linePen, midX, up, midX, dowm);
-            //PushRcPts(tmpBrush, standX, rcY, gridScaleW, rcH);
-
-            float standX = data.index * gridScaleW;
-            float midX = standX + gridScaleW * 0.5f;
-            float up = data.UpValue * gridScaleH;
-            float down = data.DownValue * gridScaleH;
-            float start = data.StartValue * gridScaleH;
-            float end = data.EndValue * gridScaleH;
-            standX = StandToCanvas(standX, true);
-            midX = StandToCanvas(midX, true);
-            up = StandToCanvas(up, false);
-            down = StandToCanvas(down, false);
-            start = StandToCanvas(start, false);
-            end = StandToCanvas(end, false);
+            float standX = data.index * gridScaleUp.X;
+            float midX = standX + gridScaleUp.X * 0.5f;
+            float up = data.UpValue * gridScaleUp.Y;
+            float down = data.DownValue * gridScaleUp.Y;
+            float start = data.StartValue * gridScaleUp.Y;
+            float end = data.EndValue * gridScaleUp.Y;
+            standX = StandToCanvas(standX, true, true);
+            midX = StandToCanvas(midX, true, true);
+            up = StandToCanvas(up, false, true);
+            down = StandToCanvas(down, false, true);
+            start = StandToCanvas(start, false, true);
+            end = StandToCanvas(end, false, true);
             float rcY = data.StartValue > data.EndValue ? start : end;
             float rcH = Math.Abs(start - end);
             if (rcH < 1)
@@ -1234,15 +1242,15 @@ namespace LotteryAnalyze
             tmpBrush = data.EndValue > data.StartValue ? redBrush : (data.EndValue < data.StartValue ? cyanBrush : whiteBrush);
             Pen linePen = data.EndValue > data.StartValue ? redLinePen : (data.EndValue < data.StartValue ? cyanLinePen : whiteLinePen);
             g.DrawLine(linePen, midX, up, midX, down);
-            PushRcPts(tmpBrush, standX, rcY, gridScaleW, rcH);
+            PushRcPts(tmpBrush, standX, rcY, gridScaleUp.X, rcH);
 
 
-            if (preViewDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleW >= mouseRelPos.X)
+            if (preViewDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleUp.X >= mouseRelPos.X)
             {
                 selDataPtX = standX;
                 preViewDataIndex = data.index;
                 g.DrawLine(grayDotLinePen, standX, 0, standX, winH);
-                g.DrawLine(grayDotLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
+                g.DrawLine(grayDotLinePen, standX + gridScaleUp.X, 0, standX + gridScaleUp.X, winH);
                 //g.DrawString(data.GetInfo(), selDataFont, whiteBrush, 5, 5);
                 //string str = "K值 = " + data.KValue.ToString() + ", 上 = " + data.UpValue.ToString() + ", 下 = " + data.DownValue.ToString();
                 //g.DrawString(str, selDataFont, whiteBrush, 5, 25);
@@ -1257,7 +1265,7 @@ namespace LotteryAnalyze
             if(data.index == selectKDataIndex)
             {
                 g.DrawLine(yellowLinePen, standX, 0, standX, winH);
-                g.DrawLine(yellowLinePen, standX + gridScaleW, 0, standX + gridScaleW, winH);
+                g.DrawLine(yellowLinePen, standX + gridScaleUp.X, 0, standX + gridScaleUp.X, winH);
             }
 
             //if (prevData != null)
@@ -1277,8 +1285,8 @@ namespace LotteryAnalyze
         void DrawAvgLineGraph(Graphics g, AvgPointMap apm, int winW, int winH, CollectDataType cdt, Pen pen)
         {
             AvgPoint ap = apm.apMap[cdt];
-            float standX = (apm.index + 0.5f) * gridScaleW;  
-            float standY = ap.avgKValue * gridScaleH;
+            float standX = (apm.index + 0.5f) * gridScaleUp.X;  
+            float standY = ap.avgKValue * gridScaleUp.Y;
             if (findPrevPt == false)
             {
                 findPrevPt = true;
@@ -1286,16 +1294,16 @@ namespace LotteryAnalyze
                 prevPt.Y = standY;
                 return;
             }
-            float cx = StandToCanvas(standX, true);
+            float cx = StandToCanvas(standX, true, true);
             if (cx < 0 || cx > winW)
             {
                 prevPt.X = standX;
                 prevPt.Y = standY;
                 return;
             }
-            float px = StandToCanvas(prevPt.X, true);
-            float py = StandToCanvas(prevPt.Y, false);
-            float cy = StandToCanvas(standY, false);
+            float px = StandToCanvas(prevPt.X, true, true);
+            float py = StandToCanvas(prevPt.Y, false, true);
+            float cy = StandToCanvas(standY, false, true);
             prevPt.X = standX;
             prevPt.Y = standY;
             PushLinePts(pen, px, py, cx, cy);
@@ -1303,26 +1311,26 @@ namespace LotteryAnalyze
         void DrawBollinLineGraph(Graphics g, BollinPointMap bpm, int winW, int winH, CollectDataType cdt)
         {
             BollinPoint bp = bpm.bpMap[cdt];
-            float standX = (bpm.index + 0.5f) * gridScaleW;
+            float standX = (bpm.index + 0.5f) * gridScaleUp.X;
             if (findPrevPt == false)
             {
                 findPrevPt = true;
                 return;
             }
-            float cx = StandToCanvas(standX, true);
+            float cx = StandToCanvas(standX, true, true);
             if (cx < 0 || cx > winW)
             {
                 return;
             }
             BollinPointMap prevBPM = bpm.GetPrevBPM();
             BollinPoint prevBP = prevBPM.bpMap[cdt];
-            float px = StandToCanvas((prevBPM.index + 0.5f) * gridScaleW, true);
-            float pyU = StandToCanvas(prevBP.upValue * gridScaleH, false);
-            float pyM = StandToCanvas(prevBP.midValue * gridScaleH, false);
-            float pyD = StandToCanvas(prevBP.downValue * gridScaleH, false);
-            float cyU = StandToCanvas(bp.upValue * gridScaleH, false);
-            float cyM = StandToCanvas(bp.midValue * gridScaleH, false);
-            float cyD = StandToCanvas(bp.downValue * gridScaleH, false);
+            float px = StandToCanvas((prevBPM.index + 0.5f) * gridScaleUp.X, true, true);
+            float pyU = StandToCanvas(prevBP.upValue * gridScaleUp.Y, false, true);
+            float pyM = StandToCanvas(prevBP.midValue * gridScaleUp.Y, false, true);
+            float pyD = StandToCanvas(prevBP.downValue * gridScaleUp.Y, false, true);
+            float cyU = StandToCanvas(bp.upValue * gridScaleUp.Y, false, true);
+            float cyM = StandToCanvas(bp.midValue * gridScaleUp.Y, false, true);
+            float cyD = StandToCanvas(bp.downValue * gridScaleUp.Y, false, true);
             Pen midPen = bollinLinePenMid;
             if (bp.bolleanMidKeepDownCountContinue > 0)//prevBP.midValue > bp.midValue)
                 midPen = bollinLinePenMidG;
@@ -1341,9 +1349,9 @@ namespace LotteryAnalyze
             {
                 isUp = mp.BAR > prevMPM.GetData(cdt, false).BAR;
             }
-            float standX = (mpm.index + 0.5f) * gridScaleW;
-            float halfW = gridScaleW * 0.5f;
-            float cx = StandToCanvas(standX, true);
+            float standX = (mpm.index + 0.5f) * gridScaleDown.X;
+            float halfW = gridScaleDown.X * 0.5f;
+            float cx = StandToCanvas(standX, true, false);
             if (cx < 0 || cx > winW)
             {
                 return;
@@ -1351,18 +1359,18 @@ namespace LotteryAnalyze
             MACDLimitValue mlv = mpm.parent.macdLimitValueMap[cdt];
             float gridScaleH = winH * 0.45f / Math.Max(Math.Abs(mlv.MaxValue), Math.Abs(mlv.MinValue));
             float standY = mp.BAR * gridScaleH;
-            float cyDIF = StandToCanvas((mp.DIF * gridScaleH), false);
-            float cyDEA = StandToCanvas((mp.DEA * gridScaleH), false);
-            float cyBAR = StandToCanvas(standY, false);
-            float rcY = StandToCanvas(standY > 0 ? standY : 0, false);
-            g.FillRectangle(isUp? redBrush : cyanBrush, cx - halfW, rcY, gridScaleW, Math.Abs(standY));
+            float cyDIF = StandToCanvas((mp.DIF * gridScaleH), false, false);
+            float cyDEA = StandToCanvas((mp.DEA * gridScaleH), false, false);
+            float cyBAR = StandToCanvas(standY, false, false);
+            float rcY = StandToCanvas(standY > 0 ? standY : 0, false, false);
+            g.FillRectangle(isUp? redBrush : cyanBrush, cx - halfW, rcY, gridScaleDown.X, Math.Abs(standY));
             //MACDPointMap prevMPM = mpm.GetPrevMACDPM();
             if (prevMPM != null)
             {
                 MACDPoint prevMP = prevMPM.macdpMap[cdt];
-                float px = cx - gridScaleW;
-                float pyDIF = StandToCanvas((prevMP.DIF * gridScaleH), false);
-                float pyDEA = StandToCanvas((prevMP.DEA * gridScaleH), false);
+                float px = cx - gridScaleDown.X;
+                float pyDIF = StandToCanvas((prevMP.DIF * gridScaleH), false, false);
+                float pyDEA = StandToCanvas((prevMP.DEA * gridScaleH), false, false);
                 g.DrawLine(yellowLinePen, px, pyDIF, cx, cyDIF);
                 g.DrawLine(whiteLinePen, px, pyDEA, cx, cyDEA);
             }
@@ -1376,31 +1384,34 @@ namespace LotteryAnalyze
             }
         }
 
-        void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt)
+        void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt, List<AuxiliaryLine> auxLines, List<Point> auxPoints, bool upPanel)
         {
             float rcHalfSize = 3;
             float rcSize = rcHalfSize * 2;
-            for ( int i = 0; i < auxiliaryLineListUpPanel.Count; ++i )
+            for ( int i = 0; i < auxLines.Count; ++i )
             {
-                AuxiliaryLine al = auxiliaryLineListUpPanel[i];
+                AuxiliaryLine al = auxLines[i];
                 if(al.cdt == cdt && al.numIndex == numIndex)
-                    DrawAuxLine(g, winW, winH, al);
+                    DrawAuxLine(g, winW, winH, al, upPanel);
             }
 
-            if(mouseHitPtsUpPanel.Count > 0 && auxOperationIndex > AuxLineType.eNone)
+            if(auxPoints.Count > 0 && auxOperationIndex > AuxLineType.eNone)
             {
-                DrawPreviewAuxLine(g, winW, winH, mouseRelPos);
+                DrawPreviewAuxLine(g, winW, winH, mouseRelPos, auxPoints);
             }
 
             if(selAuxLineUpPanel!=null && selAuxLinePointIndexUpPanel != -1)
             {
-                Point pt = StandToCanvas(selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel]);
+                Point pt = StandToCanvas(selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel], upPanel);
                 g.DrawRectangle(selAuxLineUpPanel.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
         }
 
         void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt, bool upPanel)
         {
+            float gridScaleW = upPanel ? gridScaleUp.X : gridScaleDown.X;
+            float gridScaleH = upPanel ? gridScaleUp.Y : gridScaleDown.Y;
+
             try
             {
                 if (preViewDataIndex != -1)
@@ -1415,10 +1426,10 @@ namespace LotteryAnalyze
                         {
                             if (sali.upLineData.dataPrevSharp != null && sali.upLineData.dataSharp != null)
                             {
-                                int px = (int)StandToCanvas(sali.upLineData.dataPrevSharp.index * gridScaleW, true);
-                                int py = (int)StandToCanvas(sali.upLineData.dataPrevSharp.KValue * gridScaleH, false);
-                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
-                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                                int px = (int)StandToCanvas(sali.upLineData.dataPrevSharp.index * gridScaleW, true, upPanel);
+                                int py = (int)StandToCanvas(sali.upLineData.dataPrevSharp.KValue * gridScaleH, false, upPanel);
+                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true, upPanel);
+                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false, upPanel);
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
@@ -1426,10 +1437,10 @@ namespace LotteryAnalyze
                             }
                             if (sali.upLineData.dataNextSharp != null && sali.upLineData.dataSharp != null)
                             {
-                                int px = (int)StandToCanvas(sali.upLineData.dataNextSharp.index * gridScaleW, true);
-                                int py = (int)StandToCanvas(sali.upLineData.dataNextSharp.KValue * gridScaleH, false);
-                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true);
-                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false);
+                                int px = (int)StandToCanvas(sali.upLineData.dataNextSharp.index * gridScaleW, true, upPanel);
+                                int py = (int)StandToCanvas(sali.upLineData.dataNextSharp.KValue * gridScaleH, false, upPanel);
+                                int x = (int)StandToCanvas(sali.upLineData.dataSharp.index * gridScaleW, true, upPanel);
+                                int y = (int)StandToCanvas(sali.upLineData.dataSharp.KValue * gridScaleH, false, upPanel);
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
@@ -1441,10 +1452,10 @@ namespace LotteryAnalyze
                         {
                             if (sali.downLineData.dataPrevSharp != null && sali.downLineData.dataSharp != null)
                             {
-                                int px = (int)StandToCanvas(sali.downLineData.dataPrevSharp.index * gridScaleW, true);
-                                int py = (int)StandToCanvas(sali.downLineData.dataPrevSharp.KValue * gridScaleH, false);
-                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
-                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                                int px = (int)StandToCanvas(sali.downLineData.dataPrevSharp.index * gridScaleW, true, upPanel);
+                                int py = (int)StandToCanvas(sali.downLineData.dataPrevSharp.KValue * gridScaleH, false, upPanel);
+                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true, upPanel);
+                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false, upPanel);
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
@@ -1452,10 +1463,10 @@ namespace LotteryAnalyze
                             }
                             if (sali.downLineData.dataNextSharp != null && sali.downLineData.dataSharp != null)
                             {
-                                int px = (int)StandToCanvas(sali.downLineData.dataNextSharp.index * gridScaleW, true);
-                                int py = (int)StandToCanvas(sali.downLineData.dataNextSharp.KValue * gridScaleH, false);
-                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true);
-                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false);
+                                int px = (int)StandToCanvas(sali.downLineData.dataNextSharp.index * gridScaleW, true, upPanel);
+                                int py = (int)StandToCanvas(sali.downLineData.dataNextSharp.KValue * gridScaleH, false, upPanel);
+                                int x = (int)StandToCanvas(sali.downLineData.dataSharp.index * gridScaleW, true, upPanel);
+                                int y = (int)StandToCanvas(sali.downLineData.dataSharp.KValue * gridScaleH, false, upPanel);
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
@@ -1464,7 +1475,7 @@ namespace LotteryAnalyze
                         }
                     }
 
-                    DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex);
+                    DrawAutoAuxTools(TradeDataManager.Instance.curPreviewAnalyzeTool, g, winW, winH, numIndex, cdt, preViewDataIndex, upPanel);
                     if (sali.downLineData.valid)
                     {
                         KGraphDataContainer kgdc = GraphDataManager.KGDC;
@@ -1480,8 +1491,8 @@ namespace LotteryAnalyze
                         int testID = preViewDataIndex + 1;
                         float kdX = testID * gridScaleW;
                         float kdY = kd.UpValue * gridScaleH;
-                        kdX = StandToCanvas(kdX, true);
-                        kdY = StandToCanvas(kdY, false);
+                        kdX = StandToCanvas(kdX, true, upPanel);
+                        kdY = StandToCanvas(kdY, false, upPanel);
 
                         float lblX = winW - 100;
                         float lblY = 20;
@@ -1494,7 +1505,7 @@ namespace LotteryAnalyze
                         if (hasPrevKV)
                         {
                             float prevY = prevKV * gridScaleH;
-                            prevY = StandToCanvas(prevY, false);
+                            prevY = StandToCanvas(prevY, false, upPanel);
                             g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)prevY - 5, 10, 10));
                             g.DrawLine(redLinePen, kdX, kdY, kdX, prevY);
 
@@ -1505,7 +1516,7 @@ namespace LotteryAnalyze
                         if (hasNextKV)
                         {
                             float nextY = nextKV * gridScaleH;
-                            nextY = StandToCanvas(nextY, false);
+                            nextY = StandToCanvas(nextY, false, upPanel);
                             g.DrawRectangle(redLinePen, new Rectangle((int)kdX - 5, (int)nextY - 5, 10, 10));
                             g.DrawLine(redLinePen, kdX, kdY, kdX, nextY);
 
@@ -1517,8 +1528,8 @@ namespace LotteryAnalyze
                         {
                             float prevX = prevHitPtX * gridScaleW;
                             float prevY = prevHitPtY * gridScaleH;
-                            prevX = StandToCanvas(prevX, true);
-                            prevY = StandToCanvas(prevY, false);
+                            prevX = StandToCanvas(prevX, true, upPanel);
+                            prevY = StandToCanvas(prevY, false, upPanel);
                             g.DrawRectangle(greenLinePen, new Rectangle((int)prevX - 5, (int)prevY - 5, 10, 10));
                             g.DrawLine(greenLinePen, kdX, kdY, prevX, prevY);
 
@@ -1530,8 +1541,8 @@ namespace LotteryAnalyze
                         {
                             float nextX = nextHitPtX * gridScaleW;
                             float nextY = nextHitPtY * gridScaleH;
-                            nextX = StandToCanvas(nextX, true);
-                            nextY = StandToCanvas(nextY, false);
+                            nextX = StandToCanvas(nextX, true, upPanel);
+                            nextY = StandToCanvas(nextY, false, upPanel);
                             g.DrawRectangle(greenLinePen, new Rectangle((int)nextX - 5, (int)nextY - 5, 10, 10));
                             g.DrawLine(greenLinePen, kdX, kdY, nextX, nextY);
 
@@ -1543,7 +1554,7 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt, -1);
+                    DrawAutoAuxTools(TradeDataManager.Instance.autoAnalyzeTool, g, winW, winH, numIndex, cdt, -1, upPanel);
                 }
             }
             catch(Exception e)
@@ -1552,8 +1563,11 @@ namespace LotteryAnalyze
             }
         }
 
-        void DrawAutoAuxTools(AutoAnalyzeTool autoAnalyzeTool, Graphics g, int winW, int winH, int numIndex, CollectDataType cdt, int preViewDataIndex)
+        void DrawAutoAuxTools(AutoAnalyzeTool autoAnalyzeTool, Graphics g, int winW, int winH, int numIndex, CollectDataType cdt, int preViewDataIndex, bool upPanel)
         {
+            float gridScaleW = upPanel ? gridScaleUp.X : gridScaleDown.X;
+            float gridScaleH = upPanel ? gridScaleUp.Y : gridScaleDown.Y;
+
             if (autoAnalyzeTool == null)
                 return;
             if (preViewDataIndex != -1)
@@ -1561,23 +1575,26 @@ namespace LotteryAnalyze
                 float ex = (preViewDataIndex + 1) * gridScaleW;
                 float width = GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT * gridScaleW;
                 float sx = ex - width;
-                ex = StandToCanvas(ex, true);
-                sx = StandToCanvas(sx, true);
+                ex = StandToCanvas(ex, true, upPanel);
+                sx = StandToCanvas(sx, true, upPanel);
                 g.FillRectangle(previewAnalyzeToolBrush, sx, 0, width, winH);
             }
             AutoAnalyzeTool.SingleAuxLineInfo sali = autoAnalyzeTool.GetSingleAuxLineInfo(numIndex, cdt);
             if (sali.upLineData.valid)
-                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePenB, orangeLinePenB, redLinePenB);
+                DrawAuxLineData(sali.upLineData, g, winW, winH, redLinePenB, orangeLinePenB, redLinePenB, upPanel);
             if (sali.downLineData.valid)
-                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePenB, blueLinePenB, cyanLinePenB);
+                DrawAuxLineData(sali.downLineData, g, winW, winH, cyanLinePenB, blueLinePenB, cyanLinePenB, upPanel);
         }
 
-        void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen, Pen prevPen, Pen nextPen)
+        void DrawAuxLineData(AutoAnalyzeTool.AuxLineData lineData, Graphics g, int winW, int winH, Pen pen, Pen prevPen, Pen nextPen, bool upPanel)
         {
+            float gridScaleW = upPanel ? gridScaleUp.X : gridScaleDown.X;
+            float gridScaleH = upPanel ? gridScaleUp.Y : gridScaleDown.Y;
+
             float bx = lineData.dataSharp.index * gridScaleW, sx;
             float by = lineData.dataSharp.KValue * gridScaleH, sy;
-            bx = StandToCanvas(bx, true);
-            by = StandToCanvas(by, false);
+            bx = StandToCanvas(bx, true, upPanel);
+            by = StandToCanvas(by, false, upPanel);
             g.DrawLine(grayDotLinePen, 0, by, winW, by);
             g.DrawRectangle(pen, bx - rcHalfSize, by - rcHalfSize, rcSize, rcSize);
 
@@ -1585,8 +1602,8 @@ namespace LotteryAnalyze
             {
                 sx = lineData.dataPrevSharp.index * gridScaleW;
                 sy = lineData.dataPrevSharp.KValue * gridScaleH;
-                sx = StandToCanvas(sx, true);
-                sy = StandToCanvas(sy, false);
+                sx = StandToCanvas(sx, true, upPanel);
+                sy = StandToCanvas(sy, false, upPanel);
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
@@ -1598,8 +1615,8 @@ namespace LotteryAnalyze
             {
                 sx = lineData.dataNextSharp.index * gridScaleW;
                 sy = lineData.dataNextSharp.KValue * gridScaleH;
-                sx = StandToCanvas(sx, true);
-                sy = StandToCanvas(sy, false);
+                sx = StandToCanvas(sx, true, upPanel);
+                sy = StandToCanvas(sy, false, upPanel);
                 float k = (by - sy) / (bx - sx);
                 float fyl = sy - sx * k;
                 float fyr = sy + (winW - sx) * k;
@@ -1609,15 +1626,15 @@ namespace LotteryAnalyze
             }
         }
 
-        void DrawPreviewAuxLine(Graphics g, int winW, int winH, Point mouseRelPos)
+        void DrawPreviewAuxLine(Graphics g, int winW, int winH, Point mouseRelPos, List<Point> auxPoints)
         {
             switch(auxOperationIndex)
             {
                 case AuxLineType.eSingleLine:
                     {
                         float sx, sy, ex, ey;
-                        sx = mouseHitPtsUpPanel[0].X;
-                        sy = mouseHitPtsUpPanel[0].Y;
+                        sx = auxPoints[0].X;
+                        sy = auxPoints[0].Y;
                         if (sx == mouseRelPos.X)
                         {
                             g.DrawLine(SingleLine.sOriSolidPen, sx, 0, sx, winH);
@@ -1637,10 +1654,10 @@ namespace LotteryAnalyze
                 case AuxLineType.eChannelLine:
                     {
                         float sx, sy, ex, ey;
-                        sx = mouseHitPtsUpPanel[0].X;
-                        sy = mouseHitPtsUpPanel[0].Y;
+                        sx = auxPoints[0].X;
+                        sy = auxPoints[0].Y;
                         g.DrawRectangle(ChannelLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
-                        if (mouseHitPtsUpPanel.Count == 1)
+                        if (auxPoints.Count == 1)
                         {
                             ex = mouseRelPos.X;
                             ey = mouseRelPos.Y;
@@ -1656,10 +1673,10 @@ namespace LotteryAnalyze
                                 g.DrawLine(ChannelLine.sOriSolidPen, 0, fyl, winW, fyr);
                             }
                         }
-                        else if(mouseHitPtsUpPanel.Count == 2)
+                        else if(auxPoints.Count == 2)
                         {
-                            ex = mouseHitPtsUpPanel[1].X;
-                            ey = mouseHitPtsUpPanel[1].Y;
+                            ex = auxPoints[1].X;
+                            ey = auxPoints[1].Y;
                             g.DrawRectangle(ChannelLine.sOriSolidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                             if (sx == ex)
                             {
@@ -1691,8 +1708,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eGoldSegmentedLine:
                     {
-                        float sx = mouseHitPtsUpPanel[0].X;
-                        float sy = mouseHitPtsUpPanel[0].Y;
+                        float sx = auxPoints[0].X;
+                        float sy = auxPoints[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         for(int i = 0; i < C_GOLDEN_VALUE.Length; ++i)
@@ -1709,8 +1726,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eCircleLine:
                     {
-                        float cx = mouseHitPtsUpPanel[0].X;
-                        float cy = mouseHitPtsUpPanel[0].Y;
+                        float cx = auxPoints[0].X;
+                        float cy = auxPoints[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         float dx = cx - ex;
@@ -1723,8 +1740,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eArrowLine:
                     {
-                        float cx = mouseHitPtsUpPanel[0].X;
-                        float cy = mouseHitPtsUpPanel[0].Y;
+                        float cx = auxPoints[0].X;
+                        float cy = auxPoints[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;
@@ -1736,8 +1753,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eRectLine:
                     {
-                        float cx = mouseHitPtsUpPanel[0].X;
-                        float cy = mouseHitPtsUpPanel[0].Y;
+                        float cx = auxPoints[0].X;
+                        float cy = auxPoints[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;
@@ -1756,7 +1773,7 @@ namespace LotteryAnalyze
 
         static readonly float[] C_GOLDEN_VALUE = new float[]  { 0.382f, 0.618f, 1.382f, 1.618f, 2f, 2.382f, 2.618f, 4, 4.382f, 4.618f, 8, };
 
-        void DrawAuxLine(Graphics g, int winW, int winH, AuxiliaryLine line)//, List<Point> pts, AuxLineType lineType)
+        void DrawAuxLine(Graphics g, int winW, int winH, AuxiliaryLine line, bool upPanel)//, List<Point> pts, AuxLineType lineType)
         {
             List<Point> pts = line.keyPoints;
             Pen solidPen = line.GetSolidPen();
@@ -1766,8 +1783,8 @@ namespace LotteryAnalyze
             {
                 case AuxLineType.eHorzLine:
                     {
-                        float x = StandToCanvas(pts[0].X, true);
-                        float y = StandToCanvas(pts[0].Y, false);
+                        float x = StandToCanvas(pts[0].X, true, upPanel);
+                        float y = StandToCanvas(pts[0].Y, false, upPanel);
                         g.DrawLine(solidPen, 0, y, winW, y);
                         g.DrawRectangle(solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
                     }
@@ -1775,8 +1792,8 @@ namespace LotteryAnalyze
 
                 case AuxLineType.eVertLine:
                     {
-                        float x = StandToCanvas(pts[0].X, true);
-                        float y = StandToCanvas(pts[0].Y, false);
+                        float x = StandToCanvas(pts[0].X, true, upPanel);
+                        float y = StandToCanvas(pts[0].Y, false, upPanel);
                         g.DrawLine(solidPen, x, 0, x, winH);
                         g.DrawRectangle(solidPen, x - rcHalfSize, y - rcHalfSize, rcSize, rcSize);
                     }
@@ -1787,18 +1804,18 @@ namespace LotteryAnalyze
                         float sx, sy, ex, ey, ox, oy;
                         if (pts[0].X == pts[1].X)
                         {
-                            sx = StandToCanvas(pts[0].X, true);
-                            sy = StandToCanvas(pts[0].Y, false);
+                            sx = StandToCanvas(pts[0].X, true, upPanel);
+                            sy = StandToCanvas(pts[0].Y, false, upPanel);
                             ex = sx;
-                            ey = StandToCanvas(pts[1].Y, false);
+                            ey = StandToCanvas(pts[1].Y, false, upPanel);
                             g.DrawLine(solidPen, sx, 0, sx, winH);
                         }
                         else
                         {
-                            sx = StandToCanvas(pts[0].X, true);
-                            ex = StandToCanvas(pts[1].X, true);
-                            sy = StandToCanvas(pts[0].Y, false);
-                            ey = StandToCanvas(pts[1].Y, false);
+                            sx = StandToCanvas(pts[0].X, true, upPanel);
+                            ex = StandToCanvas(pts[1].X, true, upPanel);
+                            sy = StandToCanvas(pts[0].Y, false, upPanel);
+                            ey = StandToCanvas(pts[1].Y, false, upPanel);
                             float k = (ey - sy) / (ex - sx);
                             float fyl = sy - sx * k;
                             float fyr = sy + (winW - sx) * k;
@@ -1814,23 +1831,23 @@ namespace LotteryAnalyze
                         float sx, sy, ex, ey, ox, oy;
                         if (pts[0].X == pts[1].X)
                         {
-                            sx = StandToCanvas(pts[0].X, true);
-                            sy = StandToCanvas(pts[0].Y, false);
+                            sx = StandToCanvas(pts[0].X, true, upPanel);
+                            sy = StandToCanvas(pts[0].Y, false, upPanel);
                             ex = sx;
-                            ey = StandToCanvas(pts[1].Y, false);
-                            ox = StandToCanvas(pts[2].X, true);
-                            oy = StandToCanvas(pts[2].Y, false);
+                            ey = StandToCanvas(pts[1].Y, false, upPanel);
+                            ox = StandToCanvas(pts[2].X, true, upPanel);
+                            oy = StandToCanvas(pts[2].Y, false, upPanel);
                             g.DrawLine(solidPen, sx, 0, sx, winH);
                             g.DrawLine(solidPen, ox, 0, ox, winH);
                         }
                         else
                         {
-                            sx = StandToCanvas(pts[0].X, true);
-                            ex = StandToCanvas(pts[1].X, true);
-                            ox = StandToCanvas(pts[2].X, true);
-                            sy = StandToCanvas(pts[0].Y, false);
-                            ey = StandToCanvas(pts[1].Y, false);
-                            oy = StandToCanvas(pts[2].Y, false);
+                            sx = StandToCanvas(pts[0].X, true, upPanel);
+                            ex = StandToCanvas(pts[1].X, true, upPanel);
+                            ox = StandToCanvas(pts[2].X, true, upPanel);
+                            sy = StandToCanvas(pts[0].Y, false, upPanel);
+                            ey = StandToCanvas(pts[1].Y, false, upPanel);
+                            oy = StandToCanvas(pts[2].Y, false, upPanel);
                             float k = (ey - sy) / (ex - sx);
                             float fyl = sy - sx * k;
                             float fyr = sy + (winW - sx) * k;
@@ -1848,10 +1865,10 @@ namespace LotteryAnalyze
 
                 case AuxLineType.eGoldSegmentedLine:
                     {
-                        float sx = StandToCanvas(pts[0].X, true);
-                        float sy = StandToCanvas(pts[0].Y, false);
-                        float ex = StandToCanvas(pts[1].X, true);
-                        float ey = StandToCanvas(pts[1].Y, false);
+                        float sx = StandToCanvas(pts[0].X, true, upPanel);
+                        float sy = StandToCanvas(pts[0].Y, false, upPanel);
+                        float ex = StandToCanvas(pts[1].X, true, upPanel);
+                        float ey = StandToCanvas(pts[1].Y, false, upPanel);
                         for( int i = 0; i < C_GOLDEN_VALUE.Length; ++i )
                         {
                             float v = C_GOLDEN_VALUE[i];
@@ -1868,14 +1885,14 @@ namespace LotteryAnalyze
                 case AuxLineType.eCircleLine:
                     {
                         CircleLine cl = line as CircleLine;
-                        float x = StandToCanvas(cl.x, true);
-                        float y = StandToCanvas(cl.y, false);
+                        float x = StandToCanvas(cl.x, true, upPanel);
+                        float y = StandToCanvas(cl.y, false, upPanel);
                         g.DrawEllipse(dotPen, x, y, cl.size, cl.size);
 
-                        float sx = StandToCanvas(pts[0].X, true);
-                        float sy = StandToCanvas(pts[0].Y, false);
-                        float ex = StandToCanvas(pts[1].X, true);
-                        float ey = StandToCanvas(pts[1].Y, false);
+                        float sx = StandToCanvas(pts[0].X, true, upPanel);
+                        float sy = StandToCanvas(pts[0].Y, false, upPanel);
+                        float ex = StandToCanvas(pts[1].X, true, upPanel);
+                        float ey = StandToCanvas(pts[1].Y, false, upPanel);
                         g.DrawLine(solidPen, sx, sy, ex, ey);
                         g.DrawRectangle(solidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
                         g.DrawRectangle(solidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
@@ -1883,10 +1900,10 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eArrowLine:
                     {
-                        float cx = StandToCanvas(pts[0].X, true);
-                        float cy = StandToCanvas(pts[0].Y, false);
-                        float ex = StandToCanvas(pts[1].X, true);
-                        float ey = StandToCanvas(pts[1].Y, false);
+                        float cx = StandToCanvas(pts[0].X, true, upPanel);
+                        float cy = StandToCanvas(pts[0].Y, false, upPanel);
+                        float ex = StandToCanvas(pts[1].X, true, upPanel);
+                        float ey = StandToCanvas(pts[1].Y, false, upPanel);
                         solidPen.Width = ArrowLine.C_LINE_WIDTH;
                         g.DrawLine(solidPen, cx, cy, ex, ey);
                         //g.DrawRectangle(solidPen, cx - rcHalfSize, cy - rcHalfSize, rcSize, rcSize);
@@ -1895,10 +1912,10 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eRectLine:
                     {
-                        float cx = StandToCanvas(pts[0].X, true);
-                        float cy = StandToCanvas(pts[0].Y, false);
-                        float ex = StandToCanvas(pts[1].X, true);
-                        float ey = StandToCanvas(pts[1].Y, false);
+                        float cx = StandToCanvas(pts[0].X, true, upPanel);
+                        float cy = StandToCanvas(pts[0].Y, false, upPanel);
+                        float ex = StandToCanvas(pts[1].X, true, upPanel);
+                        float ey = StandToCanvas(pts[1].Y, false, upPanel);
                         solidPen.Width = ArrowLine.C_LINE_WIDTH;
                         g.DrawLine(solidPen, cx, cy, ex, ey);
 
@@ -1914,6 +1931,9 @@ namespace LotteryAnalyze
 
         void DrawKRuler(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos, KDataDictContainer kddc, float missRelHeight)
         {
+            float gridScaleW = true ? gridScaleUp.X : gridScaleDown.X;
+            float gridScaleH = true ? gridScaleUp.Y : gridScaleDown.Y;
+
             int endIndex = kddc.dataLst.Count - 1;
             if (parent.endShowDataItemIndex != -1 && parent.endShowDataItemIndex < kddc.dataLst.Count)
                 endIndex = parent.endShowDataItemIndex;
@@ -1923,7 +1943,7 @@ namespace LotteryAnalyze
                 int startID = endIndex - GlobalSetting.G_ANALYZE_TOOL_SAMPLE_COUNT;
                 if (startID < 0)
                     startID = 0;
-                float x = StandToCanvas( startID * gridScaleW, true );
+                float x = StandToCanvas( startID * gridScaleW, true, true );
                 g.DrawLine(whiteLinePen, x, 0, x, winH);
             }
 
@@ -1934,8 +1954,8 @@ namespace LotteryAnalyze
             KData data = lastKDD.GetData(cdt, false);
             float standX = (data.index + 1) * gridScaleW;
             float standY = (data.KValue) * gridScaleH;
-            standX = StandToCanvas(standX, true);
-            standY = StandToCanvas(standY, false);
+            standX = StandToCanvas(standX, true, true);
+            standY = StandToCanvas(standY, false, true);
             if (standX > winW)
                 return;
             bool isUpOK = false;
@@ -2124,7 +2144,8 @@ namespace LotteryAnalyze
 
         public GraphTrade()
         {
-            gridScaleW = 10;
+            //gridScaleW = 10;
+            gridScaleUp.X = gridScaleDown.X = 10;
         }
 
         public override void MoveGraph(float dx, float dy)
@@ -2143,18 +2164,18 @@ namespace LotteryAnalyze
             bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
             g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
 
-            float halfSize = gridScaleW * 0.2f;
+            float halfSize = gridScaleUp.X * 0.2f;
             if (halfSize < 4)
                 halfSize = 4;
             float fullSize = halfSize * 2;
             float halfWinH = winH * 0.5f;
-            float halfGridW = gridScaleW * 0.5f;
+            float halfGridW = gridScaleUp.X * 0.5f;
 
             TradeDataManager tdm = TradeDataManager.Instance;
-            float zeroY = StandToCanvas(0, false);
-            float startMoneyY = StandToCanvas(BatchTradeSimulator.Instance.startMoney * gridScaleH, false);
-            float maxMoneyY = StandToCanvas(BatchTradeSimulator.Instance.maxMoney * gridScaleH, false);
-            float minMoneyY = StandToCanvas(BatchTradeSimulator.Instance.minMoney * gridScaleH, false);
+            float zeroY = StandToCanvas(0, false, true);
+            float startMoneyY = StandToCanvas(BatchTradeSimulator.Instance.startMoney * gridScaleUp.Y, false, true);
+            float maxMoneyY = StandToCanvas(BatchTradeSimulator.Instance.maxMoney * gridScaleUp.Y, false, true);
+            float minMoneyY = StandToCanvas(BatchTradeSimulator.Instance.minMoney * gridScaleUp.Y, false, true);
             g.FillRectangle(redBrush, winW - 10, maxMoneyY, 10, startMoneyY - maxMoneyY);
             g.FillRectangle(cyanBrush, winW - 10, startMoneyY, 10, zeroY - startMoneyY);
             if (BatchTradeSimulator.Instance.minMoney < BatchTradeSimulator.Instance.startMoney)
@@ -2173,8 +2194,8 @@ namespace LotteryAnalyze
             {
                 float lv = TRADE_LVS[i];
                 float money = tdm.startMoney * lv;
-                float y = money * gridScaleH;
-                float relY = StandToCanvas(y, false);
+                float y = money * gridScaleUp.Y;
+                float relY = StandToCanvas(y, false, true);
                 if (lv < 0)
                     moneyLvLinePen.Color = Color.Gray;
                 else if( lv == 0)
@@ -2190,14 +2211,14 @@ namespace LotteryAnalyze
                     g.DrawString(money.ToString("f0"), tipsFont, whiteBrush, winW - 65, relY);
             }
 
-            float curMouseY = CanvasToStand(mouseRelPos.Y, false);
-            curMouseY /= gridScaleH;
+            float curMouseY = CanvasToStand(mouseRelPos.Y, false, true);
+            curMouseY /= gridScaleUp.Y;
             g.DrawString(curMouseY.ToString("f0"), tipsFont, whiteBrush, winW - 65, mouseRelPos.Y);
 
             if (tdm.historyTradeDatas.Count == 0)
             {
-                float y = tdm.startMoney * gridScaleH;
-                float relY = StandToCanvas(y, false);
+                float y = tdm.startMoney * gridScaleUp.Y;
+                float relY = StandToCanvas(y, false, true);
                 if (relY < 0 || relY > winH)
                 {
                     canvasOffset.Y = y + winH * 0.5f;
@@ -2207,19 +2228,19 @@ namespace LotteryAnalyze
 
             //float maxGap = Math.Max(Math.Abs(tdm.maxValue), Math.Abs(tdm.minValue)) * 2;
             float maxGap = Math.Max(Math.Abs(BatchTradeSimulator.Instance.maxMoney), Math.Abs(BatchTradeSimulator.Instance.minMoney)) * 1.5f;
-            gridScaleH = winH / maxGap * 0.9f;
-            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            gridScaleUp.Y = winH / maxGap * 0.9f;
+            int startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
             if (startIndex < 0)
                 startIndex = 0;
-            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleUp.X) + 1;
             if (endIndex > tdm.historyTradeDatas.Count)
                 endIndex = tdm.historyTradeDatas.Count;
 
             // 自动对齐
             if (autoAllign)
             {
-                float endY = tdm.historyTradeDatas[endIndex - 1].moneyAtferTrade * gridScaleH;
-                float relEY = StandToCanvas(endY, false);
+                float endY = tdm.historyTradeDatas[endIndex - 1].moneyAtferTrade * gridScaleUp.Y;
+                float relEY = StandToCanvas(endY, false, true);
                 bool isEYOut = relEY < 0 || relEY > winH;
                 if (isEYOut)
                     canvasOffset.Y = endY + winH * 0.5f;
@@ -2230,14 +2251,14 @@ namespace LotteryAnalyze
             for(int i = startIndex; i < endIndex; ++i)
             {
                 TradeDataBase tdb = tdm.historyTradeDatas[i];
-                float cx = i * gridScaleW + halfGridW;
-                float px = cx - gridScaleW;
-                float py = tdb.moneyBeforeTrade * gridScaleH;
-                float cy = tdb.moneyAtferTrade * gridScaleH;
-                cx = StandToCanvas(cx, true);
-                px = StandToCanvas(px, true);
-                cy = StandToCanvas(cy, false);
-                py = StandToCanvas(py, false);
+                float cx = i * gridScaleUp.X + halfGridW;
+                float px = cx - gridScaleUp.X;
+                float py = tdb.moneyBeforeTrade * gridScaleUp.Y;
+                float cy = tdb.moneyAtferTrade * gridScaleUp.Y;
+                cx = StandToCanvas(cx, true, true);
+                px = StandToCanvas(px, true, true);
+                cy = StandToCanvas(cy, false, true);
+                py = StandToCanvas(py, false, true);
                 Pen pen = (tdb.cost == 0 ? whiteLinePen : (tdb.reward > tdb.cost ? redLinePen : cyanLinePen));
                 if(i == 0)
                     g.DrawRectangle(whiteLinePen, px - halfSize, py - halfSize, fullSize, fullSize);
@@ -2284,18 +2305,18 @@ namespace LotteryAnalyze
             TradeDataManager tdm = TradeDataManager.Instance;
             if(tdm.waitingTradeDatas.Count > 0)
             {
-                float y = winH - 2 * gridScaleW;
+                float y = winH - 2 * gridScaleDown.X;
 
                 for (int i = 0; i < tdm.waitingTradeDatas.Count; ++i)
                 {
-                    float x = i * gridScaleW;
-                    g.DrawRectangle(whiteLinePen, x, y, gridScaleW, gridScaleW);
+                    float x = i * gridScaleDown.X;
+                    g.DrawRectangle(whiteLinePen, x, y, gridScaleDown.X, gridScaleDown.X);
 
-                    if(selID == -1 && mouseRelPos.X >= x && mouseRelPos.X <= x + gridScaleW)
+                    if(selID == -1 && mouseRelPos.X >= x && mouseRelPos.X <= x + gridScaleDown.X)
                     {
                         selID = i;
                         g.DrawLine(grayDotLinePen, x, 0, x, winH);
-                        g.DrawLine(grayDotLinePen, x + gridScaleW, 0, x + gridScaleW, winH);
+                        g.DrawLine(grayDotLinePen, x + gridScaleDown.X, 0, x + gridScaleDown.X, winH);
 
                         string info = tdm.waitingTradeDatas[i].GetTips();
 #if TRADE_DBG
@@ -2309,7 +2330,7 @@ namespace LotteryAnalyze
 
         public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
         {
-            startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
             if (startIndex < 0)
                 startIndex = 0;
 
@@ -2324,7 +2345,7 @@ namespace LotteryAnalyze
                 selectTradeIndex = -1;
             if (needScrollToData)
             {
-                canvasOffset.X = index * gridScaleW + xOffset;// (index + 1) * gridScaleW + xOffset;
+                canvasOffset.X = index * gridScaleUp.X + xOffset;// (index + 1) * gridScaleW + xOffset;
             }
             autoAllign = true;
         }
@@ -2333,8 +2354,8 @@ namespace LotteryAnalyze
         {
             TradeDataManager tdm = TradeDataManager.Instance;
             selectTradeIndex = -1;
-            Point standMousePos = CanvasToStand(mouseRelPos);
-            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+            Point standMousePos = CanvasToStand(mouseRelPos, true);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleUp.X);
             if (mouseHoverID >= tdm.historyTradeDatas.Count)
                 mouseHoverID = -1;
             selectTradeIndex = mouseHoverID;
@@ -2392,7 +2413,8 @@ namespace LotteryAnalyze
         public GraphAppearence()
         {
             selectDataIndex = -1;
-            gridScaleW = 10;
+            //gridScaleW = 10;
+            gridScaleUp.X = gridScaleDown.X = 10;
 
             for( int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i )
             {
@@ -2446,8 +2468,8 @@ namespace LotteryAnalyze
         {
             DataManager dm = DataManager.GetInst();
             selectDataIndex = -1;
-            Point standMousePos = CanvasToStand(mouseRelPos);
-            int mouseHoverID = (int)(standMousePos.X / gridScaleW);
+            Point standMousePos = CanvasToStand(mouseRelPos, true);
+            int mouseHoverID = (int)(standMousePos.X / gridScaleUp.X);
             if (mouseHoverID >= dm.GetAllDataItemCount())
                 mouseHoverID = -1;
             selectDataIndex = mouseHoverID;
@@ -2479,19 +2501,19 @@ namespace LotteryAnalyze
         {
             hoverItem = null;
             bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
-            float halfSize = gridScaleW * 0.2f;
+            float halfSize = gridScaleUp.X * 0.2f;
             if (halfSize < 4)
                 halfSize = 4;
             float fullSize = halfSize * 2;
             float halfWinH = winH * 0.5f;
-            float halfGridW = gridScaleW * 0.5f;
+            float halfGridW = gridScaleUp.X * 0.5f;
             TradeDataManager tdm = TradeDataManager.Instance;
             DataManager dm = DataManager.GetInst();
 
-            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            int startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
             if (startIndex < 0)
                 startIndex = 0;
-            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleUp.X) + 1;
             if (endIndex > dm.GetAllDataItemCount())
                 endIndex = dm.GetAllDataItemCount();
 
@@ -2579,9 +2601,9 @@ namespace LotteryAnalyze
             if(selectDataIndex != -1)
             {
                 Pen pen = GetLinePen(Color.Yellow);
-                float left = selectDataIndex * gridScaleW;
-                left = StandToCanvas(left, true);
-                float right = left + gridScaleW;
+                float left = selectDataIndex * gridScaleUp.X;
+                left = StandToCanvas(left, true, true);
+                float right = left + gridScaleUp.X;
                 g.DrawLine(pen, left, 0, left, winH);
                 g.DrawLine(pen, right, 0, right, winH);
             }
@@ -2600,7 +2622,7 @@ namespace LotteryAnalyze
                 selectDataIndex = -1;
             if (needScrollToData)
             {
-                canvasOffset.X = index * gridScaleW + xOffset;
+                canvasOffset.X = index * gridScaleUp.X + xOffset;
             }
             autoAllign = true;
         }
@@ -2640,8 +2662,8 @@ namespace LotteryAnalyze
                 }
                 float rH = apr / 100 * maxHeight;
                 float rT = bottom - rH;
-                float x = i * gridScaleW + halfGridW;
-                x = StandToCanvas(x, true);
+                float x = i * gridScaleUp.X + halfGridW;
+                x = StandToCanvas(x, true, true);
                 g.FillRectangle(brush, x - halfSize, rT - halfSize, fullSize, fullSize);
                 if (i > startIndex)
                 {
@@ -2719,19 +2741,19 @@ namespace LotteryAnalyze
         {
             hoverItem = null;
             bool isMouseAtRight = mouseRelPos.X > winW * 0.6f;
-            float halfSize = gridScaleW * 0.2f;
+            float halfSize = gridScaleUp.X * 0.2f;
             if (halfSize < 4)
                 halfSize = 4;
             float fullSize = halfSize * 2;
             float halfWinH = winH * 0.5f;
-            float halfGridW = gridScaleW * 0.5f;
+            float halfGridW = gridScaleUp.X * 0.5f;
             TradeDataManager tdm = TradeDataManager.Instance;
             DataManager dm = DataManager.GetInst();
 
-            int startIndex = (int)(canvasOffset.X / gridScaleW) - 1;
+            int startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
             if (startIndex < 0)
                 startIndex = 0;
-            int endIndex = (int)((canvasOffset.X + winW) / gridScaleW) + 1;
+            int endIndex = (int)((canvasOffset.X + winW) / gridScaleUp.X) + 1;
             if (endIndex > dm.GetAllDataItemCount())
                 endIndex = dm.GetAllDataItemCount();
 
@@ -2835,9 +2857,9 @@ namespace LotteryAnalyze
             if (selectDataIndex != -1)
             {
                 Pen pen = GetLinePen(Color.Yellow);
-                float left = selectDataIndex * gridScaleW;
-                left = StandToCanvas(left, true);
-                float right = left + gridScaleW;
+                float left = selectDataIndex * gridScaleUp.X;
+                left = StandToCanvas(left, true, true);
+                float right = left + gridScaleUp.X;
                 g.DrawLine(pen, left, 0, left, winH);
                 g.DrawLine(pen, right, 0, right, winH);
             }
@@ -2900,8 +2922,8 @@ namespace LotteryAnalyze
 
                 float rH = CUR * gridH;
                 float rT = bottom - rH;
-                float x = i * gridScaleW + halfGridW;
-                x = StandToCanvas(x, true);
+                float x = i * gridScaleUp.X + halfGridW;
+                x = StandToCanvas(x, true, true);
                 g.FillRectangle(brush, x - halfSize, rT - halfSize, fullSize, fullSize);
                 if (i > startIndex)
                 {

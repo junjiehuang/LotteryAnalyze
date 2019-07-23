@@ -23,6 +23,7 @@ namespace LotteryAnalyze.UI
         Point upPanelMousePosOnBtnDown = new Point();
         Point downPanelMousePosOnMove = new Point();
         Point downPanelMousePosLastDrag = new Point();
+        Point downPanelMousePosOnBtnDown = new Point();
         bool hasNewDataUpdate = false;
         bool hasMouseMoveOnUpPanel = false;
         bool hasMouseMoveOnDownPanel = false;
@@ -232,13 +233,23 @@ namespace LotteryAnalyze.UI
         {
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
             {
-                textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleW.ToString();
-                textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleH.ToString();
+                textBoxGridScaleW.Text = graphMgr.kvalueGraph.gridScaleUp.X.ToString();
+                textBoxGridScaleH.Text = graphMgr.kvalueGraph.gridScaleUp.Y.ToString();
             }
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
-                textBoxGridScaleW.Text = graphMgr.tradeGraph.gridScaleW.ToString();
-                textBoxGridScaleH.Text = graphMgr.tradeGraph.gridScaleH.ToString();
+                textBoxGridScaleW.Text = graphMgr.tradeGraph.gridScaleUp.X.ToString();
+                textBoxGridScaleH.Text = graphMgr.tradeGraph.gridScaleUp.Y.ToString();
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+            {
+                textBoxGridScaleW.Text = graphMgr.appearenceGraph.gridScaleUp.X.ToString();
+                textBoxGridScaleH.Text = graphMgr.appearenceGraph.gridScaleUp.Y.ToString();
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+            {
+                textBoxGridScaleW.Text = graphMgr.missCountGraph.gridScaleUp.X.ToString();
+                textBoxGridScaleH.Text = graphMgr.missCountGraph.gridScaleUp.Y.ToString();
             }
         }
 
@@ -492,10 +503,10 @@ namespace LotteryAnalyze.UI
         {
             int checkW = (int)(this.panelUp.ClientSize.Width * 0.5f);
             int xOffset = 0;
-            if (selID * graph.gridScaleW > checkW)
+            if (selID * graph.gridScaleUp.X > checkW)
                 xOffset = -checkW;
             else
-                xOffset = -(int)(selID * graph.gridScaleW);
+                xOffset = -(int)(selID * graph.gridScaleUp.X);
             graph.ScrollToData(selID, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true, xOffset, needScrollToData);
         }
         void SelItemForKCurveGraph(int selID, bool needScrollToData = true)
@@ -596,14 +607,14 @@ namespace LotteryAnalyze.UI
                             break;
                         case AuxLineType.eHorzLine:
                             {
-                                graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT, true);
+                                graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT, upPanel);
                                 mouseHitPoints.Clear();
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eVertLine:
                             {
-                                graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT, true);
+                                graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT, upPanel);
                                 mouseHitPoints.Clear();
                                 isAddingAuxLine = true;
                             }
@@ -615,7 +626,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddSingleLine(
                                         mouseHitPoints[0],
-                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                        mouseHitPoints[1], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -629,7 +640,7 @@ namespace LotteryAnalyze.UI
                                     graphMgr.kvalueGraph.AddChannelLine(
                                         mouseHitPoints[0],
                                         mouseHitPoints[1],
-                                        mouseHitPoints[2], numberIndex, curCDT, true);
+                                        mouseHitPoints[2], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -642,7 +653,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddGoldSegLine(
                                         mouseHitPoints[0],
-                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                        mouseHitPoints[1], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -655,7 +666,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddCircleLine(
                                         mouseHitPoints[0],
-                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                        mouseHitPoints[1], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -668,7 +679,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddArrowLine(
                                         mouseHitPoints[0],
-                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                        mouseHitPoints[1], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -681,7 +692,7 @@ namespace LotteryAnalyze.UI
                                 {
                                     graphMgr.kvalueGraph.AddRectLine(
                                         mouseHitPoints[0],
-                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                        mouseHitPoints[1], numberIndex, curCDT, upPanel);
                                     mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
@@ -761,7 +772,7 @@ namespace LotteryAnalyze.UI
                         if (e.X == upPanelMousePosOnBtnDown.X && e.Y == upPanelMousePosOnBtnDown.Y)
                         {
                             // 计算点击选中的K值
-                            int selID = graphMgr.kvalueGraph.SelectKData(e.Location);
+                            int selID = graphMgr.kvalueGraph.SelectKData(e.Location, true);
                             SelItem(selID, false);
                         }
                     }
@@ -796,14 +807,50 @@ namespace LotteryAnalyze.UI
 
         private void panelDown_MouseDown(object sender, MouseEventArgs e)
         {
+            this.panelDown.Focus();
             hasMouseMoveOnDownPanel = false;
             downPanelMousePosLastDrag = e.Location;
-
-            this.panelDown.Focus();
+            downPanelMousePosOnBtnDown = e.Location;
+            if (e.Button == MouseButtons.Left)
+            {
+                if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph &&
+                    graphMgr.kvalueGraph.enableAuxiliaryLine)
+                {
+                    graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT, false);
+                }
+            }
+            RefreshPanel();//触发Paint事件
         }
         private void panelDown_MouseUp(object sender, MouseEventArgs e)
         {
-
+            if (e.Button == MouseButtons.Left)
+            {
+                if(graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                {
+                    // 处理辅助线的添加
+                    ProcAddAuxLine(e.Location, false);
+                    if (graphMgr.kvalueGraph.selAuxLineDownPanel == null &&
+                        hasMouseMoveOnDownPanel == false &&
+                        isAddingAuxLine == false &&
+                        graphMgr.kvalueGraph.enableAuxiliaryLine && graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone
+                        )
+                    {
+                        int kdataID = -1;
+                        // 鼠标没有移动
+                        if (e.X == downPanelMousePosOnBtnDown.X && e.Y == downPanelMousePosOnBtnDown.Y)
+                        {
+                            // 计算点击选中的K值
+                            int selID = graphMgr.kvalueGraph.SelectKData(e.Location, false);
+                            SelItem(selID, false);
+                        }
+                    }
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                graphMgr.kvalueGraph.mouseHitPtsDownPanel.Clear();
+            }
+            RefreshPanel();//触发Paint事件
         }
 
         private void panelUp_Paint(object sender, PaintEventArgs e)
@@ -1050,9 +1097,21 @@ namespace LotteryAnalyze.UI
                 v = 1;
             }
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
-                graphMgr.kvalueGraph.gridScaleH = v;
+            {
+                graphMgr.kvalueGraph.gridScaleUp.Y = v;
+            }
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
-                graphMgr.tradeGraph.gridScaleH = v;
+            {
+                graphMgr.tradeGraph.gridScaleUp.Y = v;
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+            {
+                graphMgr.appearenceGraph.gridScaleUp.Y = v;
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+            {
+                graphMgr.missCountGraph.gridScaleUp.Y = v;
+            }
             RefreshPanel();
         }
 
@@ -1066,9 +1125,25 @@ namespace LotteryAnalyze.UI
                 v = 1;
             }
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
-                graphMgr.kvalueGraph.gridScaleW = v;
+            {
+                graphMgr.kvalueGraph.gridScaleUp.X = v;
+                graphMgr.kvalueGraph.gridScaleDown.X = v;
+            }
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
-                graphMgr.tradeGraph.gridScaleW = v;
+            {
+                graphMgr.tradeGraph.gridScaleUp.X = v;
+                graphMgr.tradeGraph.gridScaleDown.X = v;
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eAppearenceGraph)
+            {
+                graphMgr.appearenceGraph.gridScaleUp.X = v;
+                graphMgr.appearenceGraph.gridScaleDown.X = v;
+            }
+            else if (graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
+            {
+                graphMgr.missCountGraph.gridScaleUp.X = v;
+                graphMgr.missCountGraph.gridScaleDown.X = v;
+            }
             RefreshPanel();
         }
 
@@ -1293,10 +1368,10 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.tradeGraph.autoAllign = true;
                 int xOffSet = 0;
-                if (index * graphMgr.tradeGraph.gridScaleW > checkW)
+                if (index * graphMgr.tradeGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(index * graphMgr.tradeGraph.gridScaleW);
+                    xOffSet = -(int)(index * graphMgr.tradeGraph.gridScaleUp.X);
                 graphMgr.tradeGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
@@ -1309,10 +1384,10 @@ namespace LotteryAnalyze.UI
                 TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
                 index = latestTradedItem.targetLotteryItem.idGlobal;
                 int xOffSet = 0;
-                if (index * graphMgr.kvalueGraph.gridScaleW > checkW)
+                if (index * graphMgr.kvalueGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleW);
+                    xOffSet = -(int)(index * graphMgr.kvalueGraph.gridScaleUp.X);
                 graphMgr.kvalueGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
@@ -1325,10 +1400,10 @@ namespace LotteryAnalyze.UI
                 TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
                 index = latestTradedItem.targetLotteryItem.idGlobal;
                 int xOffSet = 0;
-                if (index * graphMgr.appearenceGraph.gridScaleW > checkW)
+                if (index * graphMgr.appearenceGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(index * graphMgr.appearenceGraph.gridScaleW);
+                    xOffSet = -(int)(index * graphMgr.appearenceGraph.gridScaleUp.X);
                 graphMgr.appearenceGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
@@ -1341,10 +1416,10 @@ namespace LotteryAnalyze.UI
                 TradeDataBase latestTradedItem = TradeDataManager.Instance.historyTradeDatas[index - 1];
                 index = latestTradedItem.targetLotteryItem.idGlobal;
                 int xOffSet = 0;
-                if (index * graphMgr.missCountGraph.gridScaleW > checkW)
+                if (index * graphMgr.missCountGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(index * graphMgr.missCountGraph.gridScaleW);
+                    xOffSet = -(int)(index * graphMgr.missCountGraph.gridScaleUp.X);
                 graphMgr.missCountGraph.ScrollToData(
                     index,
                     this.panelUp.ClientSize.Width,
@@ -1374,10 +1449,10 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.tradeGraph.autoAllign = true;
                 int xOffSet = 0;
-                if (tradeIndex * graphMgr.tradeGraph.gridScaleW > checkW)
+                if (tradeIndex * graphMgr.tradeGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(tradeIndex * graphMgr.tradeGraph.gridScaleW);
+                    xOffSet = -(int)(tradeIndex * graphMgr.tradeGraph.gridScaleUp.X);
                 graphMgr.tradeGraph.ScrollToData(
                     tradeIndex,
                     this.panelUp.ClientSize.Width,
@@ -1388,10 +1463,10 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.autoAllign = true;
                 int xOffSet = 0;
-                if (dataItemIndex * graphMgr.kvalueGraph.gridScaleW > checkW)
+                if (dataItemIndex * graphMgr.kvalueGraph.gridScaleUp.X > checkW)
                     xOffSet = -checkW;
                 else
-                    xOffSet = -(int)(dataItemIndex * graphMgr.kvalueGraph.gridScaleW);
+                    xOffSet = -(int)(dataItemIndex * graphMgr.kvalueGraph.gridScaleUp.X);
                 graphMgr.kvalueGraph.ScrollToData(
                     dataItemIndex,
                     this.panelUp.ClientSize.Width,
