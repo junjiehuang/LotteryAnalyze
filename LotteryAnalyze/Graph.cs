@@ -397,6 +397,23 @@ namespace LotteryAnalyze
         public float gridScaleH = 20;
         public float gridScaleW = 5;
         public PointF canvasOffset = new PointF(0, 0);
+        public PointF downCanvasOffset = new PointF(0, 0);
+
+        public float DownCanvasToStand(float v, bool isX)
+        {
+            if (isX)
+                return (v + downCanvasOffset.X);
+            else
+                return (downCanvasOffset.Y) - v;
+        }
+
+        public float DownStandToCanvas(float v, bool isX)
+        {
+            if (isX)
+                return v - downCanvasOffset.X;
+            else
+                return downCanvasOffset.Y - v;
+        }
 
         public float CanvasToStand(float v, bool isX)
         {
@@ -424,6 +441,21 @@ namespace LotteryAnalyze
             Point res = new Point();
             res.X = (int)StandToCanvas((float)pt.X, true);
             res.Y = (int)StandToCanvas((float)pt.Y, false);
+            return res;
+        }
+
+        public Point DownCanvasToStand(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)DownCanvasToStand((float)pt.X, true);
+            res.Y = (int)DownCanvasToStand((float)pt.Y, false);
+            return res;
+        }
+        public Point DownStandToCanvas(Point pt)
+        {
+            Point res = new Point();
+            res.X = (int)DownStandToCanvas((float)pt.X, true);
+            res.Y = (int)DownStandToCanvas((float)pt.Y, false);
             return res;
         }
 
@@ -526,16 +558,20 @@ namespace LotteryAnalyze
         Dictionary<Pen, List<PointF>> segPools = new Dictionary<Pen, List<PointF>>();
         Dictionary<Pen, List<PointF>> linePools = new Dictionary<Pen, List<PointF>>();
         Dictionary<SolidBrush, List<RectangleF>> rcPools = new Dictionary<SolidBrush,List<RectangleF>>();
-        List<AuxiliaryLine> auxiliaryLineList = new List<AuxiliaryLine>();
-        public List<Point> mouseHitPts = new List<Point>();
-        public AuxiliaryLine selAuxLine = null;
-        public int selAuxLinePointIndex = -1;
+        List<AuxiliaryLine> auxiliaryLineListUpPanel = new List<AuxiliaryLine>();
+        List<AuxiliaryLine> auxiliaryLineListDownPanel = new List<AuxiliaryLine>();
+        public List<Point> mouseHitPtsUpPanel = new List<Point>();
+        public List<Point> mouseHitPtsDownPanel = new List<Point>();
+        public AuxiliaryLine selAuxLineUpPanel = null;
+        public AuxiliaryLine selAuxLineDownPanel = null;
+        public int selAuxLinePointIndexUpPanel = -1;
+        public int selAuxLinePointIndexDownPanel = -1;
 
-        float downGraphYOffset = 0;
+        //float downGraphYOffset = 0;
         public float DownGraphYOffset
         {
-            get { return downGraphYOffset; }
-            set { downGraphYOffset = value; }
+            get { return downCanvasOffset.Y; }
+            set { downCanvasOffset.Y = value; }
         }
 
         int startItemIndex = -1;
@@ -568,14 +604,17 @@ namespace LotteryAnalyze
         {
             canvasOffset.X += dx;
             canvasOffset.Y += dy;
+            
             if (canvasOffset.X < 0)
                 canvasOffset.X = 0;
+
+            downCanvasOffset.X = canvasOffset.X;
         }
         public override void ResetGraphPosition()
         {
             canvasOffset.X = 0;
             canvasOffset.Y = 0;
-            DownGraphYOffset = 0;
+            downCanvasOffset.X = downCanvasOffset.Y = 0;
         }
 
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
@@ -586,7 +625,7 @@ namespace LotteryAnalyze
             int beforeID = preViewDataIndex;
             if (enableAuxiliaryLine)
             {
-                DrawAutoAuxTools(g, winW, winH, numIndex, cdt);
+                DrawAutoAuxTools(g, winW, winH, numIndex, cdt, true);
             }
 
             preViewDataIndex = -1;
@@ -865,102 +904,141 @@ namespace LotteryAnalyze
             maxIndex = GraphDataManager.KGDC.DataLength();
         }
 
-        public void UpdateSelectAuxLinePoint(Point mouseRelPos, int dx, int dy)
+        public void UpdateSelectAuxLinePoint(Point mouseRelPos, int dx, int dy, bool upPanel)
         {
-            if(selAuxLine != null && selAuxLinePointIndex >= 0 && selAuxLinePointIndex < selAuxLine.keyPoints.Count)
+            if (upPanel)
             {
-                selAuxLine.keyPoints[selAuxLinePointIndex] = CanvasToStand(mouseRelPos);
-                if(selAuxLine.lineType == AuxLineType.eCircleLine)
+                if (selAuxLineUpPanel != null && selAuxLinePointIndexUpPanel >= 0 && selAuxLinePointIndexUpPanel < selAuxLineUpPanel.keyPoints.Count)
                 {
-                    (selAuxLine as CircleLine).CalcRect();
+                    selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel] = CanvasToStand(mouseRelPos);
+                    if (selAuxLineUpPanel.lineType == AuxLineType.eCircleLine)
+                    {
+                        (selAuxLineUpPanel as CircleLine).CalcRect();
+                    }
+                }
+                else if (selAuxLineUpPanel != null && selAuxLinePointIndexUpPanel == -1)
+                {
+                    for (int i = 0; i < selAuxLineUpPanel.keyPoints.Count; ++i)
+                    {
+                        Point p = selAuxLineUpPanel.keyPoints[i];
+                        p.Offset(dx, dy);
+                        selAuxLineUpPanel.keyPoints[i] = p;
+                    }
                 }
             }
-            else if(selAuxLine != null && selAuxLinePointIndex == -1)
+            else
             {
-                for( int i = 0; i < selAuxLine.keyPoints.Count; ++i )
+                if (selAuxLineDownPanel != null && selAuxLinePointIndexDownPanel >= 0 && selAuxLinePointIndexDownPanel < selAuxLineDownPanel.keyPoints.Count)
                 {
-                    Point p = selAuxLine.keyPoints[i];
-                    p.Offset(dx, dy);
-                    selAuxLine.keyPoints[i] = p;
+                    selAuxLineDownPanel.keyPoints[selAuxLinePointIndexDownPanel] = CanvasToStand(mouseRelPos);
+                    if (selAuxLineDownPanel.lineType == AuxLineType.eCircleLine)
+                    {
+                        (selAuxLineDownPanel as CircleLine).CalcRect();
+                    }
+                }
+                else if (selAuxLineDownPanel != null && selAuxLinePointIndexDownPanel == -1)
+                {
+                    for (int i = 0; i < selAuxLineDownPanel.keyPoints.Count; ++i)
+                    {
+                        Point p = selAuxLineDownPanel.keyPoints[i];
+                        p.Offset(dx, dy);
+                        selAuxLineDownPanel.keyPoints[i] = p;
+                    }
                 }
             }
         }
 
-        public void SelectAuxLine(Point mouseRelPos, int numIndex, CollectDataType cdt)
+        public void SelectAuxLine(Point mouseRelPos, int numIndex, CollectDataType cdt, bool upPanel)
         {
-            selAuxLine = null;
-            selAuxLinePointIndex = -1;
-            Point standMousePos = CanvasToStand(mouseRelPos);
-            for( int i = 0; i < auxiliaryLineList.Count; ++i )
+            if(upPanel)
             {
-                AuxiliaryLine al = auxiliaryLineList[i];
-                int selPtID = -1;
-                bool sel = al.HitTest(cdt, numIndex, standMousePos, rcHalfSize, ref selPtID);
-                if(sel)
+                selAuxLineUpPanel = null;
+                selAuxLinePointIndexUpPanel = -1;
+                Point standMousePos = CanvasToStand(mouseRelPos);
+                for (int i = 0; i < auxiliaryLineListUpPanel.Count; ++i)
                 {
-                    selAuxLine = al;
-                    selAuxLinePointIndex = selPtID;
-                    return;
+                    AuxiliaryLine al = auxiliaryLineListUpPanel[i];
+                    int selPtID = -1;
+                    bool sel = al.HitTest(cdt, numIndex, standMousePos, rcHalfSize, ref selPtID);
+                    if (sel)
+                    {
+                        selAuxLineUpPanel = al;
+                        selAuxLinePointIndexUpPanel = selPtID;
+                        return;
+                    }
                 }
-                //if (al.cdt == cdt && al.numIndex == numIndex)
-                //{
-                //    for (int j = 0; j < al.keyPoints.Count; ++j)
-                //    {
-                //        Point pt = al.keyPoints[j];
-                //        if (pt.X - rcHalfSize > standMousePos.X ||
-                //            pt.X + rcHalfSize < standMousePos.X ||
-                //            pt.Y - rcHalfSize > standMousePos.Y ||
-                //            pt.Y + rcHalfSize < standMousePos.Y)
-                //            continue;
-                //        else
-                //        {
-                //            selAuxLine = al;
-                //            selAuxLinePointIndex = j;
-                //            return;
-                //        }
-                //    }
-                //}
+            }
+            else
+            {
+                selAuxLineDownPanel = null;
+                selAuxLinePointIndexDownPanel = -1;
+                Point standMousePos = DownCanvasToStand(mouseRelPos);
+                for (int i = 0; i < auxiliaryLineListDownPanel.Count; ++i)
+                {
+                    AuxiliaryLine al = auxiliaryLineListDownPanel[i];
+                    int selPtID = -1;
+                    bool sel = al.HitTest(cdt, numIndex, standMousePos, rcHalfSize, ref selPtID);
+                    if (sel)
+                    {
+                        selAuxLineDownPanel = al;
+                        selAuxLinePointIndexDownPanel = selPtID;
+                        return;
+                    }
+                }
             }
         }
         public void RemoveAllAuxLines()
         {
-            auxiliaryLineList.Clear();
+            auxiliaryLineListUpPanel.Clear();
+            auxiliaryLineListDownPanel.Clear();
         }
-        public void RemoveSelectAuxLine()
+        public void RemoveSelectAuxLine(bool upPanel)
         {
-            if(selAuxLine!=null)
+            if(upPanel)
             {
-                auxiliaryLineList.Remove(selAuxLine);
-                selAuxLine = null;
-                selAuxLinePointIndex = -1;
+                if (selAuxLineUpPanel != null)
+                {
+                    auxiliaryLineListUpPanel.Remove(selAuxLineUpPanel);
+                    selAuxLineUpPanel = null;
+                    selAuxLinePointIndexUpPanel = -1;
+                }
+            }
+            else
+            {
+                if (selAuxLineDownPanel != null)
+                {
+                    auxiliaryLineListDownPanel.Remove(selAuxLineDownPanel);
+                    selAuxLineDownPanel = null;
+                    selAuxLinePointIndexDownPanel = -1;
+                }
             }
         }
-        public void AddHorzLine( Point pt, int numIndex, CollectDataType cdt)
+        public void AddHorzLine( Point pt, int numIndex, CollectDataType cdt, bool upPanel)
         {
             HorzLine line = new HorzLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add( CanvasToStand(pt) );
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddVertLine(Point pt, int numIndex, CollectDataType cdt)
+        public void AddVertLine(Point pt, int numIndex, CollectDataType cdt, bool upPanel)
         {
             VertLine line = new VertLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(pt));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddSingleLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        public void AddSingleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
         {
             SingleLine line = new SingleLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddChannelLine(Point line0P1, Point line0P2, Point line1P, int numIndex, CollectDataType cdt)
+        public void AddChannelLine(Point line0P1, Point line0P2, Point line1P, int numIndex, CollectDataType cdt, bool upPanel)
         {
             ChannelLine line = new ChannelLine();
             line.numIndex = numIndex;
@@ -968,18 +1046,18 @@ namespace LotteryAnalyze
             line.keyPoints.Add(CanvasToStand(line0P1));
             line.keyPoints.Add(CanvasToStand(line0P2));
             line.keyPoints.Add(CanvasToStand(line1P));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddGoldSegLine(Point p1, Point P2, int numIndex, CollectDataType cdt)
+        public void AddGoldSegLine(Point p1, Point P2, int numIndex, CollectDataType cdt, bool upPanel)
         {
             GoldSegmentedLine line = new GoldSegmentedLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(P2));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddCircleLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        public void AddCircleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
         {
             CircleLine line = new CircleLine();
             line.numIndex = numIndex;
@@ -987,25 +1065,25 @@ namespace LotteryAnalyze
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
             line.CalcRect();
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddArrowLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        public void AddArrowLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
         {
             ArrowLine line = new ArrowLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
-        public void AddRectLine(Point p1, Point p2, int numIndex, CollectDataType cdt)
+        public void AddRectLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
         {
             RectLine line = new RectLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1));
             line.keyPoints.Add(CanvasToStand(p2));
-            auxiliaryLineList.Add(line);
+            (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
 
         void BeforeDraw()
@@ -1302,26 +1380,26 @@ namespace LotteryAnalyze
         {
             float rcHalfSize = 3;
             float rcSize = rcHalfSize * 2;
-            for ( int i = 0; i < auxiliaryLineList.Count; ++i )
+            for ( int i = 0; i < auxiliaryLineListUpPanel.Count; ++i )
             {
-                AuxiliaryLine al = auxiliaryLineList[i];
+                AuxiliaryLine al = auxiliaryLineListUpPanel[i];
                 if(al.cdt == cdt && al.numIndex == numIndex)
                     DrawAuxLine(g, winW, winH, al);
             }
 
-            if(mouseHitPts.Count > 0 && auxOperationIndex > AuxLineType.eNone)
+            if(mouseHitPtsUpPanel.Count > 0 && auxOperationIndex > AuxLineType.eNone)
             {
                 DrawPreviewAuxLine(g, winW, winH, mouseRelPos);
             }
 
-            if(selAuxLine!=null && selAuxLinePointIndex != -1)
+            if(selAuxLineUpPanel!=null && selAuxLinePointIndexUpPanel != -1)
             {
-                Point pt = StandToCanvas(selAuxLine.keyPoints[selAuxLinePointIndex]);
-                g.DrawRectangle(selAuxLine.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+                Point pt = StandToCanvas(selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel]);
+                g.DrawRectangle(selAuxLineUpPanel.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
             }
         }
 
-        void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt)
+        void DrawAutoAuxTools(Graphics g, int winW, int winH, int numIndex, CollectDataType cdt, bool upPanel)
         {
             try
             {
@@ -1344,7 +1422,7 @@ namespace LotteryAnalyze
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
-                                    numIndex, cdt);
+                                    numIndex, cdt, upPanel);
                             }
                             if (sali.upLineData.dataNextSharp != null && sali.upLineData.dataSharp != null)
                             {
@@ -1355,7 +1433,7 @@ namespace LotteryAnalyze
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
-                                    numIndex, cdt);
+                                    numIndex, cdt, upPanel);
                             }
                         }
 
@@ -1370,7 +1448,7 @@ namespace LotteryAnalyze
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
-                                    numIndex, cdt);
+                                    numIndex, cdt, upPanel);
                             }
                             if (sali.downLineData.dataNextSharp != null && sali.downLineData.dataSharp != null)
                             {
@@ -1381,7 +1459,7 @@ namespace LotteryAnalyze
                                 AddSingleLine(
                                     new Point(px, py),
                                     new Point(x, y),
-                                    numIndex, cdt);
+                                    numIndex, cdt, upPanel);
                             }
                         }
                     }
@@ -1538,8 +1616,8 @@ namespace LotteryAnalyze
                 case AuxLineType.eSingleLine:
                     {
                         float sx, sy, ex, ey;
-                        sx = mouseHitPts[0].X;
-                        sy = mouseHitPts[0].Y;
+                        sx = mouseHitPtsUpPanel[0].X;
+                        sy = mouseHitPtsUpPanel[0].Y;
                         if (sx == mouseRelPos.X)
                         {
                             g.DrawLine(SingleLine.sOriSolidPen, sx, 0, sx, winH);
@@ -1559,10 +1637,10 @@ namespace LotteryAnalyze
                 case AuxLineType.eChannelLine:
                     {
                         float sx, sy, ex, ey;
-                        sx = mouseHitPts[0].X;
-                        sy = mouseHitPts[0].Y;
+                        sx = mouseHitPtsUpPanel[0].X;
+                        sy = mouseHitPtsUpPanel[0].Y;
                         g.DrawRectangle(ChannelLine.sOriSolidPen, sx - rcHalfSize, sy - rcHalfSize, rcSize, rcSize);
-                        if (mouseHitPts.Count == 1)
+                        if (mouseHitPtsUpPanel.Count == 1)
                         {
                             ex = mouseRelPos.X;
                             ey = mouseRelPos.Y;
@@ -1578,10 +1656,10 @@ namespace LotteryAnalyze
                                 g.DrawLine(ChannelLine.sOriSolidPen, 0, fyl, winW, fyr);
                             }
                         }
-                        else if(mouseHitPts.Count == 2)
+                        else if(mouseHitPtsUpPanel.Count == 2)
                         {
-                            ex = mouseHitPts[1].X;
-                            ey = mouseHitPts[1].Y;
+                            ex = mouseHitPtsUpPanel[1].X;
+                            ey = mouseHitPtsUpPanel[1].Y;
                             g.DrawRectangle(ChannelLine.sOriSolidPen, ex - rcHalfSize, ey - rcHalfSize, rcSize, rcSize);
                             if (sx == ex)
                             {
@@ -1613,8 +1691,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eGoldSegmentedLine:
                     {
-                        float sx = mouseHitPts[0].X;
-                        float sy = mouseHitPts[0].Y;
+                        float sx = mouseHitPtsUpPanel[0].X;
+                        float sy = mouseHitPtsUpPanel[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         for(int i = 0; i < C_GOLDEN_VALUE.Length; ++i)
@@ -1631,8 +1709,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eCircleLine:
                     {
-                        float cx = mouseHitPts[0].X;
-                        float cy = mouseHitPts[0].Y;
+                        float cx = mouseHitPtsUpPanel[0].X;
+                        float cy = mouseHitPtsUpPanel[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         float dx = cx - ex;
@@ -1645,8 +1723,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eArrowLine:
                     {
-                        float cx = mouseHitPts[0].X;
-                        float cy = mouseHitPts[0].Y;
+                        float cx = mouseHitPtsUpPanel[0].X;
+                        float cy = mouseHitPtsUpPanel[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;
@@ -1658,8 +1736,8 @@ namespace LotteryAnalyze
                     break;
                 case AuxLineType.eRectLine:
                     {
-                        float cx = mouseHitPts[0].X;
-                        float cy = mouseHitPts[0].Y;
+                        float cx = mouseHitPtsUpPanel[0].X;
+                        float cy = mouseHitPtsUpPanel[0].Y;
                         float ex = mouseRelPos.X;
                         float ey = mouseRelPos.Y;
                         ArrowLine.sOriSolidPen.Width = ArrowLine.C_LINE_WIDTH;

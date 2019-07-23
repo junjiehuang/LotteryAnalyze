@@ -25,6 +25,7 @@ namespace LotteryAnalyze.UI
         Point downPanelMousePosLastDrag = new Point();
         bool hasNewDataUpdate = false;
         bool hasMouseMoveOnUpPanel = false;
+        bool hasMouseMoveOnDownPanel = false;
         static Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 2);
         static Pen greenPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Green, 2);
         static Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 2);
@@ -404,7 +405,7 @@ namespace LotteryAnalyze.UI
 
                 if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
-                    if (graphMgr.kvalueGraph.selAuxLine == null)
+                    if (graphMgr.kvalueGraph.selAuxLineUpPanel == null)
                     {
                         upPanelMousePosLastDrag = e.Location;
                         graphMgr.MoveGraph(dx, dy);
@@ -423,7 +424,7 @@ namespace LotteryAnalyze.UI
                     {
                         int idx = upPanelMousePosOnMove.X - lastMouseMovePos.X;
                         int idy = upPanelMousePosOnMove.Y - lastMouseMovePos.Y;
-                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( upPanelMousePosOnMove, idx, -idy );
+                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint( upPanelMousePosOnMove, idx, -idy, true );
                     }
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eTradeGraph)
@@ -475,7 +476,7 @@ namespace LotteryAnalyze.UI
                     graphMgr.kvalueGraph.enableAuxiliaryLine)
                 {
                     //if(graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone)
-                        graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT);
+                        graphMgr.kvalueGraph.SelectAuxLine(e.Location, numberIndex, curCDT, true);
                 }
             }
             RefreshPanel();//触发Paint事件
@@ -565,13 +566,26 @@ namespace LotteryAnalyze.UI
                 instLst[i].SelItem(selID);
             }
         }
-        void ProcAddAuxLine(Point mousePos)
+        void ProcAddAuxLine(Point mousePos, bool upPanel)
         {
             isAddingAuxLine = false;
             if (graphMgr.kvalueGraph.enableAuxiliaryLine)
             {
-                graphMgr.kvalueGraph.SelectAuxLine(mousePos, numberIndex, curCDT);
-                if (graphMgr.kvalueGraph.selAuxLine == null && hasMouseMoveOnUpPanel == false)
+                graphMgr.kvalueGraph.SelectAuxLine(mousePos, numberIndex, curCDT, upPanel);
+                bool canProcAdd = false;
+                List<Point> mouseHitPoints = null;
+                if (upPanel)
+                {
+                    canProcAdd = graphMgr.kvalueGraph.selAuxLineUpPanel == null && hasMouseMoveOnUpPanel == false;
+                    mouseHitPoints = graphMgr.kvalueGraph.mouseHitPtsUpPanel;
+                }
+                else
+                {
+                    canProcAdd = graphMgr.kvalueGraph.selAuxLineDownPanel == null && hasMouseMoveOnDownPanel == false;
+                    mouseHitPoints = graphMgr.kvalueGraph.mouseHitPtsDownPanel;
+                }
+
+                if (canProcAdd)
                 {
                     switch (graphMgr.kvalueGraph.auxOperationIndex)
                     {
@@ -582,93 +596,93 @@ namespace LotteryAnalyze.UI
                             break;
                         case AuxLineType.eHorzLine:
                             {
-                                graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT);
-                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                graphMgr.kvalueGraph.AddHorzLine(mousePos, numberIndex, curCDT, true);
+                                mouseHitPoints.Clear();
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eVertLine:
                             {
-                                graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT);
-                                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                graphMgr.kvalueGraph.AddVertLine(mousePos, numberIndex, curCDT, true);
+                                mouseHitPoints.Clear();
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eSingleLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 2)
                                 {
                                     graphMgr.kvalueGraph.AddSingleLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eChannelLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 3)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 3)
                                 {
                                     graphMgr.kvalueGraph.AddChannelLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1],
-                                        graphMgr.kvalueGraph.mouseHitPts[2], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1],
+                                        mouseHitPoints[2], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eGoldSegmentedLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 2)
                                 {
                                     graphMgr.kvalueGraph.AddGoldSegLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eCircleLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 2)
                                 {
                                     graphMgr.kvalueGraph.AddCircleLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eArrowLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 2)
                                 {
                                     graphMgr.kvalueGraph.AddArrowLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
                             break;
                         case AuxLineType.eRectLine:
                             {
-                                graphMgr.kvalueGraph.mouseHitPts.Add(mousePos);
-                                if (graphMgr.kvalueGraph.mouseHitPts.Count == 2)
+                                mouseHitPoints.Add(mousePos);
+                                if (mouseHitPoints.Count == 2)
                                 {
                                     graphMgr.kvalueGraph.AddRectLine(
-                                        graphMgr.kvalueGraph.mouseHitPts[0],
-                                        graphMgr.kvalueGraph.mouseHitPts[1], numberIndex, curCDT);
-                                    graphMgr.kvalueGraph.mouseHitPts.Clear();
+                                        mouseHitPoints[0],
+                                        mouseHitPoints[1], numberIndex, curCDT, true);
+                                    mouseHitPoints.Clear();
                                 }
                                 isAddingAuxLine = true;
                             }
@@ -735,8 +749,8 @@ namespace LotteryAnalyze.UI
                 else if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
                     // 处理辅助线的添加
-                    ProcAddAuxLine(e.Location);
-                    if (graphMgr.kvalueGraph.selAuxLine == null && 
+                    ProcAddAuxLine(e.Location, true);
+                    if (graphMgr.kvalueGraph.selAuxLineUpPanel == null && 
                         hasMouseMoveOnUpPanel == false &&
                         isAddingAuxLine == false &&
                         graphMgr.kvalueGraph.enableAuxiliaryLine && graphMgr.kvalueGraph.auxOperationIndex == AuxLineType.eNone
@@ -755,12 +769,13 @@ namespace LotteryAnalyze.UI
             }
             else if(e.Button == MouseButtons.Right)
             {
-                graphMgr.kvalueGraph.mouseHitPts.Clear();
+                graphMgr.kvalueGraph.mouseHitPtsUpPanel.Clear();
             }
             RefreshPanel();//触发Paint事件
         }
         private void panelDown_MouseMove(object sender, MouseEventArgs e)
         {
+            hasMouseMoveOnDownPanel = true;
             downPanelMousePosOnMove = e.Location;
 
             if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
@@ -772,6 +787,8 @@ namespace LotteryAnalyze.UI
                 if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
                     graphMgr.kvalueGraph.DownGraphYOffset += dy;
+
+                    graphMgr.MoveGraph(dx, 0);
                 }
             }
             RefreshPanel();//触发Paint事件
@@ -779,6 +796,7 @@ namespace LotteryAnalyze.UI
 
         private void panelDown_MouseDown(object sender, MouseEventArgs e)
         {
+            hasMouseMoveOnDownPanel = false;
             downPanelMousePosLastDrag = e.Location;
 
             this.panelDown.Focus();
@@ -804,9 +822,13 @@ namespace LotteryAnalyze.UI
         {
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
             {
-                if (graphMgr.kvalueGraph.selAuxLine != null)
+                if (graphMgr.kvalueGraph.selAuxLineUpPanel != null)
                 {
-                    graphMgr.kvalueGraph.RemoveSelectAuxLine();
+                    graphMgr.kvalueGraph.RemoveSelectAuxLine(true);
+                }
+                if(graphMgr.kvalueGraph.selAuxLineDownPanel != null)
+                {
+                    graphMgr.kvalueGraph.RemoveSelectAuxLine(false);
                 }
             }
         }
@@ -1085,21 +1107,21 @@ namespace LotteryAnalyze.UI
         }
         private void cancelAddAuxLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            graphMgr.kvalueGraph.mouseHitPts.Clear();
+            graphMgr.kvalueGraph.mouseHitPtsUpPanel.Clear();
         }
         private void modifyAuxLineColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
             {
-                if (graphMgr.kvalueGraph.selAuxLine != null)
+                if (graphMgr.kvalueGraph.selAuxLineUpPanel != null)
                 {
                     ColorDialog dlg = new ColorDialog();
-                    dlg.Color = graphMgr.kvalueGraph.selAuxLine.GetSolidPen().Color;
+                    dlg.Color = graphMgr.kvalueGraph.selAuxLineUpPanel.GetSolidPen().Color;
 
                     if (dlg.ShowDialog() == DialogResult.OK)
                     {
                         Color GetColor = dlg.Color;
-                        graphMgr.kvalueGraph.selAuxLine.SetColor(GetColor);
+                        graphMgr.kvalueGraph.selAuxLineUpPanel.SetColor(GetColor);
                     }
                 }
             }
