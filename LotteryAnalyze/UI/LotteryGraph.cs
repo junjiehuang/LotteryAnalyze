@@ -38,6 +38,7 @@ namespace LotteryAnalyze.UI
 
         bool isAddingAuxLine = false;
         bool needRefresh = false;
+        bool needCalcDataOnGridScaleChanged = false;
 
         #region ctor and common
 
@@ -273,6 +274,14 @@ namespace LotteryAnalyze.UI
                 this.Invalidate(true);
             }
             needRefresh = false;
+            if(needCalcDataOnGridScaleChanged)
+            {
+                if(graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+                {
+                    graphMgr.kvalueGraph.OnGridScaleChanged();
+                }
+            }
+            needCalcDataOnGridScaleChanged = false;
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -1099,6 +1108,7 @@ namespace LotteryAnalyze.UI
             if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
             {
                 graphMgr.kvalueGraph.gridScaleUp.Y = v;
+                graphMgr.kvalueGraph.OnGridScaleChanged();
             }
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
@@ -1128,6 +1138,7 @@ namespace LotteryAnalyze.UI
             {
                 graphMgr.kvalueGraph.gridScaleUp.X = v;
                 graphMgr.kvalueGraph.gridScaleDown.X = v;
+                graphMgr.kvalueGraph.OnGridScaleChanged();
             }
             else if (graphMgr.CurrentGraphType == GraphType.eTradeGraph)
             {
@@ -1642,6 +1653,24 @@ namespace LotteryAnalyze.UI
             //    return;
             needRefresh = true;
             //this.Invalidate(true);//触发Paint事件
+        }
+
+        private void panelDown_Resize(object sender, EventArgs e)
+        {
+            needCalcDataOnGridScaleChanged = true;
+            //if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            //{
+            //    graphMgr.kvalueGraph.OnGridScaleChanged();
+            //}
+        }
+
+        private void splitContainer2_SplitterMoving(object sender, SplitterCancelEventArgs e)
+        {
+            needCalcDataOnGridScaleChanged = true;
+            //if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
+            //{
+            //    graphMgr.kvalueGraph.OnGridScaleChanged();
+            //}
         }
     }
 }

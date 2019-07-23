@@ -150,11 +150,13 @@ namespace LotteryAnalyze.UI
             this.textBoxMultiCount = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPageAppearence = new System.Windows.Forms.TabPage();
+            this.trackBarAppearRate = new System.Windows.Forms.TrackBar();
             this.label18 = new System.Windows.Forms.Label();
             this.comboBoxAppearenceType = new System.Windows.Forms.ComboBox();
             this.groupBoxCDTShowSetting = new System.Windows.Forms.GroupBox();
             this.checkBoxShowSingleLine = new System.Windows.Forms.CheckBox();
             this.tabPageMissCount = new System.Windows.Forms.TabPage();
+            this.trackBarMissCount = new System.Windows.Forms.TrackBar();
             this.label16 = new System.Windows.Forms.Label();
             this.comboBoxMissCountType = new System.Windows.Forms.ComboBox();
             this.groupBoxMissCountCDTShowSetting = new System.Windows.Forms.GroupBox();
@@ -163,8 +165,6 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.trackBarAppearRate = new System.Windows.Forms.TrackBar();
-            this.trackBarMissCount = new System.Windows.Forms.TrackBar();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -184,8 +184,8 @@ namespace LotteryAnalyze.UI
             this.tabPageTrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).BeginInit();
             this.tabPageAppearence.SuspendLayout();
-            this.tabPageMissCount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).BeginInit();
+            this.tabPageMissCount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).BeginInit();
             this.SuspendLayout();
             // 
@@ -401,6 +401,7 @@ namespace LotteryAnalyze.UI
             this.splitContainer2.Size = new System.Drawing.Size(586, 523);
             this.splitContainer2.SplitterDistance = 319;
             this.splitContainer2.TabIndex = 0;
+            this.splitContainer2.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.splitContainer2_SplitterMoving);
             // 
             // panelUp
             // 
@@ -520,6 +521,7 @@ namespace LotteryAnalyze.UI
             this.panelDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseDown);
             this.panelDown.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseMove);
             this.panelDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelDown_MouseUp);
+            this.panelDown.Resize += new System.EventHandler(this.panelDown_Resize);
             // 
             // textBoxRefreshTimeLength
             // 
@@ -1194,6 +1196,18 @@ namespace LotteryAnalyze.UI
             this.tabPageAppearence.Text = "出号率图";
             this.tabPageAppearence.UseVisualStyleBackColor = true;
             // 
+            // trackBarAppearRate
+            // 
+            this.trackBarAppearRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarAppearRate.AutoSize = false;
+            this.trackBarAppearRate.Location = new System.Drawing.Point(4, 250);
+            this.trackBarAppearRate.Name = "trackBarAppearRate";
+            this.trackBarAppearRate.Size = new System.Drawing.Size(309, 36);
+            this.trackBarAppearRate.TabIndex = 17;
+            this.trackBarAppearRate.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarAppearRate.Scroll += new System.EventHandler(this.trackBarAppearRate_Scroll);
+            // 
             // label18
             // 
             this.label18.AutoSize = true;
@@ -1250,6 +1264,18 @@ namespace LotteryAnalyze.UI
             this.tabPageMissCount.TabIndex = 4;
             this.tabPageMissCount.Text = "遗漏图";
             this.tabPageMissCount.UseVisualStyleBackColor = true;
+            // 
+            // trackBarMissCount
+            // 
+            this.trackBarMissCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarMissCount.AutoSize = false;
+            this.trackBarMissCount.Location = new System.Drawing.Point(4, 250);
+            this.trackBarMissCount.Name = "trackBarMissCount";
+            this.trackBarMissCount.Size = new System.Drawing.Size(305, 36);
+            this.trackBarMissCount.TabIndex = 17;
+            this.trackBarMissCount.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarMissCount.Scroll += new System.EventHandler(this.trackBarMissCount_Scroll);
             // 
             // label16
             // 
@@ -1350,30 +1376,6 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
-            // trackBarAppearRate
-            // 
-            this.trackBarAppearRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarAppearRate.AutoSize = false;
-            this.trackBarAppearRate.Location = new System.Drawing.Point(4, 250);
-            this.trackBarAppearRate.Name = "trackBarAppearRate";
-            this.trackBarAppearRate.Size = new System.Drawing.Size(309, 36);
-            this.trackBarAppearRate.TabIndex = 17;
-            this.trackBarAppearRate.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBarAppearRate.Scroll += new System.EventHandler(this.trackBarAppearRate_Scroll);
-            // 
-            // trackBarMissCount
-            // 
-            this.trackBarMissCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBarMissCount.AutoSize = false;
-            this.trackBarMissCount.Location = new System.Drawing.Point(4, 250);
-            this.trackBarMissCount.Name = "trackBarMissCount";
-            this.trackBarMissCount.Size = new System.Drawing.Size(305, 36);
-            this.trackBarMissCount.TabIndex = 17;
-            this.trackBarMissCount.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBarMissCount.Scroll += new System.EventHandler(this.trackBarMissCount_Scroll);
-            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1414,9 +1416,9 @@ namespace LotteryAnalyze.UI
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTradeData)).EndInit();
             this.tabPageAppearence.ResumeLayout(false);
             this.tabPageAppearence.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).EndInit();
             this.tabPageMissCount.ResumeLayout(false);
             this.tabPageMissCount.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

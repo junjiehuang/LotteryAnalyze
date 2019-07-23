@@ -55,6 +55,7 @@ namespace LotteryAnalyze
         public CollectDataType cdt = CollectDataType.eNone;
         public AuxLineType lineType = AuxLineType.eNone;
         public List<Point> keyPoints = new List<Point>();
+        public List<PointF> valuePoints = new List<PointF>();
         protected Pen solidPen = null;
         protected Pen dotPen = null;
 
@@ -493,6 +494,49 @@ namespace LotteryAnalyze
                 return DownCanvasToStand(pt);
         }
 
+        public PointF CanvasToValue(Point pt, bool upPanel)
+        {
+            Point sv = CanvasToStand(pt, upPanel);
+            return StandToValue(sv, upPanel);
+        }
+        public PointF StandToValue(Point sv, bool upPanel)
+        {
+            PointF ret = new PointF();
+            if (upPanel)
+            {
+                ret.X = sv.X / gridScaleUp.X;
+                ret.Y = sv.Y / gridScaleUp.Y;
+            }
+            else
+            {
+                ret.X = sv.X / gridScaleDown.X;
+                ret.Y = sv.Y / gridScaleDown.Y;
+            }
+            return ret;
+        }
+
+        public Point ValueToCanvas(PointF vPt, bool upPanel)
+        {
+            Point ret = ValueToStand(vPt, upPanel);
+            return StandToCanvas(ret, upPanel);
+        }
+
+        public Point ValueToStand(PointF vPt, bool upPanel)
+        {
+            Point ret = new Point();
+            if (upPanel)
+            {
+                ret.X = (int)(vPt.X * gridScaleUp.X);
+                ret.Y = (int)(vPt.Y * gridScaleUp.Y);
+            }
+            else
+            {
+                ret.X = (int)(vPt.X * gridScaleDown.X);
+                ret.Y = (int)(vPt.Y * gridScaleDown.Y);
+            }
+            return ret;
+        }
+
 
         public virtual bool NeedRefreshCanvasOnMouseMove(Point mousePos)
         {
@@ -512,6 +556,8 @@ namespace LotteryAnalyze
         }
         public virtual void DrawDownGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos) { }
         public virtual void ScrollToData(int index, int winW, int winH, bool needSelect, int xOffset = 0, bool needScrollToData=true) { }
+
+        public virtual void OnGridScaleChanged() { }
     }
 
     // K线图
@@ -623,6 +669,27 @@ namespace LotteryAnalyze
             selDataFont = new Font(FontFamily.GenericSerif, 12);
             auxFont = new Font(FontFamily.GenericMonospace, 10);
             rulerFont = new Font(FontFamily.GenericMonospace, 9);
+        }
+
+        public override void OnGridScaleChanged()
+        {
+            for(int i = 0; i < auxiliaryLineListUpPanel.Count; ++i)
+            {
+                AuxiliaryLine line = auxiliaryLineListUpPanel[i];
+                for(int j = 0; j < line.keyPoints.Count; ++j)
+                {
+                    line.keyPoints[j] = ValueToStand(line.valuePoints[j], true);
+                }
+            }
+
+            for (int i = 0; i < auxiliaryLineListDownPanel.Count; ++i)
+            {
+                AuxiliaryLine line = auxiliaryLineListDownPanel[i];
+                for (int j = 0; j < line.keyPoints.Count; ++j)
+                {
+                    line.keyPoints[j] = ValueToStand(line.valuePoints[j], false);
+                }
+            }
         }
 
         public override bool NeedRefreshCanvasOnMouseMove(Point mousePos)
@@ -1058,7 +1125,8 @@ namespace LotteryAnalyze
             HorzLine line = new HorzLine();
             line.numIndex = numIndex;
             line.cdt = cdt;
-            line.keyPoints.Add( CanvasToStand(pt, upPanel) );
+            line.keyPoints.Add(CanvasToStand(pt, upPanel) );
+            line.valuePoints.Add(CanvasToValue(pt, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddVertLine(Point pt, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1067,6 +1135,7 @@ namespace LotteryAnalyze
             line.numIndex = numIndex;
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(pt, upPanel));
+            line.valuePoints.Add(CanvasToValue(pt, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddSingleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1076,6 +1145,8 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1, upPanel));
             line.keyPoints.Add(CanvasToStand(p2, upPanel));
+            line.valuePoints.Add(CanvasToValue(p1, upPanel));
+            line.valuePoints.Add(CanvasToValue(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddChannelLine(Point line0P1, Point line0P2, Point line1P, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1086,6 +1157,9 @@ namespace LotteryAnalyze
             line.keyPoints.Add(CanvasToStand(line0P1, upPanel));
             line.keyPoints.Add(CanvasToStand(line0P2, upPanel));
             line.keyPoints.Add(CanvasToStand(line1P, upPanel));
+            line.valuePoints.Add(CanvasToValue(line0P1, upPanel));
+            line.valuePoints.Add(CanvasToValue(line0P2, upPanel));
+            line.valuePoints.Add(CanvasToValue(line1P, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddGoldSegLine(Point p1, Point P2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1095,6 +1169,8 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1, upPanel));
             line.keyPoints.Add(CanvasToStand(P2, upPanel));
+            line.valuePoints.Add(CanvasToValue(p1, upPanel));
+            line.valuePoints.Add(CanvasToValue(P2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddCircleLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1104,6 +1180,8 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1, upPanel));
             line.keyPoints.Add(CanvasToStand(p2, upPanel));
+            line.valuePoints.Add(CanvasToValue(p1, upPanel));
+            line.valuePoints.Add(CanvasToValue(p2, upPanel));
             line.CalcRect();
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
@@ -1114,6 +1192,8 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1, upPanel));
             line.keyPoints.Add(CanvasToStand(p2, upPanel));
+            line.valuePoints.Add(CanvasToValue(p1, upPanel));
+            line.valuePoints.Add(CanvasToValue(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
         public void AddRectLine(Point p1, Point p2, int numIndex, CollectDataType cdt, bool upPanel)
@@ -1123,6 +1203,8 @@ namespace LotteryAnalyze
             line.cdt = cdt;
             line.keyPoints.Add(CanvasToStand(p1, upPanel));
             line.keyPoints.Add(CanvasToStand(p2, upPanel));
+            line.valuePoints.Add(CanvasToValue(p1, upPanel));
+            line.valuePoints.Add(CanvasToValue(p2, upPanel));
             (upPanel ? auxiliaryLineListUpPanel : auxiliaryLineListDownPanel).Add(line);
         }
 
@@ -1382,6 +1464,8 @@ namespace LotteryAnalyze
                 g.DrawLine(yellowLinePen, xL, 0, xL, winH);
                 g.DrawLine(yellowLinePen, xR, 0, xR, winH);
             }
+
+            gridScaleDown.Y = gridScaleH;
         }
 
         void DrawAuxLineGraph(Graphics g, int winW, int winH, Point mouseRelPos, int numIndex, CollectDataType cdt, List<AuxiliaryLine> auxLines, List<Point> auxPoints, bool upPanel)
