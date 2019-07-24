@@ -18,6 +18,10 @@ namespace LotteryAnalyze.UI
         int numberIndex = 0;        
         int curCDTIndex = 0;
         CollectDataType curCDT = CollectDataType.eNone;
+
+        Point lastMouseMovePos = new Point();
+        Point lastMouseMovePosDown = new System.Drawing.Point();
+
         Point upPanelMousePosLastDrag = new Point();
         Point upPanelMousePosOnMove = new Point();
         Point upPanelMousePosOnBtnDown = new Point();
@@ -400,7 +404,6 @@ namespace LotteryAnalyze.UI
             g.Flush();
         }
 
-        Point lastMouseMovePos = new Point();
         private void panelUp_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Location.X > panelUp.ClientSize.Width - buttonHorzExpand.ClientSize.Width && buttonHorzExpand.Visible == false)
@@ -806,12 +809,22 @@ namespace LotteryAnalyze.UI
 
                 if (graphMgr.CurrentGraphType == GraphType.eKCurveGraph)
                 {
-                    graphMgr.kvalueGraph.DownGraphYOffset += dy;
-
-                    graphMgr.MoveGraph(dx, 0);
+                    if (graphMgr.kvalueGraph.selAuxLineDownPanel == null)
+                    {
+                        graphMgr.kvalueGraph.DownGraphYOffset += dy;
+                        graphMgr.MoveGraph(dx, 0);
+                    }
+                    else
+                    {
+                        int idx = downPanelMousePosOnMove.X - lastMouseMovePosDown.X;
+                        int idy = downPanelMousePosOnMove.Y - lastMouseMovePosDown.Y;
+                        graphMgr.kvalueGraph.UpdateSelectAuxLinePoint(downPanelMousePosOnMove, idx, -idy, false);
+                    }
                 }
             }
             RefreshPanel();//触发Paint事件
+
+            lastMouseMovePosDown = e.Location;
         }
 
         private void panelDown_MouseDown(object sender, MouseEventArgs e)
