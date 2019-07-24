@@ -1484,10 +1484,21 @@ namespace LotteryAnalyze
                 DrawPreviewAuxLine(g, winW, winH, mouseRelPos, auxPoints);
             }
 
-            if(selAuxLineUpPanel!=null && selAuxLinePointIndexUpPanel != -1)
+            if (upPanel)
             {
-                Point pt = StandToCanvas(selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel], upPanel);
-                g.DrawRectangle(selAuxLineUpPanel.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+                if (selAuxLineUpPanel != null && selAuxLinePointIndexUpPanel != -1)
+                {
+                    Point pt = StandToCanvas(selAuxLineUpPanel.keyPoints[selAuxLinePointIndexUpPanel], upPanel);
+                    g.DrawRectangle(selAuxLineUpPanel.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+                }
+            }
+            else
+            {
+                if (selAuxLineDownPanel != null && selAuxLinePointIndexDownPanel != -1)
+                {
+                    Point pt = StandToCanvas(selAuxLineDownPanel.keyPoints[selAuxLinePointIndexDownPanel], upPanel);
+                    g.DrawRectangle(selAuxLineDownPanel.GetSolidPen(), pt.X - rcHalfSize - 4, pt.Y - rcHalfSize - 4, rcSize + 8, rcSize + 8);
+                }
             }
         }
 
