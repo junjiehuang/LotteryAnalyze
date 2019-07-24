@@ -1,5 +1,7 @@
 ﻿//#define ENABLE_GROUP_COLLECT
 
+#define USE_EMA_CALC
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace LotteryAnalyze
         public int prevMaxMissCountIndex;
         // 统计遗漏面积
         public float missCountArea;
+        public float missCountAreaTotal;
         // 统计出现该统计类型数据的次数
         public Byte appearCount;
         // 统计没有出现该统计类型数据的次数
@@ -463,10 +466,16 @@ namespace LotteryAnalyze
                         StatisticUnit suC = sumC.statisticUnitMap[cdt];
                         StatisticUnit suP = sumP.statisticUnitMap[cdt];
                         StatisticUnit suM = sumME.statisticUnitMap[cdt];
+
                         float subArea = (suC.missCount + suP.missCount) * 0.5f;
                         if (loopCount < FAST_COUNT)
                         {
+#if USE_EMA_CALC
+                            suM.fastData.missCountAreaTotal += suC.missCount;// subArea;
+                            suM.fastData.missCountArea = suM.fastData.missCountAreaTotal / (loopCount + 1);
+#else
                             suM.fastData.missCountArea += subArea;
+#endif
                             if (suM.fastData.prevMaxMissCount < suP.missCount)
                             {
                                 suM.fastData.prevMaxMissCount = suP.missCount;
@@ -475,7 +484,12 @@ namespace LotteryAnalyze
                         }
                         if (loopCount < SHOR_COUNT)
                         {
+#if USE_EMA_CALC
+                            suM.shortData.missCountAreaTotal += suC.missCount;// subArea;
+                            suM.shortData.missCountArea = suM.shortData.missCountAreaTotal / (loopCount + 1);
+#else
                             suM.shortData.missCountArea += subArea;
+#endif
                             if (suM.shortData.prevMaxMissCount < suP.missCount)
                             {
                                 suM.shortData.prevMaxMissCount = suP.missCount;
@@ -484,7 +498,12 @@ namespace LotteryAnalyze
                         }
                         if (loopCount < LONG_COUNT)
                         {
+#if USE_EMA_CALC
+                            suM.longData.missCountAreaTotal += suC.missCount;// subArea;
+                            suM.longData.missCountArea = suM.longData.missCountAreaTotal / (loopCount + 1);
+#else
                             suM.longData.missCountArea += subArea;
+#endif
                             if (suM.longData.prevMaxMissCount < suP.missCount)
                             {
                                 suM.longData.prevMaxMissCount = suP.missCount;
