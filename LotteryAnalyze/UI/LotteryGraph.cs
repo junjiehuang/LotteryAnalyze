@@ -905,6 +905,7 @@ namespace LotteryAnalyze.UI
         private void trackBarKData_Scroll(object sender, EventArgs e)
         {
             graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
+            graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelDown.ClientSize.Width, panelDown.ClientSize.Height, false);
             RefreshPanel();//触发Paint事件
         }
 

@@ -428,6 +428,7 @@ namespace LotteryAnalyze
             if (needScrollToData)
             {
                 canvasOffset.X = index * gridScaleDown.X + xOffset;
+                downCanvasOffset.X = canvasOffset.X;
             }
             autoAllign = true;
         }

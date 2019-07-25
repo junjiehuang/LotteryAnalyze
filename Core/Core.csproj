@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Tools\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TRADE_DBG; RECORD_BOLLEAN_MID_COUNTS; </DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TRADE_DBG; RECORD_BOLLEAN_MID_COUNTS; USE_EMA_CALC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
