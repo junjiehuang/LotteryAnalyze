@@ -532,7 +532,7 @@ namespace LotteryAnalyze.UI
 
             // 重置K线的起点值
             GraphDataManager.ResetCurKValueMap();
-            //KGraphDataContainer.ResetCurKValueMap();
+            //GraphDataContainerKGraph.ResetCurKValueMap();
         }
 
         private void GlobalSimTradeWindow_FormClosed(object sender, FormClosedEventArgs e)

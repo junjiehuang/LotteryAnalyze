@@ -48,9 +48,6 @@ namespace LotteryAnalyze
         static void Main()
         {
             START_TIME = System.DateTime.Now;
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

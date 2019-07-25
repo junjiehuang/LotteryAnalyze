@@ -588,7 +588,7 @@ namespace LotteryAnalyze
             Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
             RefreshDataView();
 
-            //KGraphDataContainer.ResetCurKValueMap();
+            //GraphDataContainerKGraph.ResetCurKValueMap();
             GraphDataManager.ResetCurKValueMap();
             GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             LotteryAnalyze.UI.LotteryGraph.Open(false);

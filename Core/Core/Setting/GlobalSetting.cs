@@ -26,7 +26,7 @@ namespace LotteryAnalyze
         eUseFastAndShort,
     }
 
-    class GlobalSetting
+    public class GlobalSetting
     {
         static GlobalSetting sInstance = null;
         public static GlobalSetting Instance

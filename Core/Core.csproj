@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D3CBD336-C8B8-4136-BB22-4A8AA1930ED9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Tools\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TRADE_DBG; RECORD_BOLLEAN_MID_COUNTS; </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\DataSource\DataItem.cs" />
+    <Compile Include="Core\DataSource\DataManager.cs" />
+    <Compile Include="Core\DataSource\LotteryStatisticInfo.cs" />
+    <Compile Include="Core\DataSource\OneDayDatas.cs" />
+    <Compile Include="Core\GraphData\AutoAnalyzeTool.cs" />
+    <Compile Include="Core\GraphData\AvgDataContainer.cs" />
+    <Compile Include="Core\GraphData\AvgPoint.cs" />
+    <Compile Include="Core\GraphData\AvgPointMap.cs" />
+    <Compile Include="Core\GraphData\GraphDataContainerBarGraph.cs" />
+    <Compile Include="Core\GraphData\BollinDataContainer.cs" />
+    <Compile Include="Core\GraphData\BollinPoint.cs" />
+    <Compile Include="Core\GraphData\BollinPointMap.cs" />
+    <Compile Include="Core\GraphData\GraphDataContainerBase.cs" />
+    <Compile Include="Core\GraphData\KData.cs" />
+    <Compile Include="Core\GraphData\KDataMap.cs" />
+    <Compile Include="Core\GraphData\KDataDictContainer.cs" />
+    <Compile Include="Core\GraphData\GraphDataContainerKGraph.cs" />
+    <Compile Include="Core\GraphData\MACDDataContianer.cs" />
+    <Compile Include="Core\GraphData\MACDPoint.cs" />
+    <Compile Include="Core\GraphData\MACDPointMap.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineArrow.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineBase.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineChannel.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineCircle.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineGoldenSection.cs" />
+    <Compile Include="Core\Graph\GraphAppearence.cs" />
+    <Compile Include="Core\Graph\GraphBar.cs" />
+    <Compile Include="Core\Graph\GraphBase.cs" />
+    <Compile Include="Core\Graph\GraphKCurve.cs" />
+    <Compile Include="Core\Graph\GraphMissCount.cs" />
+    <Compile Include="Core\Graph\GraphTrade.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineHorz.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineRect.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineSupportPressure.cs" />
+    <Compile Include="Core\Graph\AuxiliaryLineVert.cs" />
+    <Compile Include="Core\Simulation\Simulator.cs" />
+    <Compile Include="Core\DataSource\StatisticData.cs" />
+    <Compile Include="Core\DataSource\StatisticUnit.cs" />
+    <Compile Include="Core\DataSource\StatisticUnitMap.cs" />
+    <Compile Include="Core\Setting\GlobalSetting.cs" />
+    <Compile Include="Core\Graph\GraphManager.cs" />
+    <Compile Include="Core\GraphData\GraphDataManager.cs" />
+    <Compile Include="Core\Util\GraphUtil.cs" />
+    <Compile Include="Core\Simulation\KillNumberStrategy.cs" />
+    <Compile Include="Core\Simulation\StatisticsCollector.cs" />
+    <Compile Include="Core\Trade\TradeData.cs" />
+    <Compile Include="Core\Util\Util.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlAgilityPack1_4_0\HtmlAgilityPack\HtmlAgilityPack_Main.csproj">
+      <Project>{193bb801-054f-4729-9d5d-fce1e32594bf}</Project>
+      <Name>HtmlAgilityPack_Main</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
-    class GraphUtil
+    public class GraphUtil
     {
 
         public static Pen GetLinePen(System.Drawing.Drawing2D.DashStyle dashStyle, Color color, int width )

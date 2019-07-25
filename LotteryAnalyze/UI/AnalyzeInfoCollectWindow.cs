@@ -454,7 +454,7 @@ namespace LotteryAnalyze.UI
         {
             DataItem pItem = testItem;
             KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(pItem);
+            KDataMap kdd = kddc.GetKDataDict(pItem);
             KData kd = kdd.GetData(cdt, false);
             BollinPoint bp = kddc.GetBollinPointMap(kdd).GetData(cdt, false);
             return (kd.RelateDistTo(bp.upValue) <= 0);
@@ -467,13 +467,13 @@ namespace LotteryAnalyze.UI
                 return false;
 
             KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
-            KDataDict kddCur = kddc.GetKDataDict(testItem);
+            KDataMap kddCur = kddc.GetKDataDict(testItem);
             KData kdCur = kddCur.GetData(cdt, false);
             BollinPoint bpCur = kddc.GetBollinPointMap(kddCur).GetData(cdt, false);
             MACDPoint macdCur = kddc.GetMacdPointMap(kddCur).GetData(cdt, false);
             bool isCurTouchBU = kdCur.RelateDistTo(bpCur.upValue) <= 0;
 
-            KDataDict kddPrv = kddc.GetKDataDict(prevItem);
+            KDataMap kddPrv = kddc.GetKDataDict(prevItem);
             KData kdPrv = kddCur.GetData(cdt, false);
             BollinPoint bpPrv = kddc.GetBollinPointMap(kddPrv).GetData(cdt, false);
             MACDPoint macdPrv = kddc.GetMacdPointMap(kddPrv).GetData(cdt, false);

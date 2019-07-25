@@ -1,4 +1,4 @@
-﻿#define TRADE_DBG
+﻿//#define TRADE_DBG
 
 
 using System;
@@ -2539,7 +2539,7 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = sum.statisticUnitMap[cdt];
-                StaticData sd = su.fastData;
+                StatisticData sd = su.fastData;
                 float v = sd.appearProbability;
                 switch(cdt)
                 {
@@ -2972,7 +2972,7 @@ namespace LotteryAnalyze
 #endif
         }
 
-        public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataDict item, BollinPointMap bpm, CollectDataType cdt, 
+        public static KGraphConfig CheckKGraphConfig(DataItem di, int numIndex, KDataMap item, BollinPointMap bpm, CollectDataType cdt, 
             ref int belowAvgLineCount, ref int uponAvgLineCount, ref int maxMissCount, ref int maxMissID, 
             ref int minKValueID, ref int vertCountFromCurToMinKV, ref int vertCountFromCurToBollMidLine, ref int vertCountFromCurToBollDownLine)
         {
@@ -2989,7 +2989,7 @@ namespace LotteryAnalyze
             uponAvgLineCount = 0;
             KGraphConfig cfg = KGraphConfig.eNone;
             int loop = KGRAPH_LOOP_COUNT;
-            KDataDict curItem = item;
+            KDataMap curItem = item;
             BollinPointMap curBPM = bpm, maxMissBPM = null;
             float rightKV = 0, leftKV = 0, maxKV = 0, minKV = 0, rightBpMid = 0, rightBpUp = 0, rightBpDown = 0, leftBpMid = 0, maxMissKV = 0, relateDist = 0;
             int rightID = -1, leftID = -1, maxID = -1, minID = -1;
@@ -3007,7 +3007,7 @@ namespace LotteryAnalyze
             // 最大遗漏值回溯是否碰到布林线下轨
             bool hasMaxMissCountTouchBolleanDown = false;
             DataItem maxMissDataItem = null;
-            KDataDict maxMissKdd = null;
+            KDataMap maxMissKdd = null;
             BollinPoint maxMissBP = null, leftBP = null, rightBP = curBPM.GetData(cdt, false), maxBP = rightBP, minBP = rightBP;
             KData leftKData = null, rightKData = item.GetData(cdt, false), maxMissKData = null, maxKData = rightKData, minKData = rightKData;
 
@@ -3073,7 +3073,7 @@ namespace LotteryAnalyze
             }
             minKValueID = minID;
             DataItem testMCI = maxMissDataItem;
-            KDataDict testKDD = maxMissKdd;
+            KDataMap testKDD = maxMissKdd;
             BollinPointMap testBPM = maxMissBPM;
             // 从最大遗漏值那期开始回溯
             while (testMCI != null)
@@ -3364,9 +3364,9 @@ namespace LotteryAnalyze
         
         void GetBestPath(DataItem item, int numIndex, TradeDataOneStar trade)
         {
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
 
             BollinPoint bp;
@@ -3609,7 +3609,7 @@ namespace LotteryAnalyze
         //{
         //    List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
         //    CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-        //    KGraphDataContainer kgdc = GraphDataManager.KGDC;
+        //    GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
         //    KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
         //    KDataDict kdd = kddc.GetKDataDict(item);
         //    BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
@@ -3692,9 +3692,9 @@ namespace LotteryAnalyze
         {
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
 
             for (int i = 0; i < cdts.Length; ++i)
@@ -3742,9 +3742,9 @@ namespace LotteryAnalyze
             const int LOOP_COUNT = 10;
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             TradeDataOneStar lastTrade = TradeDataManager.Instance.GetLatestTradeData() as TradeDataOneStar;
 
             for (int i = 0; i < cdts.Length; ++i)
@@ -3955,9 +3955,9 @@ namespace LotteryAnalyze
 
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             MACDPointMap bpm = kddc.GetMacdPointMap(kdd);
             KData minKD = null, maxKD = null;
             DataItem minItem = item, maxItem = item;
@@ -4140,7 +4140,7 @@ namespace LotteryAnalyze
 
                     if (pItem != item)
                     {
-                        KDataDict pKDD = kddc.GetKDataDict(pItem);
+                        KDataMap pKDD = kddc.GetKDataDict(pItem);
                         KData pKD = pKDD.GetData(cdt, false);
                         MACDPoint pBP = kddc.GetMacdPointMap(pKDD).GetData(cdt, false);
 
@@ -4427,7 +4427,7 @@ namespace LotteryAnalyze
                 if(curMissCount >= 3)
                 {
                     int idP = kdd.index - (curMissCount - 1);
-                    KDataDict kddP = kddc.GetKDataDict(idP);
+                    KDataMap kddP = kddc.GetKDataDict(idP);
                     BollinPointMap bpmP = kddc.GetBollinPointMap(idP);
                     KData kdP = kddP.GetData(cdt, false);
                     BollinPoint bpP = bpmP.GetData(cdt, false);
@@ -4694,9 +4694,9 @@ namespace LotteryAnalyze
             mayUpPathsCount = 0;
             List<PathCmpInfo> pcis = trade.pathCmpInfos[numIndex];
             CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             List<int> uponBMIndexs = new List<int>();
 
@@ -4746,7 +4746,7 @@ namespace LotteryAnalyze
                     {
                         pSum = pItem.statisticInfo.allStatisticInfo[numIndex];
                         pSu = pSum.statisticUnitMap[cdt];
-                        KDataDict pKDD = kddc.GetKDataDict(pItem);
+                        KDataMap pKDD = kddc.GetKDataDict(pItem);
                         KData pKD = pKDD.GetData(cdt, false);
                         BollinPoint pBP = kddc.GetBollinPointMap(pKDD).GetData(cdt, false);
 
@@ -5315,9 +5315,9 @@ namespace LotteryAnalyze
                 // 取下通道线
                 if (GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL)
                 {
-                    KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                    GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
                     KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-                    KDataDict kdd = kddc.GetKDataDict(trade.lastDateItem);
+                    KDataMap kdd = kddc.GetKDataDict(trade.lastDateItem);
                     KData kd = kdd.GetData(cdt, false);
                     float missHeight = GraphDataManager.GetMissRelLength(cdt);
                     bool hasPrevKV, hasNextKV, hasPrevHitPt, hasNextHitPt;
@@ -5558,9 +5558,9 @@ namespace LotteryAnalyze
                         if(GlobalSetting.G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL
                             && sali.downLineData.valid)
                         {
-                            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+                            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
                             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-                            KDataDict kdd = kddc.GetKDataDict(trade.lastDateItem);
+                            KDataMap kdd = kddc.GetKDataDict(trade.lastDateItem);
                             KData kd = kdd.GetData(cdt, false); 
                             float missHeight = GraphDataManager.GetMissRelLength(cdt);
 
@@ -5717,7 +5717,7 @@ namespace LotteryAnalyze
             //avgMissCountAreas[1] = avgMissCountAreas[1] / validCount;
             //avgMissCountAreas[2] = avgMissCountAreas[2] / validCount;
 
-            //KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            //GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             //KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             //KDataDict kdd = kddc.GetKDataDict(item);
             //MACDPointMap macdPM = kddc.GetMacdPointMap(kdd);
@@ -5780,9 +5780,9 @@ namespace LotteryAnalyze
         
         void CalcKValueDistToBolleanLine(DataItem item, int numIndex, CollectDataType[] cds, ref float[] count2BUs, ref float[] count2BMs, ref float[] count2BDs, ref int[] count2LIM)
         {
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
             for( int i = 0; i < cds.Length; ++i )
             {
@@ -5806,7 +5806,7 @@ namespace LotteryAnalyze
             }
         }
 
-        void CalcKValueDistToBolleanLine(KDataDict kdd, BollinPointMap bpm, CollectDataType cdt, ref float count2BU, ref float count2BM, ref float count2BD)
+        void CalcKValueDistToBolleanLine(KDataMap kdd, BollinPointMap bpm, CollectDataType cdt, ref float count2BU, ref float count2BM, ref float count2BD)
         {
             KData kd = kdd.GetData(cdt, false);
             BollinPoint bp = bpm.GetData(cdt, false);
@@ -5873,7 +5873,7 @@ namespace LotteryAnalyze
             //int[] vertCountFromCurToBollDownLine = new int[] { 0, 0, 0, };
             //int[] belowAvgLineCounts = new int[3] { 0, 0, 0 };
             //KGraphConfig[] kgCfgs = new KGraphConfig[3] { KGraphConfig.eNone, KGraphConfig.eNone, KGraphConfig.eNone, };
-            //KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            //GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             //KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
             //KDataDict kdd = kddc.GetKDataDict(item);
             //BollinPointMap bpm = kddc.GetBollinPointMap(kdd);
@@ -5971,9 +5971,9 @@ namespace LotteryAnalyze
             //    sum.statisticUnitMap[CollectDataType.ePath1].missCount,
             //    sum.statisticUnitMap[CollectDataType.ePath2].missCount,
             //};
-            KGraphDataContainer kgdc = GraphDataManager.KGDC;
+            GraphDataContainerKGraph kgdc = GraphDataManager.KGDC;
             KDataDictContainer kddc = kgdc.GetKDataDictContainer(numIndex);
-            KDataDict kdd = kddc.GetKDataDict(item);
+            KDataMap kdd = kddc.GetKDataDict(item);
             //// 5期均线
             //AvgPointMap apm5 = kddc.GetAvgPointMap(5, kdd);
             //// 10期均线
