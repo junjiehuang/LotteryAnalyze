@@ -18,16 +18,18 @@ namespace LotteryAnalyze
             eDisappearCountFast,
             eDisappearCountShort,
             eDisappearCountLong,
+            eMissCountAreaMulti,
         }
         public static string[] MissCountTypeStrs = new string[]
         {
             "遗漏值",
-            "统计5期的遗漏面积",
-            "统计10期的遗漏面积",
-            "统计30期的遗漏面积",
+            "统计5期的遗漏均线",
+            "统计10期的遗漏均线",
+            "统计30期的遗漏均线",
             "统计5期的遗漏数",
             "统计10期的遗漏数",
             "统计30期的遗漏数",
+            "统计多周期的遗漏均线",
         };
         MissCountType _missCountType = MissCountType.eMissCountValue;
         public MissCountType missCountType
@@ -88,11 +90,10 @@ namespace LotteryAnalyze
 
             if (onlyShowSelectCDTLine)
             {
-                DrawSingleMissCountLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
-
-                //float tp = GraphDataManager.GetTheoryProbability(cdt);
-                //float tY = bottom - (bottom - top) * tp / 100;
-                //g.DrawLine(GetLinePen(cdt), 0, tY, winW, tY);
+                if (missCountType == MissCountType.eMissCountAreaMulti)
+                    DrawMultiMissCountLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+                else
+                    DrawSingleMissCountLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
             }
             else
             {
@@ -114,7 +115,7 @@ namespace LotteryAnalyze
             {
                 float gridH = maxHeight / (missCountType != MissCountType.eMissCountValue ? maxMissCountArea : maxMissCount);
                 float mouseMissCount = ((bottom - mouseRelPos.Y) / gridH);
-                g.DrawString(mouseMissCount.ToString("f1"), tagFont, tagBrush, winW - 60, mouseRelPos.Y);
+                g.DrawString(mouseMissCount.ToString("f1"), tagFont, whiteBrush, winW - 60, mouseRelPos.Y);
             }
 
             if (hoverItem != null)
@@ -173,7 +174,7 @@ namespace LotteryAnalyze
                         }
                         break;
                 }
-                g.DrawString(info, tagFont, tagBrush, 5, 5);
+                g.DrawString(info, tagFont, whiteBrush, 5, 5);
             }
 
             if (selectDataIndex != -1)
@@ -184,6 +185,61 @@ namespace LotteryAnalyze
                 float right = left + gridScaleUp.X;
                 g.DrawLine(pen, left, 0, left, winH);
                 g.DrawLine(pen, right, 0, right, winH);
+            }
+        }
+
+        void DrawMultiMissCountLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
+        {
+            float gridH = gridH = maxHeight / maxMissCountArea;
+            float prevY = 0;
+            float prevX = 0;
+
+            DataManager dm = DataManager.GetInst();
+            Brush[] brushs = { redBrush, yellowBrush, whiteBrush, };
+            Pen[] pens = { redPen, yellowPen, whitePen, };
+
+            for (int j = 0; j < 3; ++j)
+            {
+                for (int i = startIndex; i < endIndex; ++i)
+                {
+                    DataItem item = dm.FindDataItem(i);
+                    StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+
+                    float CUR = 1;
+                    float curMissCountArea = 0;
+                    if (j == 0)
+                        curMissCountArea = sum.statisticUnitMap[cdt].fastData.missCountArea;
+                    else if (j == 1)
+                        curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                    else if (j == 2)
+                        curMissCountArea = sum.statisticUnitMap[cdt].longData.missCountArea;
+
+                    if (maxMissCountArea < curMissCountArea)
+                        maxMissCountArea = curMissCountArea;
+                    CUR = curMissCountArea;
+
+                    float rH = CUR * gridH;
+                    float rT = bottom - rH;
+                    float x = i * gridScaleUp.X + halfGridW;
+                    x = StandToCanvas(x, true, true);
+                    g.FillRectangle(brushs[j], x - halfSize, rT - halfSize, fullSize, fullSize);
+                    if (i > startIndex)
+                    {
+                        g.DrawLine(pens[j], x, rT, prevX, prevY);
+                    }
+                    prevX = x;
+                    prevY = rT;
+
+                    float left = x - halfGridW;
+                    float right = x + halfGridW;
+                    if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+                    {
+                        hoverItem = item;
+                        g.DrawLine(grayDotLinePen, left, 0, left, winH);
+                        g.DrawLine(grayDotLinePen, right, 0, right, winH);
+                        hasChoose = true;
+                    }
+                }
             }
         }
 

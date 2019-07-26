@@ -15,9 +15,13 @@ namespace LotteryAnalyze
         public Dictionary<CollectDataType, bool> cdtLineShowStates = new Dictionary<CollectDataType, bool>();
 
         protected SolidBrush redBrush = new SolidBrush(Color.Red);
-        protected SolidBrush tagBrush = new SolidBrush(Color.White);
+        protected SolidBrush whiteBrush = new SolidBrush(Color.White);
         protected SolidBrush greenBrush = new SolidBrush(Color.Green);
+        protected SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
         protected Pen grayDotLinePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, Color.Gray, 1);
+        protected Pen redPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Red, 1);
+        protected Pen yellowPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.Yellow, 1);
+        protected Pen whitePen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, Color.White, 1);
         protected Font tagFont = new Font(FontFamily.GenericSerif, 12);
         protected Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();
         protected Dictionary<Color, Pen> pens = new Dictionary<Color, Pen>();
@@ -32,6 +36,7 @@ namespace LotteryAnalyze
             eAppearCountFast,
             eAppearCountShort,
             eAppearCountLong,
+            eAppearenceMulti,
         }
         public static string[] AppearenceTypeStrs = new string[]
         {
@@ -41,6 +46,7 @@ namespace LotteryAnalyze
             "统计5期的出号个数",
             "统计10期的出号个数",
             "统计30期的出号个数",
+            "多周期的出号率曲线",
         };
         AppearenceType appearenceType = AppearenceType.eAppearenceFast;
         public AppearenceType AppearenceCycleType
@@ -166,8 +172,14 @@ namespace LotteryAnalyze
 
             if (onlyShowSelectCDTLine)
             {
-                DrawSingleCDTLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
-
+                if (appearenceType == AppearenceType.eAppearenceMulti)
+                {
+                    DrawMultiCDTLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+                }
+                else
+                {
+                    DrawSingleCDTLine(g, numIndex, startIndex, endIndex, cdt, ref hasChoose, bottom, maxHeight, halfGridW, halfSize, fullSize, winH, mouseRelPos);
+                }
                 float tp = GraphDataManager.GetTheoryProbability(cdt);
                 float tY = bottom - (bottom - top) * tp / 100;
                 g.DrawLine(GetLinePen(cdt), 0, tY, winW, tY);
@@ -199,7 +211,7 @@ namespace LotteryAnalyze
                     v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SHOR_COUNT;
                 else if (appearenceType == AppearenceType.eAppearCountLong)
                     v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.LONG_COUNT;
-                g.DrawString(v.ToString("f2") + "%", tagFont, tagBrush, winW - 60, mouseRelPos.Y);
+                g.DrawString(v.ToString("f2") + "%", tagFont, whiteBrush, winW - 60, mouseRelPos.Y);
             }
 
             if (hoverItem != null)
@@ -235,7 +247,7 @@ namespace LotteryAnalyze
                         break;
                 }
                 string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] [出号率 = " + apprate + "] [连续低于理论概率期数 = " + underTheoRateCount + "]";
-                g.DrawString(info, tagFont, tagBrush, 5, 5);
+                g.DrawString(info, tagFont, whiteBrush, 5, 5);
             }
 
             if (selectDataIndex != -1)
@@ -265,6 +277,57 @@ namespace LotteryAnalyze
                 canvasOffset.X = index * gridScaleUp.X + xOffset;
             }
             autoAllign = true;
+        }
+
+        void DrawMultiCDTLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
+        {
+            Brush[] brushs = { redBrush, yellowBrush, whiteBrush, };
+            Pen[] pens = { redPen, yellowPen, whitePen, };
+
+            float prevY = 0;
+            float prevX = 0;
+            DataManager dm = DataManager.GetInst();
+
+            for (int j = 0; j < 3; ++j)
+            {
+
+                for (int i = startIndex; i < endIndex; ++i)
+                {
+                    DataItem item = dm.FindDataItem(i);
+                    StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
+                    float apr = 0;
+                    if(j == 0)
+                        apr = sum.statisticUnitMap[cdt].fastData.appearProbability;
+                    else if (j == 1)
+                        apr = sum.statisticUnitMap[cdt].shortData.appearProbability;
+                    else
+                        apr = sum.statisticUnitMap[cdt].longData.appearProbability;
+
+                    float x = i * gridScaleUp.X + halfGridW;
+                    x = StandToCanvas(x, true, true);
+                    
+                    float rH = apr / 100 * maxHeight;
+                    float rT = bottom - rH;
+
+                    g.FillRectangle(brushs[j], x - halfSize, rT - halfSize, fullSize, fullSize);
+                    if (i > startIndex)
+                    {
+                        g.DrawLine(pens[j], x, rT, prevX, prevY);
+                    }
+                    prevX = x;
+                    prevY = rT;
+
+                    float left = x - halfGridW;
+                    float right = x + halfGridW;
+                    if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
+                    {
+                        hoverItem = item;
+                        g.DrawLine(grayDotLinePen, left, 0, left, winH);
+                        g.DrawLine(grayDotLinePen, right, 0, right, winH);
+                        hasChoose = true;
+                    }
+                }
+            }
         }
 
         void DrawSingleCDTLine(Graphics g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, int winH, Point mouseRelPos)
