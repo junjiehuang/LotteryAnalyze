@@ -85,10 +85,18 @@
     <Compile Include="Core\Setting\GlobalSetting.cs" />
     <Compile Include="Core\Graph\GraphManager.cs" />
     <Compile Include="Core\GraphData\GraphDataManager.cs" />
+    <Compile Include="Core\Trade\BatchTradeSimulator.cs" />
+    <Compile Include="Core\Trade\DebugInfo.cs" />
+    <Compile Include="Core\Trade\LongWrongTradeInfo.cs" />
+    <Compile Include="Core\Trade\NumberCmpInfo.cs" />
+    <Compile Include="Core\Trade\PathCmpInfo.cs" />
+    <Compile Include="Core\Trade\TradeDataBase.cs" />
+    <Compile Include="Core\Trade\TradeDataOneStar.cs" />
+    <Compile Include="Core\Trade\TradeNumbers.cs" />
     <Compile Include="Core\Util\GraphUtil.cs" />
     <Compile Include="Core\Simulation\KillNumberStrategy.cs" />
     <Compile Include="Core\Simulation\StatisticsCollector.cs" />
-    <Compile Include="Core\Trade\TradeData.cs" />
+    <Compile Include="Core\Trade\TradeDataManager.cs" />
     <Compile Include="Core\Util\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

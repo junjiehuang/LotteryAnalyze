@@ -61,6 +61,14 @@ namespace LotteryAnalyze
         {
         }
 
+        public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
+        {
+            startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            maxIndex = GraphDataManager.KGDC.DataLength();
+        }
+
         public override void DrawUpGraph(Graphics g, int numIndex, CollectDataType cdt, int winW, int winH, Point mouseRelPos)
         {
             hoverItem = null;

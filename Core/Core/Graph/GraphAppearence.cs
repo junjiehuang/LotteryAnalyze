@@ -68,6 +68,14 @@ namespace LotteryAnalyze
             }
         }
 
+        public void GetViewItemIndexInfo(ref int startIndex, ref int maxIndex)
+        {
+            startIndex = (int)(canvasOffset.X / gridScaleUp.X) - 1;
+            if (startIndex < 0)
+                startIndex = 0;
+            maxIndex = GraphDataManager.KGDC.DataLength();
+        }
+
         public bool GetCDTLineShowState(CollectDataType cdt)
         {
             return cdtLineShowStates[cdt];

@@ -470,12 +470,30 @@ namespace LotteryAnalyze.UI
                     upPanelMousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
+
+                    int startIndex = 0, maxIndex = 0;
+                    graphMgr.appearenceGraph.GetViewItemIndexInfo(ref startIndex, ref maxIndex);
+                    if (startIndex > trackBarAppearRate.Maximum)
+                        trackBarAppearRate.Value = trackBarAppearRate.Maximum;
+                    else if (startIndex < trackBarAppearRate.Minimum)
+                        trackBarAppearRate.Value = trackBarAppearRate.Minimum;
+                    else
+                        trackBarAppearRate.Value = startIndex;
                 }
                 else if(graphMgr.CurrentGraphType == GraphType.eMissCountGraph)
                 {
                     upPanelMousePosLastDrag = e.Location;
                     graphMgr.MoveGraph(dx, dy);
                     needUpdate = true;
+
+                    int startIndex = 0, maxIndex = 0;
+                    graphMgr.missCountGraph.GetViewItemIndexInfo(ref startIndex, ref maxIndex);
+                    if (startIndex > trackBarMissCount.Maximum)
+                        trackBarMissCount.Value = trackBarMissCount.Maximum;
+                    else if (startIndex < trackBarMissCount.Minimum)
+                        trackBarMissCount.Value = trackBarMissCount.Minimum;
+                    else
+                        trackBarMissCount.Value = startIndex;
                 }
             }
             if (needUpdate)
