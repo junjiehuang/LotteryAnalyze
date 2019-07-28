@@ -5580,7 +5580,7 @@ namespace LotteryAnalyze
                 //CheckAndKeepSamePath(trade, numIndex);
             }
         }
-
+        
         public static NumberCmpInfo GetNumberCmpInfo(ref List<NumberCmpInfo> nums, SByte number, bool createIfNotExist)
         {
             for( int i = 0; i < nums.Count; ++i )
@@ -5598,6 +5598,87 @@ namespace LotteryAnalyze
             }
             return null;
         }
+
+        public static void FindAllNumberProbabilities(DataItem item, ref List<NumberCmpInfo> nums, int cycle)
+        {
+            nums.Clear();
+            int realCount = item.idGlobal + 1;
+            int MAX_COUNT = cycle;
+            if (realCount > MAX_COUNT)
+                realCount = MAX_COUNT;
+            int countDown = realCount;
+            float total = 5 * realCount;
+
+            while (countDown > 0)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[i];
+                    int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+                    int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+                    for (int num = startIndex; num <= endIndex; ++num)
+                    {
+                        CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
+                        SByte number = (SByte)(num - startIndex);
+                        NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
+                        if (sum.statisticUnitMap[cdt].missCount == 0)
+                        {
+                            info.appearCount += 1;
+                            info.rate = info.appearCount * 100 / total;
+                            info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
+                        }
+                    }
+                }
+
+                --countDown;
+                item = item.parent.GetPrevItem(item);
+            }
+            nums.Sort(NumberCmpInfo.SortByAppearCount);
+        }
+
+        public static void FindAllPathsProbabilities(DataItem item, ref List<PathCmpInfo> paths, int cycle)
+        {
+            paths.Clear();
+            paths.Add(new PathCmpInfo(0, 0));
+            paths.Add(new PathCmpInfo(1, 0));
+            paths.Add(new PathCmpInfo(2, 0));
+
+            int realCount = item.idGlobal + 1;
+            int MAX_COUNT = cycle;
+            if (realCount > MAX_COUNT)
+                realCount = MAX_COUNT;
+            int countDown = realCount;
+            float total = 5 * realCount;
+            
+            while(countDown > 0)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[i];
+                    int startIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+                    int endIndex = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+                    for (int num = startIndex; num <= endIndex; ++num)
+                    {
+                        CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
+                        int pathIndex = num - startIndex;
+                        PathCmpInfo info = paths[pathIndex];
+                        if (sum.statisticUnitMap[cdt].missCount == 0)
+                        {
+                            info.pathValue += 1;
+                        }
+                    }
+                }
+
+                --countDown;
+                item = item.parent.GetPrevItem(item);
+            }
+            
+            for(int i = 0; i < 3; ++i)
+            {
+                paths[i].pathValue = paths[i].pathValue * 100 / total;
+            }
+        }
+
         public static void FindAllNumberProbabilities(DataItem item, ref List<NumberCmpInfo> nums, bool collectByLongCount = true)
         {
             nums.Clear();

@@ -165,6 +165,9 @@ namespace LotteryAnalyze.UI
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxNumIndex = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.trackBarGraphBar = new System.Windows.Forms.TrackBar();
+            this.buttonPrevItem = new System.Windows.Forms.Button();
+            this.buttonNextItem = new System.Windows.Forms.Button();
             this.menuStripGraph.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -187,6 +190,7 @@ namespace LotteryAnalyze.UI
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAppearRate)).BeginInit();
             this.tabPageMissCount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarGraphBar)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStripGraph
@@ -937,6 +941,9 @@ namespace LotteryAnalyze.UI
             // 
             // tabPageBarGraph
             // 
+            this.tabPageBarGraph.Controls.Add(this.buttonNextItem);
+            this.tabPageBarGraph.Controls.Add(this.buttonPrevItem);
+            this.tabPageBarGraph.Controls.Add(this.trackBarGraphBar);
             this.tabPageBarGraph.Controls.Add(this.textBoxCustomCollectRange);
             this.tabPageBarGraph.Controls.Add(this.label7);
             this.tabPageBarGraph.Controls.Add(this.comboBoxCollectRange);
@@ -1376,6 +1383,38 @@ namespace LotteryAnalyze.UI
             this.label1.TabIndex = 0;
             this.label1.Text = "选择数字位：";
             // 
+            // trackBarGraphBar
+            // 
+            this.trackBarGraphBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarGraphBar.AutoSize = false;
+            this.trackBarGraphBar.Location = new System.Drawing.Point(3, 250);
+            this.trackBarGraphBar.Name = "trackBarGraphBar";
+            this.trackBarGraphBar.Size = new System.Drawing.Size(309, 36);
+            this.trackBarGraphBar.TabIndex = 17;
+            this.trackBarGraphBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarGraphBar.Scroll += new System.EventHandler(this.trackBarGraphBar_Scroll);
+            // 
+            // buttonPrevItem
+            // 
+            this.buttonPrevItem.Location = new System.Drawing.Point(3, 128);
+            this.buttonPrevItem.Name = "buttonPrevItem";
+            this.buttonPrevItem.Size = new System.Drawing.Size(75, 23);
+            this.buttonPrevItem.TabIndex = 18;
+            this.buttonPrevItem.Text = "上一期";
+            this.buttonPrevItem.UseVisualStyleBackColor = true;
+            this.buttonPrevItem.Click += new System.EventHandler(this.buttonPrevItem_Click);
+            // 
+            // buttonNextItem
+            // 
+            this.buttonNextItem.Location = new System.Drawing.Point(85, 128);
+            this.buttonNextItem.Name = "buttonNextItem";
+            this.buttonNextItem.Size = new System.Drawing.Size(75, 23);
+            this.buttonNextItem.TabIndex = 19;
+            this.buttonNextItem.Text = "下一期";
+            this.buttonNextItem.UseVisualStyleBackColor = true;
+            this.buttonNextItem.Click += new System.EventHandler(this.buttonNextItem_Click);
+            // 
             // LotteryGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1420,6 +1459,7 @@ namespace LotteryAnalyze.UI
             this.tabPageMissCount.ResumeLayout(false);
             this.tabPageMissCount.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMissCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarGraphBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1541,5 +1581,8 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ComboBox comboBoxKDataCircle;
         private System.Windows.Forms.TrackBar trackBarAppearRate;
         private System.Windows.Forms.TrackBar trackBarMissCount;
+        private System.Windows.Forms.TrackBar trackBarGraphBar;
+        private System.Windows.Forms.Button buttonNextItem;
+        private System.Windows.Forms.Button buttonPrevItem;
     }
 }

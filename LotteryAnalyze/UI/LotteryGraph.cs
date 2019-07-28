@@ -300,6 +300,8 @@ namespace LotteryAnalyze.UI
         {
             trackBarKData.Minimum = 0;
             trackBarKData.Maximum = GraphDataManager.KGDC.DataLength();
+            trackBarGraphBar.Minimum = 0;
+            trackBarGraphBar.Maximum = GraphDataManager.KGDC.DataLength(); ;
             trackBarTradeData.Minimum = 0;
             trackBarTradeData.Maximum = TradeDataManager.Instance.historyTradeDatas.Count;
             trackBarMissCount.Minimum = 0;
@@ -442,6 +444,13 @@ namespace LotteryAnalyze.UI
                             trackBarKData.Value = trackBarKData.Minimum;
                         else
                             trackBarKData.Value = startIndex;
+
+                        if (startIndex > trackBarKData.Maximum)
+                            trackBarGraphBar.Value = trackBarGraphBar.Maximum;
+                        else if (startIndex < trackBarKData.Minimum)
+                            trackBarGraphBar.Value = trackBarGraphBar.Minimum;
+                        else
+                            trackBarGraphBar.Value = startIndex;
                     }
                     else
                     {
@@ -924,6 +933,7 @@ namespace LotteryAnalyze.UI
         {
             graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, false);
             graphMgr.kvalueGraph.ScrollToData(trackBarKData.Value, panelDown.ClientSize.Width, panelDown.ClientSize.Height, false);
+            trackBarGraphBar.Value = trackBarKData.Value;
             RefreshPanel();//触发Paint事件
         }
 
@@ -1703,6 +1713,32 @@ namespace LotteryAnalyze.UI
             //{
             //    graphMgr.kvalueGraph.OnGridScaleChanged();
             //}
+        }
+
+        private void trackBarGraphBar_Scroll(object sender, EventArgs e)
+        {
+            SelItem(trackBarGraphBar.Value);
+            trackBarKData.Value = trackBarGraphBar.Value;
+            graphMgr.kvalueGraph.ScrollToData(trackBarGraphBar.Value, panelUp.ClientSize.Width, panelUp.ClientSize.Height, true);
+            RefreshPanel();
+        }
+
+        private void buttonPrevItem_Click(object sender, EventArgs e)
+        {
+            if(trackBarGraphBar.Value > trackBarGraphBar.Minimum)
+            {
+                --trackBarGraphBar.Value;
+                trackBarGraphBar_Scroll(null, null);
+            }
+        }
+
+        private void buttonNextItem_Click(object sender, EventArgs e)
+        {
+            if (trackBarGraphBar.Value < trackBarGraphBar.Maximum)
+            {
+                ++trackBarGraphBar.Value;
+                trackBarGraphBar_Scroll(null, null);
+            }
         }
     }
 }
