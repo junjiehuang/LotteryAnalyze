@@ -1715,8 +1715,8 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref maxProbilityNums, number, true);
-                    info.appearCount = sum.statisticUnitMap[cdt].shortData.appearCount;
-                    info.rate = sum.statisticUnitMap[cdt].shortData.appearProbabilityDiffWithTheory;
+                    info.appearCount = sum.statisticUnitMap[cdt].fastData.appearCount;
+                    info.rate = sum.statisticUnitMap[cdt].fastData.appearProbabilityDiffWithTheory;
                     info.largerThanTheoryProbability = info.rate > 0.5f;
                 }
             }
