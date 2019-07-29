@@ -22,6 +22,7 @@ namespace LotteryAnalyze
         // 统计范围
         public enum StatisticsRange
         {
+            e5,
             // 最近10期
             e10,
             // 最近20期
@@ -42,6 +43,7 @@ namespace LotteryAnalyze
             S_StatisticsType_STRS.Add("0-9出现次数");
             S_StatisticsType_STRS.Add("012路出现次数");
 
+            S_StatisticsRange_STRS.Add("最近5期");
             S_StatisticsRange_STRS.Add("最近10期");
             S_StatisticsRange_STRS.Add("最近20期");
             S_StatisticsRange_STRS.Add("最近30期");
@@ -55,6 +57,8 @@ namespace LotteryAnalyze
             public StatisticsType type;
             public int data;
             public string tag;
+            public float rate;
+            public float relRate;
         }
         public class DataUnitLst
         {
@@ -79,6 +83,7 @@ namespace LotteryAnalyze
                 int CollectCount = customStatisticsRange;
                 switch (curStatisticsRange)
                 {
+                    case StatisticsRange.e5: CollectCount = 5; break;
                     case StatisticsRange.e10: CollectCount = 10; break;
                     case StatisticsRange.e20: CollectCount = 20; break;
                     case StatisticsRange.e30: CollectCount = 30; break;
@@ -182,6 +187,33 @@ namespace LotteryAnalyze
                 currentItem = DataManager.GetInst().GetPrevItem(currentItem);
                 if (currentItem == null)
                     break;
+            }
+
+            for (int i = 0; i < 5; ++i)
+            {
+                switch (curStatisticsType)
+                {
+                    case StatisticsType.eAppearCountFrom0To9:
+                        for(int j = 0; j < 10; ++j)
+                        {
+                            DataUnit du = allDatas[i].dataLst[j];
+                            du.rate = ((float)(du.data) / (float)totalCollectCount);
+                            du.relRate = (du.rate - 0.1f) / 0.1f;
+                        }
+                        break;
+                    case StatisticsType.eAppearCountPath012:
+                        for(int j = 0; j < 3; ++j)
+                        {
+                            DataUnit du = allDatas[i].dataLst[j];
+                            du.rate = ((float)(du.data) / (float)totalCollectCount);
+                            if(j== 0)
+                                du.relRate = (du.rate - 0.4f) / 0.4f;
+                            else
+                                du.relRate = (du.rate - 0.3f) / 0.3f;
+                        }
+                        break;
+                }
+               
             }
         }
     }

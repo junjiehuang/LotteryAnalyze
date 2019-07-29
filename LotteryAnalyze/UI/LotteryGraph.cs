@@ -586,6 +586,10 @@ namespace LotteryAnalyze.UI
             DataItem item = DataManager.GetInst().FindDataItem(kdIndex);
             CollectBarGraphData(item);
             itemSel = item;
+            if(itemSel != null)
+            {
+                trackBarGraphBar.Value = itemSel.idGlobal;
+            }
         }
         void UnselectItem()
         {

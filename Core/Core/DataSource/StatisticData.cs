@@ -20,7 +20,7 @@ namespace LotteryAnalyze
         public Byte disappearCount;
         // 统计出现该统计类型数据的百分比
         public float appearProbability;
-        // 统计出现该统计类型数据的百分比与理论概率的差值
+        // 统计出现该统计类型数据的百分比与理论概率的比值（> 0.5 表示热, < -0.5 表示冷， 其他值表示温）
         public float appearProbabilityDiffWithTheory;
         // 连续低于理论概率的个数
         public int underTheoryCount = 0;

@@ -64,11 +64,13 @@ namespace LotteryAnalyze
         }
         public void SetHotNumber(int tradeCount, ref List<NumberCmpInfo> nums)
         {
+            int count = 0;
             for (int i = 0; i < nums.Count; ++i)
             {
                 if (nums[i].rate > 0.5f)
                 {
                     tradeNumbers.Add(nums[i]);
+                    ++count;
                 }
             }
             this.tradeCount = tradeNumbers.Count > 0 ? tradeCount : 0;
