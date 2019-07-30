@@ -22,6 +22,7 @@ namespace LotteryAnalyze
         // 统计范围
         public enum StatisticsRange
         {
+            e3,
             e5,
             // 最近10期
             e10,
@@ -43,6 +44,7 @@ namespace LotteryAnalyze
             S_StatisticsType_STRS.Add("0-9出现次数");
             S_StatisticsType_STRS.Add("012路出现次数");
 
+            S_StatisticsRange_STRS.Add("最近3期");
             S_StatisticsRange_STRS.Add("最近5期");
             S_StatisticsRange_STRS.Add("最近10期");
             S_StatisticsRange_STRS.Add("最近20期");
@@ -83,6 +85,7 @@ namespace LotteryAnalyze
                 int CollectCount = customStatisticsRange;
                 switch (curStatisticsRange)
                 {
+                    case StatisticsRange.e3: CollectCount = 3; break;
                     case StatisticsRange.e5: CollectCount = 5; break;
                     case StatisticsRange.e10: CollectCount = 10; break;
                     case StatisticsRange.e20: CollectCount = 20; break;

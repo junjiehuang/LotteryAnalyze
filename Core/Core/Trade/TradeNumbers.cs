@@ -67,7 +67,8 @@ namespace LotteryAnalyze
             int count = 0;
             for (int i = 0; i < nums.Count; ++i)
             {
-                if (nums[i].rate > 0.5f)
+                //if (nums[i].rate > 0.5f)
+                if(nums[i].largerThanTheoryProbability)
                 {
                     tradeNumbers.Add(nums[i]);
                     ++count;

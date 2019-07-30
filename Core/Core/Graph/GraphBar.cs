@@ -42,25 +42,17 @@ namespace LotteryAnalyze
             string statisticInfo = "";
             for (int i = 0; i < dul.dataLst.Count; ++i)
             {
-                //float r = 0;
-                //float rate = ((float)(dul.dataLst[i].data) / (float)bgdc.totalCollectCount);
                 float r = dul.dataLst[i].relRate;
                 float rate = dul.dataLst[i].rate;
                 if (dul.dataLst[i].type == GraphDataContainerBarGraph.StatisticsType.eAppearCountPath012)
                 {
                     if (string.IsNullOrEmpty(statisticInfo))
                         statisticInfo = "012路";
-
-                    //if (i == 0)
-                    //    r = (rate - 0.4f) / 0.4f;
-                    //else
-                    //    r = (rate - 0.3f) / 0.3f;
                 }
                 else if (dul.dataLst[i].type == GraphDataContainerBarGraph.StatisticsType.eAppearCountFrom0To9)
                 {
                     if (string.IsNullOrEmpty(statisticInfo))
                         statisticInfo = "数字0-9";
-                    //r = (rate - 0.1f) / 0.1f;
                 }
                 string brand = "";
                 Brush brandBrush = yellowBrush;
