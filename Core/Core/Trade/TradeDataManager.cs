@@ -1687,6 +1687,7 @@ namespace LotteryAnalyze
             }
         }
 
+        int lastTradePath = -1;
         void TradeSinglePositionHotestNums(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
@@ -1707,19 +1708,47 @@ namespace LotteryAnalyze
 
             List<PathCmpInfo> paths = new List<PathCmpInfo>();
             TradeDataManager.FindSpecNumIndexPathsProbabilities(item, ref paths, numID, 3);
+            TradeDataManager.FindSpecNumIndexPathsProbabilities(item, ref paths, numID, 5);
             int bestPath = -1;
-            for(int i = 0; i < paths.Count; ++i)
+            if(lastTradePath != -1)
             {
-                if (i == 0)
-                    paths[i].pathValue = (paths[i].pathValue - 40.0f) / 40.0f;
-                else
-                    paths[i].pathValue = (paths[i].pathValue - 30.0f) / 30.0f;
-                if (paths[i].pathValue > 0.5f)
+                if( (float)paths[lastTradePath].paramMap["3"] < -0.5f &&
+                    (float)paths[lastTradePath].paramMap["5"] < -0.5f)
                 {
-                    bestPath = i;
-                    break;
+                    lastTradePath = -1;
+                }
+                else
+                {
+                    bestPath = lastTradePath;
                 }
             }
+            if(bestPath == -1)
+            {
+                float bestRate = -0.5f;
+                for (int i = 0; i < paths.Count; ++i)
+                {
+                    //if (i == 0)
+                    //    paths[i].pathValue = (paths[i].pathValue - 40.0f) / 40.0f;
+                    //else
+                    //    paths[i].pathValue = (paths[i].pathValue - 30.0f) / 30.0f;
+                    //if (paths[i].pathValue > 0.5f)
+                    //{
+                    //    bestPath = i;
+                    //    break;
+                    //}
+                    float curRate = ((float)paths[i].paramMap["3"] + (float)paths[i].paramMap["5"]) * 0.5f;
+                    if (i == 0)
+                        curRate = (curRate - 40.0f) / 40.0f;
+                    else
+                        curRate = (curRate - 30.0f) / 30.0f;
+                    if(curRate > bestRate)
+                    {
+                        bestRate = curRate;
+                        bestPath = i;
+                    }
+                }
+            }
+            lastTradePath = bestPath;
 
             if (bestPath != -1)
             {
@@ -5666,10 +5695,12 @@ namespace LotteryAnalyze
 
         public static void FindSpecNumIndexPathsProbabilities(DataItem item, ref List<PathCmpInfo> paths, int numIndex, int cycle)
         {
-            paths.Clear();
-            paths.Add(new PathCmpInfo(0, 0));
-            paths.Add(new PathCmpInfo(1, 0));
-            paths.Add(new PathCmpInfo(2, 0));
+            if (paths.Count == 0)
+            {
+                paths.Add(new PathCmpInfo(0, 0));
+                paths.Add(new PathCmpInfo(1, 0));
+                paths.Add(new PathCmpInfo(2, 0));
+            }
 
             int realCount = item.idGlobal + 1;
             int MAX_COUNT = cycle;
@@ -5701,6 +5732,7 @@ namespace LotteryAnalyze
             for (int i = 0; i < 3; ++i)
             {
                 paths[i].pathValue = paths[i].pathValue * 100 / total;
+                paths[i].paramMap[cycle.ToString()] = paths[i].pathValue;
             }
 
         }
