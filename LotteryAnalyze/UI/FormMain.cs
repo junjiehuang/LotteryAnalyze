@@ -507,6 +507,8 @@ namespace LotteryAnalyze
             return -1;
         }
 
+
+        int latestDateIndex = -1;
         void RefreshLatestData(bool forceUpdate)
         {
             // 如果当前不是在获取最新数据，返回
@@ -569,6 +571,9 @@ namespace LotteryAnalyze
                 //--lastItemID;
                 lastItemID -= GlobalSetting.G_DAYS_PER_BATCH;
             }
+            if (latestDateIndex >= 0)
+                lastItemID = latestDateIndex;
+
             if (firstODD != null)
                 lastItemID = GetFileIndex(firstODD.dateID);
 
@@ -740,6 +745,15 @@ namespace LotteryAnalyze
         private void anaSelectDatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CollectSelectDateMissCount();
+        }
+
+        private void setAsStartDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listViewFileList.SelectedIndices.Count == 1)
+            {
+                latestDateIndex = listViewFileList.SelectedIndices[0];
+                RefreshLatestData();
+            }
         }
     }
 }

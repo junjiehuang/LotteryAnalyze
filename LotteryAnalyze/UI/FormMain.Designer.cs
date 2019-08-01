@@ -79,6 +79,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.simTradeSelectDatasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.globalSimTradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.anaSelectDatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openAnalyzeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openSimTradeLongWrongWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tradeCalculaterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -120,7 +121,7 @@
             this.tabControlLottery = new System.Windows.Forms.TabControl();
             this.tabPageShiShiCai = new System.Windows.Forms.TabPage();
             this.tabPage5In11 = new System.Windows.Forms.TabPage();
-            this.anaSelectDatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setAsStartDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLotteryDatas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -370,6 +371,7 @@
             this.contextMenuStripShiShiCai.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.getLatestDataToolStripMenuItem,
             this.stopAutoUpdateLatestDatasToolStripMenuItem,
+            this.setAsStartDateToolStripMenuItem,
             this.collectDatasToolStripMenuItem,
             this.toolStripSeparator1,
             this.importFilesToolStripMenuItem,
@@ -392,144 +394,151 @@
             this.setWndAlphaToolStripMenuItem,
             this.openGlobalSettingToolStripMenuItem});
             this.contextMenuStripShiShiCai.Name = "contextMenuStripShiShiCai";
-            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(209, 452);
+            this.contextMenuStripShiShiCai.Size = new System.Drawing.Size(221, 474);
             // 
             // getLatestDataToolStripMenuItem
             // 
             this.getLatestDataToolStripMenuItem.Name = "getLatestDataToolStripMenuItem";
-            this.getLatestDataToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.getLatestDataToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.getLatestDataToolStripMenuItem.Text = "获取最新数据";
             this.getLatestDataToolStripMenuItem.Click += new System.EventHandler(this.getLatestDataToolStripMenuItem_Click);
             // 
             // stopAutoUpdateLatestDatasToolStripMenuItem
             // 
             this.stopAutoUpdateLatestDatasToolStripMenuItem.Name = "stopAutoUpdateLatestDatasToolStripMenuItem";
-            this.stopAutoUpdateLatestDatasToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.stopAutoUpdateLatestDatasToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.stopAutoUpdateLatestDatasToolStripMenuItem.Text = "停止获取最新数据";
             this.stopAutoUpdateLatestDatasToolStripMenuItem.Click += new System.EventHandler(this.stopAutoUpdateLatestDatasToolStripMenuItem_Click);
             // 
             // collectDatasToolStripMenuItem
             // 
             this.collectDatasToolStripMenuItem.Name = "collectDatasToolStripMenuItem";
-            this.collectDatasToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.collectDatasToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.collectDatasToolStripMenuItem.Text = "收集数据";
             this.collectDatasToolStripMenuItem.Click += new System.EventHandler(this.collectDatasToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(205, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(217, 6);
             // 
             // importFilesToolStripMenuItem
             // 
             this.importFilesToolStripMenuItem.Name = "importFilesToolStripMenuItem";
-            this.importFilesToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.importFilesToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.importFilesToolStripMenuItem.Text = "导入数据";
             this.importFilesToolStripMenuItem.Click += new System.EventHandler(this.importFilesToolStripMenuItem_Click);
             // 
             // addFilesToolStripMenuItem
             // 
             this.addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.addFilesToolStripMenuItem.Text = "添加文件";
             this.addFilesToolStripMenuItem.Click += new System.EventHandler(this.addFilesToolStripMenuItem_Click);
             // 
             // addFolderToolStripMenuItem
             // 
             this.addFolderToolStripMenuItem.Name = "addFolderToolStripMenuItem";
-            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.addFolderToolStripMenuItem.Text = "添加文件夹";
             this.addFolderToolStripMenuItem.Click += new System.EventHandler(this.addFolderToolStripMenuItem_Click);
             // 
             // clearDataToolStripMenuItem
             // 
             this.clearDataToolStripMenuItem.Name = "clearDataToolStripMenuItem";
-            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.clearDataToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.clearDataToolStripMenuItem.Text = "清空文件列表";
             this.clearDataToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(205, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(217, 6);
             // 
             // pushToSimulatePoolToolStripMenuItem
             // 
             this.pushToSimulatePoolToolStripMenuItem.Name = "pushToSimulatePoolToolStripMenuItem";
-            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.pushToSimulatePoolToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.pushToSimulatePoolToolStripMenuItem.Text = "放入模拟池";
             this.pushToSimulatePoolToolStripMenuItem.Click += new System.EventHandler(this.addToSimulatePoolToolStripMenuItem_Click);
             // 
             // clearSimPoolDataToolStripMenuItem
             // 
             this.clearSimPoolDataToolStripMenuItem.Name = "clearSimPoolDataToolStripMenuItem";
-            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.clearSimPoolDataToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.clearSimPoolDataToolStripMenuItem.Text = "清空模拟池";
             this.clearSimPoolDataToolStripMenuItem.Click += new System.EventHandler(this.clearSimPoolDataToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(205, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(217, 6);
             // 
             // openGraphToolStripMenuItem
             // 
             this.openGraphToolStripMenuItem.Name = "openGraphToolStripMenuItem";
-            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.openGraphToolStripMenuItem.Text = "打开走势图";
             this.openGraphToolStripMenuItem.Click += new System.EventHandler(this.openGraphToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(205, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
             // 
             // simTradeSelectDatasToolStripMenuItem
             // 
             this.simTradeSelectDatasToolStripMenuItem.Name = "simTradeSelectDatasToolStripMenuItem";
-            this.simTradeSelectDatasToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.simTradeSelectDatasToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.simTradeSelectDatasToolStripMenuItem.Text = "模拟交易选中的历史数据";
             this.simTradeSelectDatasToolStripMenuItem.Click += new System.EventHandler(this.simTradeSelectDatasToolStripMenuItem_Click);
             // 
             // globalSimTradeToolStripMenuItem
             // 
             this.globalSimTradeToolStripMenuItem.Name = "globalSimTradeToolStripMenuItem";
-            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.globalSimTradeToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.globalSimTradeToolStripMenuItem.Text = "模拟交易所有历史数据";
             this.globalSimTradeToolStripMenuItem.Click += new System.EventHandler(this.globalSimTradeToolStripMenuItem_Click);
+            // 
+            // anaSelectDatesToolStripMenuItem
+            // 
+            this.anaSelectDatesToolStripMenuItem.Name = "anaSelectDatesToolStripMenuItem";
+            this.anaSelectDatesToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.anaSelectDatesToolStripMenuItem.Text = "分析选定的数据";
+            this.anaSelectDatesToolStripMenuItem.Click += new System.EventHandler(this.anaSelectDatesToolStripMenuItem_Click);
             // 
             // openAnalyzeWindowToolStripMenuItem
             // 
             this.openAnalyzeWindowToolStripMenuItem.Name = "openAnalyzeWindowToolStripMenuItem";
-            this.openAnalyzeWindowToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openAnalyzeWindowToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.openAnalyzeWindowToolStripMenuItem.Text = "打开分析界面";
             this.openAnalyzeWindowToolStripMenuItem.Click += new System.EventHandler(this.openAnalyzeWindowToolStripMenuItem_Click);
             // 
             // openSimTradeLongWrongWindowToolStripMenuItem
             // 
             this.openSimTradeLongWrongWindowToolStripMenuItem.Name = "openSimTradeLongWrongWindowToolStripMenuItem";
-            this.openSimTradeLongWrongWindowToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openSimTradeLongWrongWindowToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.openSimTradeLongWrongWindowToolStripMenuItem.Text = "打开指定交易器";
             this.openSimTradeLongWrongWindowToolStripMenuItem.Click += new System.EventHandler(this.openSimTradeLongWrongWindowToolStripMenuItem_Click);
             // 
             // tradeCalculaterToolStripMenuItem
             // 
             this.tradeCalculaterToolStripMenuItem.Name = "tradeCalculaterToolStripMenuItem";
-            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.tradeCalculaterToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.tradeCalculaterToolStripMenuItem.Text = "交易计算器";
             this.tradeCalculaterToolStripMenuItem.Click += new System.EventHandler(this.tradeCalculaterToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(205, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(217, 6);
             // 
             // setWndAlphaToolStripMenuItem
             // 
             this.setWndAlphaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripTextBoxAlpha});
             this.setWndAlphaToolStripMenuItem.Name = "setWndAlphaToolStripMenuItem";
-            this.setWndAlphaToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.setWndAlphaToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.setWndAlphaToolStripMenuItem.Text = "设置透明度";
             // 
             // toolStripTextBoxAlpha
@@ -543,7 +552,7 @@
             // openGlobalSettingToolStripMenuItem
             // 
             this.openGlobalSettingToolStripMenuItem.Name = "openGlobalSettingToolStripMenuItem";
-            this.openGlobalSettingToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openGlobalSettingToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.openGlobalSettingToolStripMenuItem.Text = "打开全局设置";
             this.openGlobalSettingToolStripMenuItem.Click += new System.EventHandler(this.openGlobalSettingToolStripMenuItem_Click);
             // 
@@ -1008,12 +1017,12 @@
             this.tabPage5In11.Text = "11选5";
             this.tabPage5In11.UseVisualStyleBackColor = true;
             // 
-            // anaSelectDatesToolStripMenuItem
+            // setAsStartDateToolStripMenuItem
             // 
-            this.anaSelectDatesToolStripMenuItem.Name = "anaSelectDatesToolStripMenuItem";
-            this.anaSelectDatesToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.anaSelectDatesToolStripMenuItem.Text = "分析选定的数据";
-            this.anaSelectDatesToolStripMenuItem.Click += new System.EventHandler(this.anaSelectDatesToolStripMenuItem_Click);
+            this.setAsStartDateToolStripMenuItem.Name = "setAsStartDateToolStripMenuItem";
+            this.setAsStartDateToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.setAsStartDateToolStripMenuItem.Text = "设置为最新数据的起始日期";
+            this.setAsStartDateToolStripMenuItem.Click += new System.EventHandler(this.setAsStartDateToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -1140,6 +1149,7 @@
         private System.Windows.Forms.ToolStripMenuItem openAnalyzeWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openGlobalSettingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem anaSelectDatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setAsStartDateToolStripMenuItem;
     }
 }
 
