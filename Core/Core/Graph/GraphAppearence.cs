@@ -214,11 +214,11 @@ namespace LotteryAnalyze
                 if (appearenceType < AppearenceType.eAppearCountFast)
                     v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
                 else if (appearenceType == AppearenceType.eAppearCountFast)
-                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.FAST_COUNT;
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_5;
                 else if (appearenceType == AppearenceType.eAppearCountShort)
-                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SHOR_COUNT;
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_10;
                 else if (appearenceType == AppearenceType.eAppearCountLong)
-                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.LONG_COUNT;
+                    v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_30;
                 g.DrawString(v.ToString("f2") + "%", tagFont, whiteBrush, winW - 60, mouseRelPos.Y);
             }
 
@@ -230,28 +230,28 @@ namespace LotteryAnalyze
                 switch (appearenceType)
                 {
                     case AppearenceType.eAppearCountFast:
-                        apprate = (su.fastData.appearCount * 100 / LotteryStatisticInfo.FAST_COUNT);
-                        underTheoRateCount = su.fastData.underTheoryCount;
+                        apprate = (su.sample5Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_5);
+                        underTheoRateCount = su.sample5Data.underTheoryCount;
                         break;
                     case AppearenceType.eAppearCountShort:
-                        apprate = (su.shortData.appearCount * 100 / LotteryStatisticInfo.SHOR_COUNT);
-                        underTheoRateCount = su.shortData.underTheoryCount;
+                        apprate = (su.sample10Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_10);
+                        underTheoRateCount = su.sample10Data.underTheoryCount;
                         break;
                     case AppearenceType.eAppearCountLong:
-                        apprate = (su.longData.appearCount * 100 / LotteryStatisticInfo.LONG_COUNT);
-                        underTheoRateCount = su.longData.underTheoryCount;
+                        apprate = (su.sample30Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_30);
+                        underTheoRateCount = su.sample30Data.underTheoryCount;
                         break;
                     case AppearenceType.eAppearenceFast:
-                        apprate = su.fastData.appearProbability;
-                        underTheoRateCount = su.fastData.underTheoryCount;
+                        apprate = su.sample5Data.appearProbability;
+                        underTheoRateCount = su.sample5Data.underTheoryCount;
                         break;
                     case AppearenceType.eAppearenceShort:
-                        apprate = su.shortData.appearProbability;
-                        underTheoRateCount = su.shortData.underTheoryCount;
+                        apprate = su.sample10Data.appearProbability;
+                        underTheoRateCount = su.sample10Data.underTheoryCount;
                         break;
                     case AppearenceType.eAppearenceLong:
-                        apprate = su.longData.appearProbability;
-                        underTheoRateCount = su.longData.underTheoryCount;
+                        apprate = su.sample30Data.appearProbability;
+                        underTheoRateCount = su.sample30Data.underTheoryCount;
                         break;
                 }
                 string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] [出号率 = " + apprate + "] [连续低于理论概率期数 = " + underTheoRateCount + "]";
@@ -305,11 +305,11 @@ namespace LotteryAnalyze
                     StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
                     float apr = 0;
                     if(j == 0)
-                        apr = sum.statisticUnitMap[cdt].fastData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample5Data.appearProbability;
                     else if (j == 1)
-                        apr = sum.statisticUnitMap[cdt].shortData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample10Data.appearProbability;
                     else
-                        apr = sum.statisticUnitMap[cdt].longData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample30Data.appearProbability;
 
                     float x = i * gridScaleUp.X + halfGridW;
                     x = StandToCanvas(x, true, true);
@@ -353,22 +353,22 @@ namespace LotteryAnalyze
                 switch (appearenceType)
                 {
                     case AppearenceType.eAppearenceFast:
-                        apr = sum.statisticUnitMap[cdt].fastData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample5Data.appearProbability;
                         break;
                     case AppearenceType.eAppearenceShort:
-                        apr = sum.statisticUnitMap[cdt].shortData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample10Data.appearProbability;
                         break;
                     case AppearenceType.eAppearenceLong:
-                        apr = sum.statisticUnitMap[cdt].longData.appearProbability;
+                        apr = sum.statisticUnitMap[cdt].sample30Data.appearProbability;
                         break;
                     case AppearenceType.eAppearCountFast:
-                        apr = sum.statisticUnitMap[cdt].fastData.appearCount * 100 / LotteryStatisticInfo.FAST_COUNT;
+                        apr = sum.statisticUnitMap[cdt].sample5Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_5;
                         break;
                     case AppearenceType.eAppearCountShort:
-                        apr = sum.statisticUnitMap[cdt].shortData.appearCount * 100 / LotteryStatisticInfo.SHOR_COUNT;
+                        apr = sum.statisticUnitMap[cdt].sample10Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_10;
                         break;
                     case AppearenceType.eAppearCountLong:
-                        apr = sum.statisticUnitMap[cdt].longData.appearCount * 100 / LotteryStatisticInfo.LONG_COUNT;
+                        apr = sum.statisticUnitMap[cdt].sample30Data.appearCount * 100 / LotteryStatisticInfo.SAMPLE_COUNT_30;
                         break;
                 }
                 float rH = apr / 100 * maxHeight;

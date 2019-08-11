@@ -94,6 +94,9 @@ namespace LotteryAnalyze
         public int selAuxLinePointIndexUpPanel = -1;
         public int selAuxLinePointIndexDownPanel = -1;
 
+
+        List<int> predict_results = new List<int>();
+
         //float downGraphYOffset = 0;
         public float DownGraphYOffset
         {
@@ -222,6 +225,8 @@ namespace LotteryAnalyze
                         if (data == null)
                             continue;
                         DrawKDataGraph(g, data, winW, winH, missRelHeight, mouseRelPos, kddc, cdt);
+
+                        DrawHotNumsPredictResult(g, data, winW, winH, missRelHeight, mouseRelPos, kddc, cdt, numIndex);
                     }
 
                     if (enableKRuler)
@@ -749,6 +754,87 @@ namespace LotteryAnalyze
             return rcLst;
         }
 
+        bool CheckPredictResults(KData data, int numIndex)
+        {
+            int number = (int)data.parent.startItem.GetNumberByIndex(numIndex);
+            if (predict_results.Contains(number))
+                return true;
+            return false;
+        }
+
+        void DrawHotNumsPredictResult(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos, KDataDictContainer kddc, CollectDataType cdt, int numIndex)
+        {
+            if (GlobalSetting.G_SHOW_KCURVE_HOTNUMS_RESULT && GraphDataManager.CurrentCircle == 1)
+            {
+                float standX = data.index * gridScaleUp.X;
+                standX = StandToCanvas(standX, true, true);
+                tmpBrush = whiteBrush;
+
+                KData prevData = data.GetPrevKData();
+                if (prevData != null)
+                {
+                    predict_results.Clear();
+                    int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+                    int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+                    StatisticUnitMap sum = prevData.parent.startItem.statisticInfo.allStatisticInfo[numIndex];
+
+                    for(int i = startID; i <= endID; ++i)
+                    {
+                        CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                        StatisticUnit su = sum.statisticUnitMap[pcdt];
+                        int num = i - startID;
+
+                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
+                        {
+                            if(su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                            {
+                                if (predict_results.Contains(num) == false)
+                                    predict_results.Add(num);
+                            }
+                        }
+                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                        {
+                            if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                            {
+                                if (predict_results.Contains(num) == false)
+                                    predict_results.Add(num);
+                            }
+                        }
+                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                        {
+                            if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                            {
+                                if (predict_results.Contains(num) == false)
+                                    predict_results.Add(num);
+                            }
+                        }
+                    }
+                    if (predict_results.Count > 0)
+                    {
+                        bool predict_success = CheckPredictResults(data, numIndex);
+                        if (predict_success)
+                            tmpBrush = redBrush;
+                        else
+                            tmpBrush = cyanBrush;
+                    }
+                }
+
+                PushRcPts(tmpBrush, standX, winH - 30, gridScaleUp.X, 30);
+                if((preViewDataIndex < 0 && standX <= mouseRelPos.X && standX + gridScaleUp.X >= mouseRelPos.X)||
+                    preViewDataIndex == data.index)
+                {
+                    string info = "";
+                    int last = predict_results.Count - 1;
+                    for (int i = 0; i <= last; ++i)
+                    {
+                        info += predict_results[i];
+                        if (i < last)
+                            info += ", ";
+                    }
+                    g.DrawString(info, selDataFont, tmpBrush, standX, winH - 50);
+                }
+            }
+        }
 
         void DrawKDataGraph(Graphics g, KData data, int winW, int winH, float missRelHeight, Point mouseRelPos, KDataDictContainer kddc, CollectDataType cdt)
         {
@@ -797,6 +883,7 @@ namespace LotteryAnalyze
                 g.DrawLine(yellowLinePen, standX, 0, standX, winH);
                 g.DrawLine(yellowLinePen, standX + gridScaleUp.X, 0, standX + gridScaleUp.X, winH);
             }
+
 
             //if (prevData != null)
             //{

@@ -14,8 +14,9 @@ namespace LotteryAnalyze
         public Byte missCount = 0;
         // 连续开出的期数
         public Byte appearCount = 0;
-        public StatisticData fastData = new StatisticData();
-        public StatisticData shortData = new StatisticData();
-        public StatisticData longData = new StatisticData();
+        public StatisticData sample3Data = new StatisticData();
+        public StatisticData sample5Data = new StatisticData();
+        public StatisticData sample10Data = new StatisticData();
+        public StatisticData sample30Data = new StatisticData();
     }
 }

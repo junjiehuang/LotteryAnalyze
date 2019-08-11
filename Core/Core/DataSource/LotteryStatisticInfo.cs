@@ -11,12 +11,16 @@ namespace LotteryAnalyze
     {
         bool hasCollect = false;
 
-        public const int LONG_COUNT = 30;
-        public const int SHOR_COUNT = 10;
-        public const int FAST_COUNT = 5;
-        public int validShortCount = 0;
-        public int validLongCount = 0;
-        public int validFastCount = 0;
+        public const int SAMPLE_COUNT_30 = 30;
+        public const int SAMPLE_COUNT_10 = 10;
+        public const int SAMPLE_COUNT_5 = 5;
+        public const int SAMPLE_COUNT_3 = 3;
+
+        public int validCount30 = 0;
+        public int validCount10 = 0;
+        public int validCount5 = 0;
+        public int validCount3 = 0;
+
         public DataItem lotteryData;
         public List<StatisticUnitMap> allStatisticInfo = new List<StatisticUnitMap>();
 
@@ -43,24 +47,33 @@ namespace LotteryAnalyze
                 allStatisticInfo[i].CollectMissCount(prevItem, i);
             }
             DataItem curItem = lotteryData;
-            validLongCount = 0;
-            while (curItem != null && validLongCount < LONG_COUNT)
+            validCount30 = 0;
+            while (curItem != null && validCount30 < SAMPLE_COUNT_30)
             {
                 for (int i = 0; i < 5; ++i)
                 {
-                    allStatisticInfo[i].CollectCount(curItem, i, validLongCount < FAST_COUNT, validLongCount < SHOR_COUNT, validLongCount < LONG_COUNT);
+                    allStatisticInfo[i].CollectCount(
+                        curItem, i, 
+                        validCount30 < SAMPLE_COUNT_3, 
+                        validCount30 < SAMPLE_COUNT_5, 
+                        validCount30 < SAMPLE_COUNT_10, 
+                        validCount30 < SAMPLE_COUNT_30);
                 }
                 curItem = curItem.parent.GetPrevItem(curItem);
-                ++validLongCount;
+                ++validCount30;
             }
 
-            validShortCount = validLongCount;
-            if (validShortCount > SHOR_COUNT)
-                validShortCount = SHOR_COUNT;
+            validCount10 = validCount30;
+            if (validCount10 > SAMPLE_COUNT_10)
+                validCount10 = SAMPLE_COUNT_10;
 
-            validFastCount = validLongCount;
-            if (validFastCount > FAST_COUNT)
-                validFastCount = FAST_COUNT;
+            validCount5 = validCount30;
+            if (validCount5 > SAMPLE_COUNT_5)
+                validCount5 = SAMPLE_COUNT_5;
+
+            validCount3 = validCount30;
+            if (validCount3 > SAMPLE_COUNT_3)
+                validCount3 = SAMPLE_COUNT_3;
 
             for (int i = 0; i < 5; ++i)
             {
@@ -70,6 +83,35 @@ namespace LotteryAnalyze
             CollectMissCountArea();
 
             hasCollect = true;
+        }
+
+        void ResetSample(StatisticData sd, StatisticUnit su, StatisticUnitMap sumPre, StatisticUnit suPre, int idGlobal)
+        {
+            if (sd.appearProbabilityDiffWithTheory <= 0)
+                sd.underTheoryCount = sumPre == null ? 1 : (suPre.sample3Data.underTheoryCount + 1);
+            else
+                sd.underTheoryCount = 0;
+
+            sd.prevMaxMissCount = su.missCount;
+            sd.prevMaxMissCountIndex = idGlobal;
+        }
+
+        void ProcSample(int loopCount, int sampleCount, float subArea, StatisticData sdM, StatisticUnit suC, StatisticUnit suP, DataItem pItem)
+        {
+            if (loopCount < sampleCount)
+            {
+#if USE_EMA_CALC
+                sdM.missCountAreaTotal += suC.missCount;
+                sdM.missCountArea = sdM.missCountAreaTotal / (loopCount + 1);
+#else
+                sdM.missCountArea += subArea;
+#endif
+                if (sdM.prevMaxMissCount < suP.missCount)
+                {
+                    sdM.prevMaxMissCount = suP.missCount;
+                    sdM.prevMaxMissCountIndex = pItem.idGlobal;
+                }
+            }
         }
 
         void CollectMissCountArea()
@@ -93,25 +135,10 @@ namespace LotteryAnalyze
                     {
                         suPre = sumPre.statisticUnitMap[cdt];
                     }
-                    if (su.fastData.appearProbabilityDiffWithTheory <= 0)
-                        su.fastData.underTheoryCount = sumPre == null ? 1 : (suPre.fastData.underTheoryCount + 1);
-                    else
-                        su.fastData.underTheoryCount = 0;
-                    if (su.shortData.appearProbabilityDiffWithTheory <= 0)
-                        su.shortData.underTheoryCount = sumPre == null ? 1 : (suPre.shortData.underTheoryCount + 1);
-                    else
-                        su.shortData.underTheoryCount = 0;
-                    if (su.longData.appearProbabilityDiffWithTheory <= 0)
-                        su.longData.underTheoryCount = sumPre == null ? 1 : (suPre.longData.underTheoryCount + 1);
-                    else
-                        su.longData.underTheoryCount = 0;
-
-                    su.fastData.prevMaxMissCount = su.missCount;
-                    su.shortData.prevMaxMissCount = su.missCount;
-                    su.longData.prevMaxMissCount = su.missCount;
-                    su.fastData.prevMaxMissCountIndex = lotteryData.idGlobal;
-                    su.shortData.prevMaxMissCountIndex = lotteryData.idGlobal;
-                    su.longData.prevMaxMissCountIndex = lotteryData.idGlobal;
+                    ResetSample(su.sample3Data, su, sumPre, suPre, lotteryData.idGlobal);
+                    ResetSample(su.sample5Data, su, sumPre, suPre, lotteryData.idGlobal);
+                    ResetSample(su.sample10Data, su, sumPre, suPre, lotteryData.idGlobal);
+                    ResetSample(su.sample30Data, su, sumPre, suPre, lotteryData.idGlobal);
                 }
             }
 
@@ -135,53 +162,15 @@ namespace LotteryAnalyze
                         StatisticUnit suM = sumME.statisticUnitMap[cdt];
 
                         float subArea = (suC.missCount + suP.missCount) * 0.5f;
-                        if (loopCount < FAST_COUNT)
-                        {
-#if USE_EMA_CALC
-                            suM.fastData.missCountAreaTotal += suC.missCount;// subArea;
-                            suM.fastData.missCountArea = suM.fastData.missCountAreaTotal / (loopCount + 1);
-#else
-                            suM.fastData.missCountArea += subArea;
-#endif
-                            if (suM.fastData.prevMaxMissCount < suP.missCount)
-                            {
-                                suM.fastData.prevMaxMissCount = suP.missCount;
-                                suM.fastData.prevMaxMissCountIndex = pItem.idGlobal;
-                            }
-                        }
-                        if (loopCount < SHOR_COUNT)
-                        {
-#if USE_EMA_CALC
-                            suM.shortData.missCountAreaTotal += suC.missCount;// subArea;
-                            suM.shortData.missCountArea = suM.shortData.missCountAreaTotal / (loopCount + 1);
-#else
-                            suM.shortData.missCountArea += subArea;
-#endif
-                            if (suM.shortData.prevMaxMissCount < suP.missCount)
-                            {
-                                suM.shortData.prevMaxMissCount = suP.missCount;
-                                suM.shortData.prevMaxMissCountIndex = pItem.idGlobal;
-                            }
-                        }
-                        if (loopCount < LONG_COUNT)
-                        {
-#if USE_EMA_CALC
-                            suM.longData.missCountAreaTotal += suC.missCount;// subArea;
-                            suM.longData.missCountArea = suM.longData.missCountAreaTotal / (loopCount + 1);
-#else
-                            suM.longData.missCountArea += subArea;
-#endif
-                            if (suM.longData.prevMaxMissCount < suP.missCount)
-                            {
-                                suM.longData.prevMaxMissCount = suP.missCount;
-                                suM.longData.prevMaxMissCountIndex = pItem.idGlobal;
-                            }
-                        }
+                        ProcSample(loopCount, SAMPLE_COUNT_3, subArea, suM.sample3Data, suC, suP, pItem);
+                        ProcSample(loopCount, SAMPLE_COUNT_5, subArea, suM.sample5Data, suC, suP, pItem);
+                        ProcSample(loopCount, SAMPLE_COUNT_10, subArea, suM.sample10Data, suC, suP, pItem);
+                        ProcSample(loopCount, SAMPLE_COUNT_30, subArea, suM.sample30Data, suC, suP, pItem);
                     }
                 }
                 cItem = pItem;
                 ++loopCount;
-                if (loopCount == LONG_COUNT)
+                if (loopCount == SAMPLE_COUNT_30)
                     break;
             }
         }

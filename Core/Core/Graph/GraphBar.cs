@@ -203,7 +203,7 @@ namespace LotteryAnalyze
                     g.DrawString(nums[index].rate.ToString("f1") + "%", tagFont, brandBrush, startX, startY - 30);
                     startX += gap;
                 }
-                g.DrawString("统计 " + currentItem.idTag + " 前" + LotteryStatisticInfo.LONG_COUNT + "期所有位数字0-9的出现概率", tagFont, whiteBrush, 5, 5);
+                g.DrawString("统计 " + currentItem.idTag + " 前" + bgdc.StatisticRangeCount + "期所有位数字0-9的出现概率", tagFont, whiteBrush, 5, 5);
             }
         }
     }

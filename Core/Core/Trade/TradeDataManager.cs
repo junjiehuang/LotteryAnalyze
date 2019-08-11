@@ -817,7 +817,7 @@ namespace LotteryAnalyze
             if (bestNumIndex >= 0 && bestPath >= 0)
             {
                 int tradeCount = defaultTradeCount;
-                if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
                 {
                     if (tradeCountList.Count > 0)
                     {
@@ -879,7 +879,7 @@ namespace LotteryAnalyze
             SortNumberPath(item, bestNumIndex, ref res);
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -913,7 +913,7 @@ namespace LotteryAnalyze
             SortNumberPath(item, bestNumIndex, ref res);
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -958,7 +958,7 @@ namespace LotteryAnalyze
             SortNumberPath(item, bestNumIndex, ref res);
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1002,7 +1002,7 @@ namespace LotteryAnalyze
                 bestNumIndex = simSelNumIndex;
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1046,7 +1046,7 @@ namespace LotteryAnalyze
                 bestNumIndex = simSelNumIndex;
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1185,7 +1185,7 @@ namespace LotteryAnalyze
                 bestNumIndex = simSelNumIndex;
 
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1221,7 +1221,7 @@ namespace LotteryAnalyze
             if (simSelNumIndex != -1)
                 bestNumIndex = simSelNumIndex;
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1657,7 +1657,7 @@ namespace LotteryAnalyze
         void TradeMultiNumPath(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1691,7 +1691,7 @@ namespace LotteryAnalyze
         void TradeSinglePositionHotestNums(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1762,11 +1762,11 @@ namespace LotteryAnalyze
                         CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                         SByte number = (SByte)(num - startIndex);
                         NumberCmpInfo info = GetNumberCmpInfo(ref maxProbilityNums, number, true);
-                        //info.appearCount = sum.statisticUnitMap[cdt].shortData.appearCount;
-                        //info.rate = sum.statisticUnitMap[cdt].shortData.appearProbabilityDiffWithTheory;
+                        //info.appearCount = sum.statisticUnitMap[cdt].sample10Data.appearCount;
+                        //info.rate = sum.statisticUnitMap[cdt].sample10Data.appearProbabilityDiffWithTheory;
                         //info.largerThanTheoryProbability = info.rate > 0.5f;
 
-                        info.appearCount = sum.statisticUnitMap[cdt].fastData.appearCount;
+                        info.appearCount = sum.statisticUnitMap[cdt].sample5Data.appearCount;
                         if (num % 3 == bestPath)
                         {
                             info.largerThanTheoryProbability = true;
@@ -1788,7 +1788,7 @@ namespace LotteryAnalyze
         void TradeSingleMostPosibilityNums(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1813,7 +1813,7 @@ namespace LotteryAnalyze
         void TradeMultiMostPosibilityNums(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1838,7 +1838,7 @@ namespace LotteryAnalyze
         void TradeeSingleShortLongMostPosibilityNums(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1871,7 +1871,7 @@ namespace LotteryAnalyze
         void TradeSingleMostPosibilityPath(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1895,9 +1895,9 @@ namespace LotteryAnalyze
             JudgeNumberPath(item, trade, numID, ref maxV, ref bestNumIndex, ref bestPathOnGraphConfig, ref isFinalPathStrongUp);
 
             FindAllNumberProbabilities(item, ref maxProbilityNums, false);
-            byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].shortData.appearCount;
-            byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].shortData.appearCount;
-            byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].shortData.appearCount;
+            byte ac0 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath0].sample10Data.appearCount;
+            byte ac1 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath1].sample10Data.appearCount;
+            byte ac2 = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[CollectDataType.ePath2].sample10Data.appearCount;
             int bestPathOnProbability = -1;
             if(ac0 > ac1)
             {
@@ -1950,7 +1950,7 @@ namespace LotteryAnalyze
         void TradeSinglePositionCondictionsSuperposition(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SHOR_COUNT)
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
                 if (tradeCountList.Count > 0)
                 {
@@ -1980,7 +1980,7 @@ namespace LotteryAnalyze
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = sum.statisticUnitMap[cdt];
-                StatisticData sd = su.fastData;
+                StatisticData sd = su.sample5Data;
                 float v = sd.appearProbability;
                 switch(cdt)
                 {
@@ -2208,13 +2208,13 @@ namespace LotteryAnalyze
             }
             else
             {
-                if (suA.shortData.appearProbability > suB.shortData.appearProbability)
+                if (suA.sample10Data.appearProbability > suB.sample10Data.appearProbability)
                 {
                     curBestPath = indexA;
                     curBestV = pathValueA;
                     curBeshSU = suA;
                 }
-                else if (suA.shortData.appearProbability < suB.shortData.appearProbability)
+                else if (suA.sample10Data.appearProbability < suB.sample10Data.appearProbability)
                 {
                     curBestPath = indexB;
                     curBestV = pathValueB;
@@ -2222,13 +2222,13 @@ namespace LotteryAnalyze
                 }
                 else
                 {
-                    if (suA.longData.appearProbability > suB.longData.appearProbability)
+                    if (suA.sample30Data.appearProbability > suB.sample30Data.appearProbability)
                     {
                         curBestPath = indexA;
                         curBestV = pathValueA;
                         curBeshSU = suA;
                     }
-                    else if (suA.longData.appearProbability < suB.longData.appearProbability)
+                    else if (suA.sample30Data.appearProbability < suB.sample30Data.appearProbability)
                     {
                         curBestPath = indexB;
                         curBestV = pathValueB;
@@ -2744,15 +2744,15 @@ namespace LotteryAnalyze
                     return -1;
                 else if (x.pathValue < y.pathValue)
                     return 1;
-                if (x.su.shortData.appearProbability > y.su.shortData.appearProbability)
+                if (x.su.sample10Data.appearProbability > y.su.sample10Data.appearProbability)
                     return -1;
-                else if (x.su.shortData.appearProbability < y.su.shortData.appearProbability)
+                else if (x.su.sample10Data.appearProbability < y.su.sample10Data.appearProbability)
                     return 1;
                 else
                 {
-                    if (x.su.longData.appearProbability > y.su.longData.appearProbability)
+                    if (x.su.sample30Data.appearProbability > y.su.sample30Data.appearProbability)
                         return -1;
-                    else if (x.su.longData.appearProbability < y.su.longData.appearProbability)
+                    else if (x.su.sample30Data.appearProbability < y.su.sample30Data.appearProbability)
                         return 1;
                 }
                 return 0;
@@ -4296,15 +4296,15 @@ namespace LotteryAnalyze
                 CollectDataType cdt = cdts[i];
                 theoryAppRate[i] = GraphDataManager.GetTheoryProbability(cdt);
                 curMissCount[i] = sumCUR.statisticUnitMap[cdt].missCount;
-                preMaxMissCount[i] = sumCUR.statisticUnitMap[cdt].shortData.prevMaxMissCount;
-                preMaxMissCountID[i] = sumCUR.statisticUnitMap[cdt].shortData.prevMaxMissCountIndex;
-                appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].fastData.appearProbability;
-                underTheoryRateCount[i] = sumCUR.statisticUnitMap[cdt].fastData.underTheoryCount;
-                appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].shortData.appearProbability;
+                preMaxMissCount[i] = sumCUR.statisticUnitMap[cdt].sample10Data.prevMaxMissCount;
+                preMaxMissCountID[i] = sumCUR.statisticUnitMap[cdt].sample10Data.prevMaxMissCountIndex;
+                appearenceRateFastCUR[i] = sumCUR.statisticUnitMap[cdt].sample5Data.appearProbability;
+                underTheoryRateCount[i] = sumCUR.statisticUnitMap[cdt].sample5Data.underTheoryCount;
+                appearenceRateShortCUR[i] = sumCUR.statisticUnitMap[cdt].sample10Data.appearProbability;
                 if (sumPRV != null)
                 {
-                    appearenceRateFastPRV[i] = sumPRV.statisticUnitMap[cdt].fastData.appearProbability;
-                    appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].shortData.appearProbability;
+                    appearenceRateFastPRV[i] = sumPRV.statisticUnitMap[cdt].sample5Data.appearProbability;
+                    appearenceRateShortPRV[i] = sumPRV.statisticUnitMap[cdt].sample10Data.appearProbability;
                 }
             }
 
@@ -5125,10 +5125,10 @@ namespace LotteryAnalyze
             for (int i = 0; i < cdts.Length; ++i )
             {
                 StatisticUnit su = sum.statisticUnitMap[cdts[i]];
-                maxMissCount[i] = su.fastData.prevMaxMissCount;
+                maxMissCount[i] = su.sample5Data.prevMaxMissCount;
                 missCount[i] = su.missCount;
-                missCountAreas[i] = su.fastData.missCountArea;
-                maxMissCountID[i] = su.fastData.prevMaxMissCountIndex;
+                missCountAreas[i] = su.sample5Data.missCountArea;
+                maxMissCountID[i] = su.sample5Data.prevMaxMissCountIndex;
             }
 
             //int validCount = 0;
@@ -5264,9 +5264,9 @@ namespace LotteryAnalyze
         {
             StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numIndex];
             float[] pathValues = new float[] { 0, 0, 0, };
-            pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].fastData.appearProbabilityDiffWithTheory;
-            pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].fastData.appearProbabilityDiffWithTheory;
-            pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].fastData.appearProbabilityDiffWithTheory;
+            pathValues[0] = sum.statisticUnitMap[CollectDataType.ePath0].sample5Data.appearProbabilityDiffWithTheory;
+            pathValues[1] = sum.statisticUnitMap[CollectDataType.ePath1].sample5Data.appearProbabilityDiffWithTheory;
+            pathValues[2] = sum.statisticUnitMap[CollectDataType.ePath2].sample5Data.appearProbabilityDiffWithTheory;
             trade.pathCmpInfos[numIndex].Clear();
             for (int i = 0; i < pathValues.Length; ++i)
             {
@@ -5462,9 +5462,9 @@ namespace LotteryAnalyze
                 mp1.KGRAPH_CFG = (byte)kgCfgs[1];
                 mp2.KGRAPH_CFG = (byte)kgCfgs[2];
 
-                //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].shortData.appearProbability;
-                //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].shortData.appearProbability;
-                //proShort[2] = sum.statisticUnitMap[CollectDataType.ePath2].shortData.appearProbability;
+                //proShort[0] = sum.statisticUnitMap[CollectDataType.ePath0].sample10Data.appearProbability;
+                //proShort[1] = sum.statisticUnitMap[CollectDataType.ePath1].sample10Data.appearProbability;
+                //proShort[2] = sum.statisticUnitMap[CollectDataType.ePath2].sample10Data.appearProbability;
                 
                 pathValues[0] = pathValues[0] * kValues[0] * proShort[0];
                 pathValues[1] = pathValues[1] * kValues[1] * proShort[1];
@@ -5575,14 +5575,14 @@ namespace LotteryAnalyze
                 else if (x.pathValue < y.pathValue)
                     return 1;
 
-                if (x.su.shortData.appearProbability > y.su.shortData.appearProbability)
+                if (x.su.sample10Data.appearProbability > y.su.sample10Data.appearProbability)
                     return -1;
-                else if (x.su.shortData.appearProbability < y.su.shortData.appearProbability)
+                else if (x.su.sample10Data.appearProbability < y.su.sample10Data.appearProbability)
                     return 1;
                 
-                if (x.su.longData.appearProbability > y.su.longData.appearProbability)
+                if (x.su.sample30Data.appearProbability > y.su.sample30Data.appearProbability)
                     return -1;
-                else if (x.su.longData.appearProbability < y.su.longData.appearProbability)
+                else if (x.su.sample30Data.appearProbability < y.su.sample30Data.appearProbability)
                     return 1;
 
                 if (x.maxMissCount < y.maxMissCount)
@@ -5615,16 +5615,16 @@ namespace LotteryAnalyze
                     StatisticUnitMap sumBest = item.statisticInfo.allStatisticInfo[bestNumIndex];
                     CollectDataType curCDT = (CollectDataType)(1 << curBestPath);
                     StatisticUnit suBest = sum.statisticUnitMap[curCDT];
-                    if(suBest.shortData.appearProbability < curBestSU.shortData.appearProbability)
+                    if(suBest.sample10Data.appearProbability < curBestSU.sample10Data.appearProbability)
                     {
                         bestPath = curBestPath;
                         bestNumIndex = numIndex;
                         maxV = curBestV;
                         isFinalPathStrongUp = isStrongUp[curBestPath];
                     }
-                    else if(suBest.shortData.appearProbability == curBestSU.shortData.appearProbability)
+                    else if(suBest.sample10Data.appearProbability == curBestSU.sample10Data.appearProbability)
                     {
-                        if (suBest.longData.appearProbability < curBestSU.longData.appearProbability)
+                        if (suBest.sample30Data.appearProbability < curBestSU.sample30Data.appearProbability)
                         {
                             bestPath = curBestPath;
                             bestNumIndex = numIndex;
@@ -5784,7 +5784,7 @@ namespace LotteryAnalyze
         {
             nums.Clear();
             int realCount = item.idGlobal + 1;
-            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.LONG_COUNT : LotteryStatisticInfo.SHOR_COUNT;
+            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.SAMPLE_COUNT_30 : LotteryStatisticInfo.SAMPLE_COUNT_10;
             if (realCount > MAX_COUNT)
                 realCount = MAX_COUNT;
             float total = 5 * realCount;
@@ -5798,7 +5798,7 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
-                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].longData.appearCount : sum.statisticUnitMap[cdt].shortData.appearCount;
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].sample30Data.appearCount : sum.statisticUnitMap[cdt].sample10Data.appearCount;
                     info.rate = info.appearCount * 100 / total;
                     info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
                 }
@@ -5809,7 +5809,7 @@ namespace LotteryAnalyze
         {
             nums.Clear();
             int realCount = item.idGlobal + 1;
-            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.LONG_COUNT : LotteryStatisticInfo.SHOR_COUNT;
+            int MAX_COUNT = collectByLongCount ? LotteryStatisticInfo.SAMPLE_COUNT_30 : LotteryStatisticInfo.SAMPLE_COUNT_10;
             if (realCount > MAX_COUNT)
                 realCount = MAX_COUNT;
             float total = 5 * realCount;
@@ -5823,7 +5823,7 @@ namespace LotteryAnalyze
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[num];
                     SByte number = (SByte)(num - startIndex);
                     NumberCmpInfo info = GetNumberCmpInfo(ref nums, number, true);
-                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].longData.appearCount : sum.statisticUnitMap[cdt].shortData.appearCount;
+                    info.appearCount += collectByLongCount ? sum.statisticUnitMap[cdt].sample30Data.appearCount : sum.statisticUnitMap[cdt].sample10Data.appearCount;
                     info.rate = info.appearCount * 100 / total;
                     info.largerThanTheoryProbability = info.rate > GraphDataManager.GetTheoryProbability(cdt);
                 }
@@ -5843,8 +5843,8 @@ namespace LotteryAnalyze
                 {
                     NumberCmpInfo info = new NumberCmpInfo();
                     info.number = (SByte)(i - startIndex);
-                    info.rate = sum.statisticUnitMap[cdt].longData.appearProbability;
-                    info.largerThanTheoryProbability = sum.statisticUnitMap[cdt].longData.appearProbability > GraphDataManager.GetTheoryProbability(cdt);
+                    info.rate = sum.statisticUnitMap[cdt].sample30Data.appearProbability;
+                    info.largerThanTheoryProbability = sum.statisticUnitMap[cdt].sample30Data.appearProbability > GraphDataManager.GetTheoryProbability(cdt);
 
                     if (nums.Count == 0)
                     {
@@ -5855,7 +5855,7 @@ namespace LotteryAnalyze
                         bool hasInsert = false;
                         for( int j = 0; j < nums.Count; ++j )
                         {
-                            if(sum.statisticUnitMap[cdt].longData.appearProbability > nums[j].rate)
+                            if(sum.statisticUnitMap[cdt].sample30Data.appearProbability > nums[j].rate)
                             {
                                 nums.Insert(j, info);
                                 hasInsert = true;

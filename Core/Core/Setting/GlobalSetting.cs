@@ -68,6 +68,14 @@ namespace LotteryAnalyze
 
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
         private static bool g_SHOW_KCURVE_DETAIL = true;
+        [Parameter("界面设置/K线图设置/是否显示热号预测结果", true)]
+        private static bool g_SHOW_KCURVE_HOTNUMS_RESULT = true;
+        [Parameter("界面设置/K线图设置/热号预测采样周期3", true)]
+        private static bool g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3 = true;
+        [Parameter("界面设置/K线图设置/热号预测采样周期5", true)]
+        private static bool g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5 = true;
+        [Parameter("界面设置/K线图设置/热号预测采样周期10", true)]
+        private static bool g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10 = true;
 
 
         [Parameter("自动通道线工具/是否开启", true)]
@@ -851,6 +859,30 @@ namespace LotteryAnalyze
         {
             get { return g_SEQ_PATH_BY_MACD_LINE; }
             set { g_SEQ_PATH_BY_MACD_LINE = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_SHOW_KCURVE_HOTNUMS_RESULT
+        {
+            get { return g_SHOW_KCURVE_HOTNUMS_RESULT; }
+            set { g_SHOW_KCURVE_HOTNUMS_RESULT = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3
+        {
+            get { return g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3; }
+            set { g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3 = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5
+        {
+            get { return g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5; }
+            set { g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5 = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10
+        {
+            get { return g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10; }
+            set { g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10 = value; HAS_MODIFY = true; }
         }
 
         static GlobalSetting()

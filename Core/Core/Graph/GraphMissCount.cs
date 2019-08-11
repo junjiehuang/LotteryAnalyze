@@ -42,11 +42,11 @@ namespace LotteryAnalyze
             {
                 _missCountType = value;
                 if (_missCountType == MissCountType.eDisappearCountFast)
-                    maxMissCount = LotteryStatisticInfo.FAST_COUNT;
+                    maxMissCount = LotteryStatisticInfo.SAMPLE_COUNT_5;
                 else if (_missCountType == MissCountType.eDisappearCountShort)
-                    maxMissCount = LotteryStatisticInfo.SHOR_COUNT;
+                    maxMissCount = LotteryStatisticInfo.SAMPLE_COUNT_10;
                 else if (_missCountType == MissCountType.eDisappearCountLong)
-                    maxMissCount = LotteryStatisticInfo.LONG_COUNT;
+                    maxMissCount = LotteryStatisticInfo.SAMPLE_COUNT_30;
                 else if (_missCountType == MissCountType.eMissCountValue)
                     maxMissCount = 10;
                 else
@@ -141,44 +141,44 @@ namespace LotteryAnalyze
                         break;
                     case MissCountType.eMissCountAreaFast:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.missCountArea +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.missCountArea +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.missCountArea + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample5Data.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample5Data.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample5Data.missCountArea + "]";
                         }
                         break;
                     case MissCountType.eMissCountAreaShort:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.missCountArea +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.missCountArea +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.missCountArea + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample10Data.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample10Data.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample10Data.missCountArea + "]";
                         }
                         break;
                     case MissCountType.eMissCountAreaLong:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.missCountArea +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.missCountArea +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.missCountArea + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample30Data.missCountArea +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample30Data.missCountArea +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample30Data.missCountArea + "]";
                         }
                         break;
                     case MissCountType.eDisappearCountFast:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].fastData.disappearCount +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].fastData.disappearCount +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].fastData.disappearCount + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample5Data.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample5Data.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample5Data.disappearCount + "]";
                         }
                         break;
                     case MissCountType.eDisappearCountShort:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].shortData.disappearCount +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].shortData.disappearCount +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].shortData.disappearCount + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample10Data.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample10Data.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample10Data.disappearCount + "]";
                         }
                         break;
                     case MissCountType.eDisappearCountLong:
                         {
-                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].longData.disappearCount +
-                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].longData.disappearCount +
-                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].longData.disappearCount + "]";
+                            info += "[0 - " + sum.statisticUnitMap[CollectDataType.ePath0].sample30Data.disappearCount +
+                                "] [1 - " + sum.statisticUnitMap[CollectDataType.ePath1].sample30Data.disappearCount +
+                                "] [2 - " + sum.statisticUnitMap[CollectDataType.ePath2].sample30Data.disappearCount + "]";
                         }
                         break;
                 }
@@ -216,11 +216,11 @@ namespace LotteryAnalyze
                     float CUR = 1;
                     float curMissCountArea = 0;
                     if (j == 0)
-                        curMissCountArea = sum.statisticUnitMap[cdt].fastData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample5Data.missCountArea;
                     else if (j == 1)
-                        curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample10Data.missCountArea;
                     else if (j == 2)
-                        curMissCountArea = sum.statisticUnitMap[cdt].longData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample30Data.missCountArea;
 
                     if (maxMissCountArea < curMissCountArea)
                         maxMissCountArea = curMissCountArea;
@@ -281,25 +281,25 @@ namespace LotteryAnalyze
                 }
                 else if (missCountType == MissCountType.eDisappearCountFast)
                 {
-                    CUR = sum.statisticUnitMap[cdt].fastData.disappearCount;
+                    CUR = sum.statisticUnitMap[cdt].sample5Data.disappearCount;
                 }
                 else if (missCountType == MissCountType.eDisappearCountShort)
                 {
-                    CUR = sum.statisticUnitMap[cdt].shortData.disappearCount;
+                    CUR = sum.statisticUnitMap[cdt].sample10Data.disappearCount;
                 }
                 else if (missCountType == MissCountType.eDisappearCountLong)
                 {
-                    CUR = sum.statisticUnitMap[cdt].longData.disappearCount;
+                    CUR = sum.statisticUnitMap[cdt].sample30Data.disappearCount;
                 }
                 else
                 {
                     float curMissCountArea = 0;
                     if (missCountType == MissCountType.eMissCountAreaFast)
-                        curMissCountArea = sum.statisticUnitMap[cdt].fastData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample5Data.missCountArea;
                     else if (missCountType == MissCountType.eMissCountAreaShort)
-                        curMissCountArea = sum.statisticUnitMap[cdt].shortData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample10Data.missCountArea;
                     else if (missCountType == MissCountType.eMissCountAreaLong)
-                        curMissCountArea = sum.statisticUnitMap[cdt].longData.missCountArea;
+                        curMissCountArea = sum.statisticUnitMap[cdt].sample30Data.missCountArea;
 
                     if (maxMissCountArea < curMissCountArea)
                         maxMissCountArea = curMissCountArea;

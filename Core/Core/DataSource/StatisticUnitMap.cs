@@ -194,23 +194,25 @@ namespace LotteryAnalyze
             }
         }
 
-        void CollectCount(StatisticUnit su, bool isAppear, bool onFast, bool onShort, bool onLong)
+        void CollectCount(StatisticUnit su, bool isAppear, bool on3, bool on5, bool on10, bool on30)
         {
             if (isAppear)
             {
-                if (onFast) su.fastData.appearCount++;
-                if (onShort) su.shortData.appearCount++;
-                if (onLong) su.longData.appearCount++;
+                if (on3) su.sample3Data.appearCount++;
+                if (on5) su.sample5Data.appearCount++;
+                if (on10) su.sample10Data.appearCount++;
+                if (on30) su.sample30Data.appearCount++;
             }
             else
             {
-                if (onFast) su.fastData.disappearCount++;
-                if (onShort) su.shortData.disappearCount++;
-                if (onLong) su.longData.disappearCount++;
+                if (on3) su.sample3Data.disappearCount++;
+                if (on5) su.sample5Data.disappearCount++;
+                if (on10) su.sample10Data.disappearCount++;
+                if (on30) su.sample30Data.disappearCount++;
             }
         }
 
-        public void CollectCount(DataItem cmpItem, int numIndex, bool onFast, bool onShort, bool onLong)
+        public void CollectCount(DataItem cmpItem, int numIndex, bool on3, bool on5, bool on10, bool on30)
         {
             if (cmpItem == null)
                 return;
@@ -219,80 +221,82 @@ namespace LotteryAnalyze
                 switch (su.cdt)
                 {
                     case CollectDataType.ePath0:
-                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 0, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 0, on3, on5, on10, on30);
                         break;
                     case CollectDataType.ePath1:
-                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 1, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 1, on3, on5, on10, on30);
                         break;
                     case CollectDataType.ePath2:
-                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 2, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.path012OfEachSingle[numIndex] == 2, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eBigNum:
-                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex], onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex], on3, on5, on10, on30);
                         break;
                     case CollectDataType.eSmallNum:
-                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex] == false, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.bigOfEachSingle[numIndex] == false, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eOddNum:
-                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex], onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex], on3, on5, on10, on30);
                         break;
                     case CollectDataType.eEvenNum:
-                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex] == false, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.oddOfEachSingle[numIndex] == false, on3, on5, on10, on30);
                         break;
                     case CollectDataType.ePrimeNum:
-                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex], onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex], on3, on5, on10, on30);
                         break;
                     case CollectDataType.eCompositeNum:
-                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex] == false, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.primeOfEachSingle[numIndex] == false, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum0:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 0, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 0, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum1:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 1, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 1, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum2:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 2, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 2, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum3:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 3, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 3, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum4:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 4, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 4, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum5:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 5, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 5, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum6:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 6, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 6, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum7:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 7, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 7, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum8:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 8, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 8, on3, on5, on10, on30);
                         break;
                     case CollectDataType.eNum9:
-                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 9, onFast, onShort, onLong);
+                        CollectCount(su, cmpItem.fiveNumLst[numIndex] == 9, on3, on5, on10, on30);
                         break;
                 }
             }
         }
         public void CollectProbability()
         {
-            if (parent.validLongCount < 1)
+            if (parent.validCount30 < 1)
                 return;
             for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
             {
                 CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
                 StatisticUnit su = statisticUnitMap[cdt];
-                su.fastData.appearProbability = (float)su.fastData.appearCount * 100.0f / parent.validFastCount;
-                su.shortData.appearProbability = (float)su.shortData.appearCount * 100.0f / parent.validShortCount;
-                su.longData.appearProbability = (float)su.longData.appearCount * 100.0f / parent.validLongCount;
+                su.sample3Data.appearProbability = (float)su.sample3Data.appearCount * 100.0f / parent.validCount3;
+                su.sample5Data.appearProbability = (float)su.sample5Data.appearCount * 100.0f / parent.validCount5;
+                su.sample10Data.appearProbability = (float)su.sample10Data.appearCount * 100.0f / parent.validCount10;
+                su.sample30Data.appearProbability = (float)su.sample30Data.appearCount * 100.0f / parent.validCount30;
                 float theoryProbability = GraphDataManager.GetTheoryProbability(cdt);
-                su.fastData.appearProbabilityDiffWithTheory = (su.fastData.appearProbability - theoryProbability) / theoryProbability;
-                su.shortData.appearProbabilityDiffWithTheory = (su.shortData.appearProbability - theoryProbability) / theoryProbability;
-                su.longData.appearProbabilityDiffWithTheory = (su.longData.appearProbability - theoryProbability) / theoryProbability;
+                su.sample3Data.appearProbabilityDiffWithTheory = (su.sample3Data.appearProbability - theoryProbability) / theoryProbability;
+                su.sample5Data.appearProbabilityDiffWithTheory = (su.sample5Data.appearProbability - theoryProbability) / theoryProbability;
+                su.sample10Data.appearProbabilityDiffWithTheory = (su.sample10Data.appearProbability - theoryProbability) / theoryProbability;
+                su.sample30Data.appearProbabilityDiffWithTheory = (su.sample30Data.appearProbability - theoryProbability) / theoryProbability;
             }
         }
     }
