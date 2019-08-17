@@ -176,6 +176,18 @@ namespace LotteryAnalyze
         [Parameter("数据统计设置/二次长遗漏值", 7)]
         private static int g_MISS_COUNT_SECOND = 7;
 
+        [Parameter("模拟交易/筛选最大个数", 5)]
+        private static int g_SIM_SEL_MAX_COUNT = 5;
+        [Parameter("模拟交易/是否做万位", true)]
+        private static bool g_SIM_SEL_NUM_AT_POS_0 = true;
+        [Parameter("模拟交易/是否做千位", true)]
+        private static bool g_SIM_SEL_NUM_AT_POS_1 = true;
+        [Parameter("模拟交易/是否做百位", true)]
+        private static bool g_SIM_SEL_NUM_AT_POS_2 = true;
+        [Parameter("模拟交易/是否做十位", true)]
+        private static bool g_SIM_SEL_NUM_AT_POS_3 = true;
+        [Parameter("模拟交易/是否做个位", true)]
+        private static bool g_SIM_SEL_NUM_AT_POS_4 = true;
 
         public static List<string> TradeTags = new List<string>();
         public static List<List<int>> TradeSets = new List<List<int>>();
@@ -883,6 +895,90 @@ namespace LotteryAnalyze
         {
             get { return g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10; }
             set { g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10 = value; HAS_MODIFY = true; }
+        }
+
+        public static bool G_SIM_SEL_NUM_AT_POS_0
+        {
+            get
+            {
+                return g_SIM_SEL_NUM_AT_POS_0;
+            }
+
+            set
+            {
+                g_SIM_SEL_NUM_AT_POS_0 = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SIM_SEL_NUM_AT_POS_1
+        {
+            get
+            {
+                return g_SIM_SEL_NUM_AT_POS_1;
+            }
+
+            set
+            {
+                g_SIM_SEL_NUM_AT_POS_1 = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SIM_SEL_NUM_AT_POS_2
+        {
+            get
+            {
+                return g_SIM_SEL_NUM_AT_POS_2;
+            }
+
+            set
+            {
+                g_SIM_SEL_NUM_AT_POS_2 = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SIM_SEL_NUM_AT_POS_3
+        {
+            get
+            {
+                return g_SIM_SEL_NUM_AT_POS_3;
+            }
+
+            set
+            {
+                g_SIM_SEL_NUM_AT_POS_3 = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_SIM_SEL_NUM_AT_POS_4
+        {
+            get
+            {
+                return g_SIM_SEL_NUM_AT_POS_4;
+            }
+
+            set
+            {
+                g_SIM_SEL_NUM_AT_POS_4 = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_SIM_SEL_MAX_COUNT
+        {
+            get
+            {
+                return g_SIM_SEL_MAX_COUNT;
+            }
+
+            set
+            {
+                g_SIM_SEL_MAX_COUNT = value;
+                HAS_MODIFY = true;
+            }
         }
 
         static GlobalSetting()

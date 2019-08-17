@@ -552,6 +552,22 @@ namespace LotteryAnalyze
                         currentTradeCountIndex = 0;
                 }
             }
+
+            TradeDataOneStar ost = trade as TradeDataOneStar;
+            foreach(int numid in ost.tradeInfo.Keys)
+            {
+                TradeNumbers tn = ost.tradeInfo[numid];
+                sbyte num = trade.targetLotteryItem.GetNumberByIndex(numid);
+                if (tn.tradeCount > 0)
+                {
+                    if (tn.ContainsNumber(num))
+                        numPosCurTradeIndexs[numid] = 0;
+                    else if (numPosCurTradeIndexs[numid] >= tradeCountList.Count)
+                        numPosCurTradeIndexs[numid] = 0;
+                    else
+                        ++numPosCurTradeIndexs[numid];
+                }
+            }
         }
 
         public void Update()
@@ -1688,24 +1704,90 @@ namespace LotteryAnalyze
         }
 
         int lastTradePath = -1;
+        int[] numPosCurTradeIndexs = new int[] { 0, 0, 0, 0, 0 };
+        List<int> predict_results = new List<int>();
+
         void TradeSinglePositionHotestNums(DataItem item, TradeDataOneStar trade)
         {
-            int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+            int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+            int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+            
+            bool[] sim_flag = new bool[] 
             {
-                if (tradeCountList.Count > 0)
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
+            for(int numID = 0; numID < 5; ++numID)
+            {
+                if (!sim_flag[numID])
+                    continue;
+
+                predict_results.Clear();
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
                 {
-                    if (currentTradeCountIndex == -1)
-                        currentTradeCountIndex = 0;
-                    tradeCount = tradeCountList[currentTradeCountIndex];
+                    if (tradeCountList.Count > 0)
+                    {
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+                for (int i = startID; i <= endID; ++i)
+                {
+                    CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                    StatisticUnit su = sum.statisticUnitMap[pcdt];
+                    int num = i - startID;
+
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
+                    {
+                        if (su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(num) == false)
+                                predict_results.Add(num);
+                        }
+                    }
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                    {
+                        if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(num) == false)
+                                predict_results.Add(num);
+                        }
+                    }
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                    {
+                        if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(num) == false)
+                                predict_results.Add(num);
+                        }
+                    }
+                }
+                if (predict_results.Count > 0)
+                {
+                    if (predict_results.Count <= GlobalSetting.G_SIM_SEL_MAX_COUNT)
+                    {
+                        TradeNumbers tn = new TradeNumbers();
+                        tn.tradeCount = tradeCount;
+                        for (int i = 0; i < predict_results.Count; ++i)
+                        {
+                            tn.tradeNumbers.Add(new NumberCmpInfo(predict_results[i]));
+                        }
+                        trade.tradeInfo.Add(numID, tn);
+
+                        if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
+                            numPosCurTradeIndexs[numID] = 0;
+                    }
                 }
             }
-            else
-                tradeCount = 0;
-            int numID = 0;
-            if (simSelNumIndex != -1)
-                numID = simSelNumIndex;
 
+            /*
             List<PathCmpInfo> paths = new List<PathCmpInfo>();
             TradeDataManager.FindSpecNumIndexPathsProbabilities(item, ref paths, numID, 3);
             TradeDataManager.FindSpecNumIndexPathsProbabilities(item, ref paths, numID, 5);
@@ -1727,15 +1809,6 @@ namespace LotteryAnalyze
                 float bestRate = -0.5f;
                 for (int i = 0; i < paths.Count; ++i)
                 {
-                    //if (i == 0)
-                    //    paths[i].pathValue = (paths[i].pathValue - 40.0f) / 40.0f;
-                    //else
-                    //    paths[i].pathValue = (paths[i].pathValue - 30.0f) / 30.0f;
-                    //if (paths[i].pathValue > 0.5f)
-                    //{
-                    //    bestPath = i;
-                    //    break;
-                    //}
                     float curRate = ((float)paths[i].paramMap["3"] + (float)paths[i].paramMap["5"]) * 0.5f;
                     if (i == 0)
                         curRate = (curRate - 40.0f) / 40.0f;
@@ -1783,6 +1856,7 @@ namespace LotteryAnalyze
                 tn.SetHotNumber(tradeCount, ref maxProbilityNums);
                 trade.tradeInfo.Add(numID, tn);
             }
+            */
         }
 
         void TradeSingleMostPosibilityNums(DataItem item, TradeDataOneStar trade)

@@ -13,6 +13,16 @@ namespace LotteryAnalyze
         public bool largerThanTheoryProbability;
         public int appearCount;
 
+        public NumberCmpInfo()
+        {
+
+        }
+
+        public NumberCmpInfo(int num)
+        {
+            number = (SByte)num;
+        }
+
         public string ToString()
         {
             return number + "(" + rate.ToString("f2") + "%) ";

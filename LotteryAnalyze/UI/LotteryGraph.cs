@@ -588,6 +588,8 @@ namespace LotteryAnalyze.UI
             itemSel = item;
             if(itemSel != null)
             {
+                if (trackBarGraphBar.Maximum < DataManager.GetInst().GetAllDataItemCount() - 1)
+                    trackBarGraphBar.Maximum = DataManager.GetInst().GetAllDataItemCount() - 1;
                 trackBarGraphBar.Value = itemSel.idGlobal;
             }
         }
