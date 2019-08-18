@@ -39,6 +39,7 @@ namespace LotteryAnalyze
         public int INDEX
         {
             get { return _INDEX; }
+            set { _INDEX = value; }
         }
 
         public void UpdateIndex()

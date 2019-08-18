@@ -774,38 +774,94 @@ namespace LotteryAnalyze
                 if (prevData != null)
                 {
                     predict_results.Clear();
-                    int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
-                    int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
-                    StatisticUnitMap sum = prevData.parent.startItem.statisticInfo.allStatisticInfo[numIndex];
-
-                    for(int i = startID; i <= endID; ++i)
+                    if (GlobalSetting.G_KCURVE_HOTNUMS_PREDICT_TYPE == HotNumPredictType.eNumber)
                     {
-                        CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
-                        StatisticUnit su = sum.statisticUnitMap[pcdt];
-                        int num = i - startID;
+                        int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum0);
+                        int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.eNum9);
+                        StatisticUnitMap sum = prevData.parent.startItem.statisticInfo.allStatisticInfo[numIndex];
+                        for (int i = startID; i <= endID; ++i)
+                        {
+                            CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                            StatisticUnit su = sum.statisticUnitMap[pcdt];
+                            int num = i - startID;
 
-                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
-                        {
-                            if(su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
                             {
-                                if (predict_results.Contains(num) == false)
-                                    predict_results.Add(num);
+                                if (su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(num) == false)
+                                        predict_results.Add(num);
+                                }
+                            }
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                            {
+                                if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(num) == false)
+                                        predict_results.Add(num);
+                                }
+                            }
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                            {
+                                if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(num) == false)
+                                        predict_results.Add(num);
+                                }
                             }
                         }
-                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                    }
+                    else if(GlobalSetting.G_KCURVE_HOTNUMS_PREDICT_TYPE == HotNumPredictType.ePath012)
+                    {
+                        int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+                        int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+                        StatisticUnitMap sum = prevData.parent.startItem.statisticInfo.allStatisticInfo[numIndex];
+                        for (int i = startID; i <= endID; ++i)
                         {
-                            if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                            CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                            StatisticUnit su = sum.statisticUnitMap[pcdt];
+                            int path = i - startID;
+
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
                             {
-                                if (predict_results.Contains(num) == false)
-                                    predict_results.Add(num);
+                                if (su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(path) == false)
+                                        predict_results.Add(path);
+                                }
+                            }
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                            {
+                                if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(path) == false)
+                                        predict_results.Add(path);
+                                }
+                            }
+                            if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                            {
+                                if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                                {
+                                    if (predict_results.Contains(path) == false)
+                                        predict_results.Add(path);
+                                }
                             }
                         }
-                        if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                        int[] paths = predict_results.ToArray();
+                        predict_results.Clear();
+                        for(int i = 0; i < paths.Length; ++i)
                         {
-                            if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                            if(paths[i] == 0)
                             {
-                                if (predict_results.Contains(num) == false)
-                                    predict_results.Add(num);
+                                predict_results.Add(0); predict_results.Add(3); predict_results.Add(6); predict_results.Add(9);
+                            }
+                            else if(paths[i] == 1)
+                            {
+                                predict_results.Add(1); predict_results.Add(4); predict_results.Add(7);
+                            }
+                            else
+                            {
+                                predict_results.Add(2); predict_results.Add(5); predict_results.Add(8);
                             }
                         }
                     }

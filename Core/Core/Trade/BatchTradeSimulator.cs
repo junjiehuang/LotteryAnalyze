@@ -123,7 +123,7 @@ namespace LotteryAnalyze
 
         public void OnOneTradeCompleted(TradeDataBase trade)
         {
-            bool tradeSuccess = trade.reward > 0;
+            bool tradeSuccess = trade.reward > trade.cost;
             if (tradeSuccess)
             {
                 if (TradeDataManager.Instance.continueTradeMissCount > 0)
@@ -285,6 +285,11 @@ namespace LotteryAnalyze
         public void Resume()
         {
             state = backUpState;
+            if(state == SimState.eFinishBatch)
+            {
+                if (GlobalSetting.G_SIM_PAUSE_AT_BATCH_FINISH)
+                    state = SimState.ePrepareData;
+            }
             TradeDataManager.Instance.ResumeAutoTradeJob();
         }
         public void Stop()
@@ -311,7 +316,7 @@ namespace LotteryAnalyze
         {
             RecordTradeDatas();
 
-            if (fileIDLst.Count > lastIndex)
+            if (fileIDLst.Count - 1 > lastIndex)
             {
                 if (lastIndex == -1)
                     lastIndex = 0;
@@ -322,12 +327,14 @@ namespace LotteryAnalyze
                 if (endIndex >= fileIDLst.Count)
                 {
                     endIndex = fileIDLst.Count - 1;
-                    lastIndex = fileIDLst.Count;
+                    lastIndex = endIndex;
                 }
                 else
+                {
                     lastIndex = endIndex - 1;
+                }
 
-                for (int i = startIndex; i <= endIndex; ++i)
+                for (int i = startIndex; i <= lastIndex; ++i)
                 {
                     int key = fileIDLst[i];
                     dataMgr.LoadData(key);
@@ -382,7 +389,15 @@ namespace LotteryAnalyze
             tradeWrongCount += TradeDataManager.Instance.wrongCount;
             untradeCount += TradeDataManager.Instance.untradeCount;
             totalCount += TradeDataManager.Instance.rightCount + TradeDataManager.Instance.wrongCount + TradeDataManager.Instance.untradeCount;
-            state = SimState.ePrepareData;
+            if (GlobalSetting.G_SIM_PAUSE_AT_BATCH_FINISH)
+            {
+                if (IsPause() == false)
+                    Pause();
+            }
+            else
+            {
+                state = SimState.ePrepareData;
+            }
         }
 
 

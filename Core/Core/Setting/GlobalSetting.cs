@@ -26,6 +26,12 @@ namespace LotteryAnalyze
         eUseFastAndShort,
     }
 
+    public enum HotNumPredictType
+    {
+        ePath012,
+        eNumber,
+    }
+
     public class GlobalSetting
     {
         static GlobalSetting sInstance = null;
@@ -70,6 +76,8 @@ namespace LotteryAnalyze
         private static bool g_SHOW_KCURVE_DETAIL = true;
         [Parameter("界面设置/K线图设置/是否显示热号预测结果", true)]
         private static bool g_SHOW_KCURVE_HOTNUMS_RESULT = true;
+        [Parameter("界面设置/K线图设置/热号预测类型", HotNumPredictType.eNumber)]
+        private static HotNumPredictType g_KCURVE_HOTNUMS_PREDICT_TYPE = HotNumPredictType.eNumber;
         [Parameter("界面设置/K线图设置/热号预测采样周期3", true)]
         private static bool g_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3 = true;
         [Parameter("界面设置/K线图设置/热号预测采样周期5", true)]
@@ -188,6 +196,9 @@ namespace LotteryAnalyze
         private static bool g_SIM_SEL_NUM_AT_POS_3 = true;
         [Parameter("模拟交易/是否做个位", true)]
         private static bool g_SIM_SEL_NUM_AT_POS_4 = true;
+        [Parameter("模拟交易/每批模拟结束后是否暂停模拟", true)]
+        private static bool g_SIM_PAUSE_AT_BATCH_FINISH = true;
+
 
         public static List<string> TradeTags = new List<string>();
         public static List<List<int>> TradeSets = new List<List<int>>();
@@ -981,6 +992,34 @@ namespace LotteryAnalyze
             }
         }
 
+        public static bool G_SIM_PAUSE_AT_BATCH_FINISH
+        {
+            get
+            {
+                return g_SIM_PAUSE_AT_BATCH_FINISH;
+            }
+
+            set
+            {
+                g_SIM_PAUSE_AT_BATCH_FINISH = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static HotNumPredictType G_KCURVE_HOTNUMS_PREDICT_TYPE
+        {
+            get
+            {
+                return g_KCURVE_HOTNUMS_PREDICT_TYPE;
+            }
+
+            set
+            {
+                g_KCURVE_HOTNUMS_PREDICT_TYPE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
@@ -1014,34 +1053,39 @@ namespace LotteryAnalyze
                 }
                 else if(fi.FieldType.IsEnum)
                 {
-                    if(fi.FieldType == typeof(AppearenceCheckType))
-                    {
-                        int tv = cfg.ReadInt("GlobalSetting", fi.Name, (int)par.defV);
-                        AppearenceCheckType v = (AppearenceCheckType)tv;
-                        fi.SetValue(Instance, v);
-                    }
-                    else if (fi.FieldType == typeof(AutoUpdateUtil.DataSourceType))
-                    {
-                        int tv = cfg.ReadInt("GlobalSetting", fi.Name, (int)par.defV);
-                        AutoUpdateUtil.DataSourceType v = (AutoUpdateUtil.DataSourceType)tv;
-                        fi.SetValue(Instance, v);
-                    }
-                    else if (fi.FieldType == typeof(CollectDataType))
-                    {
-                        int tv = cfg.ReadInt("GlobalSetting", fi.Name, (int)par.defV);
-                        CollectDataType v = (CollectDataType)tv;
-                        fi.SetValue(Instance, v);
-                    }
-                    else
-                    {
-                        MessageBox.Show(
-                            "未注册解析枚举类型[ " + fi.FieldType + "]",
-                            "警告",
-                            MessageBoxButtons.OKCancel,
-                            MessageBoxIcon.Error,
-                            MessageBoxDefaultButton.Button1,
-                            MessageBoxOptions.ServiceNotification);
-                    }
+                    int tv = cfg.ReadInt("GlobalSetting", fi.Name, (int)par.defV);
+                    fi.SetValue(Instance, (object)(tv));
+
+                    //if (fi.FieldType == typeof(AppearenceCheckType))
+                    //{
+                    //    AppearenceCheckType v = (AppearenceCheckType)tv;
+                    //    fi.SetValue(Instance, v);
+                    //}
+                    //else if (fi.FieldType == typeof(AutoUpdateUtil.DataSourceType))
+                    //{
+                    //    AutoUpdateUtil.DataSourceType v = (AutoUpdateUtil.DataSourceType)tv;
+                    //    fi.SetValue(Instance, v);
+                    //}
+                    //else if (fi.FieldType == typeof(CollectDataType))
+                    //{
+                    //    CollectDataType v = (CollectDataType)tv;
+                    //    fi.SetValue(Instance, v);
+                    //}
+                    //else if (fi.FieldType == typeof(HotNumPredictType))
+                    //{
+                    //    HotNumPredictType v = (HotNumPredictType)tv;
+                    //    fi.SetValue(Instance, v);
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show(
+                    //        "未注册解析枚举类型[ " + fi.FieldType + "]",
+                    //        "警告",
+                    //        MessageBoxButtons.OKCancel,
+                    //        MessageBoxIcon.Error,
+                    //        MessageBoxDefaultButton.Button1,
+                    //        MessageBoxOptions.ServiceNotification);
+                    //}
                 }
             }
         }
@@ -1079,35 +1123,6 @@ namespace LotteryAnalyze
         public static void ReadCfg()
         {
             ReadParams();
-            /*
-            G_WINDOW_OPACITY = cfg.ReadFloat("GlobalSetting", "WindowOpacity", 1);
-            G_LOTTERY_GRAPH_UPDATE_INTERVAL = cfg.ReadInt("GlobalSetting", "LotteryGraphUpdateInterval", 1500);
-            G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL = cfg.ReadInt("GlobalSetting", "GlobalSimTradeUpdateInterval", 1500);
-            G_ANALYZE_TOOL_SAMPLE_COUNT = cfg.ReadInt("GlobalSetting", "AnalyzeToolSampleCount", 30);
-            G_EANBLE_ANALYZE_TOOL = cfg.ReadBool("GlobalSetting", "EnableAnalyzeTool", true);
-            G_ENABLE_CheckAndKeepSamePath = cfg.ReadBool("GlobalSetting", "CheckAndKeepSamePath", true);
-            G_CHANGE_PATH_ON_ALL_TRADE_MISS = cfg.ReadBool("GlobalSetting", "ChangePathOnAllTradeMiss", false);
-            G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL = cfg.ReadBool("GlobalSetting", "EnableSamePathCheckByAnalyzeTool", true);
-            G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE = cfg.ReadBool("GlobalSetting", "EnableSamePathCheckByBooleanLine", true);
-            G_SEQ_PATH_BY_APPEARENCE_RATE = cfg.ReadBool("GlobalSetting", "SeqPathByAppearenceRate", false);
-            G_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE = cfg.ReadBool("GlobalSetting", "IgnoreCurTradeOnBolleanDownContinue", false);
-            G_AppearenceCheckType = (AppearenceCheckType)cfg.ReadInt("GlobalSetting", "AppearenceCheckType", 0);
-            G_DATA_SOURCE_TYPE = (AutoUpdateUtil.DataSourceType)cfg.ReadInt("GlobalSetting", "DataSourceType", 0);
-            G_ONE_STARE_TRADE_COST = cfg.ReadFloat("GlobalSetting", "OneStartTradeCost", 1);
-            G_ONE_STARE_TRADE_REWARD = cfg.ReadFloat("GlobalSetting", "OneStartTradeReward", 9.8f);
-            G_ENABLE_BOOLEAN_DOWN_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableBooleanDownUpCheck", false);
-            G_ENABLE_MAX_APPEARENCE_FIRST = cfg.ReadBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", false);
-            G_ENABLE_UPBOLLEAN_COUNT_STATISTIC = cfg.ReadBool("GlobalSetting", "EnableUpBolleanCountStatistic", false);
-            G_ENABLE_MACD_UP_CHECK = cfg.ReadBool("GlobalSetting", "EnableMACDUpCheck", false);
-            G_ENABLE_BOLLEAN_CFG_CHECK = cfg.ReadBool("GlobalSetting", "EnableBolleanCfgCheck", false);
-            G_ENABLE_CHECK_PATH_CAN_TRADE = cfg.ReadBool("GlobalSetting", "EnableCheckPathCanTrade", false);
-            G_DAYS_PER_BATCH = cfg.ReadInt("GlobalSetting", "DaysPerBatch", 3);
-            G_ENABLE_REC_TRADE_DATAS = cfg.ReadBool("GlobalSetting", "EnableRecTradeDatas", true);
-            G_ONLY_TRADE_BEST_PATH = cfg.ReadBool("GlobalSetting", "OnlyTradeBestPath", false);
-            G_ONLY_TRADE_SPEC_CDT = cfg.ReadBool("GlobalSetting", "OnlyTradeSpecCDT", false);
-            G_TRADE_SPEC_CDT = (CollectDataType)cfg.ReadInt("GlobalSetting", "TradeSpecCDT", (int)(CollectDataType.ePath0));
-            G_CUR_TRADE_INDEX = cfg.ReadInt("TradeSets", "CurTradeIndex", -1);
-            */
 
             TradeSets.Clear();
             TradeTags.Clear();
@@ -1141,35 +1156,6 @@ namespace LotteryAnalyze
                 return;
 
             SaveParams();
-            /*
-            cfg.WriteFloat("GlobalSetting", "WindowOpacity", G_WINDOW_OPACITY);
-            cfg.WriteInt("GlobalSetting", "LotteryGraphUpdateInterval", G_LOTTERY_GRAPH_UPDATE_INTERVAL);
-            cfg.WriteInt("GlobalSetting", "GlobalSimTradeUpdateInterval", G_GLOBAL_SIM_TRADE_UPDATE_INTERVAL);
-            cfg.WriteInt("GlobalSetting", "AnalyzeToolSampleCount", G_ANALYZE_TOOL_SAMPLE_COUNT);
-            cfg.WriteBool("GlobalSetting", "EnableAnalyzeTool", G_EANBLE_ANALYZE_TOOL);
-            cfg.WriteBool("GlobalSetting", "CheckAndKeepSamePath", G_ENABLE_CheckAndKeepSamePath);
-            cfg.WriteBool("GlobalSetting", "ChangePathOnAllTradeMiss", G_CHANGE_PATH_ON_ALL_TRADE_MISS);
-            cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByAnalyzeTool", G_ENABLE_SAME_PATH_CHECK_BY_ANALYZE_TOOL);
-            cfg.WriteBool("GlobalSetting", "EnableSamePathCheckByBooleanLine", G_ENABLE_SAME_PATH_CHECK_BY_BOOLEAN_LINE);
-            cfg.WriteBool("GlobalSetting", "SeqPathByAppearenceRate", G_SEQ_PATH_BY_APPEARENCE_RATE);
-            cfg.WriteBool("GlobalSetting", "IgnoreCurTradeOnBolleanDownContinue", G_IGNORE_CUR_TRADE_ON_BOLLEAN_DOWN_CONTINUE);
-            cfg.WriteInt("GlobalSetting", "AppearenceCheckType", (int)G_AppearenceCheckType);
-            cfg.WriteInt("GlobalSetting", "DataSourceType", (int)G_DATA_SOURCE_TYPE);
-            cfg.WriteFloat("GlobalSetting", "OneStartTradeCost", G_ONE_STARE_TRADE_COST);
-            cfg.WriteFloat("GlobalSetting", "OneStartTradeReward", G_ONE_STARE_TRADE_REWARD);
-            cfg.WriteBool("GlobalSetting", "EnableBooleanDownUpCheck", G_ENABLE_BOOLEAN_DOWN_UP_CHECK);
-            cfg.WriteBool("GlobalSetting", "EnableMaxAppearenceFirstCheck", G_ENABLE_MAX_APPEARENCE_FIRST);
-            cfg.WriteBool("GlobalSetting", "EnableUpBolleanCountStatistic", G_ENABLE_UPBOLLEAN_COUNT_STATISTIC);
-            cfg.WriteBool("GlobalSetting", "EnableMACDUpCheck", G_ENABLE_MACD_UP_CHECK);
-            cfg.WriteBool("GlobalSetting", "EnableBolleanCfgCheck", G_ENABLE_BOLLEAN_CFG_CHECK);
-            cfg.WriteBool("GlobalSetting", "EnableCheckPathCanTrade", G_ENABLE_CHECK_PATH_CAN_TRADE);
-            cfg.WriteInt("GlobalSetting", "DaysPerBatch", G_DAYS_PER_BATCH);
-            cfg.WriteBool("GlobalSetting", "EnableRecTradeDatas", G_ENABLE_REC_TRADE_DATAS);
-            cfg.WriteBool("GlobalSetting", "OnlyTradeBestPath", G_ONLY_TRADE_BEST_PATH);
-            cfg.WriteBool("GlobalSetting", "OnlyTradeSpecCDT", G_ONLY_TRADE_SPEC_CDT);
-            cfg.WriteInt("GlobalSetting", "TradeSpecCDT", (int)G_TRADE_SPEC_CDT);
-            cfg.WriteInt("TradeSets", "CurTradeIndex", G_CUR_TRADE_INDEX);
-            */
 
             if (TradeSets.Count > 0)
             {
