@@ -841,6 +841,8 @@ namespace LotteryAnalyze
 
         void TradeSinglePositionBestPathByAvgLine(DataItem item, TradeDataOneStar trade)
         {
+            TradeDataOneStar prevTrade = GetTrade(trade.INDEX - 1) as TradeDataOneStar;
+
             int numID = simSelNumIndex;
             if (numID == -1)
                 numID = 0;
@@ -871,21 +873,37 @@ namespace LotteryAnalyze
 
             for (int i = 0; i < 3; ++i)
             {
+                CollectDataType cdt = cdts[i];
                 PathCmpInfo pci = new PathCmpInfo(i, 0);
+                pci.pathValue = 0;
+                pci.paramMap["MissCount"] = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
                 res.Add(pci);
 
-                CollectDataType cdt = cdts[i];
+                if (prevTrade == null)
+                    continue;
+
                 bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
                 bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
                 bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
-                if(is5H10)
+                bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+                float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
+
+                PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
+                float prevValue = prevCmp.pathValue;
+                if(prevValue <= 0 )
                 {
-                    if (is10HBM && isKH5)
-                        pci.pathValue = 3;
-                    else if (is10HBM)
-                        pci.pathValue = 2;
-                    else
+                    if(is5H10 && is10HBM && isKFH5 && budist <= 0.5f)
                         pci.pathValue = 1;
+                    else
+                        pci.pathValue = prevValue - 1;
+                }
+                else
+                {
+                    if (!is5H10 || isKL10)
+                        pci.pathValue = 0;
+                    else
+                        pci.pathValue = prevValue + 1;
                 }
             }
             res.Sort((a, b) => 
@@ -894,7 +912,8 @@ namespace LotteryAnalyze
                     return -1;
                 return 1;
             });
-            if(res[0].pathValue >= 3)
+
+            if (res[0].pathValue > 0 && (byte)res[0].paramMap["MissCount"] < 3)
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;

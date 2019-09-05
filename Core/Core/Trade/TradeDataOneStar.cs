@@ -104,7 +104,7 @@ namespace LotteryAnalyze
                 for (int j = 0; j < pcis.Count; ++j)
                 {
                     pci = pcis[j];
-                    dbgtxt += "[" + pci.pathIndex + "] ";
+                    dbgtxt += "[" + pci.pathIndex + "] [" + pci.pathValue + "] ";
                     var etor = pci.paramMap.GetEnumerator();
                     int count = 0;
                     while (etor.MoveNext())
