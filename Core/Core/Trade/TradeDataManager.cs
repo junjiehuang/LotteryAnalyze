@@ -839,13 +839,15 @@ namespace LotteryAnalyze
             }
         }
 
+        int lastTradeNumID = -1;
+        int lastTradePathIndex = -1;
+        float lastTradePathValue = -1;
+        int lastTradeMissCount = -1;
+
         void TradeSinglePositionBestPathByAvgLine(DataItem item, TradeDataOneStar trade)
         {
             TradeDataOneStar prevTrade = GetTrade(trade.INDEX - 1) as TradeDataOneStar;
 
-            int numID = simSelNumIndex;
-            if (numID == -1)
-                numID = 0;
             int tradeCount = defaultTradeCount;
             if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
             {
@@ -859,68 +861,190 @@ namespace LotteryAnalyze
             else
                 tradeCount = 0;
 
-            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
-            AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
-            AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
-            AvgPointMap apm5 = adc5.avgPointMapLst[item.idGlobal];
-            AvgPointMap apm10 = adc10.avgPointMapLst[item.idGlobal];
-            BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
-            KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
-            CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
-
-            List<PathCmpInfo> res = trade.pathCmpInfos[numID];
-            res.Clear();
-
-            for (int i = 0; i < 3; ++i)
+            int dstNumID = -1;
+            int dstPathIndex = -1;
+            int dstMissCount = -1;
+            float dstPathValue = -1;
+            for(int numID = 0; numID < 5; ++numID)
             {
-                CollectDataType cdt = cdts[i];
-                PathCmpInfo pci = new PathCmpInfo(i, 0);
-                pci.pathValue = 0;
-                pci.paramMap["MissCount"] = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
-                res.Add(pci);
+                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
+                AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
+                AvgPointMap apm5 = adc5.avgPointMapLst[item.idGlobal];
+                AvgPointMap apm10 = adc10.avgPointMapLst[item.idGlobal];
+                BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
+                KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
+                CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
 
-                if (prevTrade == null)
-                    continue;
+                List<PathCmpInfo> res = trade.pathCmpInfos[numID];
+                res.Clear();
 
-                bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
-                bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
-                bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
-                bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
-                bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
-                float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
-
-                PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
-                float prevValue = prevCmp.pathValue;
-                if(prevValue <= 0 )
+                for (int i = 0; i < 3; ++i)
                 {
-                    if(is5H10 && is10HBM && isKFH5 && budist <= 0.5f)
-                        pci.pathValue = 1;
+                    CollectDataType cdt = cdts[i];
+                    PathCmpInfo pci = new PathCmpInfo(i, 0);
+                    int missCount = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
+                    pci.pathValue = 0;
+                    pci.paramMap["MissCount"] = missCount;
+                    res.Add(pci);
+
+                    if (prevTrade == null)
+                        continue;
+
+                    bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
+                    bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
+                    bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
+                    bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+                    float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
+
+                    PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
+                    float prevValue = prevCmp.pathValue;
+                    if (prevValue <= 0)
+                    {
+                        if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f)
+                            pci.pathValue = 1;
+                        else
+                            pci.pathValue = prevValue - 1;
+                    }
                     else
-                        pci.pathValue = prevValue - 1;
+                    {
+                        if (!is5H10 || isKL10)
+                            pci.pathValue = 0;
+                        else
+                            pci.pathValue = prevValue + 1;
+                    }
+                    
+                    if(pci.pathValue > 0)
+                    {
+                        if(dstNumID == -1 || dstPathValue < pci.pathValue)
+                        {
+                            dstNumID = numID;
+                            dstPathIndex = i;
+                            dstPathValue = pci.pathValue;
+                            dstMissCount = missCount;
+                        }
+                    }
+                }
+            }
+            if(dstNumID != -1)
+            {
+                if(lastTradeNumID != -1)
+                {
+                    if(trade.pathCmpInfos[lastTradeNumID][dstPathIndex].pathValue < 1)
+                    {
+                        lastTradeNumID = dstNumID;
+                        lastTradePathIndex = dstPathIndex;
+                        lastTradePathValue = dstPathValue;
+                        lastTradeMissCount = dstMissCount;
+                    }
                 }
                 else
                 {
-                    if (!is5H10 || isKL10)
-                        pci.pathValue = 0;
-                    else
-                        pci.pathValue = prevValue + 1;
+                    lastTradeNumID = dstNumID;
+                    lastTradePathIndex = dstPathIndex;
+                    lastTradePathValue = dstPathValue;
+                    lastTradeMissCount = dstMissCount;
                 }
             }
-            res.Sort((a, b) => 
+            else
             {
-                if (a.pathValue > b.pathValue)
-                    return -1;
-                return 1;
-            });
-
-            if (res[0].pathValue > 0 && (byte)res[0].paramMap["MissCount"] < 3)
+                lastTradeNumID = -1;
+                lastTradePathIndex = -1;
+                lastTradePathValue = -1;
+                lastTradeMissCount = -1;
+            }
+            if (lastTradeNumID >= 0 && lastTradeMissCount < 3)
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
-                trade.tradeInfo.Add(numID, tn);
-                FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
-                tn.SelPath012Number(res[0].pathIndex, tradeCount, ref maxProbilityNums);
+                trade.tradeInfo.Add(lastTradeNumID, tn);
+                FindOverTheoryProbabilityNums(item, lastTradeNumID, ref maxProbilityNums);
+                tn.SelPath012Number(lastTradePathIndex, tradeCount, ref maxProbilityNums);
             }
+
+
+            //TradeDataOneStar prevTrade = GetTrade(trade.INDEX - 1) as TradeDataOneStar;
+
+            //int numID = simSelNumIndex;
+            //if (numID == -1)
+            //    numID = 0;
+            //int tradeCount = defaultTradeCount;
+            //if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+            //{
+            //    if (tradeCountList.Count > 0)
+            //    {
+            //        if (currentTradeCountIndex == -1)
+            //            currentTradeCountIndex = 0;
+            //        tradeCount = tradeCountList[currentTradeCountIndex];
+            //    }
+            //}
+            //else
+            //    tradeCount = 0;
+
+            //KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+            //AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
+            //AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
+            //AvgPointMap apm5 = adc5.avgPointMapLst[item.idGlobal];
+            //AvgPointMap apm10 = adc10.avgPointMapLst[item.idGlobal];
+            //BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
+            //KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
+            //CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+
+            //List<PathCmpInfo> res = trade.pathCmpInfos[numID];
+            //res.Clear();
+
+            //for (int i = 0; i < 3; ++i)
+            //{
+            //    CollectDataType cdt = cdts[i];
+            //    PathCmpInfo pci = new PathCmpInfo(i, 0);
+            //    pci.pathValue = 0;
+            //    pci.paramMap["MissCount"] = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
+            //    res.Add(pci);
+
+            //    if (prevTrade == null)
+            //        continue;
+
+            //    bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
+            //    bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
+            //    bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
+            //    bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+            //    bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+            //    float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
+
+            //    PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
+            //    float prevValue = prevCmp.pathValue;
+            //    if(prevValue <= 0 )
+            //    {
+            //        if(is5H10 && is10HBM && isKFH5 && budist <= 0.5f)
+            //            pci.pathValue = 1;
+            //        else
+            //            pci.pathValue = prevValue - 1;
+            //    }
+            //    else
+            //    {
+            //        if (!is5H10 || isKL10)
+            //            pci.pathValue = 0;
+            //        else
+            //            pci.pathValue = prevValue + 1;
+            //    }
+            //}
+            //res.Sort((a, b) => 
+            //{
+            //    if (a.pathValue > b.pathValue)
+            //        return -1;
+            //    return 1;
+            //});
+
+            //if (res[0].pathValue > 0 && (byte)res[0].paramMap["MissCount"] < 3)
+            //{
+            //    TradeNumbers tn = new TradeNumbers();
+            //    tn.tradeCount = tradeCount;
+            //    trade.tradeInfo.Add(numID, tn);
+            //    FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+            //    tn.SelPath012Number(res[0].pathIndex, tradeCount, ref maxProbilityNums);
+            //}
+
         }
 
         void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
