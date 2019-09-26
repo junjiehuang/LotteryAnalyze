@@ -867,6 +867,16 @@ namespace LotteryAnalyze
             float dstPathValue = -1;
             for(int numID = 0; numID < 5; ++numID)
             {
+                if (numID == 0 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_0 == false)
+                    continue;
+                if (numID == 1 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_1 == false)
+                    continue;
+                if (numID == 2 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_2 == false)
+                    continue;
+                if (numID == 3 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_3 == false)
+                    continue;
+                if (numID == 4 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_4 == false)
+                    continue;
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
                 AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
                 AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
