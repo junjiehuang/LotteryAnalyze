@@ -101,10 +101,11 @@ namespace LotteryAnalyze
             for (int i = 0; i < pathCmpInfos.Count; ++i)
             {
                 pcis = pathCmpInfos[i];
+                string posStr = KDataDictContainer.C_TAGS[i];
                 for (int j = 0; j < pcis.Count; ++j)
                 {
                     pci = pcis[j];
-                    dbgtxt += "[" + pci.pathIndex + "] [" + pci.pathValue + "] ";
+                    dbgtxt += posStr + " [" + pci.pathIndex + "] [" + pci.pathValue + "] ";
                     var etor = pci.paramMap.GetEnumerator();
                     int count = 0;
                     while (etor.MoveNext())

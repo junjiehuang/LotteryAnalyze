@@ -870,6 +870,7 @@ namespace LotteryAnalyze
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
                 AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
                 AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
+                MACDPointMap mpm = kddc.GetMacdPointMap(item.idGlobal);
                 AvgPointMap apm5 = adc5.avgPointMapLst[item.idGlobal];
                 AvgPointMap apm10 = adc10.avgPointMapLst[item.idGlobal];
                 BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
@@ -891,6 +892,8 @@ namespace LotteryAnalyze
                     if (prevTrade == null)
                         continue;
 
+                    MACDPoint mp = mpm.macdpMap[cdt];
+                    bool isMacdUpon0 = mp.DIF > 0 && mp.DEA > 0;
                     bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
                     bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
                     bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
@@ -902,7 +905,7 @@ namespace LotteryAnalyze
                     float prevValue = prevCmp.pathValue;
                     if (prevValue <= 0)
                     {
-                        if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f)
+                        if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f && isMacdUpon0)
                             pci.pathValue = 1;
                         else
                             pci.pathValue = prevValue - 1;
@@ -931,12 +934,18 @@ namespace LotteryAnalyze
             {
                 if(lastTradeNumID != -1)
                 {
-                    if(trade.pathCmpInfos[lastTradeNumID][dstPathIndex].pathValue < 1)
+                    PathCmpInfo lastPci = trade.pathCmpInfos[lastTradeNumID][dstPathIndex];
+                    if (lastPci.pathValue < 1)
                     {
                         lastTradeNumID = dstNumID;
                         lastTradePathIndex = dstPathIndex;
                         lastTradePathValue = dstPathValue;
                         lastTradeMissCount = dstMissCount;
+                    }
+                    else
+                    {
+                        lastTradePathValue = lastPci.pathValue;
+                        lastTradeMissCount = (int)lastPci.paramMap["MissCount"];
                     }
                 }
                 else
