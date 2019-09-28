@@ -839,6 +839,58 @@ namespace LotteryAnalyze
             }
         }
 
+        public struct NumCDT
+        {
+            public int numID;
+            public CollectDataType cdt;
+
+            public NumCDT(int i, CollectDataType c)
+            {
+                numID = i;
+                cdt = c;
+            }
+        }
+
+        public List<NumCDT> CalcFavorits()
+        {
+            List<NumCDT> results = new List<NumCDT>();
+            DataItem item = DataManager.GetInst().GetLatestItem();
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                AvgDataContainer adc5 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 5);
+                AvgDataContainer adc10 = GraphDataManager.KGDC.GetAvgDataContainer(numID, 10);
+                MACDPointMap mpm = kddc.GetMacdPointMap(item.idGlobal);
+                AvgPointMap apm5 = adc5.avgPointMapLst[item.idGlobal];
+                AvgPointMap apm10 = adc10.avgPointMapLst[item.idGlobal];
+                BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
+                KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
+                CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    CollectDataType cdt = cdts[i];
+                    PathCmpInfo pci = new PathCmpInfo(i, 0);
+                    int missCount = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
+
+                    MACDPoint mp = mpm.macdpMap[cdt];
+                    bool isMacdUpon0 = mp.DIF > 0 && mp.DEA > 0;
+                    bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
+                    bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
+                    bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
+                    bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+                    float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
+
+                    if (is5H10 && is10HBM && isKFH5 && isMacdUpon0)
+                    {
+                        results.Add(new NumCDT(numID, cdt));
+                    }
+                }
+            }
+            return results;
+        }
+
         int lastTradeNumID = -1;
         int lastTradePathIndex = -1;
         float lastTradePathValue = -1;

@@ -1412,6 +1412,19 @@ namespace LotteryAnalyze.UI
             graphMgr.ClearFavoriteCharts();
         }
 
+        private void buttonAutoCalcFavotiteCharts_Click(object sender, EventArgs e)
+        {
+            listBoxFavoriteCharts.Items.Clear();
+            graphMgr.ClearFavoriteCharts();
+
+            List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits();
+            for(int i = 0; i < results.Count; ++i)
+            {
+                GraphManager.FavoriteChart fc = graphMgr.AddFavoriteChart(results[i].numID, results[i].cdt);
+                listBoxFavoriteCharts.Items.Add(fc.tag);
+            }
+    }
+
         private void btnSetAsStartTrade_Click(object sender, EventArgs e)
         {
             graphMgr.endShowDataItemIndex = int.Parse(textBoxStartDataItem.Text);

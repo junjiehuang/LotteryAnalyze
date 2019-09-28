@@ -93,6 +93,7 @@ namespace LotteryAnalyze.UI
             this.textBoxRefreshTimeLength = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.buttonClearFavoriteCharts = new System.Windows.Forms.Button();
+            this.buttonAutoCalcFavotiteCharts = new System.Windows.Forms.Button();
             this.buttonAddFavoriteChart = new System.Windows.Forms.Button();
             this.listBoxFavoriteCharts = new System.Windows.Forms.ListBox();
             this.textBoxGridScaleH = new System.Windows.Forms.TextBox();
@@ -373,6 +374,7 @@ namespace LotteryAnalyze.UI
             this.splitContainer1.Panel2.Controls.Add(this.textBoxRefreshTimeLength);
             this.splitContainer1.Panel2.Controls.Add(this.label17);
             this.splitContainer1.Panel2.Controls.Add(this.buttonClearFavoriteCharts);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonAutoCalcFavotiteCharts);
             this.splitContainer1.Panel2.Controls.Add(this.buttonAddFavoriteChart);
             this.splitContainer1.Panel2.Controls.Add(this.listBoxFavoriteCharts);
             this.splitContainer1.Panel2.Controls.Add(this.textBoxGridScaleH);
@@ -548,13 +550,23 @@ namespace LotteryAnalyze.UI
             // 
             // buttonClearFavoriteCharts
             // 
-            this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 136);
+            this.buttonClearFavoriteCharts.Location = new System.Drawing.Point(7, 130);
             this.buttonClearFavoriteCharts.Name = "buttonClearFavoriteCharts";
             this.buttonClearFavoriteCharts.Size = new System.Drawing.Size(75, 23);
             this.buttonClearFavoriteCharts.TabIndex = 13;
             this.buttonClearFavoriteCharts.Text = "清空";
             this.buttonClearFavoriteCharts.UseVisualStyleBackColor = true;
             this.buttonClearFavoriteCharts.Click += new System.EventHandler(this.buttonClearFavoriteCharts_Click);
+            //
+            // buttonAutoCalcFavotiteCharts
+            //
+            this.buttonAutoCalcFavotiteCharts.Location = new System.Drawing.Point(7, 155);
+            this.buttonAutoCalcFavotiteCharts.Name = "buttonAutoCalcFavotiteCharts";
+            this.buttonAutoCalcFavotiteCharts.Size = new System.Drawing.Size(75, 23);
+            this.buttonAutoCalcFavotiteCharts.TabIndex = 14;
+            this.buttonAutoCalcFavotiteCharts.Text = "自动筛选";
+            this.buttonAutoCalcFavotiteCharts.UseVisualStyleBackColor = true;
+            this.buttonAutoCalcFavotiteCharts.Click += new System.EventHandler(this.buttonAutoCalcFavotiteCharts_Click);
             // 
             // buttonAddFavoriteChart
             // 
@@ -1554,6 +1566,7 @@ namespace LotteryAnalyze.UI
         private System.Windows.Forms.ToolStripMenuItem tradeCalculaterToolStripMenuItem;
         private System.Windows.Forms.ListBox listBoxFavoriteCharts;
         private System.Windows.Forms.Button buttonClearFavoriteCharts;
+        private System.Windows.Forms.Button buttonAutoCalcFavotiteCharts;
         private System.Windows.Forms.Button buttonAddFavoriteChart;
         private System.Windows.Forms.Button btnSetAsStartTrade;
         private System.Windows.Forms.TextBox textBoxStartDataItem;
