@@ -874,15 +874,21 @@ namespace LotteryAnalyze
                     int missCount = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
 
                     MACDPoint mp = mpm.macdpMap[cdt];
+                    // macd快慢线都在0区以上
                     bool isMacdUpon0 = mp.DIF > 0 && mp.DEA > 0;
+                    // 5级均线高于10级均线
                     bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
+                    // 10级均线高于布林中轨
                     bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
+                    // k值高于5级均线
                     bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
+                    // k值高于或者等于5级均线
                     bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
-                    bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+                    bool isKFH10 = (kdm.dataDict[cdt].DownValue - apm10.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    //bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
 
-                    if (is5H10 && is10HBM && isKFH5 && isMacdUpon0)
+                    if (is5H10 && is10HBM && isKFH10 && isMacdUpon0)
                     {
                         results.Add(new NumCDT(numID, cdt));
                     }
