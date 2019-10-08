@@ -1417,7 +1417,8 @@ namespace LotteryAnalyze.UI
             listBoxFavoriteCharts.Items.Clear();
             graphMgr.ClearFavoriteCharts();
 
-            List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits();
+            DataItem item = itemSel;
+            List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits(item);
             for(int i = 0; i < results.Count; ++i)
             {
                 GraphManager.FavoriteChart fc = graphMgr.AddFavoriteChart(results[i].numID, results[i].cdt);

@@ -851,10 +851,11 @@ namespace LotteryAnalyze
             }
         }
 
-        public List<NumCDT> CalcFavorits()
+        public List<NumCDT> CalcFavorits(DataItem item)
         {
             List<NumCDT> results = new List<NumCDT>();
-            DataItem item = DataManager.GetInst().GetLatestItem();
+            if(item == null)
+                item = DataManager.GetInst().GetLatestItem();
             for (int numID = 0; numID < 5; ++numID)
             {
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
@@ -883,7 +884,8 @@ namespace LotteryAnalyze
                     // k值高于5级均线
                     bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
                     // k值高于或者等于5级均线
-                    bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    //bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    // k值高于或者等于10级均线
                     bool isKFH10 = (kdm.dataDict[cdt].DownValue - apm10.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
                     //bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
@@ -966,6 +968,7 @@ namespace LotteryAnalyze
                     bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
                     bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
                     bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    bool isKFH10 = (kdm.dataDict[cdt].DownValue - apm10.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
                     bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
 
@@ -973,7 +976,8 @@ namespace LotteryAnalyze
                     float prevValue = prevCmp.pathValue;
                     if (prevValue <= 0)
                     {
-                        if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f && isMacdUpon0)
+                        //if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f && isMacdUpon0)
+                        if (is5H10 && is10HBM && isKFH10 && isMacdUpon0)
                             pci.pathValue = 1;
                         else
                             pci.pathValue = prevValue - 1;
@@ -988,7 +992,16 @@ namespace LotteryAnalyze
                     
                     if(pci.pathValue > 0)
                     {
-                        if(dstNumID == -1 || dstPathValue < pci.pathValue)
+                        bool findBetter = dstNumID == -1;
+                        if(!findBetter && dstMissCount >= 0)
+                        {
+                            int missCmp = missCount < dstMissCount ? -1 : (dstMissCount == missCount ? 0 : 1);
+                            if (missCmp == -1)
+                                findBetter = true;
+                            else if(missCmp == 0 && dstPathValue < pci.pathValue)
+                                findBetter = true;
+                        }
+                        if (findBetter)
                         {
                             dstNumID = numID;
                             dstPathIndex = i;
@@ -1003,7 +1016,7 @@ namespace LotteryAnalyze
                 if(lastTradeNumID != -1)
                 {
                     PathCmpInfo lastPci = trade.pathCmpInfos[lastTradeNumID][dstPathIndex];
-                    if (lastPci.pathValue < 1)
+                    if (lastPci.pathValue < 1 || (int)lastPci.paramMap["MissCount"] > 2)
                     {
                         lastTradeNumID = dstNumID;
                         lastTradePathIndex = dstPathIndex;
