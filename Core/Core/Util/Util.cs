@@ -648,9 +648,11 @@ namespace LotteryAnalyze
             return dateStr;
         }
 
+        public static string DATA_PATH_FOLDER = "..\\data\\";
+
         public static string combineFileName(int y, int m, int d)
         {
-            string fileName = "..\\data\\" + y;
+            string fileName = DATA_PATH_FOLDER + y;
             if (m < 10)
                 fileName += "0";
             fileName += m;

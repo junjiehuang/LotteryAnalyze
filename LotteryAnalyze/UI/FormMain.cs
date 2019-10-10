@@ -537,7 +537,7 @@ namespace LotteryAnalyze
             // 如果文件列表是空的，读取数据文件列表
             if (listViewFileList.Items.Count == 0)
             {
-                DirectoryInfo di = new DirectoryInfo("..\\data");
+                DirectoryInfo di = new DirectoryInfo(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);// "..\\data");
                 LoopSearchFolder(di);
                 RefreshFileList();
             }
