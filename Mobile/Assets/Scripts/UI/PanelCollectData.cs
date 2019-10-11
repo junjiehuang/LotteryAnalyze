@@ -9,13 +9,13 @@ public class PanelCollectData : MonoBehaviour
     {
         get { return sInst; }
     }
-
-    public UnityEngine.UI.InputField txtSY, txtSM, txtSD, txtEY, txtEM, txtED;
-
     private void Awake()
     {
         sInst = this;
     }
+
+    public UnityEngine.UI.InputField txtSY, txtSM, txtSD, txtEY, txtEM, txtED;
+
 
     // Start is called before the first frame update
     void Start()

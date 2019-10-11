@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class PanelMain : MonoBehaviour
 {
+    static PanelMain sInst;
+    public static PanelMain Instance
+    {
+        get { return sInst; }
+    }
+    private void Awake()
+    {
+        sInst = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
