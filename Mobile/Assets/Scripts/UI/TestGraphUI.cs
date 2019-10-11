@@ -15,17 +15,7 @@ public class TestGraphUI : UnityEngine.UI.Graphic
 
     protected override void Awake()
     {
-#if UNITY_EDITOR_WIN || UNITY_EDITOR_WIN
-        LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER = Application.persistentDataPath + "/LotteryAnalyze";
-#elif UNITY_ANDROID
-        LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER = "/mnt/sdcard/LotteryAnalyze";
-#endif
-        Debug.Log(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
-        if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
-            Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
-        LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER += "/Data";
-        if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
-            Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
+
     }
 
     private void Update()
