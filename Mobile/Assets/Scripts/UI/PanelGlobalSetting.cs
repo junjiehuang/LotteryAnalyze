@@ -35,7 +35,7 @@ public class PanelGlobalSetting : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        CollectParameterNodeInfos();
     }
 
     // Update is called once per frame
@@ -122,20 +122,15 @@ public class PanelGlobalSetting : MonoBehaviour
         int lx = 10;
         int rx = w + 10;
         int y = 10;
-
+        
         GUILayout.BeginHorizontal();
-        GUILayout.BeginVertical();
-        GUILayout.Space(100);
-        GUILayout.EndVertical();
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
-        if(GUILayout.Button("Close"))
+        if(GUILayout.Button("Close", GUILayout.Width(Screen.width)))
         {
             gameObject.SetActive(false);
         }
         GUILayout.EndHorizontal();
-        scrollPos = GUILayout.BeginScrollView(scrollPos);
+
+        scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Width(Screen.width));
         for (int i = 0; i < allParameterNodes.Count; ++i)
         {
             NodeWrapper node = allParameterNodes[i];
@@ -248,6 +243,7 @@ public class PanelGlobalSetting : MonoBehaviour
             {
                 node.isExpand = !node.isExpand;
             }
+            GUILayout.EndHorizontal();
             //Button btn = new Button();
             //btn.BackColor = Color.Black;
             //btn.ForeColor = Color.Yellow;
