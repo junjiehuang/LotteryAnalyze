@@ -62,6 +62,10 @@ public class LotteryManager : MonoBehaviour
         if(go != null)
         {
             go.SetActive(active);
+            if (active)
+            {
+                go.transform.SetSiblingIndex(go.transform.parent.childCount - 1);
+            }
         }
     }
 

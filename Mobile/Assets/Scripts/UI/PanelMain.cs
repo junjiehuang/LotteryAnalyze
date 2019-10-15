@@ -28,6 +28,10 @@ public class PanelMain : MonoBehaviour
 
     public void OnBtnClickCollectData()
     {
-        PanelCollectData.Instance.SetActive(true);
+        LotteryManager.SetActive(PanelCollectData.Instance.gameObject, true);
+    }
+    public void OnBtnClickGlobalSetting()
+    {
+        LotteryManager.SetActive(PanelGlobalSetting.Instance.gameObject, true);
     }
 }

@@ -44,15 +44,10 @@ public class PanelCollectData : MonoBehaviour
     {
         TickJobs();
     }
-
-    public void SetActive(bool active)
-    {
-        gameObject.SetActive(active);
-    }
-
+    
     public void OnBtnClick_Close()
     {
-        SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void OnBtnClick_StartCollect()
