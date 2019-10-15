@@ -34,4 +34,14 @@ public class PanelMain : MonoBehaviour
     {
         LotteryManager.SetActive(PanelGlobalSetting.Instance.gameObject, true);
     }
+
+    public void OnBtnClickOpenAnalyzeView()
+    {
+        LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
+    }
+
+    public void OnBtnClickOpenDataView()
+    {
+        LotteryManager.SetActive(PanelDataView.Instance.gameObject, true);
+    }
 }

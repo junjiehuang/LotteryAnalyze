@@ -23,8 +23,11 @@ public class LotteryManager : MonoBehaviour
     void Start()
     {
         SetActive(PanelMain.Instance.gameObject, true);
+
         SetActive(PanelCollectData.Instance.gameObject, false);
         SetActive(PanelGlobalSetting.Instance.gameObject, false);
+        SetActive(PanelAnalyze.Instance.gameObject, false);
+        SetActive(PanelDataView.Instance.gameObject, false);
     }
 
     // Update is called once per frame
