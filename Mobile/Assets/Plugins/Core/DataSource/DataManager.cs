@@ -11,6 +11,7 @@ namespace LotteryAnalyze
         public List<int> indexs = new List<int>();
         public Dictionary<int, string> mFileMetaInfo = new Dictionary<int, string>();
         public Dictionary<int, DataItem> allItemMap = new Dictionary<int, DataItem>();
+        public List<int> fileKeys = new List<int>();
 
 #if ENABLE_GROUP_COLLECT
         public SimData simData;
@@ -27,6 +28,15 @@ namespace LotteryAnalyze
             if (sInst == null)
                 sInst = new DataManager();
             return sInst;
+        }
+
+        public void GenFileKeys()
+        {
+            fileKeys.Clear();
+            foreach( int key in mFileMetaInfo.Keys)
+            {
+                fileKeys.Add(key);
+            }
         }
 
         public void ClearAllDatas()
