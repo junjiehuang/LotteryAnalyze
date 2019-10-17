@@ -37,6 +37,11 @@ namespace LotteryAnalyze
             {
                 fileKeys.Add(key);
             }
+            fileKeys.Sort((a, b) => 
+            {
+                if (a < b) return -1;
+                return 1;
+            });
         }
 
         public void ClearAllDatas()
