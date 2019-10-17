@@ -69,12 +69,17 @@ public class ScrollHandle : MonoBehaviour, IPointerClickHandler, IPointerDownHan
         isDraging = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         bar = transform.parent.gameObject.GetComponent<ScrollBar>();
         rt = transform as RectTransform;
         rtBar = bar.transform as RectTransform;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
     }
 
     // Update is called once per frame

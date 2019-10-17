@@ -46,7 +46,7 @@ public class PanelDataView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        scrollBar.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -109,7 +109,7 @@ public class PanelDataView : MonoBehaviour
 
     void OnClickBtn(Button btn)
     {
-        Debug.Log("Click Btn " + btnTxtDict[btn].text);
+        //Debug.Log("Click Btn " + btnTxtDict[btn].text);
     }
 
     public void OnScrollChange()
@@ -123,6 +123,7 @@ public class PanelDataView : MonoBehaviour
         LoopSearchFolder(di);
         scrollBar.SetHandleRatio(Mathf.Clamp01((float)(btns.Length) / (float)DataManager.GetInst().fileKeys.Count));
         RefreshFileList();
+        scrollBar.gameObject.SetActive(DataManager.GetInst().fileKeys.Count > btns.Length);
     }
 
     public void OnBtnClickClose()
