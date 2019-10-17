@@ -102,17 +102,6 @@ public class PanelDataView : MonoBehaviour
             }
             ++curID;
         }
-
-
-        //listViewFileList.Items.Clear();
-        //foreach (int key in dataMgr.mFileMetaInfo.Keys)
-        //{
-        //    ListViewItem item = new ListViewItem();
-        //    item.Name = key.ToString();
-        //    item.Text = key.ToString();
-        //    item.Tag = key;
-        //    listViewFileList.Items.Add(item);
-        //}
     }
 
 
