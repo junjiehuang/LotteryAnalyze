@@ -636,6 +636,16 @@ namespace LotteryAnalyze
             return FetchData(curDate, ref error);
         }
 
+        public static DateTime DateKeyToDateTime(int DateKey)
+        {
+            int v = DateKey;
+            int year = v / 10000; v -= year * 10000;
+            int month = v / 100; v -= month * 100;
+            int day = v;
+            DateTime date = new DateTime(year, month, day);
+            return date;
+        }
+
         public static string combineDateString(int y, int m, int d)
         {
             string dateStr = y.ToString();

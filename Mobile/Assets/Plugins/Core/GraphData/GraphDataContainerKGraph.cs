@@ -16,10 +16,12 @@ namespace LotteryAnalyze
         {
             public string tag;
             public int cycle;
-            public Color color;
             public bool enable;
 #if WIN
+            public Color color;
             public Pen pen;
+#else
+            public UnityEngine.Color color;
 #endif
         }
         public static List<AvgLineSetting> S_AVG_LINE_SETTINGS = new List<AvgLineSetting>();
@@ -27,18 +29,29 @@ namespace LotteryAnalyze
         public static List<string> S_AVG_ALGORITHM_STRS = new List<string>();
         static GraphDataContainerKGraph()
         {
+#if WIN
             AddAvgLineSetting("5", 5, Color.Red, true);
             AddAvgLineSetting("10", 10, Color.Pink, true);
             AddAvgLineSetting("20", 20, Color.Orange, true);
             AddAvgLineSetting("30", 30, Color.Yellow, true);
             AddAvgLineSetting("50", 50, Color.Green, true);
             AddAvgLineSetting("100", 100, Color.White, true);
+#else
+            AddAvgLineSetting("5", 5, UnityEngine.Color.red, true);
+            AddAvgLineSetting("10", 10, UnityEngine.Color.magenta, true);
+            AddAvgLineSetting("20", 20, UnityEngine.Color.yellow, true);
+            AddAvgLineSetting("30", 30, UnityEngine.Color.green, true);
+            AddAvgLineSetting("50", 50, UnityEngine.Color.white, true);
+            AddAvgLineSetting("100", 100, UnityEngine.Color.gray, true);
+#endif
             S_AVG_ALGORITHM_STRS.Add("简单算术平均(SMA)");
             S_AVG_ALGORITHM_STRS.Add("末日加权平均(WMALastDay)");
             S_AVG_ALGORITHM_STRS.Add("线性加权平均(WMALinear)");
             S_AVG_ALGORITHM_STRS.Add("平方系数加权平均(WMASqr)");
             S_AVG_ALGORITHM_STRS.Add("指数平滑移动平均(EMA)");
         }
+
+#if WIN
         static void AddAvgLineSetting(string tag, int cycle, Color col, bool enable)
         {
             AvgLineSetting als = new AvgLineSetting();
@@ -46,11 +59,20 @@ namespace LotteryAnalyze
             als.cycle = cycle;
             als.color = col;
             als.enable = enable;
-#if WIN
             als.pen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, col, 2);
-#endif
             S_AVG_LINE_SETTINGS.Add(als);
         }
+#else
+        static void AddAvgLineSetting(string tag, int cycle, UnityEngine.Color col, bool enable)
+        {
+            AvgLineSetting als = new AvgLineSetting();
+            als.tag = tag;
+            als.cycle = cycle;
+            als.color = col;
+            als.enable = enable;
+            S_AVG_LINE_SETTINGS.Add(als);
+        }
+#endif
 #endregion
 
         int dataLength = 0;

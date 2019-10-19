@@ -1,4 +1,5 @@
 ﻿using LotteryAnalyze;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -65,6 +66,10 @@ public class PanelDataView : MonoBehaviour
     Dictionary<Button, int> btnIndexMap = new Dictionary<Button, int>();
     List<int> selectedDateID = new List<int>();
 
+    int lastFetchCount = -1;
+    float lastUpdateTime;
+    int startRefreshDateIndex = -1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -130,6 +135,100 @@ public class PanelDataView : MonoBehaviour
             }
             ++curID;
         }
+    }
+
+    void TickAutoRefreshLatestData()
+    {
+
+    }
+
+    void RefreshLatestData(bool forceUpdate)
+    {
+        DataManager dataMgr = DataManager.GetInst();
+        // 如果当前不是在获取最新数据，返回
+        if (GlobalSetting.IsCurrentFetchingLatestData == false)
+            return;
+
+        if (forceUpdate == false)
+        {
+            // 如果不是自动获取，返回
+            if (GlobalSetting.G_AUTO_REFRESH_LATEST_DATA == false)
+                return;
+
+            // 间隔时间满足才执行刷新
+            if ((Time.time - lastUpdateTime) < GlobalSetting.G_AUTO_REFRESH_LATEST_DATA_INTERVAL)
+                return;
+            lastUpdateTime = Time.time;
+        }
+
+        // 更新当天的数据
+        int currentFetchCount = AutoUpdateUtil.AutoFetchTodayData();
+        // 如果数据没变化，直接返回
+        if (currentFetchCount == lastFetchCount && forceUpdate == false)
+            return;
+        lastFetchCount = currentFetchCount;
+
+        // 如果文件列表是空的，读取数据文件列表
+        if (dataMgr.fileKeys.Count == 0)
+        {
+            OnBtnClickImportData();
+        }
+
+        DateTime startCollectDate = DateTime.Now.AddDays(-GlobalSetting.G_DAYS_PER_BATCH);
+        if (dataMgr.fileKeys.Count > 0)
+        {
+            int startDateKey = dataMgr.fileKeys[dataMgr.fileKeys.Count - 1];
+            AutoUpdateUtil.DateKeyToDateTime(startDateKey);
+        }
+        bool hasFetchNewData = false;
+        string error = "";
+        DateTime curDate = DateTime.Now;
+        for (DateTime cd = startCollectDate; cd.CompareTo(curDate) <= 0; cd = cd.AddDays(1))
+        {
+            string dateTag = AutoUpdateUtil.combineDateString(cd.Year, cd.Month, cd.Day);
+            int dateKey = int.Parse(dateTag);
+            
+            if (DataManager.GetInst().fileKeys.Contains(dateKey) == false)
+            {
+                AutoUpdateUtil.FetchData(cd, ref error);
+                string filePath = AutoUpdateUtil.combineFileName(cd.Year, cd.Month, cd.Day);
+                dataMgr.AddMetaInfo(dateKey, filePath);
+                hasFetchNewData = true;
+            }
+        }
+
+        if(hasFetchNewData)
+        {
+            OnBtnClickImportData();
+        }
+        
+        int newAddItemIndex = -1, tmpAddItemIndex = -1;
+        OneDayDatas newAddODD = null, tmpAddODD = null;
+
+        int lastItemID = dataMgr.fileKeys.Count - 1;
+        if (lastItemID > 0)
+            lastItemID -= GlobalSetting.G_DAYS_PER_BATCH;
+        if (startRefreshDateIndex >= 0)
+            lastItemID = startRefreshDateIndex;
+        if (lastItemID < 0)
+            startRefreshDateIndex = 0;
+
+        while (lastItemID != dataMgr.fileKeys.Count && lastItemID >= 0)
+        {
+            int key = dataMgr.fileKeys[lastItemID];
+            dataMgr.LoadDataExt(key, ref tmpAddODD, ref tmpAddItemIndex);
+            if (newAddItemIndex == -1 && tmpAddItemIndex != -1)
+            {
+                newAddODD = tmpAddODD;
+                newAddItemIndex = tmpAddItemIndex;
+            }
+            ++lastItemID;
+        }
+        Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
+        GraphDataManager.ResetCurKValueMap();
+        GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+
+        LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
     }
 
 
@@ -239,7 +338,16 @@ public class PanelDataView : MonoBehaviour
     }
     public void OnBtnClickRefreshFromSelDate()
     {
+        GlobalSetting.IsCurrentFetchingLatestData = true;
+        DataManager.GetInst().ClearAllDatas();
 
+        startRefreshDateIndex = -1;
+        if(selectedDateID.Count > 0)
+        {
+            int lastDateKey = selectedDateID[selectedDateID.Count - 1];
+            startRefreshDateIndex = DataManager.GetInst().fileKeys.IndexOf(lastDateKey);
+        }
+        RefreshLatestData(true);
     }
 
     #endregion
