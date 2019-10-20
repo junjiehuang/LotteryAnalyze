@@ -108,9 +108,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>del ..\Mobile\Assets\Plugins\Core.dll
-del ..\Mobile\Assets\Plugins\HtmlAgilityPack.dll
-copy ..\Tools\Core.dll ..\Mobile\Assets\Plugins
+    <PostBuildEvent>del ..\Mobile\Assets\Plugins\HtmlAgilityPack.dll
 copy ..\Tools\HtmlAgilityPack.dll ..\Mobile\Assets\Plugins</PostBuildEvent>
   </PropertyGroup>
 </Project>
