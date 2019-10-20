@@ -14,6 +14,9 @@ public class SplitPanel : MonoBehaviour
     public RectTransform rtSplitter;
     [HideInInspector]
     public RectTransform rtSplitPanel;
+
+    public Vector2 panelLTSize = Vector2.zero;
+    public Vector2 panelRBSize = Vector2.zero;
     
     private void Awake()
     {
@@ -90,6 +93,8 @@ public class SplitPanel : MonoBehaviour
             subRB.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rtSplitPanel.rect.width - upPanelSize - splitter.size);
             subRB.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rtSplitPanel.rect.height);
         }
+        panelLTSize = subLT.rect.size;
+        panelRBSize = subRB.rect.size;
     }
 
 

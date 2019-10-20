@@ -90,7 +90,7 @@ namespace LotteryAnalyze
         public static Dictionary<int, GraphDataContainerKGraph> MultiKGDCMap = new Dictionary<int, GraphDataContainerKGraph>();
 
         public static int[] G_Circles = new int[] { 1, 3, 5, 10, };
-        public static string[] G_Circles_STRs = new string[] { "1", "3", "5", "10", };
+        public static List<string> G_Circles_STRs = new List<string>() { "1", "3", "5", "10", };
 
         static GraphDataManager()
         {
@@ -117,7 +117,7 @@ namespace LotteryAnalyze
             //S_GRAPH_DATA_CONTS.Add(GraphType.eKCurveGraph, KGDC = new GraphDataContainerKGraph());
             S_GRAPH_DATA_CONTS.Add(GraphType.eBarGraph, BGDC = new GraphDataContainerBarGraph());
 
-            for( int i = 0; i < KDataDictContainer.C_TAGS.Length; ++i )
+            for( int i = 0; i < KDataDictContainer.C_TAGS.Count; ++i )
             {
                 S_NUM_NAME_INDEX_MAP.Add(KDataDictContainer.C_TAGS[i], i);
             }

@@ -7,7 +7,7 @@ public class GraphPainterBase
     public Painter upPainter = new Painter();
     public Painter downPainter = new Painter();
 
-    public Vector2 canvasUpScale = new Vector2(5, 10);
+    public Vector2 canvasUpScale = new Vector2(5, 20);
     public Vector2 canvasDownScale = new Vector2(5, 10);
     public Vector2 canvasUpOffset;
     public Vector2 canvasDownOffset;
@@ -39,8 +39,11 @@ public class GraphPainterBase
             canvasDownOffset += offset;
             canvasUpOffset.x = canvasDownOffset.x;
         }
-        PanelAnalyze.Instance.graphUp.SetVerticesDirty();
-        PanelAnalyze.Instance.graphDown.SetVerticesDirty();
+        float v = 0;
+        if (canvasUpOffset.x < 0)
+            v = -canvasUpOffset.x / canvasUpScale.x;
+        PanelAnalyze.Instance.SetSliderValue(v);
+        PanelAnalyze.Instance.NotifyUIRepaint();
     }
 
     public virtual void DrawUpPanel(Painter g, RectTransform rtCanvas)
@@ -51,5 +54,13 @@ public class GraphPainterBase
     public virtual void DrawDownPanel(Painter g, RectTransform rtCanvas)
     {
 
+    }
+
+    public virtual void OnScrollToData(int dataIndex)
+    {
+        canvasUpOffset.x = -dataIndex * canvasUpScale.x;
+        canvasDownOffset.x = canvasUpOffset.x;
+
+        PanelAnalyze.Instance.NotifyUIRepaint();
     }
 }

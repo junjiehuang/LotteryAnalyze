@@ -9,7 +9,7 @@ namespace LotteryAnalyze
 
     public class KDataDictContainer
     {
-        public static string[] C_TAGS = new string[] { "万位", "千位", "百位", "十位", "个位", };
+        public static List<string> C_TAGS = new List<string>() { "万位", "千位", "百位", "十位", "个位", };
 
         // 数字序号0-4，对应万千百十个位
         public int numberIndex = -1;
