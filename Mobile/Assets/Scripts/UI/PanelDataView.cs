@@ -85,14 +85,14 @@ public class PanelDataView : MonoBehaviour
 
     void LoopSearchFolder(DirectoryInfo parentDirInfo)
     {
-        Debug.Log("LoopSearchFolder : " + parentDirInfo.FullName);
+        //Debug.Log("LoopSearchFolder : " + parentDirInfo.FullName);
         DataManager dataMgr = DataManager.GetInst();
         FileInfo[] files = parentDirInfo.GetFiles();
         DirectoryInfo[] dirs = parentDirInfo.GetDirectories();
         for (int i = 0; i < files.Length; ++i)
         {
             string fullFileName = files[i].FullName.Replace('\\', '/');
-            Debug.Log("Try to split file : " + fullFileName);
+            //Debug.Log("Try to split file : " + fullFileName);
             string[] strs = fullFileName.Split('/');
             string fileName = strs[strs.Length - 1];
             strs = fileName.Split('.');
