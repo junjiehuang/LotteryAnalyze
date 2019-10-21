@@ -36,6 +36,32 @@ public class LotteryManager : MonoBehaviour
         
     }
 
+    private void OnDestroy()
+    {
+        if(LOG_STREAM_WRITER != null)
+        {
+            LOG_STREAM_WRITER.Close();
+            LOG_STREAM_WRITER.Dispose();
+        }
+    }
+
+    void OnLog(string condition, string stackTrace, LogType type)
+    {
+        if(LOG_FI == null)
+        {
+            LOG_FI = new FileInfo(LOG_PATH);
+            LOG_STREAM_WRITER = LOG_FI.CreateText();
+        }
+        string msg = Time.time + " - " + type.ToString() + " : " + condition + "\nStack : \n" + stackTrace + "\n";
+        LOG_STREAM_WRITER.Write(msg);
+        LOG_STREAM_WRITER.Flush();
+    }
+
+    string LOG_PATH = "";
+    StreamWriter LOG_STREAM_WRITER;
+    FileInfo LOG_FI;
+
+
     private void Init()
     {
         LotteryAnalyze.AutoUpdateUtil.sCallBackOnCollecting += CallBack_CollectResult;
@@ -45,6 +71,11 @@ public class LotteryManager : MonoBehaviour
 #elif UNITY_ANDROID
         LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER = "/mnt/sdcard/LotteryAnalyze";
 #endif
+        Application.logMessageReceived += OnLog;
+        LOG_PATH = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "/log.txt";
+        File.Delete(LOG_PATH);
+
+
         Debug.Log(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
         if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
             Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
@@ -65,6 +96,7 @@ public class LotteryManager : MonoBehaviour
     {
         if(go != null)
         {
+            Debug.Log("set " + go.name + " active = " + active);
             go.SetActive(active);
             if (active)
             {

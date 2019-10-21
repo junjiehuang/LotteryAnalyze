@@ -1220,6 +1220,7 @@ namespace LotteryAnalyze
             set { m_FileName = value; }
         }
 
+#if WIN
         [DllImport("kernel32.dll")]
         private static extern int GetPrivateProfileInt(
             string lpAppName,
@@ -1245,6 +1246,7 @@ namespace LotteryAnalyze
             string lpString,
             string lpFileName
             );
+#endif
 
         /// <summary>
         /// 构造函数
@@ -1253,6 +1255,8 @@ namespace LotteryAnalyze
         public IniFile(string aFileName)
         {
             this.m_FileName = aFileName;
+
+            IniSetting.SetIniFilePath(aFileName);
         }
 
         /// <summary>
@@ -1270,27 +1274,39 @@ namespace LotteryAnalyze
         /// <returns></returns>
         public int ReadInt(string section, string name, int def)
         {
+#if WIN
             return GetPrivateProfileInt(section, name, def, this.m_FileName);
+#else
+            return IniSetting.GetInt(name, section, def);
+#endif
         }
 
         public float ReadFloat(string section, string name, float def)
         {
+#if WIN
             StringBuilder vRetSb = new StringBuilder(2048);
             GetPrivateProfileString(section, name, def.ToString(), vRetSb, 2048, this.m_FileName);
             float res = def;
             if (float.TryParse(vRetSb.ToString(), out res) == false)
                 res = def;
             return res;
+#else
+            return IniSetting.GetFloat(name, section, def);
+#endif
         }
 
         public bool ReadBool(string section, string name, bool def)
         {
+#if WIN
             StringBuilder vRetSb = new StringBuilder(2048);
             GetPrivateProfileString(section, name, def.ToString(), vRetSb, 2048, this.m_FileName);
             bool res = def;
             if (bool.TryParse(vRetSb.ToString(), out res) == false)
                 res = def;
             return res;
+#else
+            return IniSetting.GetBool(name, section, def);
+#endif
         }
 
         /// <summary>
@@ -1302,9 +1318,13 @@ namespace LotteryAnalyze
         /// <returns></returns>
         public string ReadString(string section, string name, string def)
         {
+#if WIN
             StringBuilder vRetSb = new StringBuilder(2048);
             GetPrivateProfileString(section, name, def, vRetSb, 2048, this.m_FileName);
             return vRetSb.ToString();
+#else
+            return IniSetting.GetString(name, section, def);
+#endif
         }
 
         /// <summary>
@@ -1315,19 +1335,29 @@ namespace LotteryAnalyze
         /// <param name="Ival">写入值</param>
         public void WriteInt(string section, string name, int Ival)
         {
-
+#if WIN
             WritePrivateProfileString(section, name, Ival.ToString(), this.m_FileName);
+#else
+            IniSetting.WriteInt(name, section, Ival);
+#endif
         }
 
         public void WriteFloat(string section, string name, float Ival)
         {
-
+#if WIN
             WritePrivateProfileString(section, name, Ival.ToString(), this.m_FileName);
+#else
+            IniSetting.WriteFloat(name, section, Ival);
+#endif
         }
 
         public void WriteBool(string section, string name, bool val)
         {
+#if WIN
             WritePrivateProfileString(section, name, val.ToString(), this.m_FileName);
+#else
+            IniSetting.WriteBool(name, section, val);
+#endif
         }
 
         /// <summary>
@@ -1338,7 +1368,11 @@ namespace LotteryAnalyze
         /// <param name="strVal">写入值</param>
         public void WriteString(string section, string name, string strVal)
         {
+#if WIN
             WritePrivateProfileString(section, name, strVal, this.m_FileName);
+#else
+            IniSetting.WriteString(name, section, strVal);
+#endif
         }
 
         /// <summary>
@@ -1347,7 +1381,11 @@ namespace LotteryAnalyze
         /// <param name="section"></param>
         public void DeleteSection(string section)
         {
+#if WIN
             WritePrivateProfileString(section, null, null, this.m_FileName);
+#else
+            IniSetting.DeleteSection(section);
+#endif
         }
 
         /// <summary>
@@ -1355,9 +1393,14 @@ namespace LotteryAnalyze
         /// </summary>
         public void DeleteAllSection()
         {
+#if WIN
             WritePrivateProfileString(null, null, null, this.m_FileName);
+#else
+            IniSetting.DeleteAllSections();
+#endif
         }
 
+#if WIN
         /// <summary>
         /// 读取指定 节-键 的值
         /// </summary>
@@ -1381,6 +1424,7 @@ namespace LotteryAnalyze
         {
             WritePrivateProfileString(section, name, value, this.m_FileName);
         }
+#endif
     }
 
     public class SystemCfg

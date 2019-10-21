@@ -1025,16 +1025,37 @@ namespace LotteryAnalyze
             }
         }
 
+
+
+        public static string ROOT_FOLDER
+        {
+            get
+            {
+                string path = "..\\";
+#if UNITY_EDITOR_WIN || UNITY_EDITOR_WIN
+                path = Application.persistentDataPath + "/LotteryAnalyze";
+#elif UNITY_ANDROID
+                path = "/mnt/sdcard/LotteryAnalyze";
+#endif
+                return path;
+            }
+        }
+
         static GlobalSetting()
         {
-#if UNITY_ANDROID
-            cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
-#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-            cfg = new IniFile("/mnt/sdcard/LotteryAnalyze" + "\\GlobalSetting.ini");
-#else
-            cfg = new IniFile(Environment.CurrentDirectory + "\\GlobalSetting.ini");
-#endif
-            //ReadCfg();
+            string CFG_FILE = ROOT_FOLDER + "\\GlobalSetting.ini";
+//#if UNITY_ANDROID
+//            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
+//#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+//            CFG_FILE =  "/mnt/sdcard/LotteryAnalyze" + "\\GlobalSetting.ini";
+//#else
+//            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
+//#endif
+            cfg = new IniFile(CFG_FILE);
+            if(System.IO.File.Exists(CFG_FILE) == false)
+            {
+                SaveCfg(true);
+            }
         }
 
         static void ReadParams()
