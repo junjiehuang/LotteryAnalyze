@@ -34,7 +34,10 @@ public class LotteryManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            SetActive(PanelQuit.Instance.gameObject, true);
+        }
     }
 
     private void OnDestroy()
