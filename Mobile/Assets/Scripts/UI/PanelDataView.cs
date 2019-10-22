@@ -237,6 +237,7 @@ public class PanelDataView : MonoBehaviour
             }
             ++lastItemID;
         }
+        dataMgr.SetDataItemsGlobalID();
         Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
         GraphDataManager.ResetCurKValueMap();
         GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);

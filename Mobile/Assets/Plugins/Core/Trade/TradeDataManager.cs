@@ -843,11 +843,13 @@ namespace LotteryAnalyze
         {
             public int numID;
             public CollectDataType cdt;
+            public int cdtID;
 
-            public NumCDT(int i, CollectDataType c)
+            public NumCDT(int i, CollectDataType _cdt, int _cdtID)
             {
                 numID = i;
-                cdt = c;
+                cdt = _cdt;
+                cdtID = _cdtID;
             }
         }
 
@@ -892,7 +894,7 @@ namespace LotteryAnalyze
 
                     if (is5H10 && is10HBM && isKFH10 && isMacdUpon0)
                     {
-                        results.Add(new NumCDT(numID, cdt));
+                        results.Add(new NumCDT(numID, cdt, GraphDataManager.S_CDT_LIST.IndexOf(cdt)));
                     }
                 }
             }

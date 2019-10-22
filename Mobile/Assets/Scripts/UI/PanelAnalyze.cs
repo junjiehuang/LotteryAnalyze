@@ -27,6 +27,20 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Toggle toggleAvg30;
         public UnityEngine.UI.Toggle toggleAvg50;
         public UnityEngine.UI.Toggle toggleAvg100;
+
+        public ListView listviewBestPosPath;
+    }
+
+    public class PosPathTag
+    {
+        public int numIndex;
+        public int cdtIndex;
+
+        public PosPathTag(int _numIndex, int _cdtIndex)
+        {
+            numIndex = _numIndex;
+            cdtIndex = _cdtIndex;
+        }
     }
 
     public UnityEngine.UI.Slider fastViewSlider;
@@ -186,6 +200,8 @@ public class PanelAnalyze : MonoBehaviour
             NotifyUIRepaint();
         });
 
+        settingKGraph.listviewBestPosPath.onClickItem += OnClickItemBestPosPath;
+
         settingKGraph.settingPanelKData.SetActive(false);
     }
 
@@ -219,6 +235,19 @@ public class PanelAnalyze : MonoBehaviour
 
     #region call back
 
+    public void OnClickItemBestPosPath(int index)
+    {
+        object o = settingKGraph.listviewBestPosPath.SelectItemTag;
+        if (o != null)
+        {
+            PosPathTag tag = o as PosPathTag;
+            numIndex = tag.numIndex;
+            settingKGraph.dropdownCDT.value = tag.cdtIndex;
+            settingKGraph.dropdownNumIndex.value = numIndex;
+            NotifyUIRepaint();
+        }
+    }
+
     public void OnBtnClickRefreshData()
     {
 
@@ -246,6 +275,41 @@ public class PanelAnalyze : MonoBehaviour
         {
             settingKGraph.settingPanelKData.SetActive(!settingKGraph.settingPanelKData.activeSelf);
         }
+    }
+
+    public void OnBtnClickAutoCalcBestPosPath()
+    {
+        settingKGraph.listviewBestPosPath.ClearAllItems();
+        List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits(null);
+        for (int i = 0; i < results.Count; ++i)
+        {
+            AddPosPath(results[i].numID, results[i].cdtID);
+        }
+    }
+
+    void AddPosPath(int numIndex, int cdtIndex)
+    {
+        string item = KDataDictContainer.C_TAGS[numIndex] + "_" + GraphDataManager.S_CDT_TAG_LIST[cdtIndex];
+        if (settingKGraph.listviewBestPosPath.FindItem(item) == null)
+        {
+            settingKGraph.listviewBestPosPath.AddItem(item, new PosPathTag(numIndex, cdtIndex));
+        }
+    }
+
+    public void OnBtnClickAddPosPath()
+    {
+        int cdtIndex = settingKGraph.dropdownCDT.value;
+        AddPosPath(numIndex, cdtIndex);
+    }
+
+    public void OnBtnClickDelSelPosPath()
+    {
+        settingKGraph.listviewBestPosPath.RemoveItem(settingKGraph.listviewBestPosPath.SelIndex);
+    }
+
+    public void OnBtnClickClearAllPosPath()
+    {
+        settingKGraph.listviewBestPosPath.ClearAllItems();
     }
 
     #endregion
