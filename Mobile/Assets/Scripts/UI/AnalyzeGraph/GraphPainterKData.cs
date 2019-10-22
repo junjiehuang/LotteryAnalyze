@@ -28,6 +28,7 @@ public class GraphPainterKData : GraphPainterBase
     Vector2 prevPt = Vector2.zero;
 
     float DownGraphYOffset;
+    float DataMaxWidth = 0;
 
     public override void Start()
     {
@@ -47,6 +48,36 @@ public class GraphPainterKData : GraphPainterBase
         //upPainter.DrawLine(5, 5, 100, 200, Color.white);
     }
 
+    public override void OnPointerClick(Vector2 pos, Painter g)
+    {
+        base.OnPointerClick(pos, g);
+        if(g == upPainter)
+        {
+            float x = upPainter.CanvasToStand(pos.x, true);
+            if(x >= 0 && x <= DataMaxWidth)
+            {
+                selectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
+            }
+            else
+            {
+                selectKDataIndex = -1;
+            }
+        }
+        else
+        {
+            float x = downPainter.CanvasToStand(pos.x, true);
+            if (x >= 0 && x <= DataMaxWidth)
+            {
+                selectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
+            }
+            else
+            {
+                selectKDataIndex = -1;
+            }
+        }
+        PanelAnalyze.Instance.NotifyUIRepaint();
+    }
+
     bool CheckAvgShow(AvgDataContainer adc)
     {
         switch(adc.cycle)
@@ -63,6 +94,7 @@ public class GraphPainterKData : GraphPainterBase
 
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
     {
+        DataMaxWidth = 0;
         float MaxLen = 99999;
         g.DrawLine(-MaxLen, 0, MaxLen, 0, Color.gray);
         g.DrawLine(0, -MaxLen, 0, MaxLen, Color.gray);
@@ -77,6 +109,7 @@ public class GraphPainterKData : GraphPainterBase
         {
             if (kddc.dataLst.Count > 0)
             {
+                DataMaxWidth = kddc.dataLst.Count * canvasUpScale.x;
                 int startIndex = 0;
                 if (canvasUpOffset.x < 0)
                 {
@@ -103,8 +136,24 @@ public class GraphPainterKData : GraphPainterBase
                     if (data == null)
                         continue;
                     DrawKDataGraph(g, rtCanvas, data, missRelHeight, kddc, cdt);
-                }
 
+                    if (selectKDataIndex == i)
+                    {
+                        float xL = g.StandToCanvas(selectKDataIndex * canvasUpScale.x, true);
+                        float xR = xL + canvasUpScale.x;
+                        g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
+                        g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
+                        
+                        string info = data.GetInfo() + 
+                            "K值 = " + data.KValue.ToString() +
+                            ", 上 = " + data.UpValue.ToString() +
+                            ", 下 = " + data.DownValue.ToString() +
+                            ", 开 = " + data.StartValue.ToString() +
+                            ", 收 = " + data.EndValue.ToString();
+                        PanelAnalyze.Instance.graphUp.AppendText(info);
+                    }
+                }
+                
                 // 画预测标尺
                 if (enableKRuler)
                 {
@@ -198,8 +247,21 @@ public class GraphPainterKData : GraphPainterBase
             for (int i = startIndex; i < endIndex; ++i)
             {
                 DrawMACDGraph(g, kddc.macdDataLst.macdMapLst[i], rtCanvas, cdt, i == selectKDataIndex);
-            }
 
+                if (selectKDataIndex == i)
+                {
+                    float xL = g.StandToCanvas(selectKDataIndex * canvasDownScale.x, true);
+                    float xR = xL + canvasDownScale.x;
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
+
+                    MACDPointMap mpm = kddc.macdDataLst.macdMapLst[selectKDataIndex];
+                    MACDPoint mp = mpm.GetData(cdt, false);
+                    string info = mpm.index + ", MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
+                    PanelAnalyze.Instance.graphDown.AppendText(info);
+                }
+            }
+            
             canvasDownOffset.y = oriYOff;
 
             //if (preViewDataIndex != -1)

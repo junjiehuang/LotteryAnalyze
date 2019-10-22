@@ -7,8 +7,10 @@ using System;
 using System.IO;
 using UnityEngine.EventSystems;
 
-public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragHandler
+public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
+    Text text;
+
     RectTransform meRT;
     RectTransform parentRT;
     Painter painter;
@@ -27,6 +29,7 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         meRT.anchorMin = Vector2.zero;
         meRT.anchorMax = Vector2.zero;
         meRT.pivot = Vector2.zero;
+        text = GetComponentInChildren<Text>();
     }
 
     private void Update()
@@ -55,5 +58,26 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
+    }
+
+    public void BeforeUpdate()
+    {
+        if (text)
+        {
+            text.text = "";
+        }
+    }
+
+    public void AppendText(string txt)
+    {
+        if (text)
+        {
+            text.text += txt;
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        graphPainter.OnPointerClick(eventData.position, painter);
     }
 }

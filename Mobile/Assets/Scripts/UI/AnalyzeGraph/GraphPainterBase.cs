@@ -23,6 +23,9 @@ public class GraphPainterBase
         PanelAnalyze.Instance.graphDown.SetPainter(downPainter, this);
         upPainter.BeforeDraw(canvasUpOffset);
         downPainter.BeforeDraw(canvasDownOffset);
+
+        PanelAnalyze.Instance.graphUp.BeforeUpdate();
+        PanelAnalyze.Instance.graphDown.BeforeUpdate();
         DrawUpPanel(upPainter, PanelAnalyze.Instance.graphUp.rectTransform);
         DrawDownPanel(downPainter, PanelAnalyze.Instance.graphDown.rectTransform);
     }
@@ -62,5 +65,10 @@ public class GraphPainterBase
         canvasDownOffset.x = canvasUpOffset.x;
 
         PanelAnalyze.Instance.NotifyUIRepaint();
+    }
+
+    public virtual void OnPointerClick(Vector2 pos, Painter g)
+    {
+
     }
 }

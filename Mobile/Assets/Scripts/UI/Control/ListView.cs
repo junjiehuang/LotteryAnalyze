@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class ListView : MonoBehaviour, IDragHandler, IEndDragHandler
 {
+    public Color itemNormalColor = Color.black;
+    public Color itemSelColor = Color.red;
+
     public RectTransform rtContent;
     public RectTransform rtItem;
 
@@ -157,6 +160,11 @@ public class ListView : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnListViewItemClick(ListViewItem item)
     {
+        item.color = itemSelColor;
+        if(SelectItem != null && SelectItem != item)
+        {
+            SelectItem.color = itemNormalColor;
+        }
         selIndex = items.IndexOf(item);
         onClickItem.Invoke(selIndex);
     }
