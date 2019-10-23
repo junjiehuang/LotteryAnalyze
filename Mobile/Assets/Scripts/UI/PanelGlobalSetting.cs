@@ -31,6 +31,13 @@ public class PanelGlobalSetting : MonoBehaviour
     bool hasGenerateWin = false;
     Vector2 scrollPos = Vector2.zero;
 
+    GUIStyle labelStyle = null;
+    GUIStyle textFieldStyle = null;
+    GUIStyle toggleStyle = null;
+    GUIStyle selectionGridStyle = null;
+    GUIStyle buttonStyle = null;
+    GUIStyle scrollViewStyle = null;
+    GUIStyle tabBtnStyle = null;
 
     // Start is called before the first frame update
     void Start()
@@ -117,6 +124,34 @@ public class PanelGlobalSetting : MonoBehaviour
 
     void DrawUI()
     {
+        if (labelStyle == null)
+        {
+            labelStyle = new GUIStyle(GUI.skin.label);
+            labelStyle.fontSize = 30;
+
+            textFieldStyle = new GUIStyle(GUI.skin.textField);
+            textFieldStyle.fontSize = 30;
+
+            toggleStyle = new GUIStyle(GUI.skin.toggle);
+            toggleStyle.fontSize = 30;
+
+            selectionGridStyle = new GUIStyle(GUI.skin.button);
+            selectionGridStyle.fontSize = 30;
+
+            buttonStyle = new GUIStyle(GUI.skin.button);
+            buttonStyle.fontSize = 30;
+
+            tabBtnStyle = new GUIStyle(GUI.skin.button);
+            tabBtnStyle.fontSize = 32;
+            tabBtnStyle.alignment = TextAnchor.MiddleLeft;
+            tabBtnStyle.normal.textColor = Color.green;
+            tabBtnStyle.hover.textColor = Color.yellow;
+
+            scrollViewStyle = new GUIStyle(GUI.skin.scrollView);
+            scrollViewStyle.fontSize = 30;
+        }
+
+
         int w = Screen.width / 2 - 10;
         int h = 30;
         int lx = 10;
@@ -124,13 +159,17 @@ public class PanelGlobalSetting : MonoBehaviour
         int y = 10;
         
         GUILayout.BeginHorizontal();
-        if(GUILayout.Button("Close", GUILayout.Width(Screen.width)))
+        if(GUILayout.Button("关闭", buttonStyle, GUILayout.Width(Screen.width)))
         {
             gameObject.SetActive(false);
         }
         GUILayout.EndHorizontal();
 
-        scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Width(Screen.width));
+        GUILayout.BeginVertical();
+        GUILayout.Space(20);
+        GUILayout.EndVertical();
+
+        scrollPos = GUILayout.BeginScrollView(scrollPos, scrollViewStyle, GUILayout.Width(Screen.width));
         for (int i = 0; i < allParameterNodes.Count; ++i)
         {
             NodeWrapper node = allParameterNodes[i];
@@ -141,26 +180,21 @@ public class PanelGlobalSetting : MonoBehaviour
 
     void GenerateNode(NodeWrapper node, int w, int h, ref int lx, int rx, ref int y)
     {
+        float halfScreenWidth = Screen.width * 0.5f;
         if (node.paramFieldInfo != null)
         {
             FieldInfo fi = node.paramFieldInfo;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(node.nodeName);
-            //Label lb = new Label();
-            //lb.Text = node.nodeName;
-            //lb.Size = new Size(w - lx, h);
-            //lb.Location = new Point(lx, y);
-            //toolTipHandler.SetToolTip(lb, fi.Name);
-            //this.Controls.Add(lb);
+            GUILayout.Space(50);
+            GUILayout.Label(node.nodeName, labelStyle, GUILayout.Width(halfScreenWidth - 50));
 
-            //int rightSize = w - 20;
             object v = fi.GetValue(GlobalSetting.Instance);
             if (fi.FieldType == typeof(int) ||
                 fi.FieldType == typeof(float) ||
                 fi.FieldType == typeof(string))
             {
-                string str = GUILayout.TextField(v.ToString());
+                string str = GUILayout.TextField(v.ToString(), textFieldStyle);
                 if(str != v.ToString())
                 {
                     if (fi.FieldType == typeof(int))
@@ -181,56 +215,26 @@ public class PanelGlobalSetting : MonoBehaviour
                     }
                     GlobalSetting.SaveCfg(true);
                 }
-                //TextBox tb = new TextBox();
-                //tb.Text = v.ToString();
-                //tb.Size = new Size(rightSize, h);
-                //tb.Location = new Point(rx, y - 2);
-                //this.Controls.Add(tb);
-                //tb.Tag = fi;
-                //tb.TextChanged += Tb_TextChanged;
-                //toolTipHandler.SetToolTip(tb, fi.Name);
             }
             else if (fi.FieldType == typeof(bool))
             {
-                bool res = GUILayout.Toggle((bool)v, "");
+                bool res = GUILayout.Toggle((bool)v, "", toggleStyle);
                 if(res != (bool)v)
                 {
                     fi.SetValue(GlobalSetting.Instance, res);
                     GlobalSetting.SaveCfg(true);
                 }
-                //CheckBox tb = new CheckBox();
-                //tb.Checked = (bool)v;
-                //tb.Size = new Size(rightSize, h);
-                //tb.Location = new Point(rx, y - 8);
-                //this.Controls.Add(tb);
-                //tb.Tag = fi;
-                //tb.CheckedChanged += Tb_CheckedChanged;
-                //toolTipHandler.SetToolTip(tb, fi.Name);
             }
             else if (fi.FieldType.IsEnum)
             {
                 string[] names = Enum.GetNames(fi.FieldType);
                 int selID = (int)v;
-                int res = GUILayout.SelectionGrid(selID, names, 1);
+                int res = GUILayout.SelectionGrid(selID, names, 1, selectionGridStyle);
                 if(res != selID)
                 {
                     fi.SetValue(GlobalSetting.Instance, res);
                     GlobalSetting.SaveCfg(true);
                 }
-
-                //ComboBox tb = new ComboBox();
-                //tb.Size = new Size(rightSize, h);
-                //tb.Location = new Point(rx, y - 2);
-                //this.Controls.Add(tb);
-
-                //string[] names = Enum.GetNames(fi.FieldType);
-                //string txt = v.ToString();
-                //tb.DataSource = names;
-                //int selID = (int)v;
-                //tb.SelectedIndex = selID;
-                //tb.Tag = fi;
-                //tb.SelectedIndexChanged += Tb_SelectedIndexChanged;
-                //toolTipHandler.SetToolTip(tb, fi.Name);
             }
             y += h;
 
@@ -239,21 +243,11 @@ public class PanelGlobalSetting : MonoBehaviour
         else
         {
             GUILayout.BeginHorizontal();
-            if(GUILayout.Button((node.isExpand ? "- " : "+ ") + node.nodeName))
+            if(GUILayout.Button((node.isExpand ? "- " : "+ ") + node.nodeName, tabBtnStyle))
             {
                 node.isExpand = !node.isExpand;
             }
             GUILayout.EndHorizontal();
-            //Button btn = new Button();
-            //btn.BackColor = Color.Black;
-            //btn.ForeColor = Color.Yellow;
-            //btn.TextAlign = ContentAlignment.MiddleLeft;
-            //btn.Text = (node.isExpand ? "- " : "+ ") + node.nodeName;
-            //btn.Size = new Size(this.Size.Width - lx - 20, h);
-            //btn.Location = new Point(lx, y);
-            //btn.Tag = node;
-            //btn.Click += Tb_ExpandBtnClick;
-            //this.Controls.Add(btn);
             y += h + 5;
 
             if (node.isExpand)
