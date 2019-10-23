@@ -60,6 +60,8 @@ public class PanelCollectData : MonoBehaviour
         int ed = int.Parse(txtED.text);
 
         console.text = "";
+        SetProgress(0);
+
         //LotteryManager.Instance.CollectData(sy, sm, sd, ey, em, ed);
         DateTime startDate = new DateTime(sy, sm, sd);
         DateTime endDate = new DateTime(ey, em, ed);

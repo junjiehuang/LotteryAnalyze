@@ -257,7 +257,7 @@ public class GraphPainterKData : GraphPainterBase
 
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[selectKDataIndex];
                     MACDPoint mp = mpm.GetData(cdt, false);
-                    string info = mpm.index + ", MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR;
+                    string info = mpm.index + ", MACD 快线值 = " + mp.DIF + ", 慢线值 = " + mp.DEA + ", 柱值 = " + mp.BAR + "\n";
                     PanelAnalyze.Instance.graphDown.AppendText(info);
                 }
             }
@@ -420,6 +420,19 @@ public class GraphPainterKData : GraphPainterBase
 
             float standY = g.CanvasToStand(0, false);
             g.DrawFillRect(standX + 1, standY, canvasUpScale.x - 1, 30, col);
+
+            if (selectKDataIndex >= 0 && selectKDataIndex == data.index)
+            {
+                string info = "\n热号预测 : ";
+                int last = predict_results.Count - 1;
+                for (int i = 0; i <= last; ++i)
+                {
+                    info += predict_results[i];
+                    if (i < last)
+                        info += ", ";
+                }
+                PanelAnalyze.Instance.graphUp.AppendText(info);
+            }
         }
     }
 

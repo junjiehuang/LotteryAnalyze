@@ -46,6 +46,9 @@ public class PanelDataView : MonoBehaviour
         btnSimSelDates.onClick.AddListener(OnBtnClickSimSelDates);
         btnSimAllDates.onClick.AddListener(OnBtnClickSimAllDates);
         btnRefreshFromSelDate.onClick.AddListener(OnBtnClickRefreshFromSelDate);
+
+        btnReadSelDateData.onClick.AddListener(OnBtnClickReadSelDateData);
+        btnWriteSelDateData.onClick.AddListener(OnBtnClickWriteSelDateData);
     }
 
     public Button btnSelCurPage;
@@ -57,6 +60,16 @@ public class PanelDataView : MonoBehaviour
     public Button btnSimAllDates;
 
     public Button btnRefreshFromSelDate;
+
+    public Button btnReadSelDateData;
+    public Button btnWriteSelDateData;
+
+    public ScrollRect scrollRectDataView;
+    public RectTransform rtDataEditContent;
+    public GameObject editDataItem;
+
+    List<DateDateEditItem> freeEditDataItems = new List<DateDateEditItem>();
+    List<DateDateEditItem> showEditDataItems = new List<DateDateEditItem>();
 
     Transform trPanelControl;
     ScrollBar scrollBar;
@@ -70,11 +83,19 @@ public class PanelDataView : MonoBehaviour
     float lastUpdateTime;
     int startRefreshDateIndex = -1;
 
+    string editFilePath = "";
+    int editFileID = -1;
+
     // Start is called before the first frame update
     void Start()
     {
         scrollBar.gameObject.SetActive(false);
         trPanelControl.gameObject.SetActive(false);
+        scrollRectDataView.gameObject.SetActive(false);
+        DateDateEditItem prefabItem = editDataItem.GetComponent<DateDateEditItem>();
+        freeEditDataItems.Add(prefabItem);
+        editDataItem.SetActive(false);
+        rtDataEditContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 120 * prefabItem.rectTransform.rect.height);
     }
 
     // Update is called once per frame
@@ -247,6 +268,76 @@ public class PanelDataView : MonoBehaviour
 
 
     #region call backs
+
+    void OnBtnClickReadSelDateData()
+    {
+        if (selectedDateID.Count == 1)
+        {
+            freeEditDataItems.AddRange(showEditDataItems);
+            showEditDataItems.Clear();
+
+            editFileID = selectedDateID[0];
+            editFilePath = DataManager.GetInst().GetFilePath(editFileID);
+            OneDayDatas odd = null;
+            Util.ReadFile(editFileID, editFilePath, ref odd);
+            scrollRectDataView.gameObject.SetActive(true);
+
+            for (int i = 0; i < 120; ++i)
+            {
+                DateDateEditItem editItem = null;
+                if(freeEditDataItems.Count > 0)
+                {
+                    editItem = freeEditDataItems[0];
+                    freeEditDataItems.RemoveAt(0);
+                }
+                else
+                {
+                    GameObject go = GameObject.Instantiate(editDataItem);
+                    editItem = go.GetComponent<DateDateEditItem>();
+                }
+                showEditDataItems.Add(editItem);
+                editItem.gameObject.SetActive(true);
+                if (i < odd.datas.Count)
+                {
+                    DataItem item = odd.datas[i];
+                    editItem.SetData(item);
+                }
+                else
+                {
+                    editItem.label.text = odd.dateID + "-" + AutoUpdateUtil.GetHundredIndexString(i + 1);
+                    editItem.inputField.text = "-";
+                }
+                editItem.rectTransform.SetParent(rtDataEditContent);
+                editItem.rectTransform.anchoredPosition = new Vector2(0, -editItem.rectTransform.rect.height * i);
+            }
+            
+        }
+    }
+
+    void OnBtnClickWriteSelDateData()
+    {
+        if(editFileID != -1 && !string.IsNullOrEmpty(editFilePath))
+        {
+            string content = "";
+            for(int i = 0; i < 120; ++i)
+            {
+                content += AutoUpdateUtil.GetHundredIndexString(i + 1) + " ";
+                DateDateEditItem item = showEditDataItems[i];
+                content += item.inputField.text + "\n";
+            }
+
+            FileStream fs = new FileStream(editFilePath, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            //开始写入
+            sw.Write(content);
+            //sw.Write(strWebContent);
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+        }
+    }
 
     void OnClickBtn(Button btn)
     {

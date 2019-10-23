@@ -89,6 +89,11 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.inputFieldScaleX.onValueChanged.AddListener((str) => 
         {
             float.TryParse(settingKGraph.inputFieldScaleX.text, out graghPainterKData.canvasUpScale.x);
+            if (graghPainterKData.canvasUpScale.x == 0)
+            {
+                graghPainterKData.canvasUpScale.x = 1;
+                settingKGraph.inputFieldScaleX.text = graghPainterKData.canvasUpScale.x.ToString();
+            }
             graghPainterKData.canvasDownScale.x = graghPainterKData.canvasUpScale.x;
             NotifyUIRepaint();
         });
@@ -96,6 +101,11 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.inputFieldScaleY.onValueChanged.AddListener((str) =>
         {
             float.TryParse(settingKGraph.inputFieldScaleY.text, out graghPainterKData.canvasUpScale.y);
+            if (graghPainterKData.canvasUpScale.y == 0)
+            {
+                graghPainterKData.canvasUpScale.y = 1;
+                settingKGraph.inputFieldScaleY.text = graghPainterKData.canvasUpScale.y.ToString();
+            }
             NotifyUIRepaint();
         });
 

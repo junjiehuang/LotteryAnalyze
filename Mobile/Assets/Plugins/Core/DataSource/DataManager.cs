@@ -64,6 +64,13 @@ namespace LotteryAnalyze
                 mFileMetaInfo.Add(key, fileFullName);
         }
 
+        public string GetFilePath(int dateID)
+        {
+            if (mFileMetaInfo.ContainsKey(dateID))
+                return mFileMetaInfo[dateID];
+            return null;
+        }
+
         public void LoadAllDatas(ref List<int> selectIDs)
         {
             for (int i = 0; i < selectIDs.Count; ++i)

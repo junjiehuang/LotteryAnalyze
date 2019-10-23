@@ -1054,6 +1054,15 @@ namespace LotteryAnalyze
 
         }
 
+        public static string GetHundredIndexString(int index)
+        {
+            if (index < 10)
+                return "00" + index.ToString();
+            else if (index < 100)
+                return "0" + index.ToString();
+            return index.ToString();
+        }
+
         static void AnalyzeBy360(string strWebContent, ref string lotteryData, ref int validCount, bool newUrl)
         {
             if (newUrl)

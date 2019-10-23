@@ -124,6 +124,7 @@ public class PanelGlobalSetting : MonoBehaviour
 
     void DrawUI()
     {
+        int WIDTH = Screen.width - 50;
         if (labelStyle == null)
         {
             labelStyle = new GUIStyle(GUI.skin.label);
@@ -152,14 +153,18 @@ public class PanelGlobalSetting : MonoBehaviour
         }
 
 
-        int w = Screen.width / 2 - 10;
+        int w = WIDTH / 2 - 10;
         int h = 30;
         int lx = 10;
         int rx = w + 10;
         int y = 10;
+
+        GUILayout.BeginVertical();
+        GUILayout.Space(20);
+        GUILayout.EndVertical();
         
         GUILayout.BeginHorizontal();
-        if(GUILayout.Button("关闭", buttonStyle, GUILayout.Width(Screen.width)))
+        if(GUILayout.Button("关闭", buttonStyle, GUILayout.Width(WIDTH)))
         {
             gameObject.SetActive(false);
         }
@@ -169,7 +174,7 @@ public class PanelGlobalSetting : MonoBehaviour
         GUILayout.Space(20);
         GUILayout.EndVertical();
 
-        scrollPos = GUILayout.BeginScrollView(scrollPos, scrollViewStyle, GUILayout.Width(Screen.width));
+        scrollPos = GUILayout.BeginScrollView(scrollPos, scrollViewStyle, GUILayout.Width(WIDTH));
         for (int i = 0; i < allParameterNodes.Count; ++i)
         {
             NodeWrapper node = allParameterNodes[i];
