@@ -266,6 +266,22 @@ public class PanelDataView : MonoBehaviour
         LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
     }
 
+    // 读取指定日期到当前最新的所有数据
+    public void RefreshLatestDataFromSpecDate()
+    {
+        if(startRefreshDateIndex == -1)
+        {
+            if (selectedDateID.Count > 0)
+            {
+                int lastDateKey = selectedDateID[selectedDateID.Count - 1];
+                startRefreshDateIndex = DataManager.GetInst().fileKeys.IndexOf(lastDateKey);
+            }
+        }
+        GlobalSetting.IsCurrentFetchingLatestData = true;
+        DataManager.GetInst().ClearAllDatas();
+        RefreshLatestData(true);
+    }
+
 
     #region call backs
 
@@ -441,6 +457,8 @@ public class PanelDataView : MonoBehaviour
     {
 
     }
+
+    // 从选择的最后一个日期作为起始日期，读取截至到目前最新的所有数据
     public void OnBtnClickRefreshFromSelDate()
     {
         GlobalSetting.IsCurrentFetchingLatestData = true;
@@ -456,5 +474,7 @@ public class PanelDataView : MonoBehaviour
     }
 
     #endregion
+
+
 
 }

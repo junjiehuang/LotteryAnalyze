@@ -92,6 +92,38 @@ public class GraphPainterKData : GraphPainterBase
         return false;
     }
 
+    public override void OnAutoAllign()
+    {
+        base.OnAutoAllign();
+
+        int numIndex = PanelAnalyze.Instance.numIndex;
+        CollectDataType cdt = PanelAnalyze.Instance.cdt;
+
+        KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+        int cdtID = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+        float missRelHeight = GraphDataManager.S_CDT_MISS_REL_LENGTH_LIST[cdtID];
+        if (kddc != null)
+        {
+            if (kddc.dataLst.Count > 0)
+            {
+                int startIndex = 0;
+                if (canvasUpOffset.x < 0)
+                {
+                    startIndex = (int)(-canvasUpOffset.x / canvasUpScale.x) - 1;
+                    if (startIndex < 0)
+                        startIndex = 0;
+                }
+
+                KDataMap kdDict = kddc.dataLst[startIndex];
+                KData data = kdDict.GetData(cdt, false);
+                float y = data.KValue * canvasUpScale.y;
+                float canvasY = upPainter.StandToCanvas(y, false);
+                canvasUpOffset.y += PanelAnalyze.Instance.graphUp.rectTransform.rect.height * 0.5f - canvasY;
+                PanelAnalyze.Instance.NotifyUIRepaint();
+            }
+        }
+    }
+
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
     {
         DataMaxWidth = 0;

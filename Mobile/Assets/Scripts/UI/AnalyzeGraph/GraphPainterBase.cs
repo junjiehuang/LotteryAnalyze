@@ -71,4 +71,9 @@ public class GraphPainterBase
     {
 
     }
+
+    public virtual void OnAutoAllign()
+    {
+
+    }
 }

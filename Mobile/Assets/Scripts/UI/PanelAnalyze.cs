@@ -114,6 +114,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownNumIndex.onValueChanged.AddListener((v) => 
         {
             numIndex = settingKGraph.dropdownNumIndex.value;
+            OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
 
@@ -122,6 +123,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownCDT.onValueChanged.AddListener((v) =>
         {
             cdt = GraphDataManager.S_CDT_LIST[settingKGraph.dropdownCDT.value];
+            OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
 
@@ -130,6 +132,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownCycle.onValueChanged.AddListener((v) =>
         {
             curCycleIndex = settingKGraph.dropdownCycle.value;
+            OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
 
@@ -245,6 +248,11 @@ public class PanelAnalyze : MonoBehaviour
 
     #region call back
 
+    public void OnBtnClickAutoAllign()
+    {
+        curGraphPainter.OnAutoAllign();
+    }
+
     public void OnClickItemBestPosPath(int index)
     {
         object o = settingKGraph.listviewBestPosPath.SelectItemTag;
@@ -260,7 +268,8 @@ public class PanelAnalyze : MonoBehaviour
 
     public void OnBtnClickRefreshData()
     {
-
+        PanelDataView.Instance.RefreshLatestDataFromSpecDate();
+        NotifyUIRepaint();
     }
 
     public void OnBtnClickClose()
