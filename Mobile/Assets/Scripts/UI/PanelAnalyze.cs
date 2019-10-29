@@ -132,6 +132,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownCycle.onValueChanged.AddListener((v) =>
         {
             curCycleIndex = settingKGraph.dropdownCycle.value;
+            GraphDataManager.CurrentCircle = GraphDataManager.G_Circles[curCycleIndex];
             OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
