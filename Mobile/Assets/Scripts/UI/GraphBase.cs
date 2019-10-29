@@ -15,6 +15,7 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     RectTransform parentRT;
     Painter painter;
     GraphPainterBase graphPainter;
+    bool hasDragged;
 
     public void SetPainter(Painter p, GraphPainterBase gp)
     {
@@ -54,6 +55,7 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
             graphPainter.OnGraphDragging(eventData.delta, painter);
         }
         this.SetVerticesDirty();
+        hasDragged = true;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -78,6 +80,8 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        graphPainter.OnPointerClick(eventData.position, painter);
+        if(hasDragged == false)
+            graphPainter.OnPointerClick(eventData.position, painter);
+        hasDragged = false;
     }
 }
