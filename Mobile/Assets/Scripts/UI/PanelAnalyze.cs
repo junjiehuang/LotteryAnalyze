@@ -51,6 +51,7 @@ public class PanelAnalyze : MonoBehaviour
     public SettingKGraph settingKGraph;
 
     GraphPainterKData graghPainterKData = new GraphPainterKData();
+    GraphPainterBar graphPainterBar = new GraphPainterBar();
     public GraphPainterBase curGraphPainter;
 
     public int numIndex = 0;
@@ -80,6 +81,7 @@ public class PanelAnalyze : MonoBehaviour
     {
         SetCurrentGraph(graghPainterKData);
         graghPainterKData.Start();
+        graphPainterBar.Start();
         InitSettingPanelKData();
     }
 
@@ -330,6 +332,17 @@ public class PanelAnalyze : MonoBehaviour
     public void OnBtnClickClearAllPosPath()
     {
         settingKGraph.listviewBestPosPath.ClearAllItems();
+    }
+
+    public void OnBtnClickKGraph()
+    {
+        SetCurrentGraph(graghPainterKData);
+        NotifyUIRepaint();
+    }
+    public void OnBtnClickBarGraph()
+    {
+        SetCurrentGraph(graphPainterBar);
+        NotifyUIRepaint();
     }
 
     #endregion

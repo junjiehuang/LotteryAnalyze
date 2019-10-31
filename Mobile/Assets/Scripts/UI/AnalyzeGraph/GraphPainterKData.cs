@@ -76,6 +76,12 @@ public class GraphPainterKData : GraphPainterBase
             }
         }
         PanelAnalyze.Instance.NotifyUIRepaint();
+
+        if (selectKDataIndex == -1)
+            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().GetLatestItem();
+        else
+            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(selectKDataIndex);
+        GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
     }
 
     bool CheckAvgShow(AvgDataContainer adc)

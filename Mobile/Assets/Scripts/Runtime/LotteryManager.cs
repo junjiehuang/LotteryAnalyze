@@ -75,18 +75,20 @@ public class LotteryManager : MonoBehaviour
 #elif UNITY_ANDROID
         LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER = "/mnt/sdcard/LotteryAnalyze";
 #endif
-        Application.logMessageReceived += OnLog;
-        LOG_PATH = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "/log.txt";
-        File.Delete(LOG_PATH);
-
 
         Debug.Log(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
         if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
             Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
+
+        Application.logMessageReceived += OnLog;
+        LOG_PATH = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "/log.txt";
+        LOG_PATH = LOG_PATH.Replace('\\', '/');
+        File.Delete(LOG_PATH);
+
         LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER += "/Data/";
         if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
             Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
-
+        
         LotteryAnalyze.GlobalSetting.ReadCfg();
     }
 
