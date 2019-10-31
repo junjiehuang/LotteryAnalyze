@@ -77,6 +77,11 @@ namespace LotteryAnalyze
         [Parameter("界面设置/主线程更新休眠时间", 100)]
         private static int g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = 1500;
 
+        [Parameter("界面设置/界面缩放X", 15.0f)]
+        private static float g_KGRAPH_CANVAS_SCALE_X = 15.0f;
+        [Parameter("界面设置/界面缩放Y", 30.0f)]
+        private static float g_KGRAPH_CANVAS_SCALE_Y = 30.0f;
+
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
         private static bool g_SHOW_KCURVE_DETAIL = true;
         [Parameter("界面设置/K线图设置/是否显示热号预测结果", true)]
@@ -1038,6 +1043,25 @@ namespace LotteryAnalyze
                 path = "/mnt/sdcard/LotteryAnalyze";
 #endif
                 return path;
+            }
+        }
+
+        public static float G_KGRAPH_CANVAS_SCALE_X
+        {
+            get => g_KGRAPH_CANVAS_SCALE_X;
+            set
+            {
+                g_KGRAPH_CANVAS_SCALE_X = value;
+                HAS_MODIFY = true;
+            }
+        }
+        public static float G_KGRAPH_CANVAS_SCALE_Y
+        {
+            get => G_KGRAPH_CANVAS_SCALE_Y;
+            set
+            {
+                G_KGRAPH_CANVAS_SCALE_Y = value;
+                HAS_MODIFY = true;
             }
         }
 
