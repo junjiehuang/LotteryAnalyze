@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Painter
 {
+    string name = "Painter";
     Vector2 offset = Vector2.zero;
     List<UIVertex> verts = new List<UIVertex>();
     List<int> tris = new List<int>();
+
+    public string Name
+    {
+        get { return name; }
+    }
 
     public List<UIVertex> Verts
     {
@@ -18,9 +24,9 @@ public class Painter
         get { return tris; }
     }
 
-    public Painter()
+    public Painter(string _name = "Painter")
     {
-
+        name = _name;
     }
 
 

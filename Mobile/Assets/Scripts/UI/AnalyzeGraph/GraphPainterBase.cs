@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GraphPainterBase
 {
-    public Painter upPainter = new Painter();
-    public Painter downPainter = new Painter();
+    public Painter upPainter = new Painter("PainterUp");
+    public Painter downPainter = new Painter("PainterDown");
 
     public Vector2 canvasUpScale = new Vector2(5, 20);
     public Vector2 canvasDownScale = new Vector2(5, 10);
@@ -42,6 +42,7 @@ public class GraphPainterBase
             canvasDownOffset += offset;
             canvasUpOffset.x = canvasDownOffset.x;
         }
+        //Debug.Log(Time.frameCount + " Drag " + painter.Name + " offset = " + offset.ToString());
         float v = 0;
         if (canvasUpOffset.x < 0)
             v = -canvasUpOffset.x / canvasUpScale.x;

@@ -35,6 +35,8 @@ public class PanelAnalyze : MonoBehaviour
     public class SettingBar
     {
         public GameObject settingPanelBar;
+        public UnityEngine.UI.Dropdown dropdownNumIndex;
+        public UnityEngine.UI.Dropdown dropdownCDT;
         public UnityEngine.UI.Dropdown dropdownStatisticType;
         public UnityEngine.UI.Dropdown dropdownStatisticRange;
         public UnityEngine.UI.InputField inputStatisticCustomRange;
@@ -70,6 +72,13 @@ public class PanelAnalyze : MonoBehaviour
     public CollectDataType cdt = CollectDataType.ePath0;
     public int curCycleIndex = 0;
     public int endShowDataItemIndex = -1;
+
+    public int selectKDataIndex = -1;
+    public int SelectKDataIndex
+    {
+        get { return selectKDataIndex; }
+        set { selectKDataIndex = value; }
+    }
 
     public int statisticType = 0;
     public int statisticRangeIndex = 0;
@@ -137,6 +146,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownNumIndex.onValueChanged.AddListener((v) => 
         {
             numIndex = settingKGraph.dropdownNumIndex.value;
+            settingBar.dropdownNumIndex.value = numIndex;
             OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
@@ -146,6 +156,7 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.dropdownCDT.onValueChanged.AddListener((v) =>
         {
             cdt = GraphDataManager.S_CDT_LIST[settingKGraph.dropdownCDT.value];
+            settingBar.dropdownCDT.value = settingKGraph.dropdownCDT.value;
             OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
@@ -244,15 +255,33 @@ public class PanelAnalyze : MonoBehaviour
 
     void InitSettingPanelBar()
     {
+        settingBar.dropdownNumIndex.AddOptions(KDataDictContainer.C_TAGS);
+        settingBar.dropdownNumIndex.value = numIndex;
+        settingBar.dropdownNumIndex.onValueChanged.AddListener((v) =>
+        {
+            numIndex = settingBar.dropdownNumIndex.value;
+            settingKGraph.dropdownNumIndex.value = numIndex;
+            OnBtnClickAutoAllign();
+            NotifyUIRepaint();
+        });
+
+        settingBar.dropdownCDT.AddOptions(GraphDataManager.S_CDT_TAG_LIST);
+        settingBar.dropdownCDT.value = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+        settingBar.dropdownCDT.onValueChanged.AddListener((v) =>
+        {
+            cdt = GraphDataManager.S_CDT_LIST[settingBar.dropdownCDT.value];
+            settingKGraph.dropdownCDT.value = settingBar.dropdownCDT.value;
+            OnBtnClickAutoAllign();
+            NotifyUIRepaint();
+        });
+
         settingBar.dropdownStatisticType.AddOptions(GraphDataContainerBarGraph.S_StatisticsType_STRS);
         settingBar.dropdownStatisticType.value = statisticType;
         settingBar.dropdownStatisticType.onValueChanged.AddListener((v) =>
         {
             statisticType = settingBar.dropdownStatisticType.value;
             GraphDataManager.BGDC.curStatisticsType = (GraphDataContainerBarGraph.StatisticsType)statisticType;
-            if (curGraphPainter == graphPainterBar)
-                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-            NotifyUIRepaint();
+            OnSelectedDataItemChanged();
         });
 
         settingBar.dropdownStatisticRange.AddOptions(GraphDataContainerBarGraph.S_StatisticsRange_STRS);
@@ -261,9 +290,7 @@ public class PanelAnalyze : MonoBehaviour
         {
             statisticRangeIndex = settingBar.dropdownStatisticRange.value;
             GraphDataManager.BGDC.curStatisticsRange = (GraphDataContainerBarGraph.StatisticsRange)statisticRangeIndex;
-            if (curGraphPainter == graphPainterBar)
-                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-            NotifyUIRepaint();
+            OnSelectedDataItemChanged();
         });
 
         settingBar.inputStatisticCustomRange.text = GraphDataManager.BGDC.customStatisticsRange.ToString();
@@ -281,34 +308,35 @@ public class PanelAnalyze : MonoBehaviour
             if (GraphDataManager.BGDC.customStatisticsRange < 5)
                 GraphDataManager.BGDC.customStatisticsRange = 5;
             settingBar.inputStatisticCustomRange.text = GraphDataManager.BGDC.customStatisticsRange.ToString();
-            if (curGraphPainter == graphPainterBar)
-                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-            NotifyUIRepaint();
+            OnSelectedDataItemChanged();
         });
 
         settingBar.buttonPrev.onClick.AddListener(() => 
         {
-            if (graghPainterKData.selectKDataIndex > 0)
+            if (SelectKDataIndex > 0)
             {
-                --graghPainterKData.selectKDataIndex;
-                GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(graghPainterKData.selectKDataIndex);
-                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-                NotifyUIRepaint();
+                --SelectKDataIndex;
+                OnSelectedDataItemChanged();
             }
         });
 
         settingBar.buttonNext.onClick.AddListener(() =>
         {
-            if (graghPainterKData.selectKDataIndex < DataManager.GetInst().GetAllDataItemCount() - 1)
+            if (SelectKDataIndex < DataManager.GetInst().GetAllDataItemCount() - 1)
             {
-                ++graghPainterKData.selectKDataIndex;
-                GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(graghPainterKData.selectKDataIndex);
-                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
-                NotifyUIRepaint();
+                ++SelectKDataIndex;
+                OnSelectedDataItemChanged();
             }
         });
 
         settingBar.settingPanelBar.SetActive(false);
+    }
+
+    public void OnSelectedDataItemChanged()
+    {
+        GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(SelectKDataIndex);
+        GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+        NotifyUIRepaint();
     }
 
     // Update is called once per frame
@@ -353,9 +381,13 @@ public class PanelAnalyze : MonoBehaviour
         {
             PosPathTag tag = o as PosPathTag;
             numIndex = tag.numIndex;
+            cdt = GraphDataManager.S_CDT_LIST[tag.cdtIndex];
             settingKGraph.dropdownCDT.value = tag.cdtIndex;
             settingKGraph.dropdownNumIndex.value = numIndex;
-            NotifyUIRepaint();
+            settingBar.dropdownCDT.value = tag.cdtIndex;
+            settingBar.dropdownNumIndex.value = numIndex;
+            OnBtnClickAutoAllign();
+            //NotifyUIRepaint();
         }
     }
 

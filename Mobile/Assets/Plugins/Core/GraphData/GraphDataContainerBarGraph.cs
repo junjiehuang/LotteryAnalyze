@@ -67,7 +67,7 @@ namespace LotteryAnalyze
             public List<DataUnit> dataLst = new List<DataUnit>();
         }
         public StatisticsType curStatisticsType = StatisticsType.eAppearCountFrom0To9;
-        public StatisticsRange curStatisticsRange = StatisticsRange.e100;
+        public StatisticsRange curStatisticsRange = StatisticsRange.e3;
         public int customStatisticsRange = 120;
         public List<DataUnitLst> allDatas = new List<DataUnitLst>();
         public int totalCollectCount = 0;

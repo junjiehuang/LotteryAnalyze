@@ -1048,7 +1048,10 @@ namespace LotteryAnalyze
 
         public static float G_KGRAPH_CANVAS_SCALE_X
         {
-            get => g_KGRAPH_CANVAS_SCALE_X;
+            get
+            {
+                return g_KGRAPH_CANVAS_SCALE_X;
+            }
             set
             {
                 g_KGRAPH_CANVAS_SCALE_X = value;
@@ -1057,10 +1060,13 @@ namespace LotteryAnalyze
         }
         public static float G_KGRAPH_CANVAS_SCALE_Y
         {
-            get => G_KGRAPH_CANVAS_SCALE_Y;
+            get
+            {
+                return g_KGRAPH_CANVAS_SCALE_Y;
+            }
             set
             {
-                G_KGRAPH_CANVAS_SCALE_Y = value;
+                g_KGRAPH_CANVAS_SCALE_Y = value;
                 HAS_MODIFY = true;
             }
         }

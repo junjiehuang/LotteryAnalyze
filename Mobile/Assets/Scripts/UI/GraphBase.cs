@@ -17,6 +17,9 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     GraphPainterBase graphPainter;
     bool hasDragged;
 
+    List<Text> freeTxts = new List<Text>();
+    List<Text> usingTxts = new List<Text>();
+
     public void SetPainter(Painter p, GraphPainterBase gp)
     {
         painter = p;
@@ -68,6 +71,13 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         {
             text.text = "";
         }
+
+        for(int i = 0; i < usingTxts.Count; ++i)
+        {
+            freeTxts.Add(usingTxts[i]);
+            usingTxts[i].text = "";
+        }
+        usingTxts.Clear();
     }
 
     public void AppendText(string txt)
@@ -76,6 +86,30 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         {
             text.text += txt;
         }
+    }
+
+    public void DrawText(string info, float x, float y, Color col)
+    {
+        y = y - meRT.rect.height;
+        Text txt = null;
+        if(freeTxts.Count > 0)
+        {
+            txt = freeTxts[0];
+            freeTxts.RemoveAt(0);
+        }
+        else
+        {
+            GameObject go = GameObject.Instantiate(text.gameObject);
+            go.transform.SetParent(text.transform.parent);
+            txt = go.GetComponent<Text>();
+        }
+        usingTxts.Add(txt);
+        txt.rectTransform.pivot = new Vector2(0, 1);
+        txt.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, meRT.rect.width);
+        txt.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, meRT.rect.height);
+        txt.rectTransform.anchoredPosition = new Vector2(x, y);
+        txt.color = col;
+        txt.text = info;
     }
 
     public void OnPointerClick(PointerEventData eventData)

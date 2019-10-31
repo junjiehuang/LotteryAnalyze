@@ -20,7 +20,7 @@ public class GraphPainterKData : GraphPainterBase
 
     int startItemIndex;
     bool autoAllign = false;
-    public int selectKDataIndex = -1;
+    //public int selectKDataIndex = -1;
     List<int> predict_results = new List<int>();
 
     float lastValue = 0;
@@ -56,11 +56,11 @@ public class GraphPainterKData : GraphPainterBase
             float x = upPainter.CanvasToStand(pos.x, true);
             if(x >= 0 && x <= DataMaxWidth)
             {
-                selectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
+                PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
             }
             else
             {
-                selectKDataIndex = -1;
+                PanelAnalyze.Instance.SelectKDataIndex = -1;
             }
         }
         else
@@ -68,19 +68,19 @@ public class GraphPainterKData : GraphPainterBase
             float x = downPainter.CanvasToStand(pos.x, true);
             if (x >= 0 && x <= DataMaxWidth)
             {
-                selectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
+                PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
             }
             else
             {
-                selectKDataIndex = -1;
+                PanelAnalyze.Instance.SelectKDataIndex = -1;
             }
         }
         PanelAnalyze.Instance.NotifyUIRepaint();
 
-        if (selectKDataIndex == -1)
+        if (PanelAnalyze.Instance.SelectKDataIndex == -1)
             GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().GetLatestItem();
         else
-            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(selectKDataIndex);
+            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(PanelAnalyze.Instance.SelectKDataIndex);
         GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
     }
 
@@ -119,6 +119,10 @@ public class GraphPainterKData : GraphPainterBase
                     if (startIndex < 0)
                         startIndex = 0;
                 }
+                if (PanelAnalyze.Instance.SelectKDataIndex >= 0)
+                    startIndex = PanelAnalyze.Instance.SelectKDataIndex;
+                if (startIndex >= kddc.dataLst.Count)
+                    startIndex = kddc.dataLst.Count - 1;
 
                 KDataMap kdDict = kddc.dataLst[startIndex];
                 KData data = kdDict.GetData(cdt, false);
@@ -132,6 +136,7 @@ public class GraphPainterKData : GraphPainterBase
 
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
     {
+        int selectKDataIndex = PanelAnalyze.Instance.SelectKDataIndex;
         DataMaxWidth = 0;
         float MaxLen = 99999;
         g.DrawLine(-MaxLen, 0, MaxLen, 0, Color.gray);
@@ -248,6 +253,7 @@ public class GraphPainterKData : GraphPainterBase
 
     public override void DrawDownPanel(Painter g, RectTransform rtCanvas)
     {
+        int selectKDataIndex = PanelAnalyze.Instance.SelectKDataIndex;
         float MaxLen = 99999;
         g.DrawLine(-MaxLen, 0, MaxLen, 0, Color.gray);
         g.DrawLine(0, -MaxLen, 0, MaxLen, Color.gray);
@@ -344,6 +350,8 @@ public class GraphPainterKData : GraphPainterBase
 
     void DrawHotNumsPredictResult(Painter g, RectTransform rtCanvas, KData data, float missRelHeight, KDataDictContainer kddc, CollectDataType cdt)
     {
+        int selectKDataIndex = PanelAnalyze.Instance.SelectKDataIndex;
+
         int numIndex = PanelAnalyze.Instance.numIndex;
 
         if (GlobalSetting.G_SHOW_KCURVE_HOTNUMS_RESULT && GraphDataManager.CurrentCircle == 1)

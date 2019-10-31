@@ -38,8 +38,6 @@ public class GraphPainterBar : GraphPainterBase
 
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
     {
-        //base.DrawUpPanel(g, rtCanvas);
-
         GraphDataContainerBarGraph bgdc = GraphDataManager.BGDC;
         if (bgdc.HasData() == false ||
             bgdc.totalCollectCount == 0)
@@ -49,7 +47,7 @@ public class GraphPainterBar : GraphPainterBase
         int numIndex = PanelAnalyze.Instance.numIndex;
 
         float upGap = 90;
-        float downGap = 10;
+        float downGap = 50;
         float startX = 0;
         float startY = downGap;
         float bottom = winH - upGap;
@@ -77,28 +75,28 @@ public class GraphPainterBar : GraphPainterBase
             Color color = Color.yellow;
             if (r > 0.5f)
             {
-                brand = "热";
+                brand = "热 - ";
                 color = Color.red;
             }
             else if (r < -0.5f)
             {
-                brand = "冷";
+                brand = "冷 - ";
                 color = Color.white;
             }
             else
             {
-                brand = "温";
+                brand = "温 - ";
             }
 
             float rcH = MaxRcH * rate;
             if (rcH < 1)
                 rcH = 1;
-            g.DrawRectInCanvasSpace(startX, startY, gap * 0.9f, MaxRcH, color);
-            g.DrawFillRectInCanvasSpace(startX, startY, gap * 0.9f, rcH, color);
-            
-            //g.DrawString(dul.dataLst[i].tag, tagFont, brandBrush, startX, bottom);
-            //g.DrawString(dul.dataLst[i].data.ToString(), tagFont, brandBrush, startX, startY - 30);
-            //g.DrawString(brand, tagFont, brandBrush, startX, startY - 60);
+            float rcW = gap * 0.9f;
+            g.DrawRectInCanvasSpace(startX, startY, rcW, MaxRcH, color);
+            g.DrawFillRectInCanvasSpace(startX, startY, rcW, rcH, color);
+            float txtX = startX + 10;
+            PanelAnalyze.Instance.graphUp.DrawText(dul.dataLst[i].tag, txtX, startY, Color.white);
+            PanelAnalyze.Instance.graphUp.DrawText(brand + dul.dataLst[i].data.ToString(), txtX, bottom, color);
             startX += gap;
         }
 
@@ -114,7 +112,6 @@ public class GraphPainterBar : GraphPainterBase
 
     public override void DrawDownPanel(Painter g, RectTransform rtCanvas)
     {
-        //base.DrawDownPanel(g, rtCanvas);
         GraphDataContainerBarGraph bgdc = GraphDataManager.BGDC;
 
         DataItem currentItem = DataManager.GetInst().GetLatestItem();
@@ -127,7 +124,7 @@ public class GraphPainterBar : GraphPainterBase
         float winW = rtCanvas.rect.width;
 
         float upGap = 90;
-        float downGap = 10;
+        float downGap = 50;
         float startX = 0;
         float startY = downGap;
         float bottom = winH - upGap;
@@ -151,42 +148,34 @@ public class GraphPainterBar : GraphPainterBase
                     r = (rate - 0.3f) / 0.3f;
 
                 string brand = null;
-                //Brush brandBrush = yellowBrush;
-                //Pen pen = yellowPen;
                 if (r > 0.5f)
                 {
-                    brand = "热";
-                    //brandBrush = redBrush;
-                    //pen = redPen;
+                    brand = "热 - ";
                     color = Color.red;
                 }
                 else if (r < -0.5f)
                 {
-                    brand = "冷";
-                    //brandBrush = whiteBrush;
-                    //pen = whitePen;
+                    brand = "冷 - ";
                     color = Color.white;
                 }
                 else
                 {
-                    brand = "温";
+                    brand = "温 - ";
                 }
 
                 float rcH = MaxRcH * rate;
                 if (rcH < 1)
                     rcH = 1;
-                //startY = bottom - rcH;
-                g.DrawRectInCanvasSpace(startX, startY, gap * 0.9f, MaxRcH, color);
-                g.DrawFillRectInCanvasSpace(startX, startY, gap * 0.9f, rcH, color);
-                //g.DrawRectangle(pen, startX, bottom - MaxRcH, gap * 0.9f, MaxRcH);
-                //g.FillRectangle(brandBrush, startX, startY, gap * 0.9f, rcH);
-                //g.DrawString(i.ToString(), tagFont, brandBrush, startX, bottom);
-                //g.DrawString(res[i].pathValue.ToString("f1") + "%", tagFont, brandBrush, startX, startY - 30);
+                float rcW = gap * 0.9f;
+                g.DrawRectInCanvasSpace(startX, startY, rcW, MaxRcH, color);
+                g.DrawFillRectInCanvasSpace(startX, startY, rcW, rcH, color);
+                float txtX = startX + 10;
+                PanelAnalyze.Instance.graphDown.DrawText(i.ToString(), txtX, startY, Color.white);
+                PanelAnalyze.Instance.graphDown.DrawText(brand + res[i].pathValue.ToString("f1") + "%", txtX, startY + MaxRcH, color);
                 startX += gap;
             }
             string info = "统计 " + currentItem.idTag + " 前" + bgdc.StatisticRangeCount + "期所有位012路的出现概率";
             PanelAnalyze.Instance.graphUp.AppendText(info);
-            //g.DrawString(, tagFont, whiteBrush, 5, 5);
 
         }
         else if (bgdc.curStatisticsType == GraphDataContainerBarGraph.StatisticsType.eAppearCountFrom0To9)
@@ -198,48 +187,39 @@ public class GraphPainterBar : GraphPainterBase
             for (int i = 0; i < nums.Count; ++i)
             {
                 int index = NumberCmpInfo.FindIndex(nums, (sbyte)(i), false);
-                //Brush brush = greenBrush;
                 float rate = nums[index].rate / 100.0f;
                 r = (rate - 0.1f) / 0.1f;
 
                 string brand = null;
-                //Brush brandBrush = yellowBrush;
-                //Pen pen = yellowPen;
                 Color color = Color.yellow;
                 if (r > 0.5f)
                 {
-                    brand = "热";
-                    //brandBrush = redBrush;
-                    //pen = redPen;
+                    brand = "热 - ";
                     color = Color.red;
                 }
                 else if (r < -0.5f)
                 {
-                    brand = "冷";
-                    //brandBrush = whiteBrush;
-                    //pen = whitePen;
+                    brand = "冷 - ";
                     color = Color.white;
                 }
                 else
                 {
-                    brand = "温";
+                    brand = "温 - ";
                 }
 
                 float rcH = MaxRcH * rate;
                 if (rcH < 1)
                     rcH = 1;
-                g.DrawRectInCanvasSpace(startX, startY, gap * 0.9f, MaxRcH, color);
-                g.DrawFillRectInCanvasSpace(startX, startY, gap * 0.9f, rcH, color);
-                //startY = bottom - rcH;
-                //g.DrawRectangle(pen, startX, bottom - MaxRcH, gap * 0.9f, MaxRcH);
-                //g.FillRectangle(brandBrush, startX, startY, gap * 0.9f, rcH);
-                //g.DrawString(nums[index].number.ToString(), tagFont, brandBrush, startX, bottom);
-                //g.DrawString(nums[index].rate.ToString("f1") + "%", tagFont, brandBrush, startX, startY - 30);
+                float rcW = gap * 0.9f;
+                g.DrawRectInCanvasSpace(startX, startY, rcW, MaxRcH, color);
+                g.DrawFillRectInCanvasSpace(startX, startY, rcW, rcH, color);
+                float txtX = startX + 10;
+                PanelAnalyze.Instance.graphDown.DrawText(nums[index].number.ToString(), txtX, startY, Color.white);
+                PanelAnalyze.Instance.graphDown.DrawText(brand + nums[index].rate.ToString("f1") + "%", txtX, startY + MaxRcH, color);
                 startX += gap;
             }
             string info = "统计 " + currentItem.idTag + " 前" + bgdc.StatisticRangeCount + "期所有位数字0-9的出现概率";
             PanelAnalyze.Instance.graphDown.AppendText(info);
-            //g.DrawString("统计 " + currentItem.idTag + " 前" + bgdc.StatisticRangeCount + "期所有位数字0-9的出现概率", tagFont, whiteBrush, 5, 5);
         }
     }
 }

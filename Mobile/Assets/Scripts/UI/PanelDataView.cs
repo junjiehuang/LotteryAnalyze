@@ -264,6 +264,12 @@ public class PanelDataView : MonoBehaviour
         GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
 
         LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
+        if(PanelAnalyze.Instance.SelectKDataIndex == -1 ||
+           PanelAnalyze.Instance.SelectKDataIndex >= dataMgr.GetAllDataItemCount())
+        {
+            PanelAnalyze.Instance.SelectKDataIndex = dataMgr.GetAllDataItemCount() - 1;
+            PanelAnalyze.Instance.OnSelectedDataItemChanged();
+        }
     }
 
     // 读取指定日期到当前最新的所有数据
