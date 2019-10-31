@@ -31,6 +31,17 @@ public class PanelAnalyze : MonoBehaviour
         public ListView listviewBestPosPath;
     }
 
+    [System.Serializable]
+    public class SettingBar
+    {
+        public GameObject settingPanelBar;
+        public UnityEngine.UI.Dropdown dropdownStatisticType;
+        public UnityEngine.UI.Dropdown dropdownStatisticRange;
+        public UnityEngine.UI.InputField inputStatisticCustomRange;
+        public UnityEngine.UI.Button buttonPrev;
+        public UnityEngine.UI.Button buttonNext;
+    }
+
     public class PosPathTag
     {
         public int numIndex;
@@ -49,6 +60,7 @@ public class PanelAnalyze : MonoBehaviour
     public GraphBase graphDown;
 
     public SettingKGraph settingKGraph;
+    public SettingBar settingBar;
 
     GraphPainterKData graghPainterKData = new GraphPainterKData();
     GraphPainterBar graphPainterBar = new GraphPainterBar();
@@ -58,6 +70,9 @@ public class PanelAnalyze : MonoBehaviour
     public CollectDataType cdt = CollectDataType.ePath0;
     public int curCycleIndex = 0;
     public int endShowDataItemIndex = -1;
+
+    public int statisticType = 0;
+    public int statisticRangeIndex = 0;
 
     [HideInInspector]
     public SplitPanel splitPanel;
@@ -83,6 +98,7 @@ public class PanelAnalyze : MonoBehaviour
         graghPainterKData.Start();
         graphPainterBar.Start();
         InitSettingPanelKData();
+        InitSettingPanelBar();
     }
 
     void InitSettingPanelKData()
@@ -221,6 +237,75 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.settingPanelKData.SetActive(false);
     }
 
+    void InitSettingPanelBar()
+    {
+        settingBar.dropdownStatisticType.AddOptions(GraphDataContainerBarGraph.S_StatisticsType_STRS);
+        settingBar.dropdownStatisticType.value = statisticType;
+        settingBar.dropdownStatisticType.onValueChanged.AddListener((v) =>
+        {
+            statisticType = settingBar.dropdownStatisticType.value;
+            GraphDataManager.BGDC.curStatisticsType = (GraphDataContainerBarGraph.StatisticsType)statisticType;
+            if (curGraphPainter == graphPainterBar)
+                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+            NotifyUIRepaint();
+        });
+
+        settingBar.dropdownStatisticRange.AddOptions(GraphDataContainerBarGraph.S_StatisticsRange_STRS);
+        settingBar.dropdownStatisticRange.value = statisticRangeIndex;
+        settingBar.dropdownStatisticRange.onValueChanged.AddListener((v) =>
+        {
+            statisticRangeIndex = settingBar.dropdownStatisticRange.value;
+            GraphDataManager.BGDC.curStatisticsRange = (GraphDataContainerBarGraph.StatisticsRange)statisticRangeIndex;
+            if (curGraphPainter == graphPainterBar)
+                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+            NotifyUIRepaint();
+        });
+
+        settingBar.inputStatisticCustomRange.text = GraphDataManager.BGDC.customStatisticsRange.ToString();
+        settingBar.inputStatisticCustomRange.onEndEdit.AddListener((str) =>
+        {
+            int range = 1;
+            if(int.TryParse(settingBar.inputStatisticCustomRange.text, out range))
+            {
+                GraphDataManager.BGDC.customStatisticsRange = range;
+            }
+            else
+            {
+                GraphDataManager.BGDC.customStatisticsRange = 5;
+            }
+            if (GraphDataManager.BGDC.customStatisticsRange < 5)
+                GraphDataManager.BGDC.customStatisticsRange = 5;
+            settingBar.inputStatisticCustomRange.text = GraphDataManager.BGDC.customStatisticsRange.ToString();
+            if (curGraphPainter == graphPainterBar)
+                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+            NotifyUIRepaint();
+        });
+
+        settingBar.buttonPrev.onClick.AddListener(() => 
+        {
+            if (graghPainterKData.selectKDataIndex > 0)
+            {
+                --graghPainterKData.selectKDataIndex;
+                GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(graghPainterKData.selectKDataIndex);
+                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                NotifyUIRepaint();
+            }
+        });
+
+        settingBar.buttonNext.onClick.AddListener(() =>
+        {
+            if (graghPainterKData.selectKDataIndex < DataManager.GetInst().GetAllDataItemCount() - 1)
+            {
+                ++graghPainterKData.selectKDataIndex;
+                GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(graghPainterKData.selectKDataIndex);
+                GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
+                NotifyUIRepaint();
+            }
+        });
+
+        settingBar.settingPanelBar.SetActive(false);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -296,7 +381,19 @@ public class PanelAnalyze : MonoBehaviour
         if(curGraphPainter is GraphPainterKData)
         {
             settingKGraph.settingPanelKData.SetActive(!settingKGraph.settingPanelKData.activeSelf);
+            settingBar.settingPanelBar.SetActive(false);
         }
+        else if(curGraphPainter is GraphPainterBar)
+        {
+            settingKGraph.settingPanelKData.SetActive(false);
+            settingBar.settingPanelBar.SetActive(!settingBar.settingPanelBar.activeSelf);
+        }
+    }
+
+    void HideSettingPanel()
+    {
+        settingBar.settingPanelBar.SetActive(false);
+        settingKGraph.settingPanelKData.SetActive(false);
     }
 
     public void OnBtnClickAutoCalcBestPosPath()
@@ -338,11 +435,13 @@ public class PanelAnalyze : MonoBehaviour
     {
         SetCurrentGraph(graghPainterKData);
         NotifyUIRepaint();
+        HideSettingPanel();
     }
     public void OnBtnClickBarGraph()
     {
         SetCurrentGraph(graphPainterBar);
         NotifyUIRepaint();
+        HideSettingPanel();
     }
 
     #endregion

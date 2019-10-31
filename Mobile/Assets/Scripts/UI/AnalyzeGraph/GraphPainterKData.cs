@@ -20,7 +20,7 @@ public class GraphPainterKData : GraphPainterBase
 
     int startItemIndex;
     bool autoAllign = false;
-    int selectKDataIndex = -1;
+    public int selectKDataIndex = -1;
     List<int> predict_results = new List<int>();
 
     float lastValue = 0;

@@ -48,9 +48,11 @@ public class GraphPainterBar : GraphPainterBase
         float winW = rtCanvas.rect.width;
         int numIndex = PanelAnalyze.Instance.numIndex;
 
+        float upGap = 90;
+        float downGap = 10;
         float startX = 0;
-        float startY = 30;
-        float bottom = winH - 30;
+        float startY = downGap;
+        float bottom = winH - upGap;
         float MaxRcH = bottom - startY;
 
         GraphDataContainerBarGraph.DataUnitLst dul = bgdc.allDatas[numIndex];
@@ -124,10 +126,12 @@ public class GraphPainterBar : GraphPainterBase
         float winH = rtCanvas.rect.height;
         float winW = rtCanvas.rect.width;
 
+        float upGap = 90;
+        float downGap = 10;
         float startX = 0;
-        float startY = 30;// winH * 0.1f;
-        float bottom = winH - 30;// winH * 0.9f;
-        float MaxRcH = bottom - startY;// winH * 0.8f;
+        float startY = downGap;
+        float bottom = winH - upGap;
+        float MaxRcH = bottom - startY;
         float r = 0;
 
         if (bgdc.curStatisticsType == GraphDataContainerBarGraph.StatisticsType.eAppearCountPath012)
