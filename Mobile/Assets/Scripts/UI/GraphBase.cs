@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using UnityEngine.EventSystems;
 
-public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragHandler, IPointerClickHandler
+public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
 {
     Text text;
 
@@ -16,6 +16,8 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     Painter painter;
     GraphPainterBase graphPainter;
     bool hasDragged;
+
+    Vector2 lastDragPos = Vector2.zero;
 
     List<Text> freeTxts = new List<Text>();
     List<Text> usingTxts = new List<Text>();
@@ -55,7 +57,9 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     {
         if(graphPainter != null)
         {
-            graphPainter.OnGraphDragging(eventData.delta, painter);
+            Vector2 offset = eventData.position - lastDragPos;
+            lastDragPos = eventData.position;
+            graphPainter.OnGraphDragging(offset, painter);
         }
         this.SetVerticesDirty();
         hasDragged = true;
@@ -117,5 +121,15 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         if(hasDragged == false)
             graphPainter.OnPointerClick(eventData.position, painter);
         hasDragged = false;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        lastDragPos = eventData.position;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        //throw new NotImplementedException();
     }
 }
