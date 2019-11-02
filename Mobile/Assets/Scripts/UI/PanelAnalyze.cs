@@ -83,6 +83,9 @@ public class PanelAnalyze : MonoBehaviour
     public int statisticType = 0;
     public int statisticRangeIndex = 0;
 
+    int notifyGraphsUpdateFrame = -1;
+    bool needUpdateScrollToSpecDataItem = true;
+
     [HideInInspector]
     public SplitPanel splitPanel;
 
@@ -347,13 +350,26 @@ public class PanelAnalyze : MonoBehaviour
 
     public void SetSliderValue(float v)
     {
+        needUpdateScrollToSpecDataItem = false;
         fastViewSlider.value = v;
     }
 
     public void NotifyUIRepaint()
     {
-        PanelAnalyze.Instance.graphUp.SetVerticesDirty();
-        PanelAnalyze.Instance.graphDown.SetVerticesDirty();
+        notifyGraphsUpdateFrame = Time.frameCount;
+    }
+
+    public void LateUpdate()
+    {
+        if(notifyGraphsUpdateFrame > 0)
+        {
+            if (Time.frameCount > notifyGraphsUpdateFrame)
+            {
+                PanelAnalyze.Instance.graphUp.SetVerticesDirty();
+                PanelAnalyze.Instance.graphDown.SetVerticesDirty();
+                notifyGraphsUpdateFrame = -1;
+            }
+        }
     }
 
     public void SetCurrentGraph(GraphPainterBase g)
@@ -387,7 +403,6 @@ public class PanelAnalyze : MonoBehaviour
             settingBar.dropdownCDT.value = tag.cdtIndex;
             settingBar.dropdownNumIndex.value = numIndex;
             OnBtnClickAutoAllign();
-            //NotifyUIRepaint();
         }
     }
 
@@ -410,7 +425,14 @@ public class PanelAnalyze : MonoBehaviour
 
     public void OnSliderFastViewChange(int v)
     {
-        curGraphPainter.OnScrollToData((int)fastViewSlider.value);
+        if (needUpdateScrollToSpecDataItem)
+        {
+            curGraphPainter.OnScrollToData((int)fastViewSlider.value);
+        }
+        else
+        {
+            needUpdateScrollToSpecDataItem = true;
+        }
     }
 
     public void OnBtnClickSetting()

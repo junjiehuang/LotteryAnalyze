@@ -57,8 +57,9 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     {
         if(graphPainter != null)
         {
-            Vector2 offset = eventData.position - lastDragPos;
-            lastDragPos = eventData.position;
+            //Vector2 offset = eventData.position - lastDragPos;
+            //lastDragPos = eventData.position;
+            Vector2 offset = eventData.delta;
             graphPainter.OnGraphDragging(offset, painter);
         }
         this.SetVerticesDirty();
@@ -125,7 +126,7 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        lastDragPos = eventData.position;
+        //lastDragPos = eventData.position;
     }
 
     public void OnPointerUp(PointerEventData eventData)

@@ -129,6 +129,7 @@ public class GraphPainterKData : GraphPainterBase
                 float y = data.KValue * canvasUpScale.y;
                 float canvasY = upPainter.StandToCanvas(y, false);
                 canvasUpOffset.y += PanelAnalyze.Instance.graphUp.rectTransform.rect.height * 0.5f - canvasY;
+                upPainter.BeforeDraw(canvasUpOffset);
                 PanelAnalyze.Instance.NotifyUIRepaint();
             }
         }
@@ -171,6 +172,25 @@ public class GraphPainterKData : GraphPainterBase
 
                 startItemIndex = startIndex;
 
+                if (selectKDataIndex >= 0)
+                {
+                    KDataMap kdDict = kddc.dataLst[selectKDataIndex];
+                    KData data = kdDict.GetData(cdt, false);
+
+                    float xL = g.StandToCanvas(selectKDataIndex * canvasUpScale.x, true);
+                    float xR = xL + canvasUpScale.x;
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
+
+                    string info = data.GetInfo() +
+                        "K值 = " + data.KValue.ToString() +
+                        ", 上 = " + data.UpValue.ToString() +
+                        ", 下 = " + data.DownValue.ToString() +
+                        ", 开 = " + data.StartValue.ToString() +
+                        ", 收 = " + data.EndValue.ToString();
+                    PanelAnalyze.Instance.graphUp.AppendText(info);
+                }
+
                 // 画K线图
                 for (int i = startIndex; i < endIndex; ++i)
                 {
@@ -179,22 +199,6 @@ public class GraphPainterKData : GraphPainterBase
                     if (data == null)
                         continue;
                     DrawKDataGraph(g, rtCanvas, data, missRelHeight, kddc, cdt);
-
-                    if (selectKDataIndex == i)
-                    {
-                        float xL = g.StandToCanvas(selectKDataIndex * canvasUpScale.x, true);
-                        float xR = xL + canvasUpScale.x;
-                        g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
-                        g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
-                        
-                        string info = data.GetInfo() + 
-                            "K值 = " + data.KValue.ToString() +
-                            ", 上 = " + data.UpValue.ToString() +
-                            ", 下 = " + data.DownValue.ToString() +
-                            ", 开 = " + data.StartValue.ToString() +
-                            ", 收 = " + data.EndValue.ToString();
-                        PanelAnalyze.Instance.graphUp.AppendText(info);
-                    }
                 }
                 
                 // 画预测标尺
