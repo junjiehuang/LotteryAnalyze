@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 
 #if WIN
+using System.Drawing;
 using System.Windows.Forms;
+#else
+using UnityEngine;
+#endif
 
 namespace LotteryAnalyze
 {
@@ -37,14 +40,19 @@ namespace LotteryAnalyze
         public int numIndex = -1;
         public CollectDataType cdt = CollectDataType.eNone;
         public AuxLineType lineType = AuxLineType.eNone;
+
+        public bool selected = false;
+
+#if WIN
         public List<Point> keyPoints = new List<Point>();
         public List<PointF> valuePoints = new List<PointF>();
+
         protected Pen solidPen = null;
         protected Pen dotPen = null;
-
         public virtual Pen GetSolidPen() { return null; }
         public virtual Pen GetDotPen() { return null; }
         public virtual void SetColor(Color col) { }
+
         public virtual bool HitTest(CollectDataType cdt, int numIndex, Point standMousePos, float rcHalfSize, ref int selKeyPtIndex)
         {
             selKeyPtIndex = -1;
@@ -67,6 +75,40 @@ namespace LotteryAnalyze
             }
             return false;
         }
+#else
+        public Color color = Color.white;
+        public List<Vector2> keyPoints = new List<Vector2>();
+        public List<Vector2> valuePoints = new List<Vector2>();
+
+
+        public static UnityEngine.Color SystemColor2UnityColor(System.Drawing.Color col)
+        {
+            UnityEngine.Color _col = new Color(col.R / 255.0f, col.G / 255.0f, col.B / 255.0f, col.A / 255.0f);
+            return _col;
+        }
+
+        public virtual bool HitTest(CollectDataType cdt, int numIndex, Vector2 standMousePos, float rcHalfSize, ref int selKeyPtIndex)
+        {
+            selKeyPtIndex = -1;
+            if (this.cdt == cdt && this.numIndex == numIndex)
+            {
+                for (int j = 0; j < this.keyPoints.Count; ++j)
+                {
+                    Vector2 pt = this.keyPoints[j];
+                    if (pt.x - rcHalfSize > standMousePos.x ||
+                        pt.x + rcHalfSize < standMousePos.x ||
+                        pt.y - rcHalfSize > standMousePos.y ||
+                        pt.y + rcHalfSize < standMousePos.y)
+                        continue;
+                    else
+                    {
+                        selKeyPtIndex = j;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+#endif
     }
 }
-#endif

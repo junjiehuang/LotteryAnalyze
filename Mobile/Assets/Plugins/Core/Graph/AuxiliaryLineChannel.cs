@@ -6,20 +6,19 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
     // 通道线
     public class AuxiliaryLineChannel : AuxiliaryLineBase
     {
+#if WIN
         public static Color sOriLineColor = Color.Pink;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
-        public AuxiliaryLineChannel()
-        {
-            lineType = AuxLineType.eChannelLine;
-        }
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -37,6 +36,11 @@ namespace LotteryAnalyze
             GetSolidPen().Color = col;
             GetDotPen().Color = col;
         }
+#endif
+        public AuxiliaryLineChannel()
+        {
+            lineType = AuxLineType.eChannelLine;
+            color = SystemColor2UnityColor(Color.Pink);
+        }
     }
 }
-#endif

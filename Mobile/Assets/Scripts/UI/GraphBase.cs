@@ -22,6 +22,9 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
     List<Text> freeTxts = new List<Text>();
     List<Text> usingTxts = new List<Text>();
 
+    public delegate Vector2 CallBackConvertPosToPainter(Vector2 pointerPos, GraphBase graph);
+    public CallBackConvertPosToPainter ConvertPosToPainter;
+
     public void SetPainter(Painter p, GraphPainterBase gp)
     {
         painter = p;
@@ -51,23 +54,6 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         {
             vh.AddUIVertexStream(painter.Verts, painter.Tris);
         }
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        if(graphPainter != null)
-        {
-            //Vector2 offset = eventData.position - lastDragPos;
-            //lastDragPos = eventData.position;
-            Vector2 offset = eventData.delta;
-            graphPainter.OnGraphDragging(offset, painter);
-        }
-        this.SetVerticesDirty();
-        hasDragged = true;
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
     }
 
     public void BeforeUpdate()
@@ -117,20 +103,47 @@ public class GraphBase : UnityEngine.UI.MaskableGraphic, IDragHandler, IEndDragH
         txt.text = info;
     }
 
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (graphPainter != null)
+        {
+            Vector2 offset = eventData.delta;
+            graphPainter.OnGraphDragging(offset, painter);
+        }
+        this.SetVerticesDirty();
+        hasDragged = true;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(hasDragged == false)
-            graphPainter.OnPointerClick(eventData.position, painter);
+        Vector2 pos = eventData.position;
+        if (ConvertPosToPainter != null)
+            pos = ConvertPosToPainter.Invoke(pos, this);
+
+        if (hasDragged == false)
+            graphPainter.OnPointerClick(pos, painter);
         hasDragged = false;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        //lastDragPos = eventData.position;
+        Vector2 pos = eventData.position;
+        if (ConvertPosToPainter != null)
+            pos = ConvertPosToPainter.Invoke(pos, this);
+
+        graphPainter.OnPointerDown(pos, painter);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        //throw new NotImplementedException();
+        Vector2 pos = eventData.position;
+        if (ConvertPosToPainter != null)
+            pos = ConvertPosToPainter.Invoke(pos, this);
+
+        graphPainter.OnPointerUp(pos, painter);
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
@@ -13,13 +14,12 @@ namespace LotteryAnalyze
     public class AuxiliaryLineArrow : AuxiliaryLineBase
     {
         public const int C_LINE_WIDTH = 1;
+
+#if WIN
         public static Color sOriLineColor = Color.GreenYellow;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
-        public AuxiliaryLineArrow()
-        {
-            lineType = AuxLineType.eArrowLine;
-        }
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -45,6 +45,13 @@ namespace LotteryAnalyze
             GetSolidPen().Color = col;
             GetDotPen().Color = col;
         }
+#endif
+
+        public AuxiliaryLineArrow()
+        {
+            lineType = AuxLineType.eArrowLine;
+            color = SystemColor2UnityColor(Color.GreenYellow);
+        }
+
     }
 }
-#endif

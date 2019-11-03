@@ -6,20 +6,19 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
     // 黄金分割线
     public class AuxiliaryLineGoldenSection : AuxiliaryLineBase
     {
+#if WIN
         public static Color sOriLineColor = Color.Yellow;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
-        public AuxiliaryLineGoldenSection()
-        {
-            lineType = AuxLineType.eGoldSegmentedLine;
-        }
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -37,7 +36,13 @@ namespace LotteryAnalyze
             GetSolidPen().Color = col;
             GetDotPen().Color = col;
         }
+#endif
+
+        public AuxiliaryLineGoldenSection()
+        {
+            lineType = AuxLineType.eGoldSegmentedLine;
+            color = SystemColor2UnityColor(Color.Yellow);
+        }
     }
 
 }
-#endif

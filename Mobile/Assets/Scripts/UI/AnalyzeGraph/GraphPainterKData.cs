@@ -5,6 +5,21 @@ using UnityEngine;
 
 public class GraphPainterKData : GraphPainterBase
 {
+
+    public static List<string> S_AUX_LINE_OPERATIONS = new List<string>()
+    {
+        "浏览",
+        "画水平线",
+        "画垂直线",
+        "画直线",
+        "画通道线",
+        "画黄金分割线",
+        "画圆",
+        "画箭头线",
+        "画矩形",
+    };
+    public AuxLineType auxLineOperation = AuxLineType.eNone;
+
     public bool enableMACD = true;
     public bool enableBollinBand = true;
     public bool enableKRuler = true;
@@ -29,6 +44,14 @@ public class GraphPainterKData : GraphPainterBase
 
     float DownGraphYOffset;
     float DataMaxWidth = 0;
+
+
+    List<AuxiliaryLineBase> upAuxLines = new List<AuxiliaryLineBase>();
+    List<AuxiliaryLineBase> downAuxLines = new List<AuxiliaryLineBase>();
+
+    Vector2 pointerDownPos = Vector2.zero;
+    Painter pointerDownPainter = null;
+
 
     public override void Start()
     {
@@ -84,20 +107,6 @@ public class GraphPainterKData : GraphPainterBase
         GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
     }
 
-    bool CheckAvgShow(AvgDataContainer adc)
-    {
-        switch(adc.cycle)
-        {
-            case 5:return enableAvg5;
-            case 10:return enableAvg10;
-            case 20:return enableAvg20;
-            case 30:return enableAvg30;
-            case 50:return enableAvg50;
-            case 100:return enableAvg100;
-        }
-        return false;
-    }
-
     public override void OnAutoAllign()
     {
         base.OnAutoAllign();
@@ -133,6 +142,26 @@ public class GraphPainterKData : GraphPainterBase
                 PanelAnalyze.Instance.NotifyUIRepaint();
             }
         }
+    }
+
+    public override void OnPointerDown(Vector2 pos, Painter g)
+    {
+        base.OnPointerUp(pos, g);
+        pointerDownPos = pos;
+        pointerDownPainter = g;
+    }
+    public override void OnPointerUp(Vector2 pos, Painter g)
+    {
+        bool notMove = pos.Equals(pointerDownPos) && (g == pointerDownPainter);
+        if(notMove)
+        {
+            CreateAuxLine(pos, g);
+        }
+        else
+        {
+            SelectAuxLine(pos, g);
+        }
+        PanelAnalyze.Instance.NotifyUIRepaint();
     }
 
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
@@ -242,6 +271,14 @@ public class GraphPainterKData : GraphPainterBase
                     }
                 }
 
+                if(enableAuxLine)
+                {
+                    for(int i = 0; i < upAuxLines.Count; ++i)
+                    {
+                        DrawAuxLine(upAuxLines[i], upPainter, rtCanvas);
+                    }
+                }
+
                 // 画预测结果
                 for (int i = startIndex; i < endIndex; ++i)
                 {
@@ -324,6 +361,193 @@ public class GraphPainterKData : GraphPainterBase
             //    DrawAuxLineGraph(g, winW, winH, mouseRelPos, numIndex, cdt, auxiliaryLineListDownPanel, mouseHitPtsDownPanel, false);
             //}
         }
+
+        if (enableAuxLine)
+        {
+            for (int i = 0; i < downAuxLines.Count; ++i)
+            {
+                DrawAuxLine(downAuxLines[i], downPainter, rtCanvas);
+            }
+        }
+    }
+   
+
+    public void DelSelAuxLine()
+    {
+        for(int i = upAuxLines.Count; i >= 0; --i)
+        {
+            if (upAuxLines[i].selected)
+                upAuxLines.RemoveAt(i);
+        }
+        for (int i = downAuxLines.Count; i >= 0; --i)
+        {
+            if (downAuxLines[i].selected)
+                downAuxLines.RemoveAt(i);
+        }
+    }
+
+    public void DelAllAuxLine()
+    {
+        upAuxLines.Clear();
+        downAuxLines.Clear();
+    }
+
+    void CreateAuxLine(Vector2 pos, Painter g)
+    {
+        GraphBase graph = null;
+        List<AuxiliaryLineBase> targetLineLst = null;
+        Vector2 gridScale = Vector2.one;
+        if (g == upPainter)
+        {
+            targetLineLst = upAuxLines;
+            graph = PanelAnalyze.Instance.graphUp;
+            gridScale = canvasUpScale;
+        }
+        else if (g == downPainter)
+        {
+            targetLineLst = downAuxLines;
+            graph = PanelAnalyze.Instance.graphDown;
+            gridScale = canvasDownScale;
+        }
+        switch (auxLineOperation)
+        {
+            case AuxLineType.eNone:
+                {
+
+                }
+                break;
+            case AuxLineType.eHorzLine:
+                {
+                    AuxiliaryLineHorz line = new AuxiliaryLineHorz();
+                    Vector2 canvasPos = pos;
+                    canvasPos.x = g.CanvasToStand(canvasPos.x, true);
+                    canvasPos.y = g.CanvasToStand(canvasPos.y, false);
+                    line.keyPoints.Add(canvasPos);
+                    Vector2 valuePos = canvasPos;
+                    valuePos.x /= gridScale.x;
+                    valuePos.y /= gridScale.y;
+                    line.valuePoints.Add(valuePos);
+                    targetLineLst.Add(line);
+                }
+                break;
+            case AuxLineType.eVertLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eSingleLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eChannelLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eGoldSegmentedLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eCircleLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eArrowLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eRectLine:
+                {
+
+                }
+                break;
+        }
+    }
+
+    void SelectAuxLine(Vector2 pos, Painter g)
+    {
+
+    }
+
+    void DrawAuxLine(AuxiliaryLineBase lineBase, Painter p, RectTransform rtCanvas)
+    {
+        float rcSize = 30;
+        float rcHalfSize = rcSize * 0.5f;
+        float w = rtCanvas.rect.width;
+        float h = rtCanvas.rect.height;
+
+        switch(lineBase.lineType)
+        {
+            case AuxLineType.eNone:
+                {
+
+                }
+                break;
+            case AuxLineType.eHorzLine:
+                {
+                    AuxiliaryLineHorz line = lineBase as AuxiliaryLineHorz;
+                    Vector2 pos = line.keyPoints[0];
+                    float x = p.StandToCanvas(pos.x, true);
+                    float y = p.StandToCanvas(pos.y, false);
+                    if(y >= 0 && y <= rtCanvas.rect.height)
+                        p.DrawLineInCanvasSpace(0, y, w, y, line.color);
+                    p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color);
+                }
+                break;
+            case AuxLineType.eVertLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eSingleLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eChannelLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eGoldSegmentedLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eCircleLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eArrowLine:
+                {
+
+                }
+                break;
+            case AuxLineType.eRectLine:
+                {
+
+                }
+                break;
+        }
+    }
+
+    bool CheckAvgShow(AvgDataContainer adc)
+    {
+        switch (adc.cycle)
+        {
+            case 5: return enableAvg5;
+            case 10: return enableAvg10;
+            case 20: return enableAvg20;
+            case 30: return enableAvg30;
+            case 50: return enableAvg50;
+            case 100: return enableAvg100;
+        }
+        return false;
     }
 
     void DrawKDataGraph(Painter g, RectTransform rtCanvas, KData data, float missRelHeight, KDataDictContainer kddc, CollectDataType cdt)

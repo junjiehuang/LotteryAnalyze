@@ -42,6 +42,10 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Button buttonRemovePosPath;
         public UnityEngine.UI.Button buttonRemoveAllPosPath;
 
+        public UnityEngine.UI.Dropdown dropdownOperationType;
+        public UnityEngine.UI.Button buttonDelSelAuxLine;
+        public UnityEngine.UI.Button buttonDelAllAuxLine;
+
         public ListView listviewBestPosPath;
     }
 
@@ -135,6 +139,9 @@ public class PanelAnalyze : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        graphDown.ConvertPosToPainter += ConvertPosToPainter;
+        graphUp.ConvertPosToPainter += ConvertPosToPainter;
+
         graghPainterKData.Start();
         graphPainterBar.Start();
         graphPainterMiss.Start();
@@ -333,6 +340,25 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.buttonRemoveAllPosPath.onClick.AddListener(() =>
         {
             settingKGraph.listviewBestPosPath.ClearAllItems();
+        });
+
+        settingKGraph.dropdownOperationType.AddOptions(GraphPainterKData.S_AUX_LINE_OPERATIONS);
+        settingKGraph.dropdownOperationType.value = (int)graghPainterKData.auxLineOperation;
+        settingKGraph.dropdownOperationType.onValueChanged.AddListener((i) =>
+        {
+            graghPainterKData.auxLineOperation = (AuxLineType)settingKGraph.dropdownOperationType.value;
+        });
+
+        settingKGraph.buttonDelSelAuxLine.onClick.AddListener(() =>
+        {
+            graghPainterKData.DelSelAuxLine();
+            NotifyUIRepaint();
+        });
+
+        settingKGraph.buttonDelAllAuxLine.onClick.AddListener(() =>
+        {
+            graghPainterKData.DelAllAuxLine();
+            NotifyUIRepaint();
         });
 
         settingKGraph.settingPanelKData.SetActive(false);
@@ -627,6 +653,20 @@ public class PanelAnalyze : MonoBehaviour
     {
         SetCurrentGraph(graphPainterMiss);
         NotifyUIRepaint();
+    }
+
+    #endregion
+
+    #region util
+
+    public Vector2 ConvertPosToPainter(Vector2 pointerPos, GraphBase graph)
+    {
+        Vector2 pos = pointerPos;
+        if(graph == this.graphUp)
+        {
+            pos.y = pos.y - splitPanel.rtSplitter.rect.height - graphDown.rectTransform.rect.height;
+        }
+        return pos;
     }
 
     #endregion

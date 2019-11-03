@@ -6,20 +6,25 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
     // 水平线
     public class AuxiliaryLineHorz : AuxiliaryLineBase
     {
-        public static Color sOriLineColor = Color.Aqua;
-        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
-        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
         public AuxiliaryLineHorz()
         {
             lineType = AuxLineType.eHorzLine;
+            color = SystemColor2UnityColor(Color.Aqua);
         }
+
+#if WIN
+        public static Color sOriLineColor = Color.Aqua;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -37,6 +42,6 @@ namespace LotteryAnalyze
             GetSolidPen().Color = col;
             GetDotPen().Color = col;
         }
+#endif
     }
 }
-#endif

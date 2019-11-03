@@ -6,6 +6,7 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
@@ -13,13 +14,11 @@ namespace LotteryAnalyze
     public class AuxiliaryLineCircle : AuxiliaryLineBase
     {
         public float x, y, size;
+#if WIN
         public static Color sOriLineColor = Color.White;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
-        public AuxiliaryLineCircle()
-        {
-            lineType = AuxLineType.eCircleLine;
-        }
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -46,7 +45,23 @@ namespace LotteryAnalyze
             y = keyPoints[0].Y + radius;
             size = 2 * radius;
         }
+#else
+        public void CalcRect()
+        {
+            float dy = keyPoints[1].y - keyPoints[0].y;
+            float dx = keyPoints[1].x - keyPoints[0].x;
+            float radius = (float)Math.Sqrt(dy * dy + dx * dx);
+            x = keyPoints[0].x - radius;
+            y = keyPoints[0].y + radius;
+            size = 2 * radius;
+        }
+#endif
 
+
+        public AuxiliaryLineCircle()
+        {
+            lineType = AuxLineType.eCircleLine;
+            color = SystemColor2UnityColor(Color.White);
+        }
     }
 }
-#endif

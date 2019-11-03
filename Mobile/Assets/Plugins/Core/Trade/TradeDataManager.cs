@@ -856,6 +856,9 @@ namespace LotteryAnalyze
         public List<NumCDT> CalcFavorits(DataItem item)
         {
             List<NumCDT> results = new List<NumCDT>();
+            if (DataManager.GetInst().GetAllDataItemCount() == 0)
+                return results;
+
             if(item == null)
                 item = DataManager.GetInst().GetLatestItem();
             for (int numID = 0; numID < 5; ++numID)

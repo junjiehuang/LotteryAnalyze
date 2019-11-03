@@ -6,6 +6,9 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#else
+using UnityEngine;
+#endif
 
 namespace LotteryAnalyze
 {
@@ -13,13 +16,17 @@ namespace LotteryAnalyze
     public class AuxiliaryLineRect : AuxiliaryLineBase
     {
         public const int C_LINE_WIDTH = 5;
-        public static Color sOriLineColor = Color.GreenYellow;
-        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
-        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
         public AuxiliaryLineRect()
         {
             lineType = AuxLineType.eRectLine;
+            color = SystemColor2UnityColor(System.Drawing.Color.GreenYellow);
         }
+
+#if WIN
+        public static Color sOriLineColor = Color.GreenYellow;
+        public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, C_LINE_WIDTH);
+        public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, C_LINE_WIDTH);
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -87,8 +94,49 @@ namespace LotteryAnalyze
             }
             return false;
         }
+#else
+        public override bool HitTest(CollectDataType cdt, int numIndex, Vector2 standMousePos, float rcHalfSize, ref int selKeyPtIndex)
+        {
+            selKeyPtIndex = -1;
+            if (this.cdt == cdt && this.numIndex == numIndex)
+            {
+                float minx = this.keyPoints[0].x;
+                float maxx = this.keyPoints[0].x;
+                float miny = this.keyPoints[0].y;
+                float maxy = this.keyPoints[0].y;
 
-    }
+                for (int j = 0; j < this.keyPoints.Count; ++j)
+                {
+                    Vector2 pt = this.keyPoints[j];
+                    if (pt.x < minx)
+                        minx = pt.x;
+                    if (pt.x > maxx)
+                        maxx = pt.x;
+                    if (pt.y < miny)
+                        miny = pt.y;
+                    if (pt.y > maxy)
+                        maxy = pt.y;
 
-}
+                    if (pt.x - rcHalfSize > standMousePos.x ||
+                        pt.x + rcHalfSize < standMousePos.x ||
+                        pt.y - rcHalfSize > standMousePos.y ||
+                        pt.y + rcHalfSize < standMousePos.y)
+                        continue;
+                    else
+                    {
+                        selKeyPtIndex = j;
+                        return true;
+                    }
+                }
+
+                if (standMousePos.x > minx && standMousePos.x < maxx &&
+                    standMousePos.y > miny && standMousePos.y < maxy)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 #endif
+    }
+}

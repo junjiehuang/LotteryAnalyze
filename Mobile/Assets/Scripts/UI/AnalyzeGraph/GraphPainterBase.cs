@@ -75,6 +75,16 @@ public class GraphPainterBase
 
     }
 
+    public virtual void OnPointerDown(Vector2 pos, Painter g)
+    {
+
+    }
+
+    public virtual void OnPointerUp(Vector2 pos, Painter g)
+    {
+
+    }
+
     public virtual void OnAutoAllign()
     {
 

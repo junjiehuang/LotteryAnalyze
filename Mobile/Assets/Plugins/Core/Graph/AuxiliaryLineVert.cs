@@ -6,20 +6,25 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
     // 垂直线
     public class AuxiliaryLineVert : AuxiliaryLineBase
     {
+        public AuxiliaryLineVert()
+        {
+            lineType = AuxLineType.eVertLine;
+            color = SystemColor2UnityColor(Color.Azure);
+        }
+
+#if WIN
         public static Color sOriLineColor = Color.Azure;
         public static Pen sOriSolidPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Solid, sOriLineColor, 2);
         public static Pen sOriDotPen = GraphUtil.GetLinePen(System.Drawing.Drawing2D.DashStyle.Dot, sOriLineColor, 1);
 
-        public AuxiliaryLineVert()
-        {
-            lineType = AuxLineType.eVertLine;
-        }
+
         public override Pen GetSolidPen()
         {
             if (solidPen == null)
@@ -37,7 +42,8 @@ namespace LotteryAnalyze
             GetSolidPen().Color = col;
             GetDotPen().Color = col;
         }
+        
+#endif
     }
 
 }
-#endif
