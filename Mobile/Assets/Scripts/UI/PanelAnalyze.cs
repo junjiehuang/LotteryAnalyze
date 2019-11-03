@@ -14,6 +14,8 @@ public class PanelAnalyze : MonoBehaviour
 
         public UnityEngine.UI.Dropdown dropdownNumIndex;
         public UnityEngine.UI.Dropdown dropdownCDT;
+        public UnityEngine.UI.Button buttonPrev;
+        public UnityEngine.UI.Button buttonNext;
     }
 
     [System.Serializable]
@@ -164,6 +166,24 @@ public class PanelAnalyze : MonoBehaviour
             cdt = GraphDataManager.S_CDT_LIST[settingCommon.dropdownCDT.value];
             OnBtnClickAutoAllign();
             NotifyUIRepaint();
+        });
+
+        settingCommon.buttonPrev.onClick.AddListener(() =>
+        {
+            if (SelectKDataIndex > 0)
+            {
+                --SelectKDataIndex;
+                OnSelectedDataItemChanged();
+            }
+        });
+
+        settingCommon.buttonNext.onClick.AddListener(() =>
+        {
+            if (SelectKDataIndex < DataManager.GetInst().GetAllDataItemCount() - 1)
+            {
+                ++SelectKDataIndex;
+                OnSelectedDataItemChanged();
+            }
         });
 
         settingCommon.settingPanelCommon.SetActive(true);

@@ -172,7 +172,7 @@ public class GraphPainterKData : GraphPainterBase
 
                 startItemIndex = startIndex;
 
-                if (selectKDataIndex >= 0)
+                if (selectKDataIndex >= 0 && selectKDataIndex < kddc.dataLst.Count)
                 {
                     KDataMap kdDict = kddc.dataLst[selectKDataIndex];
                     KData data = kdDict.GetData(cdt, false);
