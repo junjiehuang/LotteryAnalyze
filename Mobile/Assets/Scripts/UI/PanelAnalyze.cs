@@ -8,13 +8,21 @@ using UnityEngine;
 public class PanelAnalyze : MonoBehaviour
 {
     [System.Serializable]
+    public class SettingCommon
+    {
+        public GameObject settingPanelCommon;
+
+        public UnityEngine.UI.Dropdown dropdownNumIndex;
+        public UnityEngine.UI.Dropdown dropdownCDT;
+    }
+
+    [System.Serializable]
     public class SettingKGraph
     {
         public GameObject settingPanelKData;
+
         public UnityEngine.UI.InputField inputFieldScaleX;
         public UnityEngine.UI.InputField inputFieldScaleY;
-        public UnityEngine.UI.Dropdown dropdownNumIndex;
-        public UnityEngine.UI.Dropdown dropdownCDT;
         public UnityEngine.UI.Dropdown dropdownCycle;
         public UnityEngine.UI.Toggle toggleAuxline;
         public UnityEngine.UI.Toggle toggleKRuler;
@@ -27,6 +35,10 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Toggle toggleAvg30;
         public UnityEngine.UI.Toggle toggleAvg50;
         public UnityEngine.UI.Toggle toggleAvg100;
+        public UnityEngine.UI.Button buttonAutoCalcBestPosPath;
+        public UnityEngine.UI.Button buttonAddPosPath;
+        public UnityEngine.UI.Button buttonRemovePosPath;
+        public UnityEngine.UI.Button buttonRemoveAllPosPath;
 
         public ListView listviewBestPosPath;
     }
@@ -35,13 +47,25 @@ public class PanelAnalyze : MonoBehaviour
     public class SettingBar
     {
         public GameObject settingPanelBar;
-        public UnityEngine.UI.Dropdown dropdownNumIndex;
-        public UnityEngine.UI.Dropdown dropdownCDT;
+
         public UnityEngine.UI.Dropdown dropdownStatisticType;
         public UnityEngine.UI.Dropdown dropdownStatisticRange;
         public UnityEngine.UI.InputField inputStatisticCustomRange;
         public UnityEngine.UI.Button buttonPrev;
         public UnityEngine.UI.Button buttonNext;
+    }
+
+    [System.Serializable]
+    public class SettingMiss
+    {
+        public GameObject settingPanelMiss;
+
+        public UnityEngine.UI.InputField inputFieldScaleX;
+        public UnityEngine.UI.InputField inputFieldScaleY;
+        public UnityEngine.UI.Toggle toggleShowSingleLine;
+        public UnityEngine.UI.Dropdown dropdownMissType;
+        public UnityEngine.UI.Dropdown dropdownAppearenceType;
+        public ListView cdtShowStateView;
     }
 
     public class PosPathTag
@@ -61,11 +85,14 @@ public class PanelAnalyze : MonoBehaviour
     public GraphBase graphUp;
     public GraphBase graphDown;
 
+    public SettingCommon settingCommon;
     public SettingKGraph settingKGraph;
     public SettingBar settingBar;
+    public SettingMiss settingMiss;
 
     GraphPainterKData graghPainterKData = new GraphPainterKData();
     GraphPainterBar graphPainterBar = new GraphPainterBar();
+    GraphPainterMiss graphPainterMiss = new GraphPainterMiss();
     public GraphPainterBase curGraphPainter;
 
     public int numIndex = 0;
@@ -106,11 +133,40 @@ public class PanelAnalyze : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetCurrentGraph(graghPainterKData);
         graghPainterKData.Start();
         graphPainterBar.Start();
+        graphPainterMiss.Start();
+        InitSettingPanelCommon();
         InitSettingPanelKData();
         InitSettingPanelBar();
+        InitSettingPanelMiss();
+
+        SetCurrentGraph(graghPainterKData);
+    }
+
+    void InitSettingPanelCommon()
+    {
+        settingCommon.settingPanelCommon.transform.parent.gameObject.SetActive(false);
+
+        settingCommon.dropdownNumIndex.AddOptions(KDataDictContainer.C_TAGS);
+        settingCommon.dropdownNumIndex.value = numIndex;
+        settingCommon.dropdownNumIndex.onValueChanged.AddListener((v) =>
+        {
+            numIndex = settingCommon.dropdownNumIndex.value;
+            OnBtnClickAutoAllign();
+            NotifyUIRepaint();
+        });
+
+        settingCommon.dropdownCDT.AddOptions(GraphDataManager.S_CDT_TAG_LIST);
+        settingCommon.dropdownCDT.value = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
+        settingCommon.dropdownCDT.onValueChanged.AddListener((v) =>
+        {
+            cdt = GraphDataManager.S_CDT_LIST[settingCommon.dropdownCDT.value];
+            OnBtnClickAutoAllign();
+            NotifyUIRepaint();
+        });
+
+        settingCommon.settingPanelCommon.SetActive(true);
     }
 
     void InitSettingPanelKData()
@@ -141,26 +197,6 @@ public class PanelAnalyze : MonoBehaviour
                 settingKGraph.inputFieldScaleY.text = graghPainterKData.canvasUpScale.y.ToString();
             }
             GlobalSetting.G_KGRAPH_CANVAS_SCALE_Y = graghPainterKData.canvasUpScale.y;
-            NotifyUIRepaint();
-        });
-
-        settingKGraph.dropdownNumIndex.AddOptions(KDataDictContainer.C_TAGS);
-        settingKGraph.dropdownNumIndex.value = numIndex;
-        settingKGraph.dropdownNumIndex.onValueChanged.AddListener((v) => 
-        {
-            numIndex = settingKGraph.dropdownNumIndex.value;
-            settingBar.dropdownNumIndex.value = numIndex;
-            OnBtnClickAutoAllign();
-            NotifyUIRepaint();
-        });
-
-        settingKGraph.dropdownCDT.AddOptions(GraphDataManager.S_CDT_TAG_LIST);
-        settingKGraph.dropdownCDT.value = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-        settingKGraph.dropdownCDT.onValueChanged.AddListener((v) =>
-        {
-            cdt = GraphDataManager.S_CDT_LIST[settingKGraph.dropdownCDT.value];
-            settingBar.dropdownCDT.value = settingKGraph.dropdownCDT.value;
-            OnBtnClickAutoAllign();
             NotifyUIRepaint();
         });
 
@@ -253,31 +289,37 @@ public class PanelAnalyze : MonoBehaviour
 
         settingKGraph.listviewBestPosPath.onClickItem += OnClickItemBestPosPath;
 
+        settingKGraph.buttonAutoCalcBestPosPath.onClick.AddListener(() =>
+        {
+            settingKGraph.listviewBestPosPath.ClearAllItems();
+            List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits(null);
+            for (int i = 0; i < results.Count; ++i)
+            {
+                AddPosPath(results[i].numID, results[i].cdtID);
+            }
+        });
+
+        settingKGraph.buttonAddPosPath.onClick.AddListener(() =>
+        {
+            int cdtIndex = settingCommon.dropdownCDT.value;
+            AddPosPath(numIndex, cdtIndex);
+        });
+
+        settingKGraph.buttonRemovePosPath.onClick.AddListener(() =>
+        {
+            settingKGraph.listviewBestPosPath.RemoveItem(settingKGraph.listviewBestPosPath.SelIndex);
+        });
+
+        settingKGraph.buttonRemoveAllPosPath.onClick.AddListener(() =>
+        {
+            settingKGraph.listviewBestPosPath.ClearAllItems();
+        });
+
         settingKGraph.settingPanelKData.SetActive(false);
     }
 
     void InitSettingPanelBar()
     {
-        settingBar.dropdownNumIndex.AddOptions(KDataDictContainer.C_TAGS);
-        settingBar.dropdownNumIndex.value = numIndex;
-        settingBar.dropdownNumIndex.onValueChanged.AddListener((v) =>
-        {
-            numIndex = settingBar.dropdownNumIndex.value;
-            settingKGraph.dropdownNumIndex.value = numIndex;
-            OnBtnClickAutoAllign();
-            NotifyUIRepaint();
-        });
-
-        settingBar.dropdownCDT.AddOptions(GraphDataManager.S_CDT_TAG_LIST);
-        settingBar.dropdownCDT.value = GraphDataManager.S_CDT_LIST.IndexOf(cdt);
-        settingBar.dropdownCDT.onValueChanged.AddListener((v) =>
-        {
-            cdt = GraphDataManager.S_CDT_LIST[settingBar.dropdownCDT.value];
-            settingKGraph.dropdownCDT.value = settingBar.dropdownCDT.value;
-            OnBtnClickAutoAllign();
-            NotifyUIRepaint();
-        });
-
         settingBar.dropdownStatisticType.AddOptions(GraphDataContainerBarGraph.S_StatisticsType_STRS);
         settingBar.dropdownStatisticType.value = statisticType;
         settingBar.dropdownStatisticType.onValueChanged.AddListener((v) =>
@@ -335,6 +377,78 @@ public class PanelAnalyze : MonoBehaviour
         settingBar.settingPanelBar.SetActive(false);
     }
 
+    void InitSettingPanelMiss()
+    {
+        graphPainterMiss.canvasUpScale.x = graphPainterMiss.canvasDownScale.x = GlobalSetting.G_MISSGRAPH_CANVAS_SCALE_X;
+        settingMiss.inputFieldScaleX.text = graphPainterMiss.canvasUpScale.x.ToString();
+        settingMiss.inputFieldScaleX.onValueChanged.AddListener((str) =>
+        {
+            float.TryParse(settingMiss.inputFieldScaleX.text, out graphPainterMiss.canvasUpScale.x);
+            if (graphPainterMiss.canvasUpScale.x == 0)
+            {
+                graphPainterMiss.canvasUpScale.x = 1;
+                settingMiss.inputFieldScaleX.text = graphPainterMiss.canvasUpScale.x.ToString();
+            }
+            graphPainterMiss.canvasDownScale.x = graphPainterMiss.canvasUpScale.x;
+            GlobalSetting.G_MISSGRAPH_CANVAS_SCALE_X = graphPainterMiss.canvasDownScale.x;
+            NotifyUIRepaint();
+        });
+
+        graphPainterMiss.canvasUpScale.y = GlobalSetting.G_KGRAPH_CANVAS_SCALE_Y;
+        settingMiss.inputFieldScaleY.text = graphPainterMiss.canvasUpScale.y.ToString();
+        settingMiss.inputFieldScaleY.onValueChanged.AddListener((str) =>
+        {
+            float.TryParse(settingMiss.inputFieldScaleY.text, out graphPainterMiss.canvasUpScale.y);
+            if (graphPainterMiss.canvasUpScale.y == 0)
+            {
+                graphPainterMiss.canvasUpScale.y = 1;
+                settingMiss.inputFieldScaleY.text = graphPainterMiss.canvasUpScale.y.ToString();
+            }
+            GlobalSetting.G_KGRAPH_CANVAS_SCALE_Y = graphPainterMiss.canvasUpScale.y;
+            NotifyUIRepaint();
+        });
+
+        settingMiss.toggleShowSingleLine.isOn = graphPainterMiss.onlyShowSelectCDTLine;
+        settingMiss.toggleShowSingleLine.onValueChanged.AddListener((b) =>
+        {
+            graphPainterMiss.onlyShowSelectCDTLine = settingMiss.toggleShowSingleLine.isOn;
+            NotifyUIRepaint();
+        });
+
+        settingMiss.dropdownMissType.AddOptions(GraphDataManager.S_MissCountTypeStrs);
+        settingMiss.dropdownMissType.value = (int)graphPainterMiss.missCountType;
+        settingMiss.dropdownMissType.onValueChanged.AddListener((i) => 
+        {
+            graphPainterMiss.missCountType = (MissCountType)(settingMiss.dropdownMissType.value);
+            NotifyUIRepaint();
+        });
+
+        settingMiss.dropdownAppearenceType.AddOptions(GraphDataManager.S_AppearenceTypeStrs);
+        settingMiss.dropdownAppearenceType.value = (int)graphPainterMiss.appearenceType;
+        settingMiss.dropdownAppearenceType.onValueChanged.AddListener((i) =>
+        {
+            graphPainterMiss.appearenceType = (AppearenceType)(settingMiss.dropdownAppearenceType.value);
+            NotifyUIRepaint();
+        });
+
+        for (int i = 0; i < GraphDataManager.S_CDT_LIST.Count; ++i)
+        {
+            CollectDataType cdt = GraphDataManager.S_CDT_LIST[i];
+            graphPainterMiss.cdtLineShowStates.Add(cdt, false);
+            CdtShowStateItem item = settingMiss.cdtShowStateView.AddItem("", cdt) as CdtShowStateItem;
+            item.label.text = GraphDataManager.S_CDT_TAG_LIST[i];
+            item.toggleShow.isOn = false;
+            item.imgColor.color = GraphDataManager.GetColorByCDT(cdt);
+            item.toggleShow.onValueChanged.AddListener((b) =>
+            {
+                graphPainterMiss.cdtLineShowStates[cdt] = item.toggleShow.isOn;
+                NotifyUIRepaint();
+            });
+        }
+
+        settingMiss.settingPanelMiss.SetActive(false);
+    }
+
     public void OnSelectedDataItemChanged()
     {
         GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(SelectKDataIndex);
@@ -375,10 +489,29 @@ public class PanelAnalyze : MonoBehaviour
     public void SetCurrentGraph(GraphPainterBase g)
     {
         curGraphPainter = g;
-        if(curGraphPainter is GraphPainterKData)
+        fastViewSlider.minValue = 0;
+        if (curGraphPainter is GraphPainterKData)
         {
-            fastViewSlider.minValue = 0;
             fastViewSlider.maxValue = GraphDataManager.Instance.DataLength(GraphType.eKCurveGraph);
+            settingKGraph.settingPanelKData.SetActive(true);
+            settingBar.settingPanelBar.SetActive(false);
+            settingMiss.settingPanelMiss.SetActive(false);
+        }
+        else if(curGraphPainter is GraphPainterBar)
+        {
+            int max = DataManager.GetInst().GetAllDataItemCount();
+            fastViewSlider.maxValue = max;
+            settingKGraph.settingPanelKData.SetActive(false);
+            settingBar.settingPanelBar.SetActive(true);
+            settingMiss.settingPanelMiss.SetActive(false);
+        }
+        else if(curGraphPainter is GraphPainterMiss)
+        {
+            int max = DataManager.GetInst().GetAllDataItemCount();
+            fastViewSlider.maxValue = max;
+            settingKGraph.settingPanelKData.SetActive(false);
+            settingBar.settingPanelBar.SetActive(false);
+            settingMiss.settingPanelMiss.SetActive(true);
         }
         fastViewSlider.value = Mathf.Clamp(fastViewSlider.value, fastViewSlider.minValue, fastViewSlider.maxValue);
     }
@@ -398,10 +531,8 @@ public class PanelAnalyze : MonoBehaviour
             PosPathTag tag = o as PosPathTag;
             numIndex = tag.numIndex;
             cdt = GraphDataManager.S_CDT_LIST[tag.cdtIndex];
-            settingKGraph.dropdownCDT.value = tag.cdtIndex;
-            settingKGraph.dropdownNumIndex.value = numIndex;
-            settingBar.dropdownCDT.value = tag.cdtIndex;
-            settingBar.dropdownNumIndex.value = numIndex;
+            settingCommon.dropdownCDT.value = tag.cdtIndex;
+            settingCommon.dropdownNumIndex.value = numIndex;
             OnBtnClickAutoAllign();
         }
     }
@@ -425,44 +556,30 @@ public class PanelAnalyze : MonoBehaviour
 
     public void OnSliderFastViewChange(int v)
     {
+        int index = (int)fastViewSlider.value;
         if (needUpdateScrollToSpecDataItem)
         {
-            curGraphPainter.OnScrollToData((int)fastViewSlider.value);
+            graghPainterKData.OnScrollToData(index);
+            graphPainterBar.OnScrollToData(index);
+            graphPainterMiss.OnScrollToData(index);
+            curGraphPainter.OnAutoAllign();
         }
         else
         {
+            if (graghPainterKData != curGraphPainter)
+                graghPainterKData.OnScrollToData(index);
+            if (graphPainterBar != curGraphPainter)
+                graphPainterBar.OnScrollToData(index);
+            if (graphPainterMiss != curGraphPainter)
+                graphPainterMiss.OnScrollToData(index);
             needUpdateScrollToSpecDataItem = true;
         }
     }
 
     public void OnBtnClickSetting()
     {
-        if(curGraphPainter is GraphPainterKData)
-        {
-            settingKGraph.settingPanelKData.SetActive(!settingKGraph.settingPanelKData.activeSelf);
-            settingBar.settingPanelBar.SetActive(false);
-        }
-        else if(curGraphPainter is GraphPainterBar)
-        {
-            settingKGraph.settingPanelKData.SetActive(false);
-            settingBar.settingPanelBar.SetActive(!settingBar.settingPanelBar.activeSelf);
-        }
-    }
-
-    void HideSettingPanel()
-    {
-        settingBar.settingPanelBar.SetActive(false);
-        settingKGraph.settingPanelKData.SetActive(false);
-    }
-
-    public void OnBtnClickAutoCalcBestPosPath()
-    {
-        settingKGraph.listviewBestPosPath.ClearAllItems();
-        List<TradeDataManager.NumCDT> results = TradeDataManager.Instance.CalcFavorits(null);
-        for (int i = 0; i < results.Count; ++i)
-        {
-            AddPosPath(results[i].numID, results[i].cdtID);
-        }
+        GameObject settingParent = settingCommon.settingPanelCommon.transform.parent.gameObject;
+        settingParent.SetActive(!settingParent.activeSelf);
     }
 
     void AddPosPath(int numIndex, int cdtIndex)
@@ -474,33 +591,22 @@ public class PanelAnalyze : MonoBehaviour
         }
     }
 
-    public void OnBtnClickAddPosPath()
-    {
-        int cdtIndex = settingKGraph.dropdownCDT.value;
-        AddPosPath(numIndex, cdtIndex);
-    }
-
-    public void OnBtnClickDelSelPosPath()
-    {
-        settingKGraph.listviewBestPosPath.RemoveItem(settingKGraph.listviewBestPosPath.SelIndex);
-    }
-
-    public void OnBtnClickClearAllPosPath()
-    {
-        settingKGraph.listviewBestPosPath.ClearAllItems();
-    }
-
     public void OnBtnClickKGraph()
     {
         SetCurrentGraph(graghPainterKData);
         NotifyUIRepaint();
-        HideSettingPanel();
     }
+
     public void OnBtnClickBarGraph()
     {
         SetCurrentGraph(graphPainterBar);
         NotifyUIRepaint();
-        HideSettingPanel();
+    }
+
+    public void OnBtnClickMissGraph()
+    {
+        SetCurrentGraph(graphPainterMiss);
+        NotifyUIRepaint();
     }
 
     #endregion

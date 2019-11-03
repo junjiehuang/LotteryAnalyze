@@ -97,7 +97,7 @@ public class ListView : MonoBehaviour, IDragHandler, IEndDragHandler
         
     }
 
-    public void AddItem(string itemInfo, object tag)
+    public ListViewItem AddItem(string itemInfo, object tag)
     {
         ListViewItem item = null;
         if(freeItems.Count > 0)
@@ -120,6 +120,7 @@ public class ListView : MonoBehaviour, IDragHandler, IEndDragHandler
         items.Add(item);
         tags.Add(tag);
         AdjustItemPos();
+        return item;
     }
 
     public void RemoveItem(int index)
@@ -166,7 +167,10 @@ public class ListView : MonoBehaviour, IDragHandler, IEndDragHandler
             SelectItem.color = itemNormalColor;
         }
         selIndex = items.IndexOf(item);
-        onClickItem.Invoke(selIndex);
+        if (onClickItem != null)
+        {
+            onClickItem.Invoke(selIndex);
+        }
     }
 
     public void OnListViewScroll(Vector2 offset)

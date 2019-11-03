@@ -6,33 +6,16 @@ using System.Text;
 
 #if WIN
 using System.Windows.Forms;
+#endif
 
 namespace LotteryAnalyze
 {
+
+
+#if WIN
     public class GraphMissCount : GraphAppearence
     {
-        public enum MissCountType
-        {
-            eMissCountValue,
-            eMissCountAreaFast,
-            eMissCountAreaShort,
-            eMissCountAreaLong,
-            eDisappearCountFast,
-            eDisappearCountShort,
-            eDisappearCountLong,
-            eMissCountAreaMulti,
-        }
-        public static string[] MissCountTypeStrs = new string[]
-        {
-            "遗漏值",
-            "统计5期的遗漏均线",
-            "统计10期的遗漏均线",
-            "统计30期的遗漏均线",
-            "统计5期的遗漏数",
-            "统计10期的遗漏数",
-            "统计30期的遗漏数",
-            "统计多周期的遗漏均线",
-        };
+
         MissCountType _missCountType = MissCountType.eMissCountValue;
         public MissCountType missCountType
         {
@@ -333,5 +316,6 @@ namespace LotteryAnalyze
         }
 
     }
-}
 #endif
+
+}

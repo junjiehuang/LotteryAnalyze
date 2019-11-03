@@ -57,23 +57,62 @@ namespace LotteryAnalyze
     }
 
 
+    public enum MissCountType
+    {
+        eMissCountValue,
+        eMissCountAreaFast,
+        eMissCountAreaShort,
+        eMissCountAreaLong,
+        eDisappearCountFast,
+        eDisappearCountShort,
+        eDisappearCountLong,
+        eMissCountAreaMulti,
+    }
 
-
-
-
-    
-
-
+    public enum AppearenceType
+    {
+        eAppearenceFast,
+        eAppearenceShort,
+        eAppearenceLong,
+        eAppearCountFast,
+        eAppearCountShort,
+        eAppearCountLong,
+        eAppearenceMulti,
+    }
 
 
     // 图表数据管理器
     public class GraphDataManager
     {
+        public static List<string> S_MissCountTypeStrs = new List<string>()
+        {
+                "遗漏值",
+                "统计5期的遗漏均线",
+                "统计10期的遗漏均线",
+                "统计30期的遗漏均线",
+                "统计5期的遗漏数",
+                "统计10期的遗漏数",
+                "统计30期的遗漏数",
+                "统计多周期的遗漏均线",
+        };
+
+        public static List<string> S_AppearenceTypeStrs = new List<string>()
+        {
+                "统计5期的出号率",
+                "统计10期的出号率",
+                "统计30期的出号率",
+                "统计5期的出号个数",
+                "统计10期的出号个数",
+                "统计30期的出号个数",
+                "多周期的出号率曲线",
+        };
+
         public static List<CollectDataType> S_CDT_LIST = new List<CollectDataType>();
         public static List<string> S_CDT_TAG_LIST = new List<string>();
         public static List<float> S_CDT_PROBABILITY_LIST = new List<float>();
         public static List<float> S_CDT_MISS_REL_LENGTH_LIST = new List<float>();
         public static List<Color> S_CDT_COLOR_LIST = new List<Color>();
+        public static List<UnityEngine.Color> S_CDT_UCOLOR_LIST = new List<UnityEngine.Color>();
         public static Dictionary<GraphType, GraphDataContainerBase> S_GRAPH_DATA_CONTS = new Dictionary<GraphType, GraphDataContainerBase>();
         public static Dictionary<string, int> S_CDT_NAME_INDEX_MAP = new Dictionary<string, int>();
         public static Dictionary<string, int> S_NUM_NAME_INDEX_MAP = new Dictionary<string, int>();
@@ -135,6 +174,7 @@ namespace LotteryAnalyze
             S_CDT_PROBABILITY_LIST.Add(probability);
             S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
             S_CDT_COLOR_LIST.Add(col);
+            S_CDT_UCOLOR_LIST.Add(new UnityEngine.Color(col.R / 255.0f, col.G / 255.0f, col.B / 255.0f, col.A / 255.0f));
         }
         public static float GetTheoryProbability(CollectDataType cdt)
         {
@@ -146,6 +186,13 @@ namespace LotteryAnalyze
             int index = S_CDT_LIST.IndexOf(cdt);
             return S_CDT_COLOR_LIST[index];
         }
+        
+        public static UnityEngine.Color GetColorByCDT(CollectDataType cdt)
+        {
+            int index = S_CDT_LIST.IndexOf(cdt);
+            return S_CDT_UCOLOR_LIST[index];
+        }
+
         public static float GetMissRelLength(CollectDataType cdt)
         {
             int index = S_CDT_LIST.IndexOf(cdt);

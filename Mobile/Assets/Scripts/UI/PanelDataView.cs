@@ -144,7 +144,9 @@ public class PanelDataView : MonoBehaviour
     void RefreshFileList()
     {
         DataManager dataMgr = DataManager.GetInst();
-        int pages = dataMgr.fileKeys.Count / btns.Length + 1;
+        int pages = dataMgr.fileKeys.Count / btns.Length;
+        if (btns.Length * pages < dataMgr.fileKeys.Count)
+            ++pages;
         int curPage = (int)(scrollBar.GetProgress() * pages);
         int startID = curPage * btns.Length;
         int endID = startID + btns.Length - 1;
@@ -270,6 +272,7 @@ public class PanelDataView : MonoBehaviour
             PanelAnalyze.Instance.SelectKDataIndex = dataMgr.GetAllDataItemCount() - 1;
             PanelAnalyze.Instance.OnSelectedDataItemChanged();
         }
+        PanelAnalyze.Instance.NotifyUIRepaint();
     }
 
     // 读取指定日期到当前最新的所有数据
