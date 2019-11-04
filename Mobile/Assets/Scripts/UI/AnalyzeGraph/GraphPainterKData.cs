@@ -45,20 +45,46 @@ public class GraphPainterKData : GraphPainterBase
     float DownGraphYOffset;
     float DataMaxWidth = 0;
 
-
-    List<AuxiliaryLineBase> upAuxLines = new List<AuxiliaryLineBase>();
-    List<AuxiliaryLineBase> downAuxLines = new List<AuxiliaryLineBase>();
+    Dictionary<int, Dictionary<CollectDataType, List<AuxiliaryLineBase>>> upAuxLines = new Dictionary<int, Dictionary<CollectDataType, List<AuxiliaryLineBase>>>();
+    Dictionary<int, Dictionary<CollectDataType, List<AuxiliaryLineBase>>> downAuxLines = new Dictionary<int, Dictionary<CollectDataType, List<AuxiliaryLineBase>>>();
 
     Vector2 pointerDownPos = Vector2.zero;
     Painter pointerDownPainter = null;
 
+    AuxiliaryLineBase upLineSelected = null;
+    int upLineSelectedKeyID = -1;
+    AuxiliaryLineBase downLineSelected;
+    int downLineSelectedKeyID = -1;
+
+    float rcSize = 30;
+    float rcHalfSize = 15;
+    float rcSize2 = 60;
 
     public override void Start()
     {
+        rcHalfSize = rcSize * 0.5f;
+        rcSize2 = rcSize * 2;
+
         base.Start();
 
         canvasUpOffset.y = PanelAnalyze.Instance.splitPanel.panelLTSize.y * 0.5f;
         canvasDownOffset.y = PanelAnalyze.Instance.splitPanel.panelRBSize.y * 0.5f;
+
+        for(int i = 0; i < 5; ++i)
+        {
+            Dictionary<CollectDataType, List<AuxiliaryLineBase>> upCdtAuxLines = new Dictionary<CollectDataType, List<AuxiliaryLineBase>>();
+            Dictionary<CollectDataType, List<AuxiliaryLineBase>> downCdtAuxLines = new Dictionary<CollectDataType, List<AuxiliaryLineBase>>();
+
+            for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+            {
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                upCdtAuxLines.Add(cdt, new List<AuxiliaryLineBase>());
+                downCdtAuxLines.Add(cdt, new List<AuxiliaryLineBase>());
+            }
+
+            upAuxLines.Add(i, upCdtAuxLines);
+            downAuxLines.Add(i, downCdtAuxLines);
+        }
     }
 
     public override void Update()
@@ -144,11 +170,108 @@ public class GraphPainterKData : GraphPainterBase
         }
     }
 
+    public override void OnGraphDragging(Vector2 offset, Painter painter)
+    {
+        if(painter == upPainter)
+        {
+            if (upLineSelected != null)
+            {
+                Vector2 pos = upLineSelected.keyPoints[upLineSelectedKeyID] + offset;
+                upLineSelected.keyPoints[upLineSelectedKeyID] = pos;
+                pos.x = pos.x / canvasUpScale.x;
+                pos.y = pos.y / canvasUpScale.y;
+                upLineSelected.valuePoints[upLineSelectedKeyID] = pos;
+                PanelAnalyze.Instance.NotifyUIRepaint();
+                return;
+            }
+        }
+        else if(painter == downPainter)
+        {
+            if (downLineSelected != null)
+            {
+                Vector2 pos = downLineSelected.keyPoints[downLineSelectedKeyID] + offset;
+                downLineSelected.keyPoints[downLineSelectedKeyID] = pos;
+                pos.x = pos.x / canvasDownScale.x;
+                pos.y = pos.y / canvasDownScale.y;
+                downLineSelected.valuePoints[downLineSelectedKeyID] = pos;
+                PanelAnalyze.Instance.NotifyUIRepaint();
+                return;
+            }
+        }
+        base.OnGraphDragging(offset, painter);
+    }
+
     public override void OnPointerDown(Vector2 pos, Painter g)
     {
-        base.OnPointerUp(pos, g);
+        base.OnPointerDown(pos, g);
         pointerDownPos = pos;
         pointerDownPainter = g;
+        Vector2 standpos = pos;
+        standpos.x = g.CanvasToStand(standpos.x, true);
+        standpos.y = g.CanvasToStand(standpos.y, false);
+
+        CollectDataType cdt = PanelAnalyze.Instance.cdt;
+        int numIndex = PanelAnalyze.Instance.numIndex;
+        bool hasSelected = false;
+
+        if (g == upPainter)
+        {
+            upLineSelected = null;
+            upLineSelectedKeyID = -1;
+            var etor1 = upAuxLines.GetEnumerator();
+            while(etor1.MoveNext())
+            {
+                var etor2 = etor1.Current.Value.GetEnumerator();
+                while(etor2.MoveNext())
+                {
+                    for(int i = 0; i < etor2.Current.Value.Count; ++i)
+                    {
+                        AuxiliaryLineBase line = etor2.Current.Value[i];
+                        line.selected = false;
+                        line.selectedKeyID = -1;
+                        if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
+                        {
+                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, 30, ref upLineSelectedKeyID))
+                            {
+                                line.selected = true;
+                                line.selectedKeyID = upLineSelectedKeyID;
+                                upLineSelected = line;
+                                hasSelected = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(g == downPainter)
+        {
+            downLineSelected = null;
+            downLineSelectedKeyID = -1;
+            var etor1 = downAuxLines.GetEnumerator();
+            while (etor1.MoveNext())
+            {
+                var etor2 = etor1.Current.Value.GetEnumerator();
+                while (etor2.MoveNext())
+                {
+                    for (int i = 0; i < etor2.Current.Value.Count; ++i)
+                    {
+                        AuxiliaryLineBase line = etor2.Current.Value[i];
+                        line.selected = false;
+                        line.selectedKeyID = -1;
+                        if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
+                        {
+                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, 30, ref downLineSelectedKeyID))
+                            {
+                                line.selected = true;
+                                line.selectedKeyID = downLineSelectedKeyID;
+                                downLineSelected = line;
+                                hasSelected = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     public override void OnPointerUp(Vector2 pos, Painter g)
     {
@@ -273,9 +396,10 @@ public class GraphPainterKData : GraphPainterBase
 
                 if(enableAuxLine)
                 {
-                    for(int i = 0; i < upAuxLines.Count; ++i)
+                    List<AuxiliaryLineBase> lines = upAuxLines[numIndex][cdt];
+                    for(int i = 0; i < lines.Count; ++i)
                     {
-                        DrawAuxLine(upAuxLines[i], upPainter, rtCanvas);
+                        DrawAuxLine(lines[i], upPainter, rtCanvas);
                     }
                 }
 
@@ -364,9 +488,10 @@ public class GraphPainterKData : GraphPainterBase
 
         if (enableAuxLine)
         {
-            for (int i = 0; i < downAuxLines.Count; ++i)
+            List<AuxiliaryLineBase> lines = downAuxLines[numIndex][cdt];
+            for (int i = 0; i < lines.Count; ++i)
             {
-                DrawAuxLine(downAuxLines[i], downPainter, rtCanvas);
+                DrawAuxLine(lines[i], downPainter, rtCanvas);
             }
         }
     }
@@ -374,38 +499,110 @@ public class GraphPainterKData : GraphPainterBase
 
     public void DelSelAuxLine()
     {
-        for(int i = upAuxLines.Count; i >= 0; --i)
+        bool removeSuccess = false;
+        var etor1 = upAuxLines.GetEnumerator();
+        while(etor1.MoveNext())
         {
-            if (upAuxLines[i].selected)
-                upAuxLines.RemoveAt(i);
+            var etor2 = etor1.Current.Value.GetEnumerator();
+            while(etor2.MoveNext())
+            {
+                if(etor2.Current.Value.Remove(upLineSelected))
+                {
+                    removeSuccess = true;
+                    break;
+                }
+            }
+            if (removeSuccess)
+                break;
         }
-        for (int i = downAuxLines.Count; i >= 0; --i)
+
+        removeSuccess = false;
+        etor1 = downAuxLines.GetEnumerator();
+        while (etor1.MoveNext())
         {
-            if (downAuxLines[i].selected)
-                downAuxLines.RemoveAt(i);
+            var etor2 = etor1.Current.Value.GetEnumerator();
+            while (etor2.MoveNext())
+            {
+                if (etor2.Current.Value.Remove(downLineSelected))
+                {
+                    removeSuccess = true;
+                    break;
+                }
+            }
+            if (removeSuccess)
+                break;
         }
+
+        upLineSelected = null;
+        upLineSelectedKeyID = -1;
+        downLineSelected = null;
+        downLineSelectedKeyID = -1;
+        //for(int i = upAuxLines.Count; i >= 0; --i)
+        //{
+        //    if (upAuxLines[i].selected)
+        //        upAuxLines.RemoveAt(i);
+        //}
+        //for (int i = downAuxLines.Count; i >= 0; --i)
+        //{
+        //    if (downAuxLines[i].selected)
+        //        downAuxLines.RemoveAt(i);
+        //}
     }
 
     public void DelAllAuxLine()
     {
-        upAuxLines.Clear();
-        downAuxLines.Clear();
+        var etor1 = upAuxLines.GetEnumerator();
+        while (etor1.MoveNext())
+        {
+            var etor2 = etor1.Current.Value.GetEnumerator();
+            while (etor2.MoveNext())
+            {
+                etor2.Current.Value.Clear();
+            }
+        }
+
+        etor1 = downAuxLines.GetEnumerator();
+        while (etor1.MoveNext())
+        {
+            var etor2 = etor1.Current.Value.GetEnumerator();
+            while (etor2.MoveNext())
+            {
+                etor2.Current.Value.Clear();
+            }
+        }
+
+        //upAuxLines.Clear();
+        //downAuxLines.Clear();
+    }
+
+    void AddAuxlineKeyPoint(AuxiliaryLineBase line, Vector2 pos, Painter g, Vector2 canvasScale)
+    {
+        Vector2 canvasPos = pos;
+        canvasPos.x = g.CanvasToStand(canvasPos.x, true);
+        canvasPos.y = g.CanvasToStand(canvasPos.y, false);
+        line.keyPoints.Add(canvasPos);
+        Vector2 valuePos = canvasPos;
+        valuePos.x /= canvasScale.x;
+        valuePos.y /= canvasScale.y;
+        line.valuePoints.Add(valuePos);
     }
 
     void CreateAuxLine(Vector2 pos, Painter g)
     {
+        int numIndex = PanelAnalyze.Instance.numIndex;
+        CollectDataType cdt = PanelAnalyze.Instance.cdt;
         GraphBase graph = null;
         List<AuxiliaryLineBase> targetLineLst = null;
         Vector2 gridScale = Vector2.one;
         if (g == upPainter)
         {
-            targetLineLst = upAuxLines;
+            targetLineLst = upAuxLines[numIndex][cdt];
             graph = PanelAnalyze.Instance.graphUp;
             gridScale = canvasUpScale;
         }
         else if (g == downPainter)
         {
-            targetLineLst = downAuxLines;
+            targetLineLst = downAuxLines[numIndex][cdt];
             graph = PanelAnalyze.Instance.graphDown;
             gridScale = canvasDownScale;
         }
@@ -419,45 +616,76 @@ public class GraphPainterKData : GraphPainterBase
             case AuxLineType.eHorzLine:
                 {
                     AuxiliaryLineHorz line = new AuxiliaryLineHorz();
-                    Vector2 canvasPos = pos;
-                    canvasPos.x = g.CanvasToStand(canvasPos.x, true);
-                    canvasPos.y = g.CanvasToStand(canvasPos.y, false);
-                    line.keyPoints.Add(canvasPos);
-                    Vector2 valuePos = canvasPos;
-                    valuePos.x /= gridScale.x;
-                    valuePos.y /= gridScale.y;
-                    line.valuePoints.Add(valuePos);
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
                     targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eVertLine:
                 {
-
+                    AuxiliaryLineVert line = new AuxiliaryLineVert();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eSingleLine:
                 {
-
+                    AuxiliaryLineSupportPressure line = new AuxiliaryLineSupportPressure();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.x += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eChannelLine:
                 {
-
+                    AuxiliaryLineChannel line = new AuxiliaryLineChannel();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.x += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.y += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eGoldSegmentedLine:
                 {
-
+                    AuxiliaryLineGoldenSection line = new AuxiliaryLineGoldenSection();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.y += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eCircleLine:
                 {
-
+                    AuxiliaryLineCircle line = new AuxiliaryLineCircle();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.y += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eArrowLine:
                 {
-
+                    AuxiliaryLineArrow line = new AuxiliaryLineArrow();
+                    line.cdt = cdt;
+                    line.numIndex = numIndex;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    pos.x += 300.0f;
+                    AddAuxlineKeyPoint(line, pos, g, gridScale);
+                    targetLineLst.Add(line);
                 }
                 break;
             case AuxLineType.eRectLine:
@@ -475,10 +703,12 @@ public class GraphPainterKData : GraphPainterBase
 
     void DrawAuxLine(AuxiliaryLineBase lineBase, Painter p, RectTransform rtCanvas)
     {
-        float rcSize = 30;
-        float rcHalfSize = rcSize * 0.5f;
+
+        Color selGridCol = new Color(1, 1, 0, 0.5f);
+
         float w = rtCanvas.rect.width;
         float h = rtCanvas.rect.height;
+        float lineWidth = lineBase.selected ? 3 : 1;
 
         switch(lineBase.lineType)
         {
@@ -493,9 +723,13 @@ public class GraphPainterKData : GraphPainterBase
                     Vector2 pos = line.keyPoints[0];
                     float x = p.StandToCanvas(pos.x, true);
                     float y = p.StandToCanvas(pos.y, false);
+                    if(line.selected)
+                    {
+                        p.DrawFillRectInCanvasSpace(x - rcSize, y - rcSize, rcSize2, rcSize2, selGridCol);
+                    }
                     if(y >= 0 && y <= rtCanvas.rect.height)
-                        p.DrawLineInCanvasSpace(0, y, w, y, line.color);
-                    p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color);
+                        p.DrawLineInCanvasSpace(0, y, w, y, line.color, lineWidth);
+                    p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                 }
                 break;
             case AuxLineType.eVertLine:

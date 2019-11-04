@@ -42,6 +42,7 @@ namespace LotteryAnalyze
         public AuxLineType lineType = AuxLineType.eNone;
 
         public bool selected = false;
+        public int selectedKeyID = -1;
 
 #if WIN
         public List<Point> keyPoints = new List<Point>();
