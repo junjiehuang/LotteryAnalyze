@@ -8,6 +8,7 @@ public class Painter
     Vector2 offset = Vector2.zero;
     List<UIVertex> verts = new List<UIVertex>();
     List<int> tris = new List<int>();
+    List<Vector2> circlePoints = new List<Vector2>();
 
     public string Name
     {
@@ -60,6 +61,13 @@ public class Painter
         x2 += offset.x;
         y2 += offset.y;
         DrawLineInCanvasSpace(x1, y1, x2, y2, c, lineWidth);
+    }
+
+    public void DrawCircle(Vector2 center, float radius, Color c, float lineWidth = 1, int segCount = 10)
+    {
+        center.x += offset.x;
+        center.y += offset.x;
+        DrawCircleInCanvasSpace(center, radius, c, lineWidth, segCount);
     }
 
     public void DrawRectInCanvasSpace(float x, float y, float w, float h, Color c, float lineWidth = 1)
@@ -119,6 +127,33 @@ public class Painter
         tris.Add(id + 2);
         tris.Add(id + 1);
         tris.Add(id + 3);
+    }
+    
+    public void DrawCircleInCanvasSpace(Vector2 center, float radius, Color c, float lineWidth = 1, int segCount = 10)
+    {
+        circlePoints.Clear();
+        int vertexCount = segCount;
+        float gap = 360.0f / vertexCount * Mathf.Deg2Rad;
+        for(int i = 0; i < vertexCount; ++i)
+        {
+            float rad = i * gap;
+            Vector2 pos = center;
+            pos.x += Mathf.Cos(rad) * radius;
+            pos.y += Mathf.Sin(rad) * radius;
+            circlePoints.Add(pos);
+        }
+        int lastID = circlePoints.Count - 1;
+        for ( int i = 0; i < circlePoints.Count; ++i)
+        {
+            if(i < lastID)
+            {
+                DrawLineInCanvasSpace(circlePoints[i].x, circlePoints[i].y, circlePoints[i + 1].x, circlePoints[i + 1].y, c, lineWidth);
+            }
+            else
+            {
+                DrawLineInCanvasSpace(circlePoints[0].x, circlePoints[0].y, circlePoints[lastID].x, circlePoints[lastID].y, c, lineWidth);
+            }
+        }
     }
 
     public float StandToCanvas(float v, bool isX)

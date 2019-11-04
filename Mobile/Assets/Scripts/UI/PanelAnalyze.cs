@@ -210,6 +210,7 @@ public class PanelAnalyze : MonoBehaviour
             }
             graghPainterKData.canvasDownScale.x = graghPainterKData.canvasUpScale.x;
             GlobalSetting.G_KGRAPH_CANVAS_SCALE_X = graghPainterKData.canvasDownScale.x;
+            graghPainterKData.NeedRebuildAuxPoints = true;
             NotifyUIRepaint();
         });
 
@@ -224,6 +225,7 @@ public class PanelAnalyze : MonoBehaviour
                 settingKGraph.inputFieldScaleY.text = graghPainterKData.canvasUpScale.y.ToString();
             }
             GlobalSetting.G_KGRAPH_CANVAS_SCALE_Y = graghPainterKData.canvasUpScale.y;
+            graghPainterKData.NeedRebuildAuxPoints = true;
             NotifyUIRepaint();
         });
 
