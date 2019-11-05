@@ -26,7 +26,8 @@ public class GraphPainterKData : GraphPainterBase
     public bool enableBollinBand = true;
     public bool enableKRuler = true;
     public bool enableAvgLines = true;
-    public bool enableAuxLine = true;
+    public bool enableAuxLineShow = true;
+    public bool enableAuxLineOperation = true;
 
     public bool enableAvg5 = true;
     public bool enableAvg10 = true;
@@ -246,12 +247,22 @@ public class GraphPainterKData : GraphPainterBase
         bool notMove = pos.Equals(pointerDownPos) && (g == pointerDownPainter);
         if(notMove)
         {
+            if(g == upPainter)
+            {
+                if (upLineSelected != null)
+                    return;
+            }
+            else if(g == downPainter)
+            {
+                if (downLineSelected != null)
+                    return;
+            }
             CreateAuxLine(pos, g);
         }
-        else
-        {
-            SelectAuxLine(pos, g);
-        }
+        //else
+        //{
+        //    SelectAuxLine(pos, g);
+        //}
         PanelAnalyze.Instance.NotifyUIRepaint();
     }
 
@@ -362,7 +373,7 @@ public class GraphPainterKData : GraphPainterBase
                     }
                 }
 
-                if(enableAuxLine)
+                if(enableAuxLineShow)
                 {
                     List<AuxiliaryLineBase> lines = upAuxLines[numIndex][cdt];
                     for(int i = 0; i < lines.Count; ++i)
@@ -454,7 +465,7 @@ public class GraphPainterKData : GraphPainterBase
             //}
         }
 
-        if (enableAuxLine)
+        if (enableAuxLineShow)
         {
             List<AuxiliaryLineBase> lines = downAuxLines[numIndex][cdt];
             for (int i = 0; i < lines.Count; ++i)
@@ -600,6 +611,8 @@ public class GraphPainterKData : GraphPainterBase
 
     void CreateAuxLine(Vector2 pos, Painter g)
     {
+        if (enableAuxLineShow == false || enableAuxLineOperation == false)
+            return;
         int numIndex = PanelAnalyze.Instance.numIndex;
         CollectDataType cdt = PanelAnalyze.Instance.cdt;
         GraphBase graph = null;
@@ -716,6 +729,8 @@ public class GraphPainterKData : GraphPainterBase
 
     void SelectAuxLine(Vector2 pos, Painter g)
     {
+        if (enableAuxLineShow == false)
+            return;
         Vector2 standpos = pos;
         standpos.x = g.CanvasToStand(standpos.x, true);
         standpos.y = g.CanvasToStand(standpos.y, false);
@@ -738,7 +753,7 @@ public class GraphPainterKData : GraphPainterBase
                     {
                         AuxiliaryLineBase line = etor2.Current.Value[i];
 
-                        if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
+                        if (enableAuxLineOperation && hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
                         {
                             if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, rcSizeSel, ref upLineSelectedKeyID))
                             {
@@ -776,7 +791,7 @@ public class GraphPainterKData : GraphPainterBase
                     {
                         AuxiliaryLineBase line = etor2.Current.Value[i];
 
-                        if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
+                        if (enableAuxLineOperation && hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
                         {
                             if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, rcSizeSel, ref downLineSelectedKeyID))
                             {

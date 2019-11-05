@@ -31,6 +31,7 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Toggle toggleBoolean;
         public UnityEngine.UI.Toggle toggleMACD;
         public UnityEngine.UI.Toggle toggleAvgLine;
+        public UnityEngine.UI.Toggle toggleAuxLineOperation;
         public UnityEngine.UI.Toggle toggleAvg5;
         public UnityEngine.UI.Toggle toggleAvg10;
         public UnityEngine.UI.Toggle toggleAvg20;
@@ -244,10 +245,10 @@ public class PanelAnalyze : MonoBehaviour
             NotifyUIRepaint();
         });
 
-        settingKGraph.toggleAuxline.isOn = graghPainterKData.enableAuxLine;
+        settingKGraph.toggleAuxline.isOn = graghPainterKData.enableAuxLineShow;
         settingKGraph.toggleAuxline.onValueChanged.AddListener((v) => 
         {
-            graghPainterKData.enableAuxLine = settingKGraph.toggleAuxline.isOn;
+            graghPainterKData.enableAuxLineShow = settingKGraph.toggleAuxline.isOn;
             NotifyUIRepaint();
         });
 
@@ -276,6 +277,13 @@ public class PanelAnalyze : MonoBehaviour
         settingKGraph.toggleAvgLine.onValueChanged.AddListener((v) =>
         {
             graghPainterKData.enableAvgLines = settingKGraph.toggleAvgLine.isOn;
+            NotifyUIRepaint();
+        });
+
+        settingKGraph.toggleAuxLineOperation.isOn = graghPainterKData.enableAuxLineOperation;
+        settingKGraph.toggleAuxLineOperation.onValueChanged.AddListener((v) =>
+        {
+            graghPainterKData.enableAuxLineOperation = settingKGraph.toggleAuxLineOperation.isOn;
             NotifyUIRepaint();
         });
 

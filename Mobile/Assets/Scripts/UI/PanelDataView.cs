@@ -49,6 +49,7 @@ public class PanelDataView : MonoBehaviour
 
         btnReadSelDateData.onClick.AddListener(OnBtnClickReadSelDateData);
         btnWriteSelDateData.onClick.AddListener(OnBtnClickWriteSelDateData);
+        btnCloseSelDateData.onClick.AddListener(OnBtnClickCloseSelDateData);
     }
 
     public Button btnSelCurPage;
@@ -63,6 +64,7 @@ public class PanelDataView : MonoBehaviour
 
     public Button btnReadSelDateData;
     public Button btnWriteSelDateData;
+    public Button btnCloseSelDateData;
 
     public ScrollRect scrollRectDataView;
     public RectTransform rtDataEditContent;
@@ -361,6 +363,16 @@ public class PanelDataView : MonoBehaviour
             //关闭流
             sw.Close();
             fs.Close();
+        }
+    }
+
+    void OnBtnClickCloseSelDateData()
+    {
+        freeEditDataItems.AddRange(showEditDataItems);
+        showEditDataItems.Clear();
+        for(int i = 0; i < freeEditDataItems.Count; ++i)
+        {
+            freeEditDataItems[i].gameObject.SetActive(false);
         }
     }
 
