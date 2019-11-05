@@ -231,7 +231,6 @@ public class GraphPainterKData : GraphPainterBase
             }
         }
         base.OnGraphDragging(offset, painter);
-        OnAutoAllign();
     }
 
     public override void OnPointerDown(Vector2 pos, Painter g)
@@ -754,6 +753,11 @@ public class GraphPainterKData : GraphPainterBase
                                 line.selectedKeyID = -1;
                             }
                         }
+                        else
+                        {
+                            line.selected = false;
+                            line.selectedKeyID = -1;
+                        }
                     }
                 }
             }
@@ -786,6 +790,11 @@ public class GraphPainterKData : GraphPainterBase
                                 line.selected = false;
                                 line.selectedKeyID = -1;
                             }
+                        }
+                        else
+                        {
+                            line.selected = false;
+                            line.selectedKeyID = -1;
                         }
                     }
                 }

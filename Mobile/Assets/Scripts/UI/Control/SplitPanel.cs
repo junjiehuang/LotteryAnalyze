@@ -17,6 +17,9 @@ public class SplitPanel : MonoBehaviour
 
     public Vector2 panelLTSize = Vector2.zero;
     public Vector2 panelRBSize = Vector2.zero;
+
+    public delegate void CallBackSplitterChange();
+    public CallBackSplitterChange onSplitterChange;
     
     private void Awake()
     {
@@ -67,6 +70,11 @@ public class SplitPanel : MonoBehaviour
             splitRatio = rtSplitter.anchoredPosition.x / (rtSplitPanel.rect.width - rtSplitter.rect.width);
         }
         AdjustSubPanels();
+
+        if(onSplitterChange != null)
+        {
+            onSplitterChange.Invoke();
+        }
     }
 
     public void AdjustSubPanels()

@@ -139,6 +139,11 @@ public class PanelAnalyze : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        splitPanel.onSplitterChange += () => 
+        {
+            curGraphPainter.OnAutoAllign();
+        };
+
         graphDown.ConvertPosToPainter += ConvertPosToPainter;
         graphUp.ConvertPosToPainter += ConvertPosToPainter;
 

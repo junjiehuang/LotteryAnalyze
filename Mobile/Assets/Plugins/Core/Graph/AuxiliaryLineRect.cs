@@ -107,7 +107,7 @@ namespace LotteryAnalyze
 
                 for (int j = 0; j < this.keyPoints.Count; ++j)
                 {
-                    float testSize = selKeyPtIndex == j ? rcHalfSizeSel : rcHalfSize;
+                    float testSize = selectedKeyID == j ? rcHalfSizeSel : rcHalfSize;
                     Vector2 pt = this.keyPoints[j];
                     if (pt.x < minx)
                         minx = pt.x;
