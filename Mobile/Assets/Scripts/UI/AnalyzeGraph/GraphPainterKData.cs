@@ -58,9 +58,27 @@ public class GraphPainterKData : GraphPainterBase
     AuxiliaryLineBase downLineSelected;
     int downLineSelectedKeyID = -1;
 
-    float rcSize = 60;
-    float rcHalfSize = 15;
-    float rcSize2 = 60;
+    float rcSize
+    {
+        get
+        {
+            return GlobalSetting.G_AUX_LINE_KEY_POINT_HIT_SIZE;
+        }
+    }
+    float rcHalfSize
+    {
+        get
+        {
+            return GlobalSetting.G_AUX_LINE_KEY_POINT_HIT_SIZE * 0.5f;
+        }
+    }
+    float rcSizeSel
+    {
+        get
+        {
+            return GlobalSetting.G_AUX_LINE_KEY_POINT_HIT_SIZE * GlobalSetting.G_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE;
+        }
+    }
 
     bool needRebuildAuxPoints = false;
     public bool NeedRebuildAuxPoints
@@ -71,9 +89,6 @@ public class GraphPainterKData : GraphPainterBase
 
     public override void Start()
     {
-        rcHalfSize = rcSize * 0.5f;
-        rcSize2 = rcSize * 2;
-
         base.Start();
 
         canvasUpOffset.y = PanelAnalyze.Instance.splitPanel.panelLTSize.y * 0.5f;
@@ -179,9 +194,12 @@ public class GraphPainterKData : GraphPainterBase
                 float canvasY = upPainter.StandToCanvas(y, false);
                 canvasUpOffset.y += PanelAnalyze.Instance.graphUp.rectTransform.rect.height * 0.5f - canvasY;
                 upPainter.BeforeDraw(canvasUpOffset);
-                PanelAnalyze.Instance.NotifyUIRepaint();
             }
         }
+
+        canvasDownOffset.y = PanelAnalyze.Instance.graphDown.rectTransform.rect.height * 0.5f;
+        downPainter.BeforeDraw(canvasDownOffset);
+        PanelAnalyze.Instance.NotifyUIRepaint();
     }
 
     public override void OnGraphDragging(Vector2 offset, Painter painter)
@@ -213,6 +231,7 @@ public class GraphPainterKData : GraphPainterBase
             }
         }
         base.OnGraphDragging(offset, painter);
+        OnAutoAllign();
     }
 
     public override void OnPointerDown(Vector2 pos, Painter g)
@@ -719,16 +738,20 @@ public class GraphPainterKData : GraphPainterBase
                     for (int i = 0; i < etor2.Current.Value.Count; ++i)
                     {
                         AuxiliaryLineBase line = etor2.Current.Value[i];
-                        line.selected = false;
-                        line.selectedKeyID = -1;
+
                         if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
                         {
-                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, ref upLineSelectedKeyID))
+                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, rcSizeSel, ref upLineSelectedKeyID))
                             {
                                 line.selected = true;
                                 line.selectedKeyID = upLineSelectedKeyID;
                                 upLineSelected = line;
                                 hasSelected = true;
+                            }
+                            else
+                            {
+                                line.selected = false;
+                                line.selectedKeyID = -1;
                             }
                         }
                     }
@@ -748,16 +771,20 @@ public class GraphPainterKData : GraphPainterBase
                     for (int i = 0; i < etor2.Current.Value.Count; ++i)
                     {
                         AuxiliaryLineBase line = etor2.Current.Value[i];
-                        line.selected = false;
-                        line.selectedKeyID = -1;
+
                         if (hasSelected == false && numIndex == etor1.Current.Key && cdt == etor2.Current.Key)
                         {
-                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, ref downLineSelectedKeyID))
+                            if (line.HitTest(etor2.Current.Key, etor1.Current.Key, standpos, rcSize, rcSizeSel, ref downLineSelectedKeyID))
                             {
                                 line.selected = true;
                                 line.selectedKeyID = downLineSelectedKeyID;
                                 downLineSelected = line;
                                 hasSelected = true;
+                            }
+                            else
+                            {
+                                line.selected = false;
+                                line.selectedKeyID = -1;
                             }
                         }
                     }
@@ -774,7 +801,9 @@ public class GraphPainterKData : GraphPainterBase
 
         float w = rtCanvas.rect.width;
         float h = rtCanvas.rect.height;
-        float lineWidth = lineBase.selected ? 3 : 1;
+        float lineWidth = lineBase.selected ? 6 : 2;
+        float selWidth = 10;
+        int segCount = 30;
 
         switch(lineBase.lineType)
         {
@@ -791,7 +820,8 @@ public class GraphPainterKData : GraphPainterBase
                     float y = p.StandToCanvas(pos.y, false);
                     if(line.selected)
                     {
-                        p.DrawFillRectInCanvasSpace(x - rcSize, y - rcSize, rcSize2, rcSize2, selGridCol);
+                        //p.DrawFillRectInCanvasSpace(x - rcSize, y - rcSize, rcSize2, rcSize2, selGridCol);
+                        p.DrawCircleInCanvasSpace(new Vector2(x, y), rcSizeSel, selGridCol, selWidth, segCount);
                     }
                     p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
 
@@ -807,7 +837,8 @@ public class GraphPainterKData : GraphPainterBase
                     float y = p.StandToCanvas(pos.y, false);
                     if (line.selected)
                     {
-                        p.DrawFillRectInCanvasSpace(x - rcSize, y - rcSize, rcSize2, rcSize2, selGridCol);
+                        //p.DrawFillRectInCanvasSpace(x - rcSize, y - rcSize, rcSize2, rcSize2, selGridCol);
+                        p.DrawCircleInCanvasSpace(new Vector2(x, y), rcSizeSel, selGridCol, selWidth, segCount);
                     }
                     p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
 
@@ -825,10 +856,12 @@ public class GraphPainterKData : GraphPainterBase
                     float y1 = p.StandToCanvas(pos1.y, false);
                     if (line.selected)
                     {
-                        if(line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                        if (line.selectedKeyID == 0)
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
@@ -859,11 +892,14 @@ public class GraphPainterKData : GraphPainterBase
                     if (line.selected)
                     {
                         if (line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 2)
-                            p.DrawFillRectInCanvasSpace(x2 - rcSize, y2 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x2, y2), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x2 - rcSize, y2 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
@@ -898,9 +934,11 @@ public class GraphPainterKData : GraphPainterBase
                     if (line.selected)
                     {
                         if (line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
@@ -927,9 +965,11 @@ public class GraphPainterKData : GraphPainterBase
                     if (line.selected)
                     {
                         if (line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
@@ -951,9 +991,11 @@ public class GraphPainterKData : GraphPainterBase
                     if (line.selected)
                     {
                         if (line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
@@ -971,9 +1013,11 @@ public class GraphPainterKData : GraphPainterBase
                     if (line.selected)
                     {
                         if (line.selectedKeyID == 0)
-                            p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x0, y0), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x0 - rcSize, y0 - rcSize, rcSize2, rcSize2, selGridCol);
                         if (line.selectedKeyID == 1)
-                            p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
+                            p.DrawCircleInCanvasSpace(new Vector2(x1, y1), rcSizeSel, selGridCol, selWidth, segCount);
+                        //p.DrawFillRectInCanvasSpace(x1 - rcSize, y1 - rcSize, rcSize2, rcSize2, selGridCol);
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);

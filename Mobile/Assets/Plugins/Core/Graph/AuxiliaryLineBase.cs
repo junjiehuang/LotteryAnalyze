@@ -88,18 +88,19 @@ namespace LotteryAnalyze
             return _col;
         }
 
-        public virtual bool HitTest(CollectDataType cdt, int numIndex, Vector2 standMousePos, float rcHalfSize, ref int selKeyPtIndex)
+        public virtual bool HitTest(CollectDataType cdt, int numIndex, Vector2 standMousePos, float rcHalfSize, float rcHalfSizeSel, ref int selKeyPtIndex)
         {
-            selKeyPtIndex = -1;
+            //selKeyPtIndex = -1;
             if (this.cdt == cdt && this.numIndex == numIndex)
             {
                 for (int j = 0; j < this.keyPoints.Count; ++j)
                 {
+                    float testSize = selKeyPtIndex == j ? rcHalfSizeSel : rcHalfSize;
                     Vector2 pt = this.keyPoints[j];
-                    if (pt.x - rcHalfSize > standMousePos.x ||
-                        pt.x + rcHalfSize < standMousePos.x ||
-                        pt.y - rcHalfSize > standMousePos.y ||
-                        pt.y + rcHalfSize < standMousePos.y)
+                    if (pt.x - testSize > standMousePos.x ||
+                        pt.x + testSize < standMousePos.x ||
+                        pt.y - testSize > standMousePos.y ||
+                        pt.y + testSize < standMousePos.y)
                         continue;
                     else
                     {
@@ -108,6 +109,7 @@ namespace LotteryAnalyze
                     }
                 }
             }
+            selKeyPtIndex = -1;
             return false;
         }
 #endif

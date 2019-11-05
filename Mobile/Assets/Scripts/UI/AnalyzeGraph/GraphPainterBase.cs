@@ -44,7 +44,6 @@ public class GraphPainterBase
         }
         upPainter.BeforeDraw(canvasUpOffset);
         downPainter.BeforeDraw(canvasDownOffset);
-        //Debug.Log(Time.frameCount + " Drag " + painter.Name + " offset = " + offset.ToString());
         float v = 0;
         if (canvasUpOffset.x < 0)
             v = -canvasUpOffset.x / canvasUpScale.x;

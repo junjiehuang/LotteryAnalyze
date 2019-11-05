@@ -87,6 +87,11 @@ namespace LotteryAnalyze
         [Parameter("界面设置/遗漏线界面缩放Y", 30.0f)]
         private static float g_MISSGRAPH_CANVAS_SCALE_Y = 30.0f;
 
+        [Parameter("界面设置/辅助线点击检测范围", 30.0f)]
+        private static float g_AUX_LINE_KEY_POINT_HIT_SIZE = 30.0f;
+        [Parameter("界面设置/辅助线拖拽点击范围的缩放值", 3.0f)]
+        private static float g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE = 3.0f;
+
 
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
         private static bool g_SHOW_KCURVE_DETAIL = true;
@@ -1086,6 +1091,18 @@ namespace LotteryAnalyze
         {
             get { return g_MISSGRAPH_CANVAS_SCALE_Y; }
             set { g_MISSGRAPH_CANVAS_SCALE_Y = value; HAS_MODIFY = true; }
+        }
+
+        public static float G_AUX_LINE_KEY_POINT_HIT_SIZE
+        {
+            get { return g_AUX_LINE_KEY_POINT_HIT_SIZE; }
+            set { g_AUX_LINE_KEY_POINT_HIT_SIZE = value; HAS_MODIFY = true; }
+        }
+
+        public static float G_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE
+        {
+            get { return g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE; }
+            set { g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE = value; HAS_MODIFY = true; }
         }
 
         static GlobalSetting()
