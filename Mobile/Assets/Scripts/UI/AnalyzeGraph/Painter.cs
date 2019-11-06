@@ -78,6 +78,16 @@ public class Painter
         DrawLineInCanvasSpace(x, y, x, y + h, c, lineWidth);
     }
 
+    public void DrawCrossInCanvasSpace(float x, float y, float halfW, float halfH, Color c, float lineWidth = 1)
+    {
+        Vector2 lt = new Vector2(x - halfW, y + halfH);
+        Vector2 lb = new Vector2(x - halfW, y - halfH);
+        Vector2 rt = new Vector2(x + halfW, y + halfH);
+        Vector2 rb = new Vector2(x + halfW, y - halfH);
+        DrawLineInCanvasSpace(lt.x, lt.y, rb.x, rb.y, c, lineWidth);
+        DrawLineInCanvasSpace(rt.x, rt.y, lb.x, lb.y, c, lineWidth);
+    }
+
     public void DrawFillRectInCanvasSpace(float x, float y, float w, float h, Color c)
     {
         UIVertex p0 = new UIVertex(), p1 = new UIVertex(), p2 = new UIVertex(), p3 = new UIVertex();

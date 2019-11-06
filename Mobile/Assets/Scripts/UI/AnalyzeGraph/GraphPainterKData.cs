@@ -848,6 +848,7 @@ public class GraphPainterKData : GraphPainterBase
                         p.DrawCircleInCanvasSpace(new Vector2(x, y), rcSizeSel, selGridCol, selWidth, segCount);
                     }
                     p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x, y, rcHalfSize, rcHalfSize, line.color, lineWidth);
 
                     if (y >= 0 && y <= h)
                         p.DrawLineInCanvasSpace(0, y, w, y, line.color, lineWidth);
@@ -865,6 +866,7 @@ public class GraphPainterKData : GraphPainterBase
                         p.DrawCircleInCanvasSpace(new Vector2(x, y), rcSizeSel, selGridCol, selWidth, segCount);
                     }
                     p.DrawRectInCanvasSpace(x - rcHalfSize, y - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x, y, rcHalfSize, rcHalfSize, line.color, lineWidth);
 
                     if (x >= 0 && x <= w)
                         p.DrawLineInCanvasSpace(x, 0, x, h, line.color, lineWidth);
@@ -889,7 +891,9 @@ public class GraphPainterKData : GraphPainterBase
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
-                    
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
+
                     if (x0 == x1)
                     {
                         p.DrawLineInCanvasSpace(x0, 0, x1, h, line.color, lineWidth);
@@ -928,6 +932,9 @@ public class GraphPainterKData : GraphPainterBase
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x2 - rcHalfSize, y2 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x2, y2, rcHalfSize, rcHalfSize, line.color, lineWidth);
 
                     p.DrawLineInCanvasSpace(x0, y0, x2, y2, line.color, 1);
                     if (x0 == x1)
@@ -966,6 +973,9 @@ public class GraphPainterKData : GraphPainterBase
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
+
 
                     for (int i = 0; i < C_GOLDEN_VALUE.Length; ++i)
                     {
@@ -997,6 +1007,8 @@ public class GraphPainterKData : GraphPainterBase
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
                     p.DrawLineInCanvasSpace(x0, y0, x1, y1, line.color, lineWidth);
 
                     float dx = x0 - x1, dy = y0 - y1;
@@ -1023,6 +1035,9 @@ public class GraphPainterKData : GraphPainterBase
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
+
                     p.DrawLineInCanvasSpace(x0, y0, x1, y1, line.color, lineWidth);
                 }
                 break;
@@ -1045,6 +1060,9 @@ public class GraphPainterKData : GraphPainterBase
                     }
                     p.DrawRectInCanvasSpace(x0 - rcHalfSize, y0 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
                     p.DrawRectInCanvasSpace(x1 - rcHalfSize, y1 - rcHalfSize, rcSize, rcSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x0, y0, rcHalfSize, rcHalfSize, line.color, lineWidth);
+                    p.DrawCrossInCanvasSpace(x1, y1, rcHalfSize, rcHalfSize, line.color, lineWidth);
+
                     p.DrawLineInCanvasSpace(x0, y0, x1, y1, line.color, lineWidth);
 
                     float sx = Mathf.Min(x0, x1);
