@@ -124,32 +124,35 @@ public class PanelGlobalSetting : MonoBehaviour
 
     void DrawUI()
     {
+        int comTextSize = GlobalSetting.G_COMMON_FONT_SIZE;
+        int btnTextSize = GlobalSetting.G_BUTTON_FONT_SIZE;
+
         int WIDTH = Screen.width - 50;
         if (labelStyle == null)
         {
             labelStyle = new GUIStyle(GUI.skin.label);
-            labelStyle.fontSize = 30;
+            labelStyle.fontSize = comTextSize;
 
             textFieldStyle = new GUIStyle(GUI.skin.textField);
-            textFieldStyle.fontSize = 30;
+            textFieldStyle.fontSize = comTextSize;
 
             toggleStyle = new GUIStyle(GUI.skin.toggle);
-            toggleStyle.fontSize = 30;
+            toggleStyle.fontSize = comTextSize;
 
             selectionGridStyle = new GUIStyle(GUI.skin.button);
-            selectionGridStyle.fontSize = 30;
+            selectionGridStyle.fontSize = comTextSize;
 
             buttonStyle = new GUIStyle(GUI.skin.button);
-            buttonStyle.fontSize = 30;
+            buttonStyle.fontSize = comTextSize;
 
             tabBtnStyle = new GUIStyle(GUI.skin.button);
-            tabBtnStyle.fontSize = 32;
+            tabBtnStyle.fontSize = btnTextSize;
             tabBtnStyle.alignment = TextAnchor.MiddleLeft;
             tabBtnStyle.normal.textColor = Color.green;
             tabBtnStyle.hover.textColor = Color.yellow;
 
             scrollViewStyle = new GUIStyle(GUI.skin.scrollView);
-            scrollViewStyle.fontSize = 30;
+            scrollViewStyle.fontSize = comTextSize;
         }
 
 

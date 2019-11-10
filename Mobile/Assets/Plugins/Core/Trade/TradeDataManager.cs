@@ -8,6 +8,14 @@ using System.Text;
 
 namespace LotteryAnalyze
 {
+    public enum GenerateType
+    {
+        eMinCost,
+        eFixedProfit,
+        eFixedScaleCount,
+    }
+
+
     public enum TradeType
     {
         eNone,
@@ -42,6 +50,13 @@ namespace LotteryAnalyze
     // 交易数据管理器
     public class TradeDataManager
     {
+        public static List<string> S_GenerateTypeStr = new List<string>()
+        {
+            "按总成本最小计算",
+            "按每次中出有固定收益计算",
+            "按以上次注数乘以指定倍率计算",
+        };
+
         public const int MACD_LOOP_COUNT = 5;
         public const int KGRAPH_LOOP_COUNT = 10;
 

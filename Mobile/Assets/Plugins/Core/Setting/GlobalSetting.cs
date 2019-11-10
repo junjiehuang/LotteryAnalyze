@@ -92,6 +92,11 @@ namespace LotteryAnalyze
         [Parameter("界面设置/辅助线拖拽点击范围的缩放值", 3.0f)]
         private static float g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE = 3.0f;
 
+        [Parameter("界面设置/设置界面字体/普通字体大小", 40)]
+        private static int g_COMMON_FONT_SIZE = 40;
+        [Parameter("界面设置/设置界面字体/按钮字体大小", 45)]
+        private static int g_BUTTON_FONT_SIZE = 45;
+
 
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
         private static bool g_SHOW_KCURVE_DETAIL = true;
@@ -1103,6 +1108,34 @@ namespace LotteryAnalyze
         {
             get { return g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE; }
             set { g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE = value; HAS_MODIFY = true; }
+        }
+
+        public static int G_COMMON_FONT_SIZE
+        {
+            get
+            {
+                return g_COMMON_FONT_SIZE;
+            }
+
+            set
+            {
+                g_COMMON_FONT_SIZE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_BUTTON_FONT_SIZE
+        {
+            get
+            {
+                return g_BUTTON_FONT_SIZE;
+            }
+
+            set
+            {
+                g_BUTTON_FONT_SIZE = value;
+                HAS_MODIFY = true;
+            }
         }
 
         static GlobalSetting()
