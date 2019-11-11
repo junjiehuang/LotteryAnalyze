@@ -30,6 +30,7 @@ public class PanelCalculator : MonoBehaviour
 
     public Button btnCalcByPlan;
     public Button btnGenPlanAndCalc;
+    public Button btnClose;
 
     public InputField inputfieldTradePlan;
 
@@ -68,6 +69,10 @@ public class PanelCalculator : MonoBehaviour
 
         btnCalcByPlan.onClick.AddListener(OnBtnClickCalcByPlan);
         btnGenPlanAndCalc.onClick.AddListener(OnBtnClickGenPlanAndCalc);
+        btnClose.onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+        });
 
         itemPrefab.SetActive(false);
         freeItems.Add(itemPrefab.GetComponent<TradeCalcItem>());
