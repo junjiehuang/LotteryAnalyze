@@ -59,6 +59,18 @@ public class GraphPainterKData : GraphPainterBase
     AuxiliaryLineBase downLineSelected;
     int downLineSelectedKeyID = -1;
 
+    public AuxiliaryLineBase SelectedAuxLine
+    {
+        get
+        {
+            if (upLineSelected != null)
+                return upLineSelected;
+            if (downLineSelected != null)
+                return downLineSelected;
+            return null;
+        }
+    }
+
     float rcSize
     {
         get

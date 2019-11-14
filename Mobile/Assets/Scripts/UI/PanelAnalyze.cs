@@ -46,6 +46,7 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Dropdown dropdownOperationType;
         public UnityEngine.UI.Button buttonDelSelAuxLine;
         public UnityEngine.UI.Button buttonDelAllAuxLine;
+        public UnityEngine.UI.Button buttonSelectColor;
 
         public ListView listviewBestPosPath;
     }
@@ -206,7 +207,7 @@ public class PanelAnalyze : MonoBehaviour
     {
         graghPainterKData.canvasUpScale.x = graghPainterKData.canvasDownScale.x = GlobalSetting.G_KGRAPH_CANVAS_SCALE_X;
         settingKGraph.inputFieldScaleX.text = graghPainterKData.canvasUpScale.x.ToString();
-        settingKGraph.inputFieldScaleX.onValueChanged.AddListener((str) => 
+        settingKGraph.inputFieldScaleX.onValueChanged.AddListener((str) =>
         {
             float.TryParse(settingKGraph.inputFieldScaleX.text, out graghPainterKData.canvasUpScale.x);
             if (graghPainterKData.canvasUpScale.x == 0)
@@ -246,7 +247,7 @@ public class PanelAnalyze : MonoBehaviour
         });
 
         settingKGraph.toggleAuxline.isOn = graghPainterKData.enableAuxLineShow;
-        settingKGraph.toggleAuxline.onValueChanged.AddListener((v) => 
+        settingKGraph.toggleAuxline.onValueChanged.AddListener((v) =>
         {
             graghPainterKData.enableAuxLineShow = settingKGraph.toggleAuxline.isOn;
             NotifyUIRepaint();
@@ -374,6 +375,15 @@ public class PanelAnalyze : MonoBehaviour
         {
             graghPainterKData.DelAllAuxLine();
             NotifyUIRepaint();
+        });
+
+        settingKGraph.buttonSelectColor.onClick.AddListener(() =>
+        {
+            if (graghPainterKData.SelectedAuxLine != null)
+            {
+                LotteryManager.SetActive(PanelSelectColor.Instance.gameObject, true);
+                PanelSelectColor.Instance.OnOpen(graghPainterKData.SelectedAuxLine.color, (c) =>{ graghPainterKData.SelectedAuxLine.color = c; });
+            }
         });
 
         settingKGraph.settingPanelKData.SetActive(false);
