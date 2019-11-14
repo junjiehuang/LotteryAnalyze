@@ -382,7 +382,11 @@ public class PanelAnalyze : MonoBehaviour
             if (graghPainterKData.SelectedAuxLine != null)
             {
                 LotteryManager.SetActive(PanelSelectColor.Instance.gameObject, true);
-                PanelSelectColor.Instance.OnOpen(graghPainterKData.SelectedAuxLine.color, (c) =>{ graghPainterKData.SelectedAuxLine.color = c; });
+                PanelSelectColor.Instance.OnOpen(graghPainterKData.SelectedAuxLine.color, (c) =>
+                {
+                    graghPainterKData.SelectedAuxLine.color = c;
+                    NotifyUIRepaint();
+                });
             }
         });
 
