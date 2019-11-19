@@ -319,9 +319,11 @@ public class GraphPainterMiss : GraphPainterBase
         if (g == upPainter)
         {
             float x = upPainter.CanvasToStand(pos.x, true);
-            if (x >= 0 && x <= DataMaxWidth)
+            if (x >= 0)// && x <= DataMaxWidth)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
+                if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
+                    PanelAnalyze.Instance.SelectKDataIndex = DataManager.GetInst().GetAllDataItemCount() - 1;
             }
             else
             {
@@ -331,9 +333,11 @@ public class GraphPainterMiss : GraphPainterBase
         else
         {
             float x = downPainter.CanvasToStand(pos.x, true);
-            if (x >= 0 && x <= DataMaxWidth)
+            if (x >= 0)// && x <= DataMaxWidth)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
+                if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
+                    PanelAnalyze.Instance.SelectKDataIndex = DataManager.GetInst().GetAllDataItemCount() - 1;
             }
             else
             {

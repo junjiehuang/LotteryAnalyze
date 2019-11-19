@@ -145,9 +145,11 @@ public class GraphPainterKData : GraphPainterBase
         if(g == upPainter)
         {
             float x = upPainter.CanvasToStand(pos.x, true);
-            if(x >= 0 && x <= DataMaxWidth)
+            if(x >= 0)// && x <= DataMaxWidth)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
+                if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
+                    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
@@ -157,9 +159,11 @@ public class GraphPainterKData : GraphPainterBase
         else
         {
             float x = downPainter.CanvasToStand(pos.x, true);
-            if (x >= 0 && x <= DataMaxWidth)
+            if (x >= 0)// && x <= DataMaxWidth)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
+                if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
+                    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
