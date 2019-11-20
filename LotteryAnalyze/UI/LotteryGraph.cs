@@ -420,6 +420,8 @@ namespace LotteryAnalyze.UI
 
             hasMouseMoveOnUpPanel = true;
             upPanelMousePosOnMove = e.Location;
+            downPanelMousePosOnMove.X = upPanelMousePosOnMove.X;
+
             bool needUpdate = false;
             if (graphMgr.NeedRefreshCanvasOnMouseMove(e.Location))
                 needUpdate = true;
@@ -833,6 +835,7 @@ namespace LotteryAnalyze.UI
         {
             hasMouseMoveOnDownPanel = true;
             downPanelMousePosOnMove = e.Location;
+            upPanelMousePosOnMove.X = downPanelMousePosOnMove.X;
 
             if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
             {

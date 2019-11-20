@@ -314,6 +314,7 @@ namespace LotteryAnalyze
                 }
 
                 g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
+                g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
                 float kValueMouse = CanvasToStand(mouseRelPos.Y, false, true) / gridScaleUp.Y;
                 g.DrawString(kValueMouse.ToString("f3"), selDataFont, whiteBrush, winW - 80, mouseRelPos.Y - 20);
                 //g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
@@ -415,6 +416,8 @@ namespace LotteryAnalyze
                     g.DrawLine(grayDotLinePen, selDataPtX, 0, selDataPtX, winH);
                     g.DrawLine(grayDotLinePen, selDataPtX + gridScaleDown.X, 0, selDataPtX + gridScaleDown.X, winH);
                 }
+
+                g.DrawLine(grayDotLinePen, mouseRelPos.X, 0, mouseRelPos.X, winH);
 
                 // 画辅助线
                 if (enableAuxiliaryLine)
