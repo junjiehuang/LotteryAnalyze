@@ -59,6 +59,8 @@ public class GraphPainterKData : GraphPainterBase
     AuxiliaryLineBase downLineSelected;
     int downLineSelectedKeyID = -1;
 
+    int fakeSelID = -1;
+
     public AuxiliaryLineBase SelectedAuxLine
     {
         get
@@ -147,13 +149,14 @@ public class GraphPainterKData : GraphPainterBase
             float x = upPainter.CanvasToStand(pos.x, true);
             if(x >= 0)// && x <= DataMaxWidth)
             {
+                fakeSelID = Mathf.FloorToInt(x / canvasUpScale.x);
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
                 if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
                     PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
-
+                fakeSelID = 0;
                 PanelAnalyze.Instance.SelectKDataIndex = -1;
                 if (GraphDataManager.KGDC.DataLength() > 0)
                     PanelAnalyze.Instance.SelectKDataIndex = 0;
@@ -164,12 +167,14 @@ public class GraphPainterKData : GraphPainterBase
             float x = downPainter.CanvasToStand(pos.x, true);
             if (x >= 0)// && x <= DataMaxWidth)
             {
+                fakeSelID = Mathf.FloorToInt(x / canvasDownScale.x);
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
                 if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
                     PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
+                fakeSelID = 0;
                 PanelAnalyze.Instance.SelectKDataIndex = -1;
                 if (GraphDataManager.KGDC.DataLength() > 0)
                     PanelAnalyze.Instance.SelectKDataIndex = 0;
@@ -412,6 +417,14 @@ public class GraphPainterKData : GraphPainterBase
                         continue;
                     DrawHotNumsPredictResult(g, rtCanvas, data, missRelHeight, kddc, cdt);
                 }
+
+                if(fakeSelID != selectKDataIndex)
+                {
+                    float xL = g.StandToCanvas(fakeSelID * canvasUpScale.x, true);
+                    float xR = xL + canvasUpScale.x;
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray);
+                }
             }
         }
     }
@@ -470,7 +483,15 @@ public class GraphPainterKData : GraphPainterBase
                     PanelAnalyze.Instance.graphDown.AppendText(info);
                 }
             }
-            
+
+            if (fakeSelID != selectKDataIndex)
+            {
+                float xL = g.StandToCanvas(fakeSelID * canvasDownScale.x, true);
+                float xR = xL + canvasDownScale.x;
+                g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray);
+                g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray);
+            }
+
             canvasDownOffset.y = oriYOff;
 
             //if (preViewDataIndex != -1)
