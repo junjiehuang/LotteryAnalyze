@@ -153,7 +153,10 @@ public class GraphPainterKData : GraphPainterBase
             }
             else
             {
+
                 PanelAnalyze.Instance.SelectKDataIndex = -1;
+                if (GraphDataManager.KGDC.DataLength() > 0)
+                    PanelAnalyze.Instance.SelectKDataIndex = 0;
             }
         }
         else
@@ -168,6 +171,8 @@ public class GraphPainterKData : GraphPainterBase
             else
             {
                 PanelAnalyze.Instance.SelectKDataIndex = -1;
+                if (GraphDataManager.KGDC.DataLength() > 0)
+                    PanelAnalyze.Instance.SelectKDataIndex = 0;
             }
         }
         PanelAnalyze.Instance.NotifyUIRepaint();

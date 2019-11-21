@@ -319,7 +319,7 @@ public class GraphPainterMiss : GraphPainterBase
         if (g == upPainter)
         {
             float x = upPainter.CanvasToStand(pos.x, true);
-            if (x >= 0)// && x <= DataMaxWidth)
+            if (x >= 0)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
                 if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
@@ -327,13 +327,16 @@ public class GraphPainterMiss : GraphPainterBase
             }
             else
             {
-                PanelAnalyze.Instance.SelectKDataIndex = -1;
+                if(DataManager.GetInst().GetAllDataItemCount() > 0)
+                    PanelAnalyze.Instance.SelectKDataIndex = 0;
+                else
+                    PanelAnalyze.Instance.SelectKDataIndex = -1;
             }
         }
         else
         {
             float x = downPainter.CanvasToStand(pos.x, true);
-            if (x >= 0)// && x <= DataMaxWidth)
+            if (x >= 0)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
                 if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
@@ -341,7 +344,10 @@ public class GraphPainterMiss : GraphPainterBase
             }
             else
             {
-                PanelAnalyze.Instance.SelectKDataIndex = -1;
+                if (DataManager.GetInst().GetAllDataItemCount() > 0)
+                    PanelAnalyze.Instance.SelectKDataIndex = 0;
+                else
+                    PanelAnalyze.Instance.SelectKDataIndex = -1;
             }
         }
         PanelAnalyze.Instance.NotifyUIRepaint();
