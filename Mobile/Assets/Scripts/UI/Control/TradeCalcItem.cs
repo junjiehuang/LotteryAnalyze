@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class TradeCalcItem : MonoBehaviour
+public class TradeCalcItem : MonoBehaviour, IPointerClickHandler
 {
     [HideInInspector]
     public RectTransform rectTransform;
@@ -14,9 +15,14 @@ public class TradeCalcItem : MonoBehaviour
     public Text textReward;
     public Text textProfit;
 
+    Image img;
+    bool sel = false;
+
     private void Awake()
     {
         rectTransform = transform as RectTransform;
+
+        img = GetComponent<Image>();
     }
 
     // Start is called before the first frame update
@@ -38,5 +44,11 @@ public class TradeCalcItem : MonoBehaviour
         textCost.text = cost;
         textReward.text = reward;
         textProfit.text = profit;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        sel = !sel;
+        img.color = sel ? Color.blue : Color.black;
     }
 }
