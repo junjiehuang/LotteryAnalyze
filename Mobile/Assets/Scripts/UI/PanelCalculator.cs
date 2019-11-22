@@ -42,7 +42,7 @@ public class PanelCalculator : MonoBehaviour
     List<TradeCalcItem> freeItems = new List<TradeCalcItem>();
     RectTransform rtItemPrefab;
 
-    int numberCountPerTrade = 4;
+    int numberCountPerTrade = 3;
     float reward = 9.95f;
     float cost = 1f;
 
