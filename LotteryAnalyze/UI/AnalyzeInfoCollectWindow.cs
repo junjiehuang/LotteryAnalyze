@@ -969,9 +969,12 @@ namespace LotteryAnalyze.UI
             {
                 FormMain.Instance.ShowSpecData((int)node.Tag);
                 int itemID = DataManager.GetInst().GetDataItemByIdTag(node.Text).idGlobal;
-                string cdtSTR = node.Parent.Parent.Parent.Text;
-                string numSTR = node.Parent.Parent.Parent.Parent.Text;
-                int cdtIndex = GraphDataManager.GetCdtIndex(cdtSTR);
+                //string cdtSTR = node.Parent.Parent.Parent.Text;
+                //string numSTR = node.Parent.Parent.Parent.Parent.Text;
+                string cdtSTR = node.Parent.Parent.Text;
+                string numSTR = node.Parent.Parent.Parent.Text;
+
+                int cdtIndex = GraphDataManager.GetCdtIndexByCdtEnumName(cdtSTR);
                 int numIndex = GraphDataManager.GetNumIndex(numSTR);
                 LotteryGraph.G_SetSelCollectDataType(cdtIndex);
                 LotteryGraph.G_SetSelNumIndex(numIndex);
