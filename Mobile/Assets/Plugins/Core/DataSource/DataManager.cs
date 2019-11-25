@@ -7,6 +7,8 @@ namespace LotteryAnalyze
 {
     public class DataManager
     {
+        public OneDayDatas fakeODD = new OneDayDatas();
+
         public Dictionary<int, OneDayDatas> allDatas = new Dictionary<int, OneDayDatas>();
         public List<int> indexs = new List<int>();
         public Dictionary<int, string> mFileMetaInfo = new Dictionary<int, string>();
@@ -288,6 +290,24 @@ namespace LotteryAnalyze
                 count += odd.datas.Count;
             }
             return count;
+        }
+
+        public void GenerateFakeODD(string strfakeData)
+        {
+            DateTime dt = DateTime.Now.AddDays(1);
+            int fakeDateID = AutoUpdateUtil.CombineFileID(dt.Year, dt.Month, dt.Day);
+            fakeODD = new OneDayDatas();
+            fakeODD.dateID = fakeDateID;
+            indexs.Add(fakeDateID);
+            allDatas.Add(fakeDateID, fakeODD);
+            string strFakeDateID = fakeDateID.ToString();
+            for (int i = 0; i < GlobalSetting.G_KCURVE_PREDICT_SAMPLE_COUNT; ++i)
+            {
+                string idstr = AutoUpdateUtil.GetHundredIndexString(i);
+                DataItem item = new DataItem(idstr, strfakeData, fakeDateID);
+                item.isReal = false;
+                fakeODD.AddItem(item);
+            }
         }
     }
 

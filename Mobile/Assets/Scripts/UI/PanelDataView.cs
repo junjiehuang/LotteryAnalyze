@@ -250,7 +250,7 @@ public class PanelDataView : MonoBehaviour
             lastItemID = startRefreshDateIndex;
         if (lastItemID < 0)
             startRefreshDateIndex = 0;
-
+        
         while (lastItemID != dataMgr.fileKeys.Count && lastItemID >= 0)
         {
             int key = dataMgr.fileKeys[lastItemID];
@@ -263,6 +263,17 @@ public class PanelDataView : MonoBehaviour
             ++lastItemID;
         }
         dataMgr.SetDataItemsGlobalID();
+
+        if (GlobalSetting.G_ENABLE_SHOW_KCURVE_PREDICT)
+        {
+            DataItem tailItem = dataMgr.GetLatestItem();
+            if (tailItem != null)
+            {
+                dataMgr.GenerateFakeODD(tailItem.lotteryNumber);
+                dataMgr.SetDataItemsGlobalID();
+            }
+        }
+
         Util.CollectPath012Info(null, newAddODD, newAddItemIndex);
         GraphDataManager.ResetCurKValueMap();
         GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);

@@ -97,6 +97,10 @@ namespace LotteryAnalyze
         [Parameter("界面设置/设置界面字体/按钮字体大小", 45)]
         private static int g_BUTTON_FONT_SIZE = 45;
 
+        [Parameter("界面设置/K线图预测/是否启用", true)]
+        private static bool g_ENABLE_SHOW_KCURVE_PREDICT = true;
+        [Parameter("界面设置/K线图预测/是否启用", 10)]
+        private static int g_KCURVE_PREDICT_SAMPLE_COUNT = 10;
 
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
         private static bool g_SHOW_KCURVE_DETAIL = true;
@@ -1134,6 +1138,34 @@ namespace LotteryAnalyze
             set
             {
                 g_BUTTON_FONT_SIZE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_ENABLE_SHOW_KCURVE_PREDICT
+        {
+            get
+            {
+                return g_ENABLE_SHOW_KCURVE_PREDICT;
+            }
+
+            set
+            {
+                g_ENABLE_SHOW_KCURVE_PREDICT = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static int G_KCURVE_PREDICT_SAMPLE_COUNT
+        {
+            get
+            {
+                return g_KCURVE_PREDICT_SAMPLE_COUNT;
+            }
+
+            set
+            {
+                g_KCURVE_PREDICT_SAMPLE_COUNT = value;
                 HAS_MODIFY = true;
             }
         }

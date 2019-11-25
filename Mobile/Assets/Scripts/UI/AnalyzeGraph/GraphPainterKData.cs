@@ -1146,7 +1146,10 @@ public class GraphPainterKData : GraphPainterBase
             rcH = 1;
         Color linePen = data.EndValue > data.StartValue ? Color.red : (data.EndValue < data.StartValue ? Color.cyan : Color.white);
         g.DrawLine(midX, up, midX, down, linePen);
-        g.DrawFillRect(standX, rcY, canvasUpScale.x, rcH, linePen);
+        if (data.parent.startItem.isReal)
+            g.DrawFillRect(standX, rcY, canvasUpScale.x, rcH, linePen);
+        else if (GlobalSetting.G_ENABLE_SHOW_KCURVE_PREDICT)
+            g.DrawRect(standX, rcY, canvasUpScale.x, rcH, linePen, 2);
     }
 
     bool CheckPredictResults(KData data, int numIndex)
@@ -1371,6 +1374,8 @@ public class GraphPainterKData : GraphPainterBase
 
     void DrawBollinLineGraph(Painter g, BollinPointMap bpm, RectTransform rtCanvas, CollectDataType cdt)
     {
+        if (bpm.kdd.startItem.isReal == false && GlobalSetting.G_ENABLE_SHOW_KCURVE_PREDICT == false)
+            return;
         BollinPoint bp = bpm.bpMap[cdt];
         float standX = (bpm.index + 0.5f) * canvasUpScale.x;
         if (findPrevPt == false)

@@ -13,6 +13,7 @@ namespace LotteryAnalyze
 
     public class DataItem
     {
+        public bool isReal = true;
         public object tag = null;
 
         static int[] TheoryProbabilityOfPath012 = new int[3] { 40, 30, 30, };

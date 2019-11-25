@@ -758,7 +758,7 @@ namespace LotteryAnalyze
             }
         }
 
-        static int CombineFileID(int y, int m, int d)
+        public static int CombineFileID(int y, int m, int d)
         {
             string url = y.ToString();
             if (m < 10)
