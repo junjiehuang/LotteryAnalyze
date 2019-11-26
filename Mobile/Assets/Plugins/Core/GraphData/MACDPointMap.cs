@@ -9,6 +9,7 @@ namespace LotteryAnalyze
 
     public class MACDPointMap
     {
+        public bool isReal = true;
         public MACDDataContianer parent;
         public int index = -1;
         public Dictionary<CollectDataType, MACDPoint> macdpMap = new Dictionary<CollectDataType, MACDPoint>();

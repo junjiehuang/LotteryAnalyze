@@ -45,6 +45,8 @@ namespace LotteryAnalyze
                 AvgPointMap apmL = avgContainerLong.avgPointMapLst[i];
 
                 MACDPointMap bpm = CreateMACDPointMap();
+                bpm.isReal = kdd.startItem.isReal;
+
                 for (int t = 0; t < GraphDataManager.S_CDT_LIST.Count; ++t)
                 {
                     CollectDataType cdt = GraphDataManager.S_CDT_LIST[t];

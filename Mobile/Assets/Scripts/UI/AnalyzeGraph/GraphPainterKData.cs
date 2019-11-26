@@ -1277,7 +1277,11 @@ public class GraphPainterKData : GraphPainterBase
             }
 
             float standY = g.CanvasToStand(0, false);
-            g.DrawFillRect(standX + 1, standY, canvasUpScale.x - 1, 30, col);
+
+            if(data.parent.startItem.isReal)
+                g.DrawFillRect(standX + 1, standY, canvasUpScale.x - 1, 30, col);
+            else
+                g.DrawRect(standX + 1, standY, canvasUpScale.x - 1, 30, col);
 
             if (selectKDataIndex >= 0 && selectKDataIndex == data.index)
             {
@@ -1357,14 +1361,14 @@ public class GraphPainterKData : GraphPainterBase
             if (isUpOK == false)
             {
                 float upY = standY + i * gridScaleH;
-                g.DrawRectInCanvasSpace(X, upY, gridScaleW, gridScaleH, Color.red);
+                g.DrawRectInCanvasSpace(X, upY, gridScaleW, gridScaleH, Color.red, 2);
                 if (X > rtCanvas.rect.width || upY < 0)
                     isUpOK = true;
             }
             if (isDownOK == false)
             {
                 float downY = standY - (i + 1) * downRCH;
-                g.DrawRectInCanvasSpace(X, downY, gridScaleW, downRCH, Color.cyan);
+                g.DrawRectInCanvasSpace(X, downY, gridScaleW, downRCH, Color.cyan, 2);
                 if (X > rtCanvas.rect.width || downY > rtCanvas.rect.height)
                     isDownOK = true;
             }
@@ -1430,7 +1434,12 @@ public class GraphPainterKData : GraphPainterBase
         float cyDEA = g.StandToCanvas((mp.DEA * gridScaleH), false);
         float cyBAR = g.StandToCanvas(standY, false);
         float rcY = g.StandToCanvas(standY > 0 ? 0 : standY, false);
-        g.DrawFillRectInCanvasSpace(cx - halfW, rcY, canvasDownScale.x, Mathf.Abs(standY), isUp ? Color.red : Color.cyan);
+
+        if(mpm.isReal)
+            g.DrawFillRectInCanvasSpace(cx - halfW, rcY, canvasDownScale.x, Mathf.Abs(standY), isUp ? Color.red : Color.cyan);
+        else
+            g.DrawRectInCanvasSpace(cx - halfW, rcY, canvasDownScale.x, Mathf.Abs(standY), isUp ? Color.red : Color.cyan, 2);
+
         if (prevMPM != null)
         {
             MACDPoint prevMP = prevMPM.macdpMap[cdt];
