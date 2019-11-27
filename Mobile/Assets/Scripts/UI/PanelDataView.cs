@@ -50,6 +50,9 @@ public class PanelDataView : MonoBehaviour
         btnReadSelDateData.onClick.AddListener(OnBtnClickReadSelDateData);
         btnWriteSelDateData.onClick.AddListener(OnBtnClickWriteSelDateData);
         btnCloseSelDateData.onClick.AddListener(OnBtnClickCloseSelDateData);
+
+        btnPrevBatchReadAndAnalyze.onClick.AddListener(OnBtnClickPrevBatchReadAndAnalyze);
+        btnNextBatchReadAndAnalyze.onClick.AddListener(OnBtnClickNextBatchReadAndAnalyze);
     }
 
     public Button btnSelCurPage;
@@ -65,6 +68,9 @@ public class PanelDataView : MonoBehaviour
     public Button btnReadSelDateData;
     public Button btnWriteSelDateData;
     public Button btnCloseSelDateData;
+
+    public Button btnPrevBatchReadAndAnalyze;
+    public Button btnNextBatchReadAndAnalyze;
 
     public ScrollRect scrollRectDataView;
     public RectTransform rtDataEditContent;
@@ -305,6 +311,79 @@ public class PanelDataView : MonoBehaviour
     }
 
 
+    int BatchStartIndex = -1;
+    public void ReadBatchData(bool prevBatch)
+    {
+        GlobalSetting.IsCurrentFetchingLatestData = false;
+
+        DataManager dataMgr = DataManager.GetInst();
+
+        // 如果文件列表是空的，读取数据文件列表
+        if (dataMgr.fileKeys.Count == 0)
+        {
+            OnBtnClickImportData();
+        }
+
+
+        if (BatchStartIndex < 0)
+        {
+            if (selectedDateID.Count > 0)
+            {
+                int lastDateKey = selectedDateID[selectedDateID.Count - 1];
+                BatchStartIndex = DataManager.GetInst().fileKeys.IndexOf(lastDateKey);
+            }
+            else
+                BatchStartIndex = 0;
+        }
+        int EndIndex = BatchStartIndex;
+        if (prevBatch)
+        {
+            if (BatchStartIndex == 0)
+                return;
+            else
+            {
+                EndIndex = BatchStartIndex;
+                BatchStartIndex = EndIndex - GlobalSetting.G_DAYS_PER_BATCH;
+                if (BatchStartIndex < 0)
+                    BatchStartIndex = 0;
+            }
+        }
+        else
+        {
+            if (BatchStartIndex == dataMgr.fileKeys.Count - 1)
+                return;
+            EndIndex = BatchStartIndex + GlobalSetting.G_DAYS_PER_BATCH;
+            if (EndIndex >= dataMgr.fileKeys.Count)
+                EndIndex = dataMgr.fileKeys.Count - 1;
+        }
+
+        if (BatchStartIndex != EndIndex)
+        {
+            dataMgr.ClearAllDatas();
+            for (int i = BatchStartIndex; i <= EndIndex; ++i)
+            {
+                int key = dataMgr.fileKeys[i];
+                dataMgr.LoadData(key);
+            }
+            dataMgr.SetDataItemsGlobalID();
+
+            Util.CollectPath012Info(null);
+            GraphDataManager.ResetCurKValueMap();
+            GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+
+            LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
+            if (PanelAnalyze.Instance.SelectKDataIndex == -1 ||
+               PanelAnalyze.Instance.SelectKDataIndex >= dataMgr.GetAllDataItemCount())
+            {
+                PanelAnalyze.Instance.SelectKDataIndex = dataMgr.GetAllDataItemCount() - 1;
+                PanelAnalyze.Instance.OnSelectedDataItemChanged();
+            }
+            PanelAnalyze.Instance.NotifyUIRepaint();
+        }
+        BatchStartIndex = EndIndex;
+    }
+
+
     #region call backs
 
     void OnBtnClickReadSelDateData()
@@ -385,6 +464,16 @@ public class PanelDataView : MonoBehaviour
         {
             freeEditDataItems[i].gameObject.SetActive(false);
         }
+    }
+
+    void OnBtnClickPrevBatchReadAndAnalyze()
+    {
+        ReadBatchData(true);
+    }
+
+    void OnBtnClickNextBatchReadAndAnalyze()
+    {
+        ReadBatchData(false);
     }
 
     void OnClickBtn(Button btn)
