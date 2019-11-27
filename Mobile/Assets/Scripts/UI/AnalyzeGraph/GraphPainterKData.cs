@@ -144,15 +144,19 @@ public class GraphPainterKData : GraphPainterBase
     public override void OnPointerClick(Vector2 pos, Painter g)
     {
         base.OnPointerClick(pos, g);
-        if(g == upPainter)
+        DataItem latestItem = DataManager.GetInst().GetLatestRealItem();
+
+        if (g == upPainter)
         {
             float x = upPainter.CanvasToStand(pos.x, true);
-            if(x >= 0)// && x <= DataMaxWidth)
+            if(x >= 0)
             {
                 fakeSelID = Mathf.FloorToInt(x / canvasUpScale.x);
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
-                if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
-                    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
+                if (PanelAnalyze.Instance.SelectKDataIndex > latestItem.idGlobal)
+                    PanelAnalyze.Instance.SelectKDataIndex = latestItem.idGlobal;
+                //if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
+                //    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
@@ -165,12 +169,14 @@ public class GraphPainterKData : GraphPainterBase
         else
         {
             float x = downPainter.CanvasToStand(pos.x, true);
-            if (x >= 0)// && x <= DataMaxWidth)
+            if (x >= 0)
             {
                 fakeSelID = Mathf.FloorToInt(x / canvasDownScale.x);
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
-                if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
-                    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
+                if (PanelAnalyze.Instance.SelectKDataIndex > latestItem.idGlobal)
+                    PanelAnalyze.Instance.SelectKDataIndex = latestItem.idGlobal;
+                //if (PanelAnalyze.Instance.SelectKDataIndex >= GraphDataManager.KGDC.DataLength())
+                //    PanelAnalyze.Instance.SelectKDataIndex = GraphDataManager.KGDC.DataLength() - 1;
             }
             else
             {
@@ -183,7 +189,7 @@ public class GraphPainterKData : GraphPainterBase
         PanelAnalyze.Instance.NotifyUIRepaint();
 
         if (PanelAnalyze.Instance.SelectKDataIndex == -1)
-            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().GetLatestItem();
+            GraphDataManager.BGDC.CurrentSelectItem = latestItem;//DataManager.GetInst().GetLatestItem();
         else
             GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(PanelAnalyze.Instance.SelectKDataIndex);
         GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
@@ -336,10 +342,11 @@ public class GraphPainterKData : GraphPainterBase
 
                     float xL = g.StandToCanvas(selectKDataIndex * canvasUpScale.x, true);
                     float xR = xL + canvasUpScale.x;
-                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
-                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow, 2);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow, 2);
 
-                    string info = data.GetInfo() +
+                    string mainInfo = DataManager.GetInst().GetFirstItem().idTag + " - " + DataManager.GetInst().GetLatestRealItem().idTag + "\n";
+                    string info = mainInfo + data.GetInfo() +
                         "K值 = " + data.KValue.ToString() +
                         ", 上 = " + data.UpValue.ToString() +
                         ", 下 = " + data.DownValue.ToString() +
@@ -422,8 +429,8 @@ public class GraphPainterKData : GraphPainterBase
                 {
                     float xL = g.StandToCanvas(fakeSelID * canvasUpScale.x, true);
                     float xR = xL + canvasUpScale.x;
-                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray);
-                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray);
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray, 2);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray, 2);
                 }
             }
         }
@@ -474,8 +481,8 @@ public class GraphPainterKData : GraphPainterBase
                 {
                     float xL = g.StandToCanvas(selectKDataIndex * canvasDownScale.x, true);
                     float xR = xL + canvasDownScale.x;
-                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow);
-                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow);
+                    g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.yellow, 2);
+                    g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.yellow, 2);
 
                     MACDPointMap mpm = kddc.macdDataLst.macdMapLst[selectKDataIndex];
                     MACDPoint mp = mpm.GetData(cdt, false);
@@ -488,8 +495,8 @@ public class GraphPainterKData : GraphPainterBase
             {
                 float xL = g.StandToCanvas(fakeSelID * canvasDownScale.x, true);
                 float xR = xL + canvasDownScale.x;
-                g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray);
-                g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray);
+                g.DrawLineInCanvasSpace(xL, 0, xL, rtCanvas.rect.height, Color.gray, 2);
+                g.DrawLineInCanvasSpace(xR, 0, xR, rtCanvas.rect.height, Color.gray, 2);
             }
 
             canvasDownOffset.y = oriYOff;

@@ -875,7 +875,7 @@ namespace LotteryAnalyze
                 return results;
 
             if(item == null)
-                item = DataManager.GetInst().GetLatestItem();
+                item = DataManager.GetInst().GetLatestRealItem();
             for (int numID = 0; numID < 5; ++numID)
             {
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);

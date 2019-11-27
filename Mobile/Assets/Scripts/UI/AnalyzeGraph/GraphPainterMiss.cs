@@ -82,8 +82,8 @@ public class GraphPainterMiss : GraphPainterBase
             }
         }
         
-        g.DrawLineInCanvasSpace(0, top, winW, top, Color.gray);
-        g.DrawLineInCanvasSpace(0, bottom, winW, bottom, Color.gray);
+        g.DrawLineInCanvasSpace(0, top, winW, top, Color.gray, 2);
+        g.DrawLineInCanvasSpace(0, bottom, winW, bottom, Color.gray, 2);
 
         DataItem hoverItem = GraphDataManager.BGDC.CurrentSelectItem;
 
@@ -152,8 +152,8 @@ public class GraphPainterMiss : GraphPainterBase
             float left = selectDataIndex * canvasUpScale.x;
             left = g.StandToCanvas(left, true);
             float right = left + canvasUpScale.x;
-            g.DrawLineInCanvasSpace(left, 0, left, winH, Color.yellow);
-            g.DrawLineInCanvasSpace(right, 0, right, winH, Color.yellow);
+            g.DrawLineInCanvasSpace(left, 0, left, winH, Color.yellow, 2);
+            g.DrawLineInCanvasSpace(right, 0, right, winH, Color.yellow, 2);
         }
 
     }
@@ -225,24 +225,8 @@ public class GraphPainterMiss : GraphPainterBase
             }
         }
 
-        g.DrawLineInCanvasSpace(0, top, winW, top, Color.gray);
-        g.DrawLineInCanvasSpace(0, bottom, winW, bottom, Color.gray);
-        //g.DrawLine(grayDotLinePen, 0, mouseRelPos.Y, winW, mouseRelPos.Y);
-        //g.DrawLine(grayDotLinePen, 0, top, winW, top);
-        //g.DrawLine(grayDotLinePen, 0, bottom, winW, bottom);
-        //if (mouseRelPos.Y >= top && mouseRelPos.Y <= bottom)
-        //{
-        //    float v = 0;
-        //    if (appearenceType < AppearenceType.eAppearCountFast)
-        //        v = (bottom - mouseRelPos.Y) / (bottom - top) * 100.0f;
-        //    else if (appearenceType == AppearenceType.eAppearCountFast)
-        //        v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_5;
-        //    else if (appearenceType == AppearenceType.eAppearCountShort)
-        //        v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_10;
-        //    else if (appearenceType == AppearenceType.eAppearCountLong)
-        //        v = (bottom - mouseRelPos.Y) / (bottom - top) * LotteryStatisticInfo.SAMPLE_COUNT_30;
-        //    g.DrawString(v.ToString("f2") + "%", tagFont, whiteBrush, winW - 60, mouseRelPos.Y);
-        //}
+        g.DrawLineInCanvasSpace(0, top, winW, top, Color.gray, 2);
+        g.DrawLineInCanvasSpace(0, bottom, winW, bottom, Color.gray, 2);
 
         DataItem hoverItem = GraphDataManager.BGDC.CurrentSelectItem;
         if (hoverItem != null)
@@ -278,27 +262,17 @@ public class GraphPainterMiss : GraphPainterBase
                     break;
             }
             string info = "[" + hoverItem.idTag + "] [" + hoverItem.lotteryNumber + "] [出号率 = " + apprate + "] [连续低于理论概率期数 = " + underTheoRateCount + "]";
-            //g.DrawString(info, tagFont, whiteBrush, 5, 5);
             PanelAnalyze.Instance.graphDown.AppendText(info);
         }
 
-        //if (selectDataIndex != -1)
-        //{
-        //    Pen pen = GetLinePen(Color.Yellow);
-        //    float left = selectDataIndex * gridScaleUp.X;
-        //    left = StandToCanvas(left, true, true);
-        //    float right = left + gridScaleUp.X;
-        //    g.DrawLine(pen, left, 0, left, winH);
-        //    g.DrawLine(pen, right, 0, right, winH);
-        //}
         int selectDataIndex = PanelAnalyze.Instance.SelectKDataIndex;
         if (selectDataIndex >= 0)
         {
             float left = selectDataIndex * canvasUpScale.x;
             left = g.StandToCanvas(left, true);
             float right = left + canvasUpScale.x;
-            g.DrawLineInCanvasSpace(left, 0, left, winH, Color.yellow);
-            g.DrawLineInCanvasSpace(right, 0, right, winH, Color.yellow);
+            g.DrawLineInCanvasSpace(left, 0, left, winH, Color.yellow, 2);
+            g.DrawLineInCanvasSpace(right, 0, right, winH, Color.yellow, 2);
         }
 
     }
@@ -316,14 +290,16 @@ public class GraphPainterMiss : GraphPainterBase
     public override void OnPointerClick(Vector2 pos, Painter g)
     {
         base.OnPointerClick(pos, g);
+        DataItem latestItem = DataManager.GetInst().GetLatestRealItem();
+
         if (g == upPainter)
         {
             float x = upPainter.CanvasToStand(pos.x, true);
             if (x >= 0)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasUpScale.x);
-                if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
-                    PanelAnalyze.Instance.SelectKDataIndex = DataManager.GetInst().GetAllDataItemCount() - 1;
+                if (PanelAnalyze.Instance.SelectKDataIndex > latestItem.idGlobal)
+                    PanelAnalyze.Instance.SelectKDataIndex = latestItem.idGlobal;
             }
             else
             {
@@ -339,8 +315,8 @@ public class GraphPainterMiss : GraphPainterBase
             if (x >= 0)
             {
                 PanelAnalyze.Instance.SelectKDataIndex = Mathf.FloorToInt(x / canvasDownScale.x);
-                if (PanelAnalyze.Instance.SelectKDataIndex >= DataManager.GetInst().GetAllDataItemCount())
-                    PanelAnalyze.Instance.SelectKDataIndex = DataManager.GetInst().GetAllDataItemCount() - 1;
+                if (PanelAnalyze.Instance.SelectKDataIndex > latestItem.idGlobal)
+                    PanelAnalyze.Instance.SelectKDataIndex = latestItem.idGlobal;
             }
             else
             {
@@ -353,7 +329,7 @@ public class GraphPainterMiss : GraphPainterBase
         PanelAnalyze.Instance.NotifyUIRepaint();
 
         if (PanelAnalyze.Instance.SelectKDataIndex == -1)
-            GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().GetLatestItem();
+            GraphDataManager.BGDC.CurrentSelectItem = latestItem;
         else
             GraphDataManager.BGDC.CurrentSelectItem = DataManager.GetInst().FindDataItem(PanelAnalyze.Instance.SelectKDataIndex);
         GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
@@ -371,6 +347,7 @@ public class GraphPainterMiss : GraphPainterBase
         float prevX = 0;
 
         DataManager dm = DataManager.GetInst();
+        DataItem latestRealDataItem = dm.GetLatestRealItem();
         Color[] cols = { Color.red, Color.yellow, Color.white, };
 
         for (int j = 0; j < 3; ++j)
@@ -409,8 +386,13 @@ public class GraphPainterMiss : GraphPainterBase
                 float right = x + halfGridW;
                 if (PanelAnalyze.Instance.SelectKDataIndex == i)
                 {
-                    g.DrawLineInCanvasSpace(left, 0, left, winH, Color.gray);
-                    g.DrawLineInCanvasSpace(right, 0, right, winH, Color.gray);
+                    g.DrawLineInCanvasSpace(left, 0, left, winH, Color.gray, 2);
+                    g.DrawLineInCanvasSpace(right, 0, right, winH, Color.gray, 2);
+                }
+                if(item == latestRealDataItem)
+                {
+                    g.DrawLineInCanvasSpace(left, 0, left, winH, Color.white, 2);
+                    g.DrawLineInCanvasSpace(right, 0, right, winH, Color.white, 2);
                 }
             }
         }
@@ -429,6 +411,7 @@ public class GraphPainterMiss : GraphPainterBase
         float prevY = 0;
         float prevX = 0;
         DataManager dm = DataManager.GetInst();
+        DataItem latestRealDataItem = dm.GetLatestRealItem();
         UnityEngine.Color col = GraphDataManager.GetColorByCDT(cdt);
         for (int i = startIndex; i < endIndex; ++i)
         {
@@ -486,30 +469,29 @@ public class GraphPainterMiss : GraphPainterBase
 
             float left = x - halfGridW;
             float right = x + halfGridW;
-            //if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
-            //{
-            //    hoverItem = item;
-            //    g.DrawLine(grayDotLinePen, left, 0, left, winH);
-            //    g.DrawLine(grayDotLinePen, right, 0, right, winH);
-            //    hasChoose = true;
-            //}
+
             if(PanelAnalyze.Instance.SelectKDataIndex == i)
             {
-                g.DrawLineInCanvasSpace(left, 0, left, winH, Color.gray);
-                g.DrawLineInCanvasSpace(right, 0, right, winH, Color.gray);
+                g.DrawLineInCanvasSpace(left, 0, left, winH, Color.gray, 2);
+                g.DrawLineInCanvasSpace(right, 0, right, winH, Color.gray, 2);
+            }
+
+            if (item == latestRealDataItem)
+            {
+                g.DrawLineInCanvasSpace(left, 0, left, winH, Color.white, 2);
+                g.DrawLineInCanvasSpace(right, 0, right, winH, Color.white, 2);
             }
         }
     }
 
     void DrawMultiCDTLine(Painter g, int numIndex, int startIndex, int endIndex, CollectDataType cdt, ref bool hasChoose, float bottom, float maxHeight, float halfGridW, float halfSize, float fullSize, float winH)
     {
-        //Brush[] brushs = { redBrush, yellowBrush, whiteBrush, };
-        //Pen[] pens = { redPen, yellowPen, whitePen, };
         Color[] cols = { Color.red, Color.yellow, Color.white, };
 
         float prevY = 0;
         float prevX = 0;
         DataManager dm = DataManager.GetInst();
+        DataItem latestRealDataItem = dm.GetLatestRealItem();
 
         for (int j = 0; j < 3; ++j)
         {
@@ -540,15 +522,11 @@ public class GraphPainterMiss : GraphPainterBase
                 prevX = x;
                 prevY = rT;
 
-                //float left = x - halfGridW;
-                //float right = x + halfGridW;
-                //if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
-                //{
-                //    hoverItem = item;
-                //    g.DrawLine(grayDotLinePen, left, 0, left, winH);
-                //    g.DrawLine(grayDotLinePen, right, 0, right, winH);
-                //    hasChoose = true;
-                //}
+                if (item == latestRealDataItem)
+                {
+                    g.DrawLineInCanvasSpace(x - halfGridW, 0, x - halfGridW, winH, Color.white, 2);
+                    g.DrawLineInCanvasSpace(x + halfGridW, 0, x + halfGridW, winH, Color.white, 2);
+                }
             }
         }
     }
@@ -558,9 +536,10 @@ public class GraphPainterMiss : GraphPainterBase
         float prevY = 0;
         float prevX = 0;
         DataManager dm = DataManager.GetInst();
+        DataItem latestRealDataItem = dm.GetLatestRealItem();
+
         Color col = GraphDataManager.GetColorByCDT(cdt);
-        //Brush brush = GetBrush(cdt);
-        //Pen pen = GetLinePen(cdt);
+
         for (int i = startIndex; i < endIndex; ++i)
         {
             DataItem item = dm.FindDataItem(i);
@@ -596,18 +575,14 @@ public class GraphPainterMiss : GraphPainterBase
             {
                 g.DrawLineInCanvasSpace(x, rT, prevX, prevY, col);
             }
+
+            if (item == latestRealDataItem)
+            {
+                g.DrawLineInCanvasSpace(x - halfGridW, 0, x - halfGridW, winH, Color.white, 2);
+                g.DrawLineInCanvasSpace(x + halfGridW, 0, x + halfGridW, winH, Color.white, 2);
+            }
             prevX = x;
             prevY = rT;
-
-            //float left = x - halfGridW;
-            //float right = x + halfGridW;
-            //if (hasChoose == false && mouseRelPos.X > left && mouseRelPos.X < right)
-            //{
-            //    hoverItem = item;
-            //    g.DrawLine(grayDotLinePen, left, 0, left, winH);
-            //    g.DrawLine(grayDotLinePen, right, 0, right, winH);
-            //    hasChoose = true;
-            //}
         }
     }
 

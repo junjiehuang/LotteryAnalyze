@@ -51,6 +51,7 @@ namespace LotteryAnalyze
             allDatas.Clear();
             indexs.Clear();
             allItemMap.Clear();
+            fakeODD = null;
         }
 
         public void ClearDatasExcept(OneDayDatas odd)
@@ -248,6 +249,20 @@ namespace LotteryAnalyze
             return null;
         }
 
+        public DataItem GetLatestRealItem()
+        {
+            if(fakeODD == null)
+            {
+                return GetLatestItem();
+            }
+            else
+            {
+                int id = fakeODD.GetFirstItem().idGlobal - 1;
+                return FindDataItem(id);
+            }
+            return null;
+        }
+
         /// <summary>
         /// 获取第一个开奖数据
         /// </summary>
@@ -301,7 +316,7 @@ namespace LotteryAnalyze
             indexs.Add(fakeDateID);
             allDatas.Add(fakeDateID, fakeODD);
             string strFakeDateID = fakeDateID.ToString();
-            for (int i = 0; i < GlobalSetting.G_KCURVE_PREDICT_SAMPLE_COUNT; ++i)
+            for (int i = 1; i <= GlobalSetting.G_KCURVE_PREDICT_SAMPLE_COUNT; ++i)
             {
                 string idstr = AutoUpdateUtil.GetHundredIndexString(i);
                 DataItem item = new DataItem(idstr, strfakeData, fakeDateID);
