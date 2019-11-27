@@ -1327,7 +1327,9 @@ public class GraphPainterKData : GraphPainterBase
         float gridScaleW = canvasUpScale.x;
         float gridScaleH = canvasUpScale.y;
 
-        int endIndex = kddc.dataLst.Count - 1;
+        int endIndex = GraphDataManager.KGDC.LastRealItemIndex;
+        if(endIndex > kddc.dataLst.Count - 1)
+            endIndex = kddc.dataLst.Count - 1;
         if (PanelAnalyze.Instance.endShowDataItemIndex != -1 && PanelAnalyze.Instance.endShowDataItemIndex < kddc.dataLst.Count)
             endIndex = PanelAnalyze.Instance.endShowDataItemIndex;
 

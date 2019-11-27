@@ -73,14 +73,20 @@ namespace LotteryAnalyze
             S_AVG_LINE_SETTINGS.Add(als);
         }
 #endif
-#endregion
+        #endregion
 
+        int lastRealItemIndex = -1;
         int dataLength = 0;
         int cycleLength = 5;
         int bollinBandCycleLength = 20;
         int macdEMAShortCycle = 5;//10;
         int macdEMALongCycle = 10;//20;
         List<KDataDictContainer> allKDatas = new List<KDataDictContainer>();
+
+        public int LastRealItemIndex
+        {
+            get { return lastRealItemIndex; }
+        }
 
         List<Dictionary<CollectDataType, float>> G_CUR_KVALUE_MAP = new List<Dictionary<CollectDataType, float>>();
         public void ResetCurKValueMap()
@@ -177,6 +183,9 @@ namespace LotteryAnalyze
                 for (int j = 0; j < odd.datas.Count; ++j)
                 {
                     DataItem item = odd.datas[j];
+                    if (item.isReal && item.idGlobal > lastRealItemIndex)
+                        lastRealItemIndex = item.idGlobal;
+
                     if (curDatas == null)
                         curDatas = CreateKDataDicts();
 
