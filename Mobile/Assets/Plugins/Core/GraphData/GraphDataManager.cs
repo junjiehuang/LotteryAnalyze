@@ -109,6 +109,7 @@ namespace LotteryAnalyze
 
         public static List<CollectDataType> S_CDT_LIST = new List<CollectDataType>();
         public static List<string> S_CDT_TAG_LIST = new List<string>();
+        public static Dictionary<string, int> S_CDT_STR_INDEX_MAP = new Dictionary<string, int>();
         public static List<float> S_CDT_PROBABILITY_LIST = new List<float>();
         public static List<float> S_CDT_MISS_REL_LENGTH_LIST = new List<float>();
         public static List<Color> S_CDT_COLOR_LIST = new List<Color>();
@@ -171,6 +172,7 @@ namespace LotteryAnalyze
             S_CDT_LIST.Add(cdt);
             S_CDT_TAG_LIST.Add(name);
             S_CDT_NAME_INDEX_MAP.Add(name, S_CDT_NAME_INDEX_MAP.Count);
+            S_CDT_STR_INDEX_MAP.Add(cdt.ToString(), S_CDT_STR_INDEX_MAP.Count);
             S_CDT_PROBABILITY_LIST.Add(probability);
             S_CDT_MISS_REL_LENGTH_LIST.Add(probability / (1.0f - probability));
             S_CDT_COLOR_LIST.Add(col);
@@ -205,6 +207,11 @@ namespace LotteryAnalyze
         public static int GetNumIndex(string numSTR)
         {
             return S_NUM_NAME_INDEX_MAP[numSTR];
+        }
+
+        public static int GetCdtIndexByEnumStr(string cdtEnumStr)
+        {
+            return S_CDT_STR_INDEX_MAP[cdtEnumStr];
         }
 
         static GraphDataManager sInst = null;

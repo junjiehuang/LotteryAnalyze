@@ -383,6 +383,39 @@ public class PanelDataView : MonoBehaviour
         BatchStartIndex = EndIndex;
     }
 
+    public void ReadSpecDateData(string idtag, int dateID)
+    {
+        GlobalSetting.IsCurrentFetchingLatestData = false;
+        DataManager dataMgr = DataManager.GetInst();
+        // 如果文件列表是空的，读取数据文件列表
+        if (dataMgr.fileKeys.Count == 0)
+        {
+            OnBtnClickImportData();
+        }
+        int startID = DataManager.GetInst().fileKeys.IndexOf(dateID);
+        int endID = startID + 1;
+        if (startID > 0)
+            --startID;
+        if (endID >= DataManager.GetInst().fileKeys.Count)
+            endID = DataManager.GetInst().fileKeys.Count - 1;
+        dataMgr.ClearAllDatas();
+        for (int i = startID; i <= endID; ++i)
+        {
+            int key = dataMgr.fileKeys[i];
+            dataMgr.LoadData(key);
+        }
+        dataMgr.SetDataItemsGlobalID();
+
+        Util.CollectPath012Info(null);
+        GraphDataManager.ResetCurKValueMap();
+        GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
+
+        LotteryManager.SetActive(PanelAnalyze.Instance.gameObject, true);
+        PanelAnalyze.Instance.SelectKDataIndex = DataManager.GetInst().GetDataItemByIdTag(idtag).idGlobal;
+        PanelAnalyze.Instance.OnSelectedDataItemChanged();
+        PanelAnalyze.Instance.NotifyUIRepaint();
+    }
+
 
     #region call backs
 

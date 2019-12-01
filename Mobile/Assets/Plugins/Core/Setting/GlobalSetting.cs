@@ -92,6 +92,9 @@ namespace LotteryAnalyze
         [Parameter("界面设置/辅助线拖拽点击范围的缩放值", 3.0f)]
         private static float g_AUX_LINE_KEY_POINT_SEL_SIZE_SCALE = 3.0f;
 
+        [Parameter("界面设置/是否强制分析界面的水平对齐", false)]
+        private static bool g_FORCE_HORZ_ALLIGN = false;
+
         [Parameter("界面设置/设置界面字体/普通字体大小", 40)]
         private static int g_COMMON_FONT_SIZE = 40;
         [Parameter("界面设置/设置界面字体/按钮字体大小", 45)]
@@ -1166,6 +1169,20 @@ namespace LotteryAnalyze
             set
             {
                 g_KCURVE_PREDICT_SAMPLE_COUNT = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static bool G_FORCE_HORZ_ALLIGN
+        {
+            get
+            {
+                return g_FORCE_HORZ_ALLIGN;
+            }
+
+            set
+            {
+                g_FORCE_HORZ_ALLIGN = value;
                 HAS_MODIFY = true;
             }
         }

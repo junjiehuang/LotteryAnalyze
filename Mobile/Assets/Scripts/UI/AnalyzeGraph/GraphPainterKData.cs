@@ -226,11 +226,17 @@ public class GraphPainterKData : GraphPainterBase
                 float y = data.KValue * canvasUpScale.y;
                 float canvasY = upPainter.StandToCanvas(y, false);
                 canvasUpOffset.y += PanelAnalyze.Instance.graphUp.rectTransform.rect.height * 0.5f - canvasY;
+                if(GlobalSetting.G_FORCE_HORZ_ALLIGN)
+                {
+                    float canvasX = upPainter.StandToCanvas(startIndex * canvasUpScale.x, true);
+                    canvasUpOffset.x += PanelAnalyze.Instance.graphUp.rectTransform.rect.width * 0.3f - canvasX;
+                }
                 upPainter.BeforeDraw(canvasUpOffset);
             }
         }
 
         canvasDownOffset.y = PanelAnalyze.Instance.graphDown.rectTransform.rect.height * 0.5f;
+        canvasDownOffset.x = canvasUpOffset.x;
         downPainter.BeforeDraw(canvasDownOffset);
         PanelAnalyze.Instance.NotifyUIRepaint();
     }

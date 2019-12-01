@@ -31,6 +31,8 @@ public class LotteryManager : MonoBehaviour
         SetActive(PanelQuit.Instance.gameObject, false);
         SetActive(PanelCalculator.Instance.gameObject, false);
         SetActive(PanelSelectColor.Instance.gameObject, false);
+        SetActive(PanelStatisticCollect.Instance.gameObject, false);
+        SetActive(PanelMessageBox.Instance.gameObject, false);
     }
 
     // Update is called once per frame

@@ -160,6 +160,19 @@ public class PanelAnalyze : MonoBehaviour
         SetCurrentGraph(graghPainterKData);
     }
 
+    public void ChangeNumIndexAndCdtIndex(int _numIndex, int _cdtIndex)
+    {
+        numIndex = _numIndex;
+        cdt = GraphDataManager.S_CDT_LIST[_cdtIndex];
+        if (settingCommon != null)
+        {
+            settingCommon.dropdownNumIndex.value = _numIndex;
+            settingCommon.dropdownCDT.value = _cdtIndex;
+        }
+        OnBtnClickAutoAllign();
+        NotifyUIRepaint();
+    }
+
     void InitSettingPanelCommon()
     {
         settingCommon.settingPanelCommon.transform.parent.gameObject.SetActive(false);
@@ -595,7 +608,10 @@ public class PanelAnalyze : MonoBehaviour
 
     public void OnBtnClickAutoAllign()
     {
-        curGraphPainter.OnAutoAllign();
+        if (curGraphPainter != null)
+        {
+            curGraphPainter.OnAutoAllign();
+        }
     }
 
     public void OnClickItemBestPosPath(int index)

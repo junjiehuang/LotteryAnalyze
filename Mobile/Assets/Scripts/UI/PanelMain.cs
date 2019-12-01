@@ -49,4 +49,9 @@ public class PanelMain : MonoBehaviour
     {
         LotteryManager.SetActive(PanelCalculator.Instance.gameObject, true);
     }
+
+    public void OnBtnClickOpenStatisticCollect()
+    {
+        LotteryManager.SetActive(PanelStatisticCollect.Instance.gameObject, true);
+    }
 }
