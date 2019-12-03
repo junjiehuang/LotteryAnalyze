@@ -12,8 +12,10 @@ public class PanelStatisticCollect : MonoBehaviour
     public Dropdown dropdownStatisticType;
     public Button btnClose;
     public Button btnToggleBrief;
+
     public GameObject goBrief;
-    public Text txtBrief;
+    public GraphBase graphStatistic;
+    GraphPainterStatistic curPainter = new GraphPainterStatistic();
 
     public Button btnStart;
     public Button btnStop;
@@ -116,8 +118,11 @@ public class PanelStatisticCollect : MonoBehaviour
     List<StatisticItem> freePool = new List<StatisticItem>();
     List<ItemWrapper> treeInfos = new List<ItemWrapper>();
 
-    Dictionary<int, Dictionary<int, Dictionary<int, List<ItemWrapper>>>> allBarUpInfo = new Dictionary<int, Dictionary<int, Dictionary<int, List<ItemWrapper>>>>();
+    public Dictionary<int, Dictionary<int, Dictionary<int, List<ItemWrapper>>>> allBarUpInfo = new Dictionary<int, Dictionary<int, Dictionary<int, List<ItemWrapper>>>>();
 
+    public int TotalStartID = 0;
+    public int TotalCount = 0;
+    public int MaxMissCount = 0;
 
     void SetProgress(float pL, float pG)
     {
@@ -131,6 +136,7 @@ public class PanelStatisticCollect : MonoBehaviour
         dropdownStatisticType.value = 0;
         dropdownStatisticType.onValueChanged.AddListener((v) =>
         {
+            TotalStartID = 0;
             currentDataAnalyseType = (DataAnalyseType)dropdownStatisticType.value;
 
             treeInfos.Clear();
@@ -192,11 +198,16 @@ public class PanelStatisticCollect : MonoBehaviour
 
     }
 
+    public Vector2 ConvertPosToPainter(Vector2 pointerPos, GraphBase graph)
+    {
+        Vector2 pos = pointerPos;
+        return pos;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         goBrief.SetActive(false);
-        txtBrief.text = "";
 
         FULL_SIZE = (imgL.rectTransform.parent as RectTransform).rect.width;
         ITEM_W = rtPrefab.rect.width;
@@ -210,12 +221,16 @@ public class PanelStatisticCollect : MonoBehaviour
 
         rtPrefab.gameObject.SetActive(false);
         freePool.Add(rtPrefab.GetComponent<StatisticItem>());
+
+        graphStatistic.ConvertPosToPainter += ConvertPosToPainter;
     }
 
     // Update is called once per frame
     void Update()
     {
         DoUpdate();
+
+        curPainter.Update();
     }
 
     void DoUpdate()
@@ -247,6 +262,10 @@ public class PanelStatisticCollect : MonoBehaviour
 
     void DoPrepBatch()
     {
+        if(TotalCount > 0 && TotalStartID == 0)
+        {
+            TotalStartID = TotalCount;
+        }
         DataManager dataMgr = DataManager.GetInst();
         endIndex = startIndex + batchCount;
         if (endIndex >= dateIDLst.Count)
@@ -268,6 +287,13 @@ public class PanelStatisticCollect : MonoBehaviour
             }
 
             cItem = dataMgr.GetFirstItem();
+
+            DataItem tailItem = dataMgr.GetLatestRealItem();
+            if(TotalStartID > 0 && tailItem != null)
+            {
+                TotalStartID -= tailItem.parent.datas.Count;
+            }
+            TotalCount = TotalStartID + dataMgr.GetAllDataItemCount();
             if (string.IsNullOrEmpty(lastDataItemTag) == false)
             {
                 DataItem lastItem = dataMgr.GetDataItemByIdTag(lastDataItemTag);
@@ -442,7 +468,8 @@ public class PanelStatisticCollect : MonoBehaviour
                                     mpmC = mpmP;
                                     mpmP = kddc.GetMacdPointMap(curID);
                                 }
-                                info += "," + barGoUpCount;
+                                int globalID = TotalStartID + cItem.idGlobal;
+                                info += "," + barGoUpCount + "," + globalID;
                                 missInfo.Add(info);
                             }
 
@@ -624,6 +651,8 @@ public class PanelStatisticCollect : MonoBehaviour
         {
             PanelDataView.Instance.OnBtnClickImportData();
         }
+        TotalCount = 0;
+        TotalStartID = 0;
 
         isStop = false;
         status = ProcStatus.eStart;
@@ -716,7 +745,7 @@ public class PanelStatisticCollect : MonoBehaviour
         FileStream fs = new FileStream(fileName, FileMode.Create);
         StreamWriter sw = new StreamWriter(fs);
 
-        string info = "<root type=\"" + currentDataAnalyseType.ToString() + "\">\n";
+        string info = "<root type=\"" + currentDataAnalyseType.ToString() + "\" TotalCount=\"" + TotalCount + "\">\n";
         sw.Write(info);
 
         for (int i = 0; i < 5; ++i)
@@ -959,7 +988,10 @@ public class PanelStatisticCollect : MonoBehaviour
         if (pNode == null)
             return;
 
-        txtBrief.text = "";
+        MaxMissCount = 0;
+
+        TotalCount = int.Parse(pNode.Attributes["TotalCount"].Value);
+
         treeInfos.Clear();
 
         allBarUpInfo.Clear();
@@ -990,6 +1022,10 @@ public class PanelStatisticCollect : MonoBehaviour
                     ItemWrapper tnCount = new ItemWrapper(coundNode.Attributes[0].Value);
                     tnCDT.SubNodes.Add(tnCount);
 
+                    int missCount = int.Parse(coundNode.Attributes[0].Value);
+                    if (MaxMissCount < missCount)
+                        MaxMissCount = missCount;
+
                     foreach (XmlNode missNode in coundNode.ChildNodes)
                     {
                         ItemWrapper tnMiss = new ItemWrapper(missNode.Attributes[0].Value);
@@ -998,13 +1034,18 @@ public class PanelStatisticCollect : MonoBehaviour
                         string[] strs = tnMiss.Text.Split(',');
                         int date = int.Parse(strs[0].Split('-')[0]);
                         int barGoUpCount = 0;
+                        int globalID = -1;
                         if(strs.Length > 1)
                             barGoUpCount = int.Parse(strs[1]);
+                        if (strs.Length > 2)
+                            globalID = int.Parse(strs[2]);
                         tnMiss.Tag = date;
+                        tnMiss.globalID = globalID;
                         tnMiss.numIndex = numIndex;
                         tnMiss.cdtIndex = cdtIndex;
                         tnMiss.showViewBtn = true;
                         tnMiss.isLeafNode = true;
+                        tnMiss.barUpCount = barGoUpCount;
 
                         List<ItemWrapper> lst = null;
                         if (cdtBarUpInfo.ContainsKey(barGoUpCount))
@@ -1183,5 +1224,10 @@ public class PanelStatisticCollect : MonoBehaviour
             }
             --layer;
         }
+    }
+
+    public void NotifyRepaint()
+    {
+        graphStatistic.SetVerticesDirty();
     }
 }

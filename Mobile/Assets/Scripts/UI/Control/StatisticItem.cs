@@ -96,6 +96,8 @@ public class ItemWrapper
     public int cdtIndex;
     public bool isLeafNode;
     public bool showViewBtn;
+    public int globalID = -1;
+    public int barUpCount = 0;
 
     public ItemWrapper(string info)
     {
