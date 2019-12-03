@@ -647,7 +647,7 @@ public class PanelAnalyze : MonoBehaviour
 
     public void OnSliderFastViewChange(int v)
     {
-        int index = (int)fastViewSlider.value;
+        float index = (int)fastViewSlider.value;
         if (needUpdateScrollToSpecDataItem)
         {
             graghPainterKData.OnScrollToData(index);

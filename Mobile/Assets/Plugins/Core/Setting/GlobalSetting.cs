@@ -77,6 +77,13 @@ namespace LotteryAnalyze
         [Parameter("界面设置/主线程更新休眠时间", 100)]
         private static int g_GLOBAL_MAIN_THREAD_UPDATE_INTERVAL = 1500;
 
+        [Parameter("界面设置/统计界面/当前缩放X", 15.0f)]
+        private static float g_STATISTIC_CANVAS_SCALE_X = 15.0f;
+        [Parameter("界面设置/统计界面/最大缩放X", 15.0f)]
+        private static float g_STATISTIC_CANVAS_SCALE_X_MAX = 15.0f;
+        [Parameter("界面设置/统计界面/最小显示格大小", 15.0f)]
+        private static float g_STATISTIC_CANVAS_MIN_GRID_SIZE = 15.0f;
+
         [Parameter("界面设置/K线界面缩放X", 15.0f)]
         private static float g_KGRAPH_CANVAS_SCALE_X = 15.0f;
         [Parameter("界面设置/K线界面缩放Y", 30.0f)]
@@ -1183,6 +1190,48 @@ namespace LotteryAnalyze
             set
             {
                 g_FORCE_HORZ_ALLIGN = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static float G_STATISTIC_CANVAS_SCALE_X
+        {
+            get
+            {
+                return g_STATISTIC_CANVAS_SCALE_X;
+            }
+
+            set
+            {
+                g_STATISTIC_CANVAS_SCALE_X = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static float G_STATISTIC_CANVAS_MIN_GRID_SIZE
+        {
+            get
+            {
+                return g_STATISTIC_CANVAS_MIN_GRID_SIZE;
+            }
+
+            set
+            {
+                g_STATISTIC_CANVAS_MIN_GRID_SIZE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static float G_STATISTIC_CANVAS_SCALE_X_MAX
+        {
+            get
+            {
+                return g_STATISTIC_CANVAS_SCALE_X_MAX;
+            }
+
+            set
+            {
+                g_STATISTIC_CANVAS_SCALE_X_MAX = value;
                 HAS_MODIFY = true;
             }
         }

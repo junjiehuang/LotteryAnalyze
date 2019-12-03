@@ -61,7 +61,7 @@ public class GraphPainterBase
 
     }
 
-    public virtual void OnScrollToData(int dataIndex)
+    public virtual void OnScrollToData(float dataIndex)
     {
         canvasUpOffset.x = -dataIndex * canvasUpScale.x;
         canvasDownOffset.x = canvasUpOffset.x;

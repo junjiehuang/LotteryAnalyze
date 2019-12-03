@@ -15,6 +15,10 @@ public class PanelStatisticCollect : MonoBehaviour
 
     public GameObject goBrief;
     public GraphBase graphStatistic;
+    public ScrollBar scrollBar;
+    public Slider slider;
+    public Button btnViewData;
+
     GraphPainterStatistic curPainter = new GraphPainterStatistic();
 
     public Button btnStart;
@@ -83,6 +87,8 @@ public class PanelStatisticCollect : MonoBehaviour
     int CALC_PER_COUNT = 100;
     bool isStop = false;
 
+    bool needRepaint = false;
+
     enum ProcStatus
     {
         eNotStart,
@@ -123,6 +129,8 @@ public class PanelStatisticCollect : MonoBehaviour
     public int TotalStartID = 0;
     public int TotalCount = 0;
     public int MaxMissCount = 0;
+
+    public Dictionary<int, List<ItemWrapper>> graphDataItems = new Dictionary<int, List<ItemWrapper>>();
 
     void SetProgress(float pL, float pG)
     {
@@ -195,7 +203,47 @@ public class PanelStatisticCollect : MonoBehaviour
             }
         });
 
+        float ratio = GlobalSetting.G_STATISTIC_CANVAS_SCALE_X / GlobalSetting.G_STATISTIC_CANVAS_SCALE_X_MAX;
+        scrollBar.SetHandleRatio(ratio);
+        scrollBar.onScrollChange += () =>
+        {
+            GlobalSetting.G_STATISTIC_CANVAS_SCALE_X = scrollBar.GetProgress() * GlobalSetting.G_STATISTIC_CANVAS_SCALE_X_MAX;
+            if (GlobalSetting.G_STATISTIC_CANVAS_SCALE_X < 0.01f)
+                GlobalSetting.G_STATISTIC_CANVAS_SCALE_X = 0.01f;
+            curPainter.OnGraphZoom(curPainter.upPainter);
+            NotifyRepaint();
+        };
 
+        slider.onValueChanged.AddListener((v) =>
+        {
+            curPainter.OnScrollToData((int)slider.value);
+        });
+
+        btnViewData.onClick.AddListener(() =>
+        {
+            if(curPainter.selectedIndex >= 0)
+            {
+                if(graphDataItems.ContainsKey(curPainter.selectedIndex))
+                {
+                    List<ItemWrapper> lst = graphDataItems[curPainter.selectedIndex];
+                    for (int i = 0; i < lst.Count; ++i)
+                    {
+                        ItemWrapper item = lst[i];
+                        if (item.Tag != null && item.cdtIndex < 3)
+                        {
+                            string idtag = item.Text;
+                            if (item.Text.Contains(","))
+                            {
+                                idtag = item.Text.Split(',')[0];
+                            }
+                            PanelDataView.Instance.ReadSpecDateData(idtag, (int)item.Tag);
+                            PanelAnalyze.Instance.ChangeNumIndexAndCdtIndex(item.numIndex, item.cdtIndex);
+                            return;
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public Vector2 ConvertPosToPainter(Vector2 pointerPos, GraphBase graph)
@@ -231,6 +279,15 @@ public class PanelStatisticCollect : MonoBehaviour
         DoUpdate();
 
         curPainter.Update();
+    }
+
+    private void LateUpdate()
+    {
+        if(needRepaint)
+        {
+            graphStatistic.SetVerticesDirty();
+            needRepaint = false;
+        }
     }
 
     void DoUpdate()
@@ -993,12 +1050,13 @@ public class PanelStatisticCollect : MonoBehaviour
         TotalCount = int.Parse(pNode.Attributes["TotalCount"].Value);
 
         treeInfos.Clear();
-
         allBarUpInfo.Clear();
+        graphDataItems.Clear();
 
         ItemWrapper iwBolleanUpLongMiss = new ItemWrapper("遗漏信息");
         treeInfos.Add(iwBolleanUpLongMiss);
 
+        // numIndex node
         foreach (XmlNode numNode in pNode.ChildNodes)
         {
             int numIndex = KDataDictContainer.C_TAGS.IndexOf(numNode.Attributes[0].Value);
@@ -1008,6 +1066,7 @@ public class PanelStatisticCollect : MonoBehaviour
             Dictionary<int, Dictionary<int, List<ItemWrapper>>> numBarUpInfo = new Dictionary<int, Dictionary<int, List<ItemWrapper>>>();
             allBarUpInfo[numIndex] = numBarUpInfo;
 
+            // collectDataType node
             foreach (XmlNode cdtNode in numNode.ChildNodes)
             {
                 int cdtIndex = GraphDataManager.GetCdtIndexByEnumStr(cdtNode.Attributes[0].Value);
@@ -1017,6 +1076,7 @@ public class PanelStatisticCollect : MonoBehaviour
                 Dictionary<int, List<ItemWrapper>> cdtBarUpInfo = new Dictionary<int, List<ItemWrapper>>();
                 numBarUpInfo[cdtIndex] = cdtBarUpInfo;
 
+                // missCount node
                 foreach (XmlNode coundNode in cdtNode.ChildNodes)
                 {
                     ItemWrapper tnCount = new ItemWrapper(coundNode.Attributes[0].Value);
@@ -1046,6 +1106,7 @@ public class PanelStatisticCollect : MonoBehaviour
                         tnMiss.showViewBtn = true;
                         tnMiss.isLeafNode = true;
                         tnMiss.barUpCount = barGoUpCount;
+                        tnMiss.missCount = missCount;
 
                         List<ItemWrapper> lst = null;
                         if (cdtBarUpInfo.ContainsKey(barGoUpCount))
@@ -1056,6 +1117,16 @@ public class PanelStatisticCollect : MonoBehaviour
                             cdtBarUpInfo[barGoUpCount] = lst;
                         }
                         lst.Add(tnMiss);
+
+                        List<ItemWrapper> lstData = null;
+                        if (graphDataItems.ContainsKey(globalID))
+                            lstData = graphDataItems[globalID];
+                        else
+                        {
+                            lstData = new List<ItemWrapper>();
+                            graphDataItems[globalID] = lstData;
+                        }
+                        lstData.Add(tnMiss);
                     }
 
                     tnCDT.SubNodes.Sort((a, b) =>
@@ -1112,6 +1183,9 @@ public class PanelStatisticCollect : MonoBehaviour
             }
         }
 
+        slider.minValue = 0;
+        slider.maxValue = TotalCount;
+        slider.value = 0;
         RefreshView();
     }
 
@@ -1228,6 +1302,6 @@ public class PanelStatisticCollect : MonoBehaviour
 
     public void NotifyRepaint()
     {
-        graphStatistic.SetVerticesDirty();
+        needRepaint = true;
     }
 }

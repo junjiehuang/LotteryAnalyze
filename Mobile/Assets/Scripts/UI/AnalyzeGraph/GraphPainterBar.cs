@@ -31,7 +31,7 @@ public class GraphPainterBar : GraphPainterBase
         base.OnPointerClick(pos, g);
     }
 
-    public override void OnScrollToData(int dataIndex)
+    public override void OnScrollToData(float dataIndex)
     {
         base.OnScrollToData(dataIndex);
     }

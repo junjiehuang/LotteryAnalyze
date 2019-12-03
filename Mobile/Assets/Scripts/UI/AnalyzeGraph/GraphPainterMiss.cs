@@ -335,7 +335,7 @@ public class GraphPainterMiss : GraphPainterBase
         GraphDataManager.Instance.CollectGraphData(GraphType.eBarGraph);
     }
 
-    public override void OnScrollToData(int dataIndex)
+    public override void OnScrollToData(float dataIndex)
     {
         base.OnScrollToData(dataIndex);
     }

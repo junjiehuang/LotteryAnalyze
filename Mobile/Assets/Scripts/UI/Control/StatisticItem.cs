@@ -98,6 +98,7 @@ public class ItemWrapper
     public bool showViewBtn;
     public int globalID = -1;
     public int barUpCount = 0;
+    public int missCount = 0;
 
     public ItemWrapper(string info)
     {
