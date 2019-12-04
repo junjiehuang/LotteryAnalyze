@@ -292,8 +292,8 @@ namespace LotteryAnalyze
             // 根据均线选择某个数字位的最优012路
             eSinglePositionBestPathByAvgLine,
         }
-        public static string[] STRATEGY_NAMES = 
-            {
+        public static List<string> STRATEGY_NAMES = new List<string>()
+        {
             "eSinglePositionBestPath",
             "eSinglePositionBestTwoPath",
             "eSinglePositionBestPaths",

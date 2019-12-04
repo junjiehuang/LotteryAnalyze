@@ -54,4 +54,9 @@ public class PanelMain : MonoBehaviour
     {
         LotteryManager.SetActive(PanelStatisticCollect.Instance.gameObject, true);
     }
+
+    public void OnBtnClickOpenTrade()
+    {
+        LotteryManager.SetActive(PanelTrade.Instance.gameObject, true);
+    }
 }
