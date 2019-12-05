@@ -605,11 +605,20 @@ public class PanelDataView : MonoBehaviour
     }
     public void OnBtnClickSimSelDates()
     {
-
+        if(selectedDateID.Count > 0)
+        {
+            int firstIndex = selectedDateID[0];
+            int lastIndex = selectedDateID[selectedDateID.Count - 1];
+            PanelTrade.Instance.StartDate = firstIndex;// DataManager.GetInst().fileKeys.IndexOf(firstIndex);
+            PanelTrade.Instance.EndDate = lastIndex;// DataManager.GetInst().fileKeys.IndexOf(lastIndex);
+            LotteryManager.SetActive(PanelTrade.Instance.gameObject, true);
+        }
     }
     public void OnBtnClickSimAllDates()
     {
-
+        PanelTrade.Instance.StartDate = -1;
+        PanelTrade.Instance.EndDate = -1;
+        LotteryManager.SetActive(PanelTrade.Instance.gameObject, true);
     }
 
     // 从选择的最后一个日期作为起始日期，读取截至到目前最新的所有数据

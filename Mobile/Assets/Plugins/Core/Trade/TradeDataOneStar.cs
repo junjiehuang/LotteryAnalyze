@@ -83,19 +83,19 @@ namespace LotteryAnalyze
         public TradeDataOneStar()
         {
             UpdateIndex();
-#if TRADE_DBG
+//#if TRADE_DBG
             for (int i = 0; i < 5; ++i)
             {
                 pathCmpInfos.Add(new List<PathCmpInfo>());
             }
-#endif
+//#endif
             tradeType = TradeType.eOneStar;
         }
 
         public override string GetDbgInfo()
         {
             string dbgtxt = "";
-#if TRADE_DBG
+//#if TRADE_DBG
             List<PathCmpInfo> pcis = null;
             PathCmpInfo pci = null;
             for (int i = 0; i < pathCmpInfos.Count; ++i)
@@ -136,7 +136,7 @@ namespace LotteryAnalyze
 
                 }
             }
-#endif
+//#endif
             return dbgtxt;
         }
 

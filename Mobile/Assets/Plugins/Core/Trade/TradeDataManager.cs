@@ -422,6 +422,8 @@ namespace LotteryAnalyze
         public OnTradeComleted tradeCompletedCallBack;
         public delegate void OnLongWrongTrade(LongWrongTradeInfo info);
         public OnLongWrongTrade longWrongTradeCallBack;
+        public delegate void OnOneTradeCompleted(TradeDataBase trade);
+        public OnOneTradeCompleted evtOneTradeCompleted;
 
         public AutoAnalyzeTool autoAnalyzeTool = new AutoAnalyzeTool();
         public AutoAnalyzeTool curPreviewAnalyzeTool = new AutoAnalyzeTool();
@@ -596,23 +598,26 @@ namespace LotteryAnalyze
             {
                 for( int i = waitingTradeDatas.Count-1; i >= 0; --i )
                 {
-                    waitingTradeDatas[i].Update();
-                    if (waitingTradeDatas[i].tradeStatus == TradeStatus.eDone)
+                    TradeDataBase trade = waitingTradeDatas[i];
+                    trade.Update();
+                    if (trade.tradeStatus == TradeStatus.eDone)
                     {
                         //if (waitingTradeDatas[i].cost != 0)
                         {
-                            BatchTradeSimulator.Instance.OnOneTradeCompleted(waitingTradeDatas[i]);
+                            BatchTradeSimulator.Instance.OnOneTradeCompleted(trade);
                         }
 
-                        RefreshTradeCountOnOneTradeCompleted(waitingTradeDatas[i]);
-                        if (maxValue < waitingTradeDatas[i].moneyAtferTrade)
-                            maxValue = waitingTradeDatas[i].moneyAtferTrade;
-                        if (minValue > waitingTradeDatas[i].moneyAtferTrade)
-                            minValue = waitingTradeDatas[i].moneyAtferTrade;
-                        historyTradeDatas.Add(waitingTradeDatas[i]);
+                        RefreshTradeCountOnOneTradeCompleted(trade);
+                        if (maxValue < trade.moneyAtferTrade)
+                            maxValue = trade.moneyAtferTrade;
+                        if (minValue > trade.moneyAtferTrade)
+                            minValue = trade.moneyAtferTrade;
+                        historyTradeDatas.Add(trade);
                         waitingTradeDatas.RemoveAt(i);
                         if (tradeCompletedCallBack != null)
                             tradeCompletedCallBack();
+                        if (evtOneTradeCompleted != null)
+                            evtOneTradeCompleted(trade);
                     }
                 }
             }

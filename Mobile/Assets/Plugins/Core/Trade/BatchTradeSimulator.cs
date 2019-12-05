@@ -201,7 +201,7 @@ namespace LotteryAnalyze
             else if (lastIndex < 0 || fileIDLst.Count == 0)
                 return 0;
             else
-                return (lastIndex * 100 / fileIDLst.Count);
+                return ((lastIndex + 1) * 100 / fileIDLst.Count);
         }
         public int GetBatchProgress()
         {
@@ -212,7 +212,7 @@ namespace LotteryAnalyze
             int totalItemCount = DataManager.GetInst().GetAllDataItemCount();
             if (totalItemCount == 0)
                 return 0;
-            int v = TradeDataManager.Instance.historyTradeDatas.Count * 100 / totalItemCount;
+            int v = (TradeDataManager.Instance.historyTradeDatas.Count + 1) * 100 / totalItemCount;
             return v;
         }
 

@@ -11,6 +11,22 @@ namespace LotteryAnalyze
         public List<NumberCmpInfo> tradeNumbers = new List<NumberCmpInfo>();
         public int tradeCount = 0;
 
+        public void CopyFrom(TradeNumbers other)
+        {
+            tradeCount = other.tradeCount;
+            tradeNumbers.Clear();
+            for(int i = 0; i < other.tradeNumbers.Count; ++i)
+            {
+                NumberCmpInfo srcN = other.tradeNumbers[i];
+                NumberCmpInfo tarN = new NumberCmpInfo();
+                tarN.appearCount = srcN.appearCount;
+                tarN.largerThanTheoryProbability = srcN.largerThanTheoryProbability;
+                tarN.number = srcN.number;
+                tarN.rate = srcN.rate;
+                tradeNumbers.Add(tarN);
+            }
+        }
+
         public void GetInfo(ref string info)
         {
             if (tradeNumbers.Count > 0)

@@ -6,6 +6,17 @@ using UnityEngine.UI;
 
 public class PanelTrade : MonoBehaviour
 {
+    public class SingleTradeInfo
+    {
+        public string lastDataItemIdTag;
+        public string targetDataItemIdTag;
+        public float moneyLeft;
+        public float cost;
+        public float reward;
+        public Dictionary<int, TradeNumbers> tradeDetail;
+    }
+    public List<SingleTradeInfo> allTradeInfos = new List<SingleTradeInfo>();
+
     [System.Serializable]
     public class UIMain
     {
@@ -14,6 +25,10 @@ public class PanelTrade : MonoBehaviour
         public Button btnStart;
         public Button btnPause;
         public Button btnStop;
+
+        public Text txtBtnPause;
+        public RectTransform rtProgressLocal;
+        public RectTransform rtProgressGlobal;
     }
 
     [System.Serializable]
@@ -48,6 +63,22 @@ public class PanelTrade : MonoBehaviour
     public UISetting uiSetting;
     public UITrade uiTrade;
 
+    public float ProgreeBarMaxW;
+    int startDate = -1, endDate = -1;
+    public int StartDate
+    {
+        get { return startDate; }
+        set { startDate = value; uiSetting.inputStartDate.text = value.ToString(); }
+    }
+    public int EndDate
+    {
+        get { return endDate; }
+        set { endDate = value; uiSetting.inputEndDate.text = value.ToString(); }
+    }
+
+    bool needRepaint = false;
+    GraphPainterTrade curPainter = new GraphPainterTrade();
+
     static PanelTrade sInst;
     public static PanelTrade Instance
     {
@@ -62,6 +93,11 @@ public class PanelTrade : MonoBehaviour
 
     void Init()
     {
+        ProgreeBarMaxW = (uiMain.rtProgressGlobal.parent as RectTransform).rect.width;
+        uiMain.rtProgressGlobal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
+        uiMain.rtProgressLocal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
+
+        uiMain.txtBtnPause = uiMain.btnPause.GetComponentInChildren<Text>();
         uiMain.btnClose.onClick.AddListener(() =>
         {
             LotteryManager.SetActive(gameObject, false);
@@ -69,17 +105,33 @@ public class PanelTrade : MonoBehaviour
 
         uiMain.btnPause.onClick.AddListener(() =>
         {
-
+            if (BatchTradeSimulator.Instance.IsSimulating)
+            {
+                if (BatchTradeSimulator.Instance.IsPause())
+                {
+                    DoResume();
+                    uiMain.txtBtnPause.text = "暂停";
+                }
+                else
+                {
+                    DoPause();
+                    uiMain.txtBtnPause.text = "恢复";
+                }
+            }
         });
 
         uiMain.btnStart.onClick.AddListener(() =>
         {
-
+            if (BatchTradeSimulator.Instance.IsSimulating == false)
+            {
+                DoStart();
+                uiMain.txtBtnPause.text = "暂停";
+            }
         });
 
         uiMain.btnStop.onClick.AddListener(() =>
         {
-
+            DoStop();
         });
 
         uiMain.btnToggleTradeSettingView.onClick.AddListener(() =>
@@ -100,6 +152,8 @@ public class PanelTrade : MonoBehaviour
 
         uiSetting.dropdownTradeStratedy.AddOptions(TradeDataManager.STRATEGY_NAMES);
         uiSetting.dropdownTradeStratedy.value = 0;
+
+        TradeDataManager.Instance.evtOneTradeCompleted += OnOneTradeCompleted;
     }
 
 
@@ -112,6 +166,102 @@ public class PanelTrade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DoTradeUpdate();
+        curPainter.Update();
+    }
+
+    private void LateUpdate()
+    {
+        if (needRepaint)
+        {
+            uiTrade.graphTrade.SetVerticesDirty();
+            needRepaint = false;
+        }
+    }
+
+    public void NotifyRepaint()
+    {
+        needRepaint = true;
+    }
+
+    void DoStart()
+    {
+        BatchTradeSimulator.Instance.batch = GlobalSetting.G_DAYS_PER_BATCH;
+        BatchTradeSimulator.Instance.startMoney = float.Parse(uiSetting.inputStartMoney.text);
+        TradeDataManager.Instance.SetTradeCountInfo(uiSetting.inputTradeCountLst.text);
         
+        uiMain.txtBtnPause.text = "暂停";
+        BatchTradeSimulator.Instance.Start(ref startDate, ref endDate);
+
+        uiSetting.inputStartDate.text = startDate.ToString();
+        uiSetting.inputEndDate.text = endDate.ToString();
+
+        allTradeInfos.Clear();
+    }
+
+    void DoPause()
+    {
+        BatchTradeSimulator.Instance.Pause();
+    }
+
+    void DoResume()
+    {
+        BatchTradeSimulator.Instance.Resume();
+    }
+
+    void DoStop()
+    {
+        BatchTradeSimulator.Instance.Stop();
+        // 重置K线的起点值
+        GraphDataManager.ResetCurKValueMap();
+    }
+
+    void SetProgress(float local, float globalV)
+    {
+        uiMain.rtProgressLocal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, ProgreeBarMaxW * local);
+        uiMain.rtProgressGlobal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, ProgreeBarMaxW * globalV);
+    }
+
+    void DoTradeUpdate()
+    {
+        TradeDataManager.Instance.Update();
+        BatchTradeSimulator.Instance.Update();
+
+        if(BatchTradeSimulator.Instance.IsSimulating)
+        {
+            float vl = BatchTradeSimulator.Instance.GetBatchProgress() / 100.0f;
+            float vg = BatchTradeSimulator.Instance.GetMainProgress() / 100.0f;
+            SetProgress(vl, vg);
+        }
+        else
+        {
+            SetProgress(0, 0);
+        }
+    }
+
+    void OnOneTradeCompleted(TradeDataBase _trade)
+    {
+        TradeDataOneStar trade = _trade as TradeDataOneStar;
+        SingleTradeInfo info = new SingleTradeInfo();
+        info.lastDataItemIdTag = trade.lastDateItem.idTag;
+        info.targetDataItemIdTag = trade.targetLotteryItem.idTag;
+        info.moneyLeft = trade.moneyAtferTrade;
+        info.cost = trade.cost;
+        info.reward = trade.reward;
+        if (trade.tradeInfo.Count > 0)
+        {
+            info.tradeDetail = new Dictionary<int, TradeNumbers>();
+            var itor = trade.tradeInfo.GetEnumerator();
+            while(itor.MoveNext())
+            {
+                int numID = itor.Current.Key;
+                TradeNumbers srcTN = itor.Current.Value;
+                TradeNumbers tarTN = new TradeNumbers();
+                tarTN.CopyFrom(srcTN);
+                info.tradeDetail.Add(numID, tarTN);
+            }
+        }
+        allTradeInfos.Add(info);
+        NotifyRepaint();
     }
 }
