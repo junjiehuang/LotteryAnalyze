@@ -14,6 +14,32 @@ public class PanelTrade : MonoBehaviour
         public float cost;
         public float reward;
         public Dictionary<int, TradeNumbers> tradeDetail;
+
+        string info;
+        public string GetDetailInfo()
+        {
+            if (info == null)
+            {
+                info =
+                    "目标期：" + lastDataItemIdTag + "\n" +
+                    "结果期：" + targetDataItemIdTag + "\n";
+                if (tradeDetail == null)
+                {
+                }
+                else
+                {
+                    info += "交易详情：\n";
+                    var itor = tradeDetail.GetEnumerator();
+                    while (itor.MoveNext())
+                    {
+                        string tns = "";
+                        itor.Current.Value.GetInfo(ref tns);
+                        info += KDataDictContainer.C_TAGS[itor.Current.Key] + tns;
+                    }
+                }
+            }
+            return info;
+        }
     }
     public List<SingleTradeInfo> allTradeInfos = new List<SingleTradeInfo>();
 
@@ -87,8 +113,6 @@ public class PanelTrade : MonoBehaviour
     private void Awake()
     {
         sInst = this;
-
-        Init();
     }
 
     void Init()
@@ -153,6 +177,38 @@ public class PanelTrade : MonoBehaviour
         uiSetting.dropdownTradeStratedy.AddOptions(TradeDataManager.STRATEGY_NAMES);
         uiSetting.dropdownTradeStratedy.value = 0;
 
+        float ratio = GlobalSetting.G_TRADE_CANVAS_SCALE_X / GlobalSetting.G_TRADE_CANVAS_SCALE_X_MAX;
+        uiTrade.scrollZoom.SetHandleRatio(0.2f);
+        uiTrade.scrollZoom.SetProgress(ratio);
+        uiTrade.scrollZoom.onScrollChange += () =>
+        {
+            GlobalSetting.G_TRADE_CANVAS_SCALE_X = uiTrade.scrollZoom.GetProgress() * GlobalSetting.G_TRADE_CANVAS_SCALE_X_MAX;
+            if (GlobalSetting.G_TRADE_CANVAS_SCALE_X < 0.01f)
+                GlobalSetting.G_TRADE_CANVAS_SCALE_X = 0.01f;
+            curPainter.OnGraphZoom(curPainter.upPainter);
+            NotifyRepaint();
+        };
+
+        uiTrade.sliderSelectTradeItem.onValueChanged.AddListener((v) =>
+        {
+            curPainter.OnScrollToData(uiTrade.sliderSelectTradeItem.value);
+        });
+
+        uiTrade.btnViewDataItem.onClick.AddListener(() =>
+        {
+            if (curPainter.selectedIndex >= 0 && allTradeInfos.Count > curPainter.selectedIndex)
+            {
+                SingleTradeInfo info = allTradeInfos[curPainter.selectedIndex];
+                if (info != null)
+                {
+                    string idtag = info.lastDataItemIdTag;
+                    int dateID = int.Parse(idtag.Split('-')[0]);
+                    PanelDataView.Instance.ReadSpecDateData(idtag, dateID);
+                    return;
+                }
+            }
+        });
+
         TradeDataManager.Instance.evtOneTradeCompleted += OnOneTradeCompleted;
     }
 
@@ -160,7 +216,7 @@ public class PanelTrade : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Init();
     }
 
     // Update is called once per frame

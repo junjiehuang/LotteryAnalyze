@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class GraphPainterTrade : GraphPainterBase
 {
+    public int selectedIndex = 0;
+    bool canScroll = true;
+
+
     // Start is called before the first frame update
     public override void Start()
     {
@@ -14,7 +18,7 @@ public class GraphPainterTrade : GraphPainterBase
     // Update is called once per frame
     public override void Update()
     {
-        canvasUpScale.x = GlobalSetting.G_STATISTIC_CANVAS_SCALE_X;
+        canvasUpScale.x = GlobalSetting.G_TRADE_CANVAS_SCALE_X;
         PanelTrade.Instance.uiTrade.graphTrade.SetPainter(upPainter, this);
         upPainter.BeforeDraw(canvasUpOffset);
         PanelTrade.Instance.uiTrade.graphTrade.BeforeUpdate();
@@ -42,6 +46,14 @@ public class GraphPainterTrade : GraphPainterBase
 
     public override void OnPointerClick(Vector2 pos, Painter g)
     {
+        float xv = g.CanvasToStand(pos.x, true);
+        selectedIndex = (int)(xv / canvasUpScale.x);
+        if (selectedIndex < 0)
+            selectedIndex = 0;
+        if (selectedIndex > PanelTrade.Instance.allTradeInfos.Count)
+            selectedIndex = PanelTrade.Instance.allTradeInfos.Count;
+
+        PanelTrade.Instance.NotifyRepaint();
 
     }
 
@@ -57,11 +69,30 @@ public class GraphPainterTrade : GraphPainterBase
 
     public void OnGraphZoom(Painter g)
     {
+        if (selectedIndex >= 0)
+        {
+            float anchorXold = g.StandToCanvas(selectedIndex * canvasUpScale.x, true);
+            float anchorXnew = g.StandToCanvas(selectedIndex * GlobalSetting.G_TRADE_CANVAS_SCALE_X, true);
+            canvasUpOffset.x += anchorXold - anchorXnew;
 
+            g.BeforeDraw(canvasUpOffset);
+            float startX = g.CanvasToStand(0, true);
+            float sv = startX / GlobalSetting.G_TRADE_CANVAS_SCALE_X;
+            canScroll = false;
+            PanelTrade.Instance.uiTrade.sliderSelectTradeItem.value = sv;
+        }
     }
 
     public override void OnScrollToData(float dataIndex)
     {
+        if (canScroll)
+        {
+            canvasUpOffset.x = -dataIndex * canvasUpScale.x;
+            canvasDownOffset.x = canvasUpOffset.x;
+        }
+        canScroll = true;
+
+        PanelTrade.Instance.NotifyRepaint();
 
     }
 
@@ -69,15 +100,17 @@ public class GraphPainterTrade : GraphPainterBase
     {
         base.DrawUpPanel(g, rtCanvas);
 
-        float MaxMoney = BatchTradeSimulator.Instance.maxMoney;
-        float MinMoney = BatchTradeSimulator.Instance.minMoney;
+        float HistoryMaxMoney = BatchTradeSimulator.Instance.maxMoney;
+        float StartMoney = BatchTradeSimulator.Instance.startMoney;
+        float HistoryMinMoney = BatchTradeSimulator.Instance.minMoney;
+        float MinMoney = HistoryMinMoney;
         if (MinMoney > 0)
             MinMoney = 0;
-        float MoneyGap = MaxMoney - MinMoney;
+        float MoneyGap = HistoryMaxMoney - MinMoney;
 
         float gridSize = canvasUpScale.x - 1;
-        if (gridSize < GlobalSetting.G_STATISTIC_CANVAS_MIN_GRID_SIZE)
-            gridSize = GlobalSetting.G_STATISTIC_CANVAS_MIN_GRID_SIZE;
+        if (gridSize < GlobalSetting.G_TRADE_CANVAS_MIN_GRID_SIZE)
+            gridSize = GlobalSetting.G_TRADE_CANVAS_MIN_GRID_SIZE;
         float gridHalfSize = gridSize * 0.5f;
         float winW = rtCanvas.rect.width;
         float winH = rtCanvas.rect.height;
@@ -86,19 +119,32 @@ public class GraphPainterTrade : GraphPainterBase
         float H = yMax - yMin;
         float sx = g.StandToCanvas(0, true);
         float ex = g.StandToCanvas(PanelTrade.Instance.allTradeInfos.Count * canvasUpScale.x, true);
-        g.DrawLineInCanvasSpace(0, yMin, winW, yMin, Color.white);
-        g.DrawLineInCanvasSpace(sx, 0, sx, winH, Color.white);
-        if(MinMoney < 0)
+        g.DrawLineInCanvasSpace(0, yMin, winW, yMin, Color.white, 2);
+        g.DrawLineInCanvasSpace(sx, 0, sx, winH, Color.white, 2);
+        //g.DrawLineInCanvasSpace(0, yMax, winW, yMax, Color.white, 2);
+        if (MinMoney < 0)
         {
             float zy = -MinMoney / MoneyGap * H + yMin;
-            g.DrawLineInCanvasSpace(0, zy, winW, zy, Color.white);
+            g.DrawLineInCanvasSpace(0, zy, winW, zy, Color.white, 2);
         }
 
         float prevY = 0;
-        float prevX = 0;
-        for(int i = 0; i < PanelTrade.Instance.allTradeInfos.Count; ++i)
+        float prevX = g.StandToCanvas(0, true);
+        int Count = PanelTrade.Instance.allTradeInfos.Count;
+        for (int i = 0; i < Count; ++i)
         {
             PanelTrade.SingleTradeInfo info = PanelTrade.Instance.allTradeInfos[i];
+            if(i == selectedIndex)
+            {
+                float profitCur = info.reward - info.cost;
+                string strProfitCur = profitCur > 0 ? ("盈利：" + profitCur) : (profitCur < 0 ? ("亏损：" + profitCur) : " 没交易");
+                float profitTotal = info.moneyLeft - StartMoney;
+                string strProfitTotal = profitTotal > 0 ? ("盈利：" + profitTotal) : (profitTotal < 0 ? ("亏损：" + profitTotal) : " 没交易");
+                string txt = "初始：" + StartMoney + " 最高：" + HistoryMaxMoney + " 最低：" + HistoryMinMoney + " 当前：" + info.moneyLeft + "\n" +
+                    "总" + strProfitTotal + " 当前" + strProfitCur + "\n" + 
+                    info.GetDetailInfo();
+                PanelTrade.Instance.uiTrade.graphTrade.AppendText(txt);
+            }
             float x = g.StandToCanvas(i * canvasUpScale.x, true);
             if (x < 0)
                 continue;
@@ -110,6 +156,11 @@ public class GraphPainterTrade : GraphPainterBase
             if(i > 0)
             {
                 g.DrawLineInCanvasSpace(prevX, prevY, x + gridHalfSize, y + gridHalfSize, Color.white);
+            }
+            if (i == selectedIndex)
+            {
+                g.DrawLineInCanvasSpace(x + canvasUpScale.x, 0, x + canvasUpScale.x, winH, Color.yellow);
+                g.DrawLineInCanvasSpace(x, 0, x, winH, Color.yellow);
             }
             prevX = x + gridHalfSize;
             prevY = y + gridHalfSize;

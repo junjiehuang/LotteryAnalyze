@@ -96,4 +96,18 @@ public class ScrollBar : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
         }
         return v;
     }
+
+    public void SetProgress(float v)
+    {
+        if(isVertScroll)
+        {
+            float y = -(rtBar.rect.height - rtHandle.rect.height) * v;
+            rtHandle.anchoredPosition = new Vector2(0, y);
+        }
+        else
+        {
+            float x = (rtBar.rect.width - rtHandle.rect.width) * v;
+            rtHandle.anchoredPosition = new Vector2(x, 0);
+        }
+    }
 }

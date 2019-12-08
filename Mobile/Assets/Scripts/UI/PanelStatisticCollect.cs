@@ -204,7 +204,8 @@ public class PanelStatisticCollect : MonoBehaviour
         });
 
         float ratio = GlobalSetting.G_STATISTIC_CANVAS_SCALE_X / GlobalSetting.G_STATISTIC_CANVAS_SCALE_X_MAX;
-        scrollBar.SetHandleRatio(ratio);
+        scrollBar.SetHandleRatio(0.2f);
+        scrollBar.SetProgress(ratio);
         scrollBar.onScrollChange += () =>
         {
             GlobalSetting.G_STATISTIC_CANVAS_SCALE_X = scrollBar.GetProgress() * GlobalSetting.G_STATISTIC_CANVAS_SCALE_X_MAX;
@@ -216,7 +217,7 @@ public class PanelStatisticCollect : MonoBehaviour
 
         slider.onValueChanged.AddListener((v) =>
         {
-            curPainter.OnScrollToData((int)slider.value);
+            curPainter.OnScrollToData(slider.value);
         });
 
         btnViewData.onClick.AddListener(() =>
