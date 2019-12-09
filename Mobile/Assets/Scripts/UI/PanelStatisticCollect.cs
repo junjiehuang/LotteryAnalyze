@@ -55,18 +55,22 @@ public class PanelStatisticCollect : MonoBehaviour
         eDAT_MissCountOnTouchBolleanUp,
         // 开出长遗漏后继续开出长遗漏的信息
         eDAT_ContinueLongMissCount,
+        // 统计K线触碰到布林下轨后的遗漏值
+        eDAT_MissCountOnTouchBulleanDown,
     }
     static List<string> DataAnalyseTypeStrs = new List<string>()
     {
             "所有的遗漏数据",
             "K线触碰到布林上轨后的遗漏值",
             "连续开出长遗漏的统计信息",
+            "统计K线触碰到布林下轨后的遗漏值",
     };
     static List<string> ExportDataPaths = new List<string>()
     {
             "遗漏统计结果.xml",
             "从布林上轨连续遗漏的统计结果.xml",
             "连续开出长遗漏的统计信息.xml",
+            "统计K线触碰到布林下轨后的遗漏值.xml",
     };
 
 
@@ -114,6 +118,9 @@ public class PanelStatisticCollect : MonoBehaviour
 
     List<Dictionary<CollectDataType, int>> numberPathMissCount = new List<Dictionary<CollectDataType, int>>();
     List<Dictionary<CollectDataType, Dictionary<int, List<string>>>> overMissCountAndTouchBolleanUpInfos = new List<Dictionary<CollectDataType, Dictionary<int, List<string>>>>();
+
+    List<Dictionary<CollectDataType, Dictionary<int, List<string>>>> overMissCountAndTouchBolleanDownInfos = new List<Dictionary<CollectDataType, Dictionary<int, List<string>>>>();
+
 
     List<Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>> continueMissCountInfos = new List<Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>>();
     List<Dictionary<CollectDataType, int>> lastLongMissCountInfo = new List<Dictionary<CollectDataType, int>>();
@@ -184,6 +191,9 @@ public class PanelStatisticCollect : MonoBehaviour
                 case DataAnalyseType.eDAT_ContinueLongMissCount:
                     ExportForContinueLongMissCount();
                     break;
+                case DataAnalyseType.eDAT_MissCountOnTouchBulleanDown:
+                    ExportForMissCountOnTouchBulleanDown();
+                    break;
             }
         });
 
@@ -199,6 +209,9 @@ public class PanelStatisticCollect : MonoBehaviour
                     break;
                 case DataAnalyseType.eDAT_ContinueLongMissCount:
                     ImportFromContinueLongMissCount();
+                    break;
+                case DataAnalyseType.eDAT_MissCountOnTouchBulleanDown:
+                    ImportMissCountOnTouchBulleanDown();
                     break;
             }
         });
@@ -339,7 +352,8 @@ public class PanelStatisticCollect : MonoBehaviour
         {
             Util.CollectPath012Info(null);
             if (currentDataAnalyseType == DataAnalyseType.eDAT_MissCountOnTouchBolleanUp ||
-                currentDataAnalyseType == DataAnalyseType.eDAT_ContinueLongMissCount)
+                currentDataAnalyseType == DataAnalyseType.eDAT_ContinueLongMissCount ||
+                currentDataAnalyseType == DataAnalyseType.eDAT_MissCountOnTouchBulleanDown)
             {
                 GraphDataManager.Instance.CollectGraphData(GraphType.eKCurveGraph);
             }
@@ -401,6 +415,9 @@ public class PanelStatisticCollect : MonoBehaviour
                 break;
             case DataAnalyseType.eDAT_ContinueLongMissCount:
                 AnalyseContinueLongMissCount();
+                break;
+            case DataAnalyseType.eDAT_MissCountOnTouchBulleanDown:
+                AnalyseMissCountOnTouchBulleanDown();
                 break;
         }
     }
@@ -572,6 +589,117 @@ public class PanelStatisticCollect : MonoBehaviour
             }
         }
     }
+
+    void AnalyseMissCountOnTouchBulleanDown()
+    {
+        int loop = CALC_PER_COUNT;
+        while (cItem != null && loop-- > 0)
+        {
+            if (cItem != null)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(i);
+
+                    sum = cItem.statisticInfo.allStatisticInfo[i];
+
+                    for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+                    {
+                        CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+                        su = sum.statisticUnitMap[cdt];
+
+                        if (su.missCount == 0)
+                        {
+                            int lastMissCount = numberPathMissCount[i][cdt];
+
+                            // 判断当前这一期是否在触及布林下轨
+                            bool isCurrentHitBooleanDown = CheckIsTouchBolleanDown(i, cdt, cItem);
+
+                            // 上次记录的遗漏值如果超过指定的遗漏值,就记录之
+                            if (lastMissCount > GlobalSetting.G_OVER_SPEC_MISS_COUNT)
+                            {
+                                Dictionary<CollectDataType, Dictionary<int, List<string>>> numInfo = overMissCountAndTouchBolleanDownInfos[i];
+                                Dictionary<int, List<string>> cdtMissCountInfo = null;
+                                numInfo.TryGetValue(cdt, out cdtMissCountInfo);
+                                if (cdtMissCountInfo == null)
+                                {
+                                    cdtMissCountInfo = new Dictionary<int, List<string>>();
+                                    numInfo[cdt] = cdtMissCountInfo;
+                                }
+                                List<string> missInfo = null;
+                                cdtMissCountInfo.TryGetValue(lastMissCount, out missInfo);
+                                if (missInfo == null)
+                                {
+                                    missInfo = new List<string>();
+                                    cdtMissCountInfo[lastMissCount] = missInfo;
+                                }
+
+                                string info = cItem.idTag;
+                                int curID = cItem.idGlobal;
+                                MACDPointMap mpmC = kddc.GetMacdPointMap(curID);
+                                --curID;
+                                MACDPointMap mpmP = kddc.GetMacdPointMap(curID);
+                                int barGoUpCount = 0;
+                                while (mpmC != null && mpmP != null)
+                                {
+                                    MACDPoint mpC = mpmC.GetData(cdt, false);
+                                    MACDPoint mpP = mpmP.GetData(cdt, false);
+                                    if (mpC.BAR > mpP.BAR)
+                                        ++barGoUpCount;
+                                    else
+                                        break;
+                                    --curID;
+                                    mpmC = mpmP;
+                                    mpmP = kddc.GetMacdPointMap(curID);
+                                }
+                                int globalID = TotalStartID + cItem.idGlobal;
+                                info += "," + barGoUpCount + "," + globalID;
+                                missInfo.Add(info);
+                            }
+
+                            // 当前触到布林中轨,就设置下次开始记录的遗漏值
+                            if (isCurrentHitBooleanDown)
+                            {
+                                numberPathMissCount[i][cdt] = 0;
+                            }
+                            // 否则就不需要记录了
+                            else
+                            {
+                                numberPathMissCount[i][cdt] = -1;
+                            }
+                        }
+                        // 只有当上次记录的值>=0时才记录
+                        else if (numberPathMissCount[i][cdt] >= 0)
+                        {
+                            numberPathMissCount[i][cdt] = su.missCount;
+                        }
+                    }
+                }
+                lastDataItemTag = cItem.idTag;
+                cItem = cItem.parent.GetNextItem(cItem);
+
+                if (cItem == null)
+                {
+                    if (endIndex == dateIDLst.Count - 1)
+                    {
+                        hasFinished = true;
+                        lastDataItemTag = "";
+                        status = ProcStatus.eCompleted;
+                    }
+                    else
+                    {
+                        startIndex = endIndex;
+                        status = ProcStatus.ePrepBatch;
+                    }
+                    RefreshProgress();
+                    return;
+                }
+                RefreshProgress();
+            }
+        }
+
+    }
+
     bool CheckIsFullUp(int numIndex, CollectDataType cdt, DataItem testItem)
     {
         DataItem prevItem = testItem.parent.GetPrevItem(testItem);
@@ -592,6 +720,17 @@ public class PanelStatisticCollect : MonoBehaviour
         bool isPrvTouchBU = kdPrv.RelateDistTo(bpPrv.upValue) <= 0;
 
         return isCurTouchBU && isPrvTouchBU && macdCur.BAR > macdPrv.BAR && macdCur.DIF > macdPrv.DIF;
+    }
+
+    bool CheckIsTouchBolleanDown(int numIndex, CollectDataType cdt, DataItem testItem)
+    {
+        KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+        KDataMap kddCur = kddc.GetKDataDict(testItem);
+        KData kdCur = kddCur.GetData(cdt, false);
+        BollinPoint bpCur = kddc.GetBollinPointMap(kddCur).GetData(cdt, false);
+        MACDPoint macdCur = kddc.GetMacdPointMap(kddCur).GetData(cdt, false);
+        bool isCurTouchBD = kdCur.RelateDistTo(bpCur.downValue) >= 0;
+        return isCurTouchBD;
     }
 
     void AnalyseContinueLongMissCount()
@@ -721,6 +860,7 @@ public class PanelStatisticCollect : MonoBehaviour
         hasFinished = false;
         numberPathMissCount.Clear();
         overMissCountAndTouchBolleanUpInfos.Clear();
+        overMissCountAndTouchBolleanDownInfos.Clear();
         continueMissCountInfos.Clear();
         lastLongMissCountInfo.Clear();
         currentLongMissCountInfo.Clear();
@@ -731,6 +871,7 @@ public class PanelStatisticCollect : MonoBehaviour
             Dictionary<CollectDataType, int> cdtMissCountMap = new Dictionary<CollectDataType, int>();
             numberPathMissCount.Add(cdtMissCountMap);
             overMissCountAndTouchBolleanUpInfos.Add(new Dictionary<CollectDataType, Dictionary<int, List<string>>>());
+            overMissCountAndTouchBolleanDownInfos.Add(new Dictionary<CollectDataType, Dictionary<int, List<string>>>());
             continueMissCountInfos.Add(new Dictionary<CollectDataType, Dictionary<int, Dictionary<int, List<string>>>>());
             Dictionary<CollectDataType, int> lastLongMissCount = new Dictionary<CollectDataType, int>();
             Dictionary<CollectDataType, int> currentLongMissCount = new Dictionary<CollectDataType, int>();
@@ -916,6 +1057,68 @@ public class PanelStatisticCollect : MonoBehaviour
                     }
 
                     info = "\t\t\t</FirstMissCount>\n";
+                    sw.Write(info);
+                }
+
+                info = "\t\t</CDT>\n";
+                sw.Write(info);
+            }
+
+            info = "\t</Num>\n";
+            sw.Write(info);
+        }
+
+        info = "</root>";
+        sw.Write(info);
+
+        //清空缓冲区
+        sw.Flush();
+        //关闭流
+        sw.Close();
+        fs.Close();
+
+        PanelMessageBox.Instance.Show("成功导出: " + fileName, null, null);
+    }
+
+    void ExportForMissCountOnTouchBulleanDown()
+    {
+        string fileName = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "../" + ExportDataPaths[(int)currentDataAnalyseType];
+        FileStream fs = new FileStream(fileName, FileMode.Create);
+        StreamWriter sw = new StreamWriter(fs);
+
+        string info = "<root type=\"" + currentDataAnalyseType.ToString() + "\" TotalCount=\"" + TotalCount + "\">\n";
+        sw.Write(info);
+
+        for (int i = 0; i < 5; ++i)
+        {
+            info = "\t<Num pos=\"" + KDataDictContainer.C_TAGS[i] + "\">\n";
+            sw.Write(info);
+
+            Dictionary<CollectDataType, Dictionary<int, List<string>>> cdtMissInfo = overMissCountAndTouchBolleanDownInfos[i];
+
+            for (int j = 0; j < GraphDataManager.S_CDT_LIST.Count; ++j)
+            {
+                CollectDataType cdt = GraphDataManager.S_CDT_LIST[j];
+
+                if (cdtMissInfo.ContainsKey(cdt) == false)
+                    continue;
+                Dictionary<int, List<string>> countInfo = cdtMissInfo[cdt];
+
+                info = "\t\t<CDT name=\"" + cdt + "\">\n";
+                sw.Write(info);
+                foreach (int key in countInfo.Keys)
+                {
+                    info = "\t\t\t<Count count=\"" + key + "\">\n";
+                    sw.Write(info);
+
+                    List<string> missInfo = countInfo[key];
+                    for (int jj = 0; jj < missInfo.Count; ++jj)
+                    {
+                        info = "\t\t\t\t<MissInfo item=\"" + missInfo[jj] + "\"/>\n";
+                        sw.Write(info);
+                    }
+
+                    info = "\t\t\t</Count>\n";
                     sw.Write(info);
                 }
 
@@ -1268,6 +1471,171 @@ public class PanelStatisticCollect : MonoBehaviour
             }
         }
         RefreshView();
+    }
+
+    void ImportMissCountOnTouchBulleanDown()
+    {
+        string fileName = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "../" + ExportDataPaths[(int)currentDataAnalyseType];
+
+        XmlDocument x = new XmlDocument();
+        try
+        {
+            x.Load(fileName);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.ToString());
+            PanelMessageBox.Instance.Show("读取" + fileName + "失败 - " + e.ToString(), null, null);
+            return;
+        }
+
+        XmlNode pNode = x.SelectSingleNode("root");
+        if (pNode == null)
+            return;
+
+        MaxMissCount = 0;
+
+        TotalCount = int.Parse(pNode.Attributes["TotalCount"].Value);
+
+        treeInfos.Clear();
+        allBarUpInfo.Clear();
+        graphDataItems.Clear();
+
+        ItemWrapper iwBolleanUpLongMiss = new ItemWrapper("遗漏信息");
+        treeInfos.Add(iwBolleanUpLongMiss);
+
+        // numIndex node
+        foreach (XmlNode numNode in pNode.ChildNodes)
+        {
+            int numIndex = KDataDictContainer.C_TAGS.IndexOf(numNode.Attributes[0].Value);
+            ItemWrapper tnNum = new ItemWrapper(numNode.Attributes[0].Value);
+            iwBolleanUpLongMiss.SubNodes.Add(tnNum);
+
+            Dictionary<int, Dictionary<int, List<ItemWrapper>>> numBarUpInfo = new Dictionary<int, Dictionary<int, List<ItemWrapper>>>();
+            allBarUpInfo[numIndex] = numBarUpInfo;
+
+            // collectDataType node
+            foreach (XmlNode cdtNode in numNode.ChildNodes)
+            {
+                int cdtIndex = GraphDataManager.GetCdtIndexByEnumStr(cdtNode.Attributes[0].Value);
+                ItemWrapper tnCDT = new ItemWrapper(cdtNode.Attributes[0].Value);
+                tnNum.SubNodes.Add(tnCDT);
+
+                Dictionary<int, List<ItemWrapper>> cdtBarUpInfo = new Dictionary<int, List<ItemWrapper>>();
+                numBarUpInfo[cdtIndex] = cdtBarUpInfo;
+
+                // missCount node
+                foreach (XmlNode coundNode in cdtNode.ChildNodes)
+                {
+                    ItemWrapper tnCount = new ItemWrapper(coundNode.Attributes[0].Value);
+                    tnCDT.SubNodes.Add(tnCount);
+
+                    int missCount = int.Parse(coundNode.Attributes[0].Value);
+                    if (MaxMissCount < missCount)
+                        MaxMissCount = missCount;
+
+                    foreach (XmlNode missNode in coundNode.ChildNodes)
+                    {
+                        ItemWrapper tnMiss = new ItemWrapper(missNode.Attributes[0].Value);
+                        tnCount.SubNodes.Add(tnMiss);
+
+                        string[] strs = tnMiss.Text.Split(',');
+                        int date = int.Parse(strs[0].Split('-')[0]);
+                        int barGoUpCount = 0;
+                        int globalID = -1;
+                        if (strs.Length > 1)
+                            barGoUpCount = int.Parse(strs[1]);
+                        if (strs.Length > 2)
+                            globalID = int.Parse(strs[2]);
+                        tnMiss.Tag = date;
+                        tnMiss.globalID = globalID;
+                        tnMiss.numIndex = numIndex;
+                        tnMiss.cdtIndex = cdtIndex;
+                        tnMiss.showViewBtn = true;
+                        tnMiss.isLeafNode = true;
+                        tnMiss.barUpCount = barGoUpCount;
+                        tnMiss.missCount = missCount;
+
+                        List<ItemWrapper> lst = null;
+                        if (cdtBarUpInfo.ContainsKey(barGoUpCount))
+                            lst = cdtBarUpInfo[barGoUpCount];
+                        else
+                        {
+                            lst = new List<ItemWrapper>();
+                            cdtBarUpInfo[barGoUpCount] = lst;
+                        }
+                        lst.Add(tnMiss);
+
+                        List<ItemWrapper> lstData = null;
+                        if (graphDataItems.ContainsKey(globalID))
+                            lstData = graphDataItems[globalID];
+                        else
+                        {
+                            lstData = new List<ItemWrapper>();
+                            graphDataItems[globalID] = lstData;
+                        }
+                        lstData.Add(tnMiss);
+                    }
+
+                    tnCDT.SubNodes.Sort((a, b) =>
+                    {
+                        int va = int.Parse(a.Text);
+                        int vb = int.Parse(b.Text);
+                        if (va < vb)
+                            return 1;
+                        return -1;
+                    });
+                }
+            }
+        }
+
+        ItemWrapper iwBarUpCount = new ItemWrapper("长遗漏柱值提升期数统计信息");
+        treeInfos.Add(iwBarUpCount);
+        foreach (int numIndex in allBarUpInfo.Keys)
+        {
+            ItemWrapper iwNum = new ItemWrapper(KDataDictContainer.C_TAGS[numIndex]);
+            iwBarUpCount.SubNodes.Add(iwNum);
+
+            Dictionary<int, Dictionary<int, List<ItemWrapper>>> cdtInfo = allBarUpInfo[numIndex];
+            foreach (int cdtIndex in cdtInfo.Keys)
+            {
+                ItemWrapper iwCDT = new ItemWrapper(GraphDataManager.S_CDT_TAG_LIST[cdtIndex]);
+                iwNum.SubNodes.Add(iwCDT);
+
+                Dictionary<int, List<ItemWrapper>> info = cdtInfo[cdtIndex];
+                foreach (int key in info.Keys)
+                {
+                    List<ItemWrapper> lst = info[key];
+
+                    ItemWrapper iwKeyNode = new ItemWrapper(key + " - " + lst.Count);
+                    iwCDT.SubNodes.Add(iwKeyNode);
+                    iwKeyNode.Tag = key;
+
+                    for (int i = 0; i < lst.Count; ++i)
+                    {
+                        ItemWrapper iwNode = new ItemWrapper(lst[i].Text);
+                        iwKeyNode.SubNodes.Add(iwNode);
+                        iwNode.showViewBtn = true;
+                        iwNode.isLeafNode = true;
+                        iwNode.Tag = lst[i].Tag;
+                        iwNode.numIndex = lst[i].numIndex;
+                        iwNode.cdtIndex = lst[i].cdtIndex;
+                    }
+                }
+
+                iwCDT.SubNodes.Sort((a, b) =>
+                {
+                    if ((int)a.Tag > (int)b.Tag) return -1;
+                    return 1;
+                });
+            }
+        }
+
+        slider.minValue = 0;
+        slider.maxValue = TotalCount;
+        slider.value = 0;
+        RefreshView();
+
     }
 
     public void RefreshView()

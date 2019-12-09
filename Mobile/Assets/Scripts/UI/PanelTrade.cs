@@ -318,6 +318,9 @@ public class PanelTrade : MonoBehaviour
             }
         }
         allTradeInfos.Add(info);
+
+        uiTrade.sliderSelectTradeItem.minValue = 0;
+        uiTrade.sliderSelectTradeItem.maxValue = allTradeInfos.Count - 1;
         NotifyRepaint();
     }
 }
