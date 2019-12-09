@@ -50,8 +50,8 @@ public class GraphPainterTrade : GraphPainterBase
         selectedIndex = (int)(xv / canvasUpScale.x);
         if (selectedIndex < 0)
             selectedIndex = 0;
-        if (selectedIndex > PanelTrade.Instance.allTradeInfos.Count)
-            selectedIndex = PanelTrade.Instance.allTradeInfos.Count;
+        if (selectedIndex >= PanelTrade.Instance.allTradeInfos.Count)
+            selectedIndex = PanelTrade.Instance.allTradeInfos.Count - 1;
 
         PanelTrade.Instance.NotifyRepaint();
 

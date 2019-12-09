@@ -291,6 +291,9 @@ namespace LotteryAnalyze
 
             // 根据均线选择某个数字位的最优012路
             eSinglePositionBestPathByAvgLine,
+
+            // 在Macd柱经过长期走低开始走高的时候进行交易
+            eTradeOnMacdBarGoUp,
         }
         public static List<string> STRATEGY_NAMES = new List<string>()
         {
@@ -314,6 +317,7 @@ namespace LotteryAnalyze
             "sSinglePositionCondictionsSuperposition",
 
             "sSinglePositionBestPathByAvgLine",
+            "eTradeOnMacdBarGoUp",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -839,6 +843,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eSinglePositionBestPathByAvgLine:
                     TradeSinglePositionBestPathByAvgLine(item, trade);
                     break;
+                case TradeStrategy.eTradeOnMacdBarGoUp:
+                    TradeOnMacdBarGoUp(item, trade);
+                    break;
             }
 
             // 杀掉上期开出的号，为了节省开销
@@ -1160,6 +1167,99 @@ namespace LotteryAnalyze
             //    tn.SelPath012Number(res[0].pathIndex, tradeCount, ref maxProbilityNums);
             //}
 
+        }
+
+        void TradeOnMacdBarGoUp(DataItem item, TradeDataOneStar trade)
+        {
+            int tradeCount = defaultTradeCount;
+            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+            {
+                if (tradeCountList.Count > 0)
+                {
+                    if (currentTradeCountIndex == -1)
+                        currentTradeCountIndex = 0;
+                    tradeCount = tradeCountList[currentTradeCountIndex];
+                }
+            }
+            else
+                tradeCount = 0;
+
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                if (numID == 0 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_0 == false)
+                    continue;
+                if (numID == 1 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_1 == false)
+                    continue;
+                if (numID == 2 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_2 == false)
+                    continue;
+                if (numID == 3 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_3 == false)
+                    continue;
+                if (numID == 4 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_4 == false)
+                    continue;
+                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                MACDPointMap mpm = kddc.GetMacdPointMap(item.idGlobal);
+                BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
+                KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
+                CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+
+                List<PathCmpInfo> res = trade.pathCmpInfos[numID];
+                res.Clear();
+
+                bool hasFindValidPath = false;
+                FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+                for (int i = 0; i < 3; ++i)
+                {
+                    CollectDataType cdt = cdts[i];
+                    PathCmpInfo pci = new PathCmpInfo(i, 0);
+                    int missCount = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
+                    pci.pathValue = 0;
+                    pci.paramMap["MissCount"] = missCount;
+                    res.Add(pci);
+
+                    if (missCount == 0)
+                        continue;
+                    MACDPoint latestMP = mpm.GetData(cdt, false);
+                    if (latestMP.BAR > 0)
+                        continue;
+
+                    KDataMap headKDM = kddc.GetKDataDict(item.idGlobal - missCount);
+                    BollinPointMap headBPM = kddc.GetBollinPointMap(headKDM);
+                    BollinPoint headBP = headBPM.GetData(cdt, false);
+                    KData headKD = headKDM.GetData(cdt, false);
+                    if (headKD.RelateDistTo(headBP.upValue) > 0.5f)
+                        continue;
+                    MACDPoint minMP = null, firstUpMP = null;
+                    while (headKDM != kdm)
+                    {
+                        MACDPoint curMP = kddc.GetMacdPointMap(headKDM).GetData(cdt, false);
+                        if (minMP == null || minMP.BAR > curMP.BAR)
+                            minMP = curMP;
+                        if(minMP != null && minMP != curMP && minMP.BAR < curMP.BAR)
+                        {
+                            if (firstUpMP == null)
+                                firstUpMP = curMP;
+                            else if (firstUpMP.BAR > curMP.BAR)
+                                break;
+                        }
+                        headKDM = kddc.GetKDataDict(headKDM.index + 1);
+                    }
+                    if(headKDM == kdm)
+                    {
+                        pci.pathValue = 1;
+                        hasFindValidPath = true;
+                    }
+                }
+                if(hasFindValidPath)
+                {
+                    TradeNumbers tn = new TradeNumbers();
+                    tn.tradeCount = tradeCount;
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        if(res[i].pathValue > 0)
+                            tn.SelPath012Number(i, tradeCount, ref maxProbilityNums);
+                    }
+                }
+            }
         }
 
         void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
@@ -2362,17 +2462,6 @@ namespace LotteryAnalyze
             }
         }
 
-        //class NumberValue
-        //{
-        //    public int number;
-        //    public float value; 
-
-        //    public NumberValue(int num, float v)
-        //    {
-        //        number = num;
-        //        value = v;
-        //    }
-        //}
         void TradeSinglePositionCondictionsSuperposition(DataItem item, TradeDataOneStar trade)
         {
             int tradeCount = defaultTradeCount;

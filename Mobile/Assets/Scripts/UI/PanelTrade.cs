@@ -9,7 +9,9 @@ public class PanelTrade : MonoBehaviour
     public class SingleTradeInfo
     {
         public string lastDataItemIdTag;
+        public string lastDataItemNums;
         public string targetDataItemIdTag;
+        public string targetDataItemNums;
         public float moneyLeft;
         public float cost;
         public float reward;
@@ -21,8 +23,8 @@ public class PanelTrade : MonoBehaviour
             if (info == null)
             {
                 info =
-                    "目标期：" + lastDataItemIdTag + "\n" +
-                    "结果期：" + targetDataItemIdTag + "\n";
+                    "目标期: " + lastDataItemIdTag + " 出号: " + lastDataItemNums + "\n" +
+                    "结果期: " + targetDataItemIdTag + " 出号: " + targetDataItemNums + "\n";
                 if (tradeDetail == null)
                 {
                 }
@@ -166,11 +168,31 @@ public class PanelTrade : MonoBehaviour
         uiSetting.rtSettingView.gameObject.SetActive(false);
         uiSetting.inputStartMoney.text = BatchTradeSimulator.Instance.startMoney.ToString();
 
-        uiSetting.toggle1.isOn = true;
-        uiSetting.toggle2.isOn = true;
-        uiSetting.toggle3.isOn = true;
-        uiSetting.toggle4.isOn = true;
-        uiSetting.toggle5.isOn = true;
+        uiSetting.toggle1.isOn = GlobalSetting.G_SIM_SEL_NUM_AT_POS_0;
+        uiSetting.toggle1.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_SEL_NUM_AT_POS_0 = uiSetting.toggle1.isOn;
+        });
+        uiSetting.toggle2.isOn = GlobalSetting.G_SIM_SEL_NUM_AT_POS_1;
+        uiSetting.toggle2.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_SEL_NUM_AT_POS_1 = uiSetting.toggle2.isOn;
+        });
+        uiSetting.toggle3.isOn = GlobalSetting.G_SIM_SEL_NUM_AT_POS_2;
+        uiSetting.toggle3.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_SEL_NUM_AT_POS_2 = uiSetting.toggle3.isOn;
+        });
+        uiSetting.toggle4.isOn = GlobalSetting.G_SIM_SEL_NUM_AT_POS_3;
+        uiSetting.toggle4.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_SEL_NUM_AT_POS_3 = uiSetting.toggle4.isOn;
+        });
+        uiSetting.toggle5.isOn = GlobalSetting.G_SIM_SEL_NUM_AT_POS_4;
+        uiSetting.toggle5.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_SEL_NUM_AT_POS_4 = uiSetting.toggle5.isOn;
+        });
 
         uiSetting.inputTradeCountLst.text = "1,2,4,8,16,32,64,128";
 
@@ -300,7 +322,9 @@ public class PanelTrade : MonoBehaviour
         TradeDataOneStar trade = _trade as TradeDataOneStar;
         SingleTradeInfo info = new SingleTradeInfo();
         info.lastDataItemIdTag = trade.lastDateItem.idTag;
+        info.lastDataItemNums = trade.lastDateItem.lotteryNumber;
         info.targetDataItemIdTag = trade.targetLotteryItem.idTag;
+        info.targetDataItemNums = trade.targetLotteryItem.lotteryNumber;
         info.moneyLeft = trade.moneyAtferTrade;
         info.cost = trade.cost;
         info.reward = trade.reward;

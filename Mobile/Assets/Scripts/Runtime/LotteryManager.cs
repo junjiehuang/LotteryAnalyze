@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using LotteryAnalyze;
 
 public class LotteryManager : MonoBehaviour
 {
@@ -43,6 +44,8 @@ public class LotteryManager : MonoBehaviour
         {
             SetActive(PanelQuit.Instance.gameObject, true);
         }
+
+        GlobalSetting.SaveCfg();
     }
 
     private void OnDestroy()
