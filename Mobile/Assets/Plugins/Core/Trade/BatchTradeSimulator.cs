@@ -296,7 +296,7 @@ namespace LotteryAnalyze
         {
             TradeDataManager.Instance.StopAutoTradeJob();
             DoFinishBatch();
-            state = SimState.eFinishAll;
+            state = SimState.eNone;
             lastIndex = fileIDLst.Count;
         }
         public bool HasFinished()

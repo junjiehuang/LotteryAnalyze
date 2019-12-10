@@ -504,7 +504,7 @@ public class PanelStatisticCollect : MonoBehaviour
                             int lastMissCount = numberPathMissCount[i][cdt];
 
                             // 判断当前这一期是否在触及布林上轨
-                            bool isCurrentHitBooleanUp = CheckIsFullUp(i, cdt, cItem);
+                            bool isCurrentHitBooleanUp = CheckKDataIsFullUp(i, cdt, cItem);
 
                             // 上次记录的遗漏值如果超过指定的遗漏值,就记录之
                             if (lastMissCount > GlobalSetting.G_OVER_SPEC_MISS_COUNT)
@@ -700,26 +700,9 @@ public class PanelStatisticCollect : MonoBehaviour
 
     }
 
-    bool CheckIsFullUp(int numIndex, CollectDataType cdt, DataItem testItem)
+    public bool CheckKDataIsFullUp(int numIndex, CollectDataType cdt, DataItem testItem)
     {
-        DataItem prevItem = testItem.parent.GetPrevItem(testItem);
-        if (prevItem == null)
-            return false;
-
-        KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
-        KDataMap kddCur = kddc.GetKDataDict(testItem);
-        KData kdCur = kddCur.GetData(cdt, false);
-        BollinPoint bpCur = kddc.GetBollinPointMap(kddCur).GetData(cdt, false);
-        MACDPoint macdCur = kddc.GetMacdPointMap(kddCur).GetData(cdt, false);
-        bool isCurTouchBU = kdCur.RelateDistTo(bpCur.upValue) <= 0;
-
-        KDataMap kddPrv = kddc.GetKDataDict(prevItem);
-        KData kdPrv = kddCur.GetData(cdt, false);
-        BollinPoint bpPrv = kddc.GetBollinPointMap(kddPrv).GetData(cdt, false);
-        MACDPoint macdPrv = kddc.GetMacdPointMap(kddPrv).GetData(cdt, false);
-        bool isPrvTouchBU = kdPrv.RelateDistTo(bpPrv.upValue) <= 0;
-
-        return isCurTouchBU && isPrvTouchBU && macdCur.BAR > macdPrv.BAR && macdCur.DIF > macdPrv.DIF;
+        return TradeDataManager.CheckKDataIsFullUp(numIndex, cdt, testItem);
     }
 
     bool CheckIsTouchBolleanDown(int numIndex, CollectDataType cdt, DataItem testItem)

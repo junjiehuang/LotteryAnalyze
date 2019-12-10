@@ -591,7 +591,7 @@ namespace LotteryAnalyze
                     else if (numPosCurTradeIndexs[numid] >= tradeCountList.Count)
                         numPosCurTradeIndexs[numid] = 0;
                     else
-                        ++numPosCurTradeIndexs[numid];
+                        numPosCurTradeIndexs[numid] = numPosCurTradeIndexs[numid] + 1;
                 }
             }
         }
@@ -1169,33 +1169,57 @@ namespace LotteryAnalyze
 
         }
 
+        public static bool CheckKDataIsFullUp(int numIndex, CollectDataType cdt, DataItem testItem)
+        {
+            DataItem prevItem = testItem.parent.GetPrevItem(testItem);
+            if (prevItem == null)
+                return false;
+
+            KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numIndex);
+            KDataMap kddCur = kddc.GetKDataDict(testItem);
+            KData kdCur = kddCur.GetData(cdt, false);
+            BollinPoint bpCur = kddc.GetBollinPointMap(kddCur).GetData(cdt, false);
+            MACDPoint macdCur = kddc.GetMacdPointMap(kddCur).GetData(cdt, false);
+            bool isCurTouchBU = kdCur.RelateDistTo(bpCur.upValue) <= 0;
+
+            KDataMap kddPrv = kddc.GetKDataDict(prevItem);
+            KData kdPrv = kddCur.GetData(cdt, false);
+            BollinPoint bpPrv = kddc.GetBollinPointMap(kddPrv).GetData(cdt, false);
+            MACDPoint macdPrv = kddc.GetMacdPointMap(kddPrv).GetData(cdt, false);
+            bool isPrvTouchBU = kdPrv.RelateDistTo(bpPrv.upValue) <= 0;
+
+            return isCurTouchBU && isPrvTouchBU && macdCur.BAR > macdPrv.BAR && macdCur.DIF > macdPrv.DIF;
+        }
+
         void TradeOnMacdBarGoUp(DataItem item, TradeDataOneStar trade)
         {
-            int tradeCount = defaultTradeCount;
-            if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+            bool[] sim_flag = new bool[]
             {
-                if (tradeCountList.Count > 0)
-                {
-                    if (currentTradeCountIndex == -1)
-                        currentTradeCountIndex = 0;
-                    tradeCount = tradeCountList[currentTradeCountIndex];
-                }
-            }
-            else
-                tradeCount = 0;
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
 
             for (int numID = 0; numID < 5; ++numID)
             {
-                if (numID == 0 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_0 == false)
+                if (!sim_flag[numID])
                     continue;
-                if (numID == 1 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_1 == false)
-                    continue;
-                if (numID == 2 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_2 == false)
-                    continue;
-                if (numID == 3 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_3 == false)
-                    continue;
-                if (numID == 4 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_4 == false)
-                    continue;
+
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (numPosCurTradeIndexs[numID] >= tradeCountList.Count)
+                            numPosCurTradeIndexs[numID] = 0;
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
                 KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
                 MACDPointMap mpm = kddc.GetMacdPointMap(item.idGlobal);
                 BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
@@ -1222,28 +1246,23 @@ namespace LotteryAnalyze
                     if (latestMP.BAR > 0)
                         continue;
 
-                    KDataMap headKDM = kddc.GetKDataDict(item.idGlobal - missCount);
-                    BollinPointMap headBPM = kddc.GetBollinPointMap(headKDM);
-                    BollinPoint headBP = headBPM.GetData(cdt, false);
-                    KData headKD = headKDM.GetData(cdt, false);
-                    if (headKD.RelateDistTo(headBP.upValue) > 0.5f)
+                    DataItem headItem = DataManager.GetInst().FindDataItem(item.idGlobal - missCount);
+                    if (headItem == null)
                         continue;
-                    MACDPoint minMP = null, firstUpMP = null;
-                    while (headKDM != kdm)
+                    bool isHeadItemTouchBolleanUp = CheckKDataIsFullUp(numID, cdt, headItem);
+                    if (isHeadItemTouchBolleanUp == false)
+                        continue;
+
+                    KDataMap headKDM = kddc.GetKDataDict(headItem);
+                    MACDPoint minMP = null;
+                    while (headKDM != null)
                     {
                         MACDPoint curMP = kddc.GetMacdPointMap(headKDM).GetData(cdt, false);
                         if (minMP == null || minMP.BAR > curMP.BAR)
                             minMP = curMP;
-                        if(minMP != null && minMP != curMP && minMP.BAR < curMP.BAR)
-                        {
-                            if (firstUpMP == null)
-                                firstUpMP = curMP;
-                            else if (firstUpMP.BAR > curMP.BAR)
-                                break;
-                        }
                         headKDM = kddc.GetKDataDict(headKDM.index + 1);
                     }
-                    if(headKDM == kdm)
+                    if(minMP.parent.index < bpm.index && minMP.BAR < 0)
                     {
                         pci.pathValue = 1;
                         hasFindValidPath = true;
@@ -1256,8 +1275,11 @@ namespace LotteryAnalyze
                     for (int i = 0; i < 3; ++i)
                     {
                         if(res[i].pathValue > 0)
-                            tn.SelPath012Number(i, tradeCount, ref maxProbilityNums);
+                            tn.SelPath012Number(res[i].pathIndex, tradeCount, ref maxProbilityNums);
                     }
+                    trade.tradeInfo.Add(numID, tn);
+                    if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
+                        numPosCurTradeIndexs[numID] = 0;
                 }
             }
         }

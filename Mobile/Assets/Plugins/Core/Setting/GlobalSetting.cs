@@ -219,8 +219,8 @@ namespace LotteryAnalyze
         private static int g_CUR_TRADE_INDEX = -1;
         [Parameter("数据设置/每批加载多少天的数据",3)]
         private static int g_DAYS_PER_BATCH = 3;
-        [Parameter("数据设置/是否记录交易数据",true)]
-        private static bool g_ENABLE_REC_TRADE_DATAS = true;
+        [Parameter("数据设置/是否记录交易数据", false)]
+        private static bool g_ENABLE_REC_TRADE_DATAS = false;
 
         [Parameter("数据统计设置/当遗漏值超过多少期就记录其信息", 7)]
         private static int g_OVER_SPEC_MISS_COUNT = 7;
@@ -243,9 +243,10 @@ namespace LotteryAnalyze
         private static bool g_SIM_SEL_NUM_AT_POS_3 = true;
         [Parameter("模拟交易/是否做个位", true)]
         private static bool g_SIM_SEL_NUM_AT_POS_4 = true;
-        [Parameter("模拟交易/每批模拟结束后是否暂停模拟", true)]
-        private static bool g_SIM_PAUSE_AT_BATCH_FINISH = true;
-
+        [Parameter("模拟交易/每批模拟结束后是否暂停模拟", false)]
+        private static bool g_SIM_PAUSE_AT_BATCH_FINISH = false;
+        [Parameter("模拟交易/模拟策略", TradeDataManager.TradeStrategy.eTradeOnMacdBarGoUp)]
+        private static TradeDataManager.TradeStrategy g_SIM_STRETAGY = TradeDataManager.TradeStrategy.eTradeOnMacdBarGoUp;
 
         public static List<string> TradeTags = new List<string>();
         public static List<List<int>> TradeSets = new List<List<int>>();
@@ -1281,6 +1282,20 @@ namespace LotteryAnalyze
             set
             {
                 g_TRADE_CANVAS_MIN_GRID_SIZE = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static TradeDataManager.TradeStrategy G_SIM_STRETAGY
+        {
+            get
+            {
+                return g_SIM_STRETAGY;
+            }
+
+            set
+            {
+                g_SIM_STRETAGY = value;
                 HAS_MODIFY = true;
             }
         }

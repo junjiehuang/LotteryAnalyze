@@ -8,6 +8,7 @@ public class PanelTrade : MonoBehaviour
 {
     public class SingleTradeInfo
     {
+        public int tradeID;
         public string lastDataItemIdTag;
         public string lastDataItemNums;
         public string targetDataItemIdTag;
@@ -197,7 +198,11 @@ public class PanelTrade : MonoBehaviour
         uiSetting.inputTradeCountLst.text = "1,2,4,8,16,32,64,128";
 
         uiSetting.dropdownTradeStratedy.AddOptions(TradeDataManager.STRATEGY_NAMES);
-        uiSetting.dropdownTradeStratedy.value = 0;
+        uiSetting.dropdownTradeStratedy.value = (int)GlobalSetting.G_SIM_STRETAGY;
+        uiSetting.dropdownTradeStratedy.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_SIM_STRETAGY = (TradeDataManager.TradeStrategy)(uiSetting.dropdownTradeStratedy.value);
+        });
 
         float ratio = GlobalSetting.G_TRADE_CANVAS_SCALE_X / GlobalSetting.G_TRADE_CANVAS_SCALE_X_MAX;
         uiTrade.scrollZoom.SetHandleRatio(0.2f);
@@ -266,6 +271,7 @@ public class PanelTrade : MonoBehaviour
     {
         BatchTradeSimulator.Instance.batch = GlobalSetting.G_DAYS_PER_BATCH;
         BatchTradeSimulator.Instance.startMoney = float.Parse(uiSetting.inputStartMoney.text);
+        TradeDataManager.Instance.curTradeStrategy = GlobalSetting.G_SIM_STRETAGY;
         TradeDataManager.Instance.SetTradeCountInfo(uiSetting.inputTradeCountLst.text);
         
         uiMain.txtBtnPause.text = "暂停";
@@ -275,6 +281,8 @@ public class PanelTrade : MonoBehaviour
         uiSetting.inputEndDate.text = endDate.ToString();
 
         allTradeInfos.Clear();
+
+        NotifyRepaint();
     }
 
     void DoPause()
@@ -292,6 +300,9 @@ public class PanelTrade : MonoBehaviour
         BatchTradeSimulator.Instance.Stop();
         // 重置K线的起点值
         GraphDataManager.ResetCurKValueMap();
+
+        allTradeInfos.Clear();
+        NotifyRepaint();
     }
 
     void SetProgress(float local, float globalV)
@@ -321,6 +332,7 @@ public class PanelTrade : MonoBehaviour
     {
         TradeDataOneStar trade = _trade as TradeDataOneStar;
         SingleTradeInfo info = new SingleTradeInfo();
+        info.tradeID = trade.INDEX;
         info.lastDataItemIdTag = trade.lastDateItem.idTag;
         info.lastDataItemNums = trade.lastDateItem.lotteryNumber;
         info.targetDataItemIdTag = trade.targetLotteryItem.idTag;
@@ -345,6 +357,9 @@ public class PanelTrade : MonoBehaviour
 
         uiTrade.sliderSelectTradeItem.minValue = 0;
         uiTrade.sliderSelectTradeItem.maxValue = allTradeInfos.Count - 1;
-        NotifyRepaint();
+        uiTrade.sliderSelectTradeItem.value = uiTrade.sliderSelectTradeItem.maxValue;
+
+        curPainter.ScrollLatestItemToMiddle(curPainter.upPainter, uiTrade.graphTrade.rectTransform);
+        //NotifyRepaint();
     }
 }

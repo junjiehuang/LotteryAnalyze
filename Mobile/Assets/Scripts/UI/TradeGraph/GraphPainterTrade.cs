@@ -96,6 +96,13 @@ public class GraphPainterTrade : GraphPainterBase
 
     }
 
+    public void ScrollLatestItemToMiddle(Painter g, RectTransform rtCanvas)
+    {
+        float curCanvasX = g.StandToCanvas(PanelTrade.Instance.allTradeInfos.Count * canvasUpScale.x, true);
+        canvasUpOffset.x += rtCanvas.rect.width * 0.5f - curCanvasX;
+        PanelTrade.Instance.NotifyRepaint();
+    }
+
     public override void DrawUpPanel(Painter g, RectTransform rtCanvas)
     {
         base.DrawUpPanel(g, rtCanvas);
@@ -140,7 +147,7 @@ public class GraphPainterTrade : GraphPainterBase
                 string strProfitCur = profitCur > 0 ? ("盈利：" + profitCur) : (profitCur < 0 ? ("亏损：" + profitCur) : " 没交易");
                 float profitTotal = info.moneyLeft - StartMoney;
                 string strProfitTotal = profitTotal > 0 ? ("盈利：" + profitTotal) : (profitTotal < 0 ? ("亏损：" + profitTotal) : " 没交易");
-                string txt = "初始：" + StartMoney + " 最高：" + HistoryMaxMoney + " 最低：" + HistoryMinMoney + " 当前：" + info.moneyLeft + "\n" +
+                string txt = "[" + ", " + info.tradeID + "] 初始：" + StartMoney + " 最高：" + HistoryMaxMoney + " 最低：" + HistoryMinMoney + " 当前：" + info.moneyLeft + "\n" +
                     "总" + strProfitTotal + " 当前" + strProfitCur + "\n" + 
                     info.GetDetailInfo();
                 PanelTrade.Instance.uiTrade.graphTrade.AppendText(txt);
