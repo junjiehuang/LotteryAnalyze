@@ -1191,6 +1191,7 @@ namespace LotteryAnalyze
             return isCurTouchBU && isPrvTouchBU && macdCur.BAR > macdPrv.BAR && macdCur.DIF > macdPrv.DIF;
         }
 
+        bool[] NeedResetTradeCountID = new bool[] { false, false, false, false, false, };
         void TradeOnMacdBarGoUp(DataItem item, TradeDataOneStar trade)
         {
             bool[] sim_flag = new bool[]
@@ -1240,11 +1241,11 @@ namespace LotteryAnalyze
                     pci.paramMap["MissCount"] = missCount;
                     res.Add(pci);
 
-                    if (missCount == 0)
-                        continue;
-                    MACDPoint latestMP = mpm.GetData(cdt, false);
-                    if (latestMP.BAR > 0)
-                        continue;
+                    //if (missCount == 0)
+                    //    continue;
+                    //MACDPoint latestMP = mpm.GetData(cdt, false);
+                    //if (latestMP.BAR > 0)
+                    //    continue;
 
                     DataItem headItem = DataManager.GetInst().FindDataItem(item.idGlobal - missCount);
                     if (headItem == null)
@@ -1255,17 +1256,29 @@ namespace LotteryAnalyze
 
                     KDataMap headKDM = kddc.GetKDataDict(headItem);
                     MACDPoint minMP = null;
-                    while (headKDM != null)
+                    while (headKDM != null && headKDM.index <= kdm.index)
                     {
                         MACDPoint curMP = kddc.GetMacdPointMap(headKDM).GetData(cdt, false);
                         if (minMP == null || minMP.BAR > curMP.BAR)
                             minMP = curMP;
                         headKDM = kddc.GetKDataDict(headKDM.index + 1);
                     }
-                    if(minMP.parent.index < bpm.index && minMP.BAR < 0)
+                    if (missCount < 3)
+                    {
+                        //pci.pathValue = 1;
+                        //hasFindValidPath = true;
+                        //NeedResetTradeCountID[numID] = true;
+                    }
+                    else if (minMP.parent.index < bpm.index && minMP.BAR < 0)
                     {
                         pci.pathValue = 1;
                         hasFindValidPath = true;
+                        if (NeedResetTradeCountID[numID] == true)
+                        {
+                            numPosCurTradeIndexs[numID] = 1;
+                            tradeCount = tradeCountList[numPosCurTradeIndexs[0]];
+                            NeedResetTradeCountID[numID] = false;
+                        }
                     }
                 }
                 if(hasFindValidPath)

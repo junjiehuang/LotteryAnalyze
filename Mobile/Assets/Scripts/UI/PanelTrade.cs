@@ -43,6 +43,25 @@ public class PanelTrade : MonoBehaviour
             }
             return info;
         }
+
+        public bool GetTradeNumIndexAndPathIndex(ref int numID, ref int pathID)
+        {
+            if(tradeDetail.Count > 0)
+            {
+                var itor = tradeDetail.GetEnumerator();
+                while(itor.MoveNext())
+                {
+                    TradeNumbers tn = itor.Current.Value;
+                    if(tn.tradeCount > 0)
+                    {
+                        numID = itor.Current.Key;
+                        pathID = tn.tradeNumbers[0].number % 3;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
     public List<SingleTradeInfo> allTradeInfos = new List<SingleTradeInfo>();
 
@@ -228,9 +247,14 @@ public class PanelTrade : MonoBehaviour
                 SingleTradeInfo info = allTradeInfos[curPainter.selectedIndex];
                 if (info != null)
                 {
-                    string idtag = info.lastDataItemIdTag;
+                    string idtag = info.targetDataItemIdTag;
                     int dateID = int.Parse(idtag.Split('-')[0]);
                     PanelDataView.Instance.ReadSpecDateData(idtag, dateID);
+                    int numID = 0, pathID = 0;
+                    if(info.GetTradeNumIndexAndPathIndex(ref numID, ref pathID))
+                    {
+                        PanelAnalyze.Instance.ChangeNumIndexAndCdtIndex(numID, pathID);
+                    }
                     return;
                 }
             }
@@ -359,6 +383,7 @@ public class PanelTrade : MonoBehaviour
         uiTrade.sliderSelectTradeItem.maxValue = allTradeInfos.Count - 1;
         uiTrade.sliderSelectTradeItem.value = uiTrade.sliderSelectTradeItem.maxValue;
 
+        curPainter.selectedIndex = allTradeInfos.Count - 1;
         curPainter.ScrollLatestItemToMiddle(curPainter.upPainter, uiTrade.graphTrade.rectTransform);
         //NotifyRepaint();
     }
