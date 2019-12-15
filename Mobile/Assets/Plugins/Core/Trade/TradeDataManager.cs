@@ -296,9 +296,10 @@ namespace LotteryAnalyze
             eTradeOnMacdBarGoUp,
             // 在K线触碰到布林线下轨的时候进行交易
             eTradeOnKCurveTouchBolleanDown,
-
             // 交易热路的那些号码
             eTradeHotestPathNums,
+            // 交易小遗漏路的号码
+            eTradeOnSmallMissCount,
         }
         public static List<string> STRATEGY_NAMES = new List<string>()
         {
@@ -325,6 +326,7 @@ namespace LotteryAnalyze
             "eTradeOnMacdBarGoUp",
             "eTradeOnKCurveTouchBolleanDown",
             "eTradeHotestPathNums",
+            "eTradeOnSmallMissCount",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -858,6 +860,9 @@ namespace LotteryAnalyze
                     break;
                 case TradeStrategy.eTradeHotestPathNums:
                     TradeHotestPathNums(item, trade);
+                    break;
+                case TradeStrategy.eTradeOnSmallMissCount:
+                    TradeOnSmallMissCount(item, trade);
                     break;
             }
 
@@ -1396,6 +1401,66 @@ namespace LotteryAnalyze
                             tn.SelPath012Number(res[i].pathIndex, tradeCount, ref maxProbilityNums);
                     }
                     trade.tradeInfo.Add(numID, tn);
+                    if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
+                        numPosCurTradeIndexs[numID] = 0;
+                }
+            }
+
+        }
+
+        void TradeOnSmallMissCount(DataItem item, TradeDataOneStar trade)
+        {
+            int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+            int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+
+            bool[] sim_flag = new bool[]
+            {
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                if (!sim_flag[numID])
+                    continue;
+
+                predict_results.Clear();
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (numPosCurTradeIndexs[numID] >= tradeCountList.Count)
+                            numPosCurTradeIndexs[numID] = 0;
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+                for (int i = startID; i <= endID; ++i)
+                {
+                    CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                    StatisticUnit su = sum.statisticUnitMap[pcdt];
+                    int pathID = i - startID;
+                    if(su.missCount < 2)
+                        if (predict_results.Contains(pathID) == false)
+                            predict_results.Add(pathID);
+                }
+                if (predict_results.Count > 0)
+                {
+                    FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+                    TradeNumbers tn = new TradeNumbers();
+                    tn.tradeCount = tradeCount;
+                    for (int i = 0; i < predict_results.Count; ++i)
+                    {
+                        tn.SelPath012Number(predict_results[i], tradeCount, ref maxProbilityNums);
+                    }
+                    trade.tradeInfo.Add(numID, tn);
+
                     if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
                         numPosCurTradeIndexs[numID] = 0;
                 }
