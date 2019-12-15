@@ -294,6 +294,11 @@ namespace LotteryAnalyze
 
             // 在Macd柱经过长期走低开始走高的时候进行交易
             eTradeOnMacdBarGoUp,
+            // 在K线触碰到布林线下轨的时候进行交易
+            eTradeOnKCurveTouchBolleanDown,
+
+            // 交易热路的那些号码
+            eTradeHotestPathNums,
         }
         public static List<string> STRATEGY_NAMES = new List<string>()
         {
@@ -318,6 +323,8 @@ namespace LotteryAnalyze
 
             "sSinglePositionBestPathByAvgLine",
             "eTradeOnMacdBarGoUp",
+            "eTradeOnKCurveTouchBolleanDown",
+            "eTradeHotestPathNums",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -846,6 +853,12 @@ namespace LotteryAnalyze
                 case TradeStrategy.eTradeOnMacdBarGoUp:
                     TradeOnMacdBarGoUp(item, trade);
                     break;
+                case TradeStrategy.eTradeOnKCurveTouchBolleanDown:
+                    TradeOnKCurveTouchBolleanDown(item, trade);
+                    break;
+                case TradeStrategy.eTradeHotestPathNums:
+                    TradeHotestPathNums(item, trade);
+                    break;
             }
 
             // 杀掉上期开出的号，为了节省开销
@@ -1295,6 +1308,99 @@ namespace LotteryAnalyze
                         numPosCurTradeIndexs[numID] = 0;
                 }
             }
+        }
+
+        void TradeOnKCurveTouchBolleanDown(DataItem item, TradeDataOneStar trade)
+        {
+            bool[] sim_flag = new bool[]
+            {
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
+
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                if (!sim_flag[numID])
+                    continue;
+
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (numPosCurTradeIndexs[numID] >= tradeCountList.Count)
+                            numPosCurTradeIndexs[numID] = 0;
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
+                KDataDictContainer kddc = GraphDataManager.KGDC.GetKDataDictContainer(numID);
+                MACDPointMap mpm = kddc.GetMacdPointMap(item.idGlobal);
+                BollinPointMap bpm = kddc.GetBollinPointMap(item.idGlobal);
+                KDataMap kdm = kddc.GetKDataDict(item.idGlobal);
+                CollectDataType[] cdts = new CollectDataType[] { CollectDataType.ePath0, CollectDataType.ePath1, CollectDataType.ePath2, };
+
+                List<PathCmpInfo> res = trade.pathCmpInfos[numID];
+                res.Clear();
+
+                bool hasFindValidPath = false;
+                FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+                for (int i = 0; i < 3; ++i)
+                {
+                    CollectDataType cdt = cdts[i];
+                    PathCmpInfo pci = new PathCmpInfo(i, 0);
+                    int missCount = item.statisticInfo.allStatisticInfo[numID].statisticUnitMap[cdt].missCount;
+                    pci.pathValue = 0;
+                    pci.paramMap["MissCount"] = missCount;
+                    res.Add(pci);
+
+                    DataItem headItem = DataManager.GetInst().FindDataItem(item.idGlobal - missCount);
+                    if (headItem == null)
+                        continue;
+                    
+                    KDataMap headKDM = kddc.GetKDataDict(headItem);
+                    while (headKDM != null && headKDM.index <= kdm.index)
+                    {
+                        BollinPoint headBP = kddc.GetBollinPointMap(headKDM).GetData(cdt, false);
+                        KData headKD = headKDM.GetData(cdt, false);
+                        if(headKD.RelateDistTo(headBP.downValue) >= 0)
+                        {
+                            if(kdm.index - headKD.index > tradeCountList.Count)
+                                break;
+
+                            hasFindValidPath = true;
+                            pci.pathValue = 1;
+                            if (NeedResetTradeCountID[numID] == true)
+                            {
+                                numPosCurTradeIndexs[numID] = 1;
+                                tradeCount = tradeCountList[numPosCurTradeIndexs[0]];
+                                NeedResetTradeCountID[numID] = false;
+                            }
+                            break;
+                        }
+                        headKDM = kddc.GetKDataDict(headKDM.index + 1);
+                    }
+                }
+                if (hasFindValidPath)
+                {
+                    TradeNumbers tn = new TradeNumbers();
+                    tn.tradeCount = tradeCount;
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        if (res[i].pathValue > 0)
+                            tn.SelPath012Number(res[i].pathIndex, tradeCount, ref maxProbilityNums);
+                    }
+                    trade.tradeInfo.Add(numID, tn);
+                    if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
+                        numPosCurTradeIndexs[numID] = 0;
+                }
+            }
+
         }
 
         void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
@@ -2223,7 +2329,7 @@ namespace LotteryAnalyze
                 }
                 else
                     tradeCount = 0;
-
+                
                 StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
                 for (int i = startID; i <= endID; ++i)
                 {
@@ -2258,7 +2364,7 @@ namespace LotteryAnalyze
                 }
                 if (predict_results.Count > 0)
                 {
-                    if (predict_results.Count <= GlobalSetting.G_SIM_SEL_MAX_COUNT)
+                    //if (predict_results.Count <= GlobalSetting.G_SIM_SEL_MAX_COUNT)
                     {
                         TradeNumbers tn = new TradeNumbers();
                         tn.tradeCount = tradeCount;
@@ -2344,6 +2450,89 @@ namespace LotteryAnalyze
                 trade.tradeInfo.Add(numID, tn);
             }
             */
+        }
+
+        void TradeHotestPathNums(DataItem item, TradeDataOneStar trade)
+        {
+            int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+            int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+
+            bool[] sim_flag = new bool[]
+            {
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                if (!sim_flag[numID])
+                    continue;
+
+                predict_results.Clear();
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (numPosCurTradeIndexs[numID] >= tradeCountList.Count)
+                            numPosCurTradeIndexs[numID] = 0;
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+                for (int i = startID; i <= endID; ++i)
+                {
+                    CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                    StatisticUnit su = sum.statisticUnitMap[pcdt];
+                    int pathID = i - startID;
+
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_3)
+                    {
+                        if (su.sample3Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(pathID) == false)
+                                predict_results.Add(pathID);
+                        }
+                    }
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_5)
+                    {
+                        if (su.sample5Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(pathID) == false)
+                                predict_results.Add(pathID);
+                        }
+                    }
+                    if (GlobalSetting.G_USE_KCURVE_HOTNUMS_PREDICT_SAMPLE_10)
+                    {
+                        if (su.sample10Data.appearProbabilityDiffWithTheory > 0.5f)
+                        {
+                            if (predict_results.Contains(pathID) == false)
+                                predict_results.Add(pathID);
+                        }
+                    }
+                }
+                if (predict_results.Count > 0)
+                {
+
+                    FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+                    TradeNumbers tn = new TradeNumbers();
+                    tn.tradeCount = tradeCount;
+                    for (int i = 0; i < predict_results.Count; ++i)
+                    {
+                        tn.SelPath012Number(predict_results[i], tradeCount, ref maxProbilityNums);
+                    }
+                    trade.tradeInfo.Add(numID, tn);
+
+                    if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1)
+                        numPosCurTradeIndexs[numID] = 0;
+                }
+            }
+
         }
 
         void TradeSingleMostPosibilityNums(DataItem item, TradeDataOneStar trade)

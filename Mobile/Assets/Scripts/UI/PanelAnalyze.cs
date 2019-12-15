@@ -44,6 +44,7 @@ public class PanelAnalyze : MonoBehaviour
         public UnityEngine.UI.Button buttonRemoveAllPosPath;
 
         public UnityEngine.UI.Dropdown dropdownOperationType;
+        public UnityEngine.UI.Dropdown dropdownPredictType;
         public UnityEngine.UI.Button buttonDelSelAuxLine;
         public UnityEngine.UI.Button buttonDelAllAuxLine;
         public UnityEngine.UI.Button buttonSelectColor;
@@ -401,6 +402,14 @@ public class PanelAnalyze : MonoBehaviour
                     NotifyUIRepaint();
                 });
             }
+        });
+
+        settingKGraph.dropdownPredictType.AddOptions(GlobalSetting.S_HOT_NUM_PREDICT_TYPE_STRS);
+        settingKGraph.dropdownPredictType.value = (int)GlobalSetting.G_KCURVE_HOTNUMS_PREDICT_TYPE;
+        settingKGraph.dropdownPredictType.onValueChanged.AddListener((v) =>
+        {
+            GlobalSetting.G_KCURVE_HOTNUMS_PREDICT_TYPE = (HotNumPredictType)settingKGraph.dropdownPredictType.value;
+            NotifyUIRepaint();
         });
 
         settingKGraph.settingPanelKData.SetActive(false);

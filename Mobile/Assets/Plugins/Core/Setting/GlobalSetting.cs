@@ -39,6 +39,12 @@ namespace LotteryAnalyze
 
     public class GlobalSetting
     {
+        public static List<string> S_HOT_NUM_PREDICT_TYPE_STRS = new List<string>()
+        {
+            "ePath012",
+            "eNumber",
+        };
+
         static GlobalSetting sInstance = null;
         public static GlobalSetting Instance
         {
@@ -116,7 +122,7 @@ namespace LotteryAnalyze
 
         [Parameter("界面设置/K线图预测/是否启用", true)]
         private static bool g_ENABLE_SHOW_KCURVE_PREDICT = true;
-        [Parameter("界面设置/K线图预测/是否启用", 10)]
+        [Parameter("界面设置/K线图预测/预测取样数量", 10)]
         private static int g_KCURVE_PREDICT_SAMPLE_COUNT = 10;
 
         [Parameter("界面设置/K线图设置/是否显示K线详情", true)]
