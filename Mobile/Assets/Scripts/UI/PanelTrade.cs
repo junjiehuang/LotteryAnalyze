@@ -293,6 +293,8 @@ public class PanelTrade : MonoBehaviour
 
     void DoStart()
     {
+        curPainter.Reset();
+
         BatchTradeSimulator.Instance.batch = GlobalSetting.G_DAYS_PER_BATCH;
         BatchTradeSimulator.Instance.startMoney = float.Parse(uiSetting.inputStartMoney.text);
         TradeDataManager.Instance.curTradeStrategy = GlobalSetting.G_SIM_STRETAGY;

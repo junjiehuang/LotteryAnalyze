@@ -12,6 +12,12 @@ public class GraphPainterBase
     public Vector2 canvasUpOffset;
     public Vector2 canvasDownOffset;
 
+    public virtual void Reset()
+    {
+        canvasUpOffset.Set(0, 0);
+        canvasDownOffset.Set(0, 0);
+    }
+
     public virtual void Start()
     {
 
