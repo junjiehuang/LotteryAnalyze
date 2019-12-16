@@ -54,6 +54,12 @@ public class PanelCalculator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        inputfieldTradePlan.text = GlobalSetting.G_SIM_TRADE_PLANS;
+        inputfieldTradePlan.onEndEdit.AddListener((str) =>
+        {
+            GlobalSetting.G_SIM_TRADE_PLANS = inputfieldTradePlan.text;
+        });
+
         inputfieldCountPerTrade.text = numberCountPerTrade.ToString();
         inputfieldReward.text = reward.ToString();
         inputfieldCost.text = cost.ToString();

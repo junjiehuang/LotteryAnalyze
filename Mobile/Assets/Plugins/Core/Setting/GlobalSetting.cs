@@ -253,6 +253,8 @@ namespace LotteryAnalyze
         private static bool g_SIM_PAUSE_AT_BATCH_FINISH = false;
         [Parameter("模拟交易/模拟策略", TradeDataManager.TradeStrategy.eTradeOnMacdBarGoUp)]
         private static TradeDataManager.TradeStrategy g_SIM_STRETAGY = TradeDataManager.TradeStrategy.eTradeOnMacdBarGoUp;
+        [Parameter("模拟交易/交易计划", "1,2,4,8,16,32")]
+        private static string g_SIM_TRADE_PLANS = "1,2,4,8,16,32";
 
         public static List<string> TradeTags = new List<string>();
         public static List<List<int>> TradeSets = new List<List<int>>();
@@ -1306,6 +1308,20 @@ namespace LotteryAnalyze
             }
         }
 
+        public static string G_SIM_TRADE_PLANS
+        {
+            get
+            {
+                return g_SIM_TRADE_PLANS;
+            }
+
+            set
+            {
+                g_SIM_TRADE_PLANS = value;
+                HAS_MODIFY = true;
+            }
+        }
+
         static GlobalSetting()
         {
             string CFG_FILE = ROOT_FOLDER + "\\GlobalSetting.ini";
@@ -1352,37 +1368,11 @@ namespace LotteryAnalyze
                 {
                     int tv = cfg.ReadInt("GlobalSetting", fi.Name, (int)par.defV);
                     fi.SetValue(Instance, (object)(tv));
-
-                    //if (fi.FieldType == typeof(AppearenceCheckType))
-                    //{
-                    //    AppearenceCheckType v = (AppearenceCheckType)tv;
-                    //    fi.SetValue(Instance, v);
-                    //}
-                    //else if (fi.FieldType == typeof(AutoUpdateUtil.DataSourceType))
-                    //{
-                    //    AutoUpdateUtil.DataSourceType v = (AutoUpdateUtil.DataSourceType)tv;
-                    //    fi.SetValue(Instance, v);
-                    //}
-                    //else if (fi.FieldType == typeof(CollectDataType))
-                    //{
-                    //    CollectDataType v = (CollectDataType)tv;
-                    //    fi.SetValue(Instance, v);
-                    //}
-                    //else if (fi.FieldType == typeof(HotNumPredictType))
-                    //{
-                    //    HotNumPredictType v = (HotNumPredictType)tv;
-                    //    fi.SetValue(Instance, v);
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show(
-                    //        "未注册解析枚举类型[ " + fi.FieldType + "]",
-                    //        "警告",
-                    //        MessageBoxButtons.OKCancel,
-                    //        MessageBoxIcon.Error,
-                    //        MessageBoxDefaultButton.Button1,
-                    //        MessageBoxOptions.ServiceNotification);
-                    //}
+                }
+                else if (fi.FieldType == typeof(string))
+                {
+                    string v = cfg.ReadString("GlobalSetting", fi.Name, (string)par.defV);
+                    fi.SetValue(Instance, v);
                 }
             }
         }
@@ -1413,6 +1403,10 @@ namespace LotteryAnalyze
                 else if (fi.FieldType.IsEnum)
                 {
                     cfg.WriteInt("GlobalSetting", fi.Name, (int)v);
+                }
+                else if(fi.FieldType == typeof(string))
+                {
+                    cfg.WriteString("GlobalSetting", fi.Name, (string)v);
                 }
             }
         }

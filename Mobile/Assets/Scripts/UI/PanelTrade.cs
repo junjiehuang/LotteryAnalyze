@@ -214,7 +214,11 @@ public class PanelTrade : MonoBehaviour
             GlobalSetting.G_SIM_SEL_NUM_AT_POS_4 = uiSetting.toggle5.isOn;
         });
 
-        uiSetting.inputTradeCountLst.text = "1,2,4,8,16,32,64,128";
+        uiSetting.inputTradeCountLst.text = GlobalSetting.G_SIM_TRADE_PLANS;// "1,2,4,8,16,32,64,128";
+        uiSetting.inputTradeCountLst.onEndEdit.AddListener((str) =>
+        {
+            GlobalSetting.G_SIM_TRADE_PLANS = uiSetting.inputTradeCountLst.text;
+        });
 
         uiSetting.dropdownTradeStratedy.AddOptions(TradeDataManager.STRATEGY_NAMES);
         uiSetting.dropdownTradeStratedy.value = (int)GlobalSetting.G_SIM_STRETAGY;

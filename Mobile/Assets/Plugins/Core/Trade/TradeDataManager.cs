@@ -1545,10 +1545,17 @@ namespace LotteryAnalyze
                             break;
                         su = pItem.statisticInfo.allStatisticInfo[numID].statisticUnitMap[pcdt];
                     }
-                    if(curMCIndex > 1 && missCounts[0] <= missCounts[1] && missCounts[0] <= tradeCountList.Count)
+                    if(curMCIndex > 2)
                     {
-                        pci.pathValue = 1;
-                        findBetterPath = true;
+                        int CHECK_COUNT = 5;
+                        int preMaxMC = Math.Max(missCounts[1], missCounts[2]);//Math.Max(Math.Max(missCounts[1], missCounts[2]), CHECK_COUNT);// 
+                        bool isSmallEnough = missCounts[0] < CHECK_COUNT && preMaxMC < CHECK_COUNT && missCounts[0] <= preMaxMC;
+                        bool isMissCountBecomeSmall = missCounts[0] <= missCounts[1] && missCounts[0] <= tradeCountList.Count;
+                        if (isSmallEnough || isMissCountBecomeSmall)
+                        {
+                            pci.pathValue = 1;
+                            findBetterPath = true;
+                        }
                     }
                 }
                 if (findBetterPath)
