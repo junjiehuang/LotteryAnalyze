@@ -300,6 +300,8 @@ namespace LotteryAnalyze
             eTradeHotestPathNums,
             // 交易小遗漏路的号码
             eTradeOnSmallMissCount,
+            // 当遗漏出现变小的时候进行交易
+            eTradeOnMissCountBecomeSmall,
         }
         public static List<string> STRATEGY_NAMES = new List<string>()
         {
@@ -327,6 +329,7 @@ namespace LotteryAnalyze
             "eTradeOnKCurveTouchBolleanDown",
             "eTradeHotestPathNums",
             "eTradeOnSmallMissCount",
+            "eTradeOnMissCountBecomeSmall",
         };
 
         // 是否强制每次交易都取指定的最大的数字个数
@@ -864,6 +867,9 @@ namespace LotteryAnalyze
                 case TradeStrategy.eTradeOnSmallMissCount:
                     TradeOnSmallMissCount(item, trade);
                     break;
+                case TradeStrategy.eTradeOnMissCountBecomeSmall:
+                    TradeOnMissCountBecomeSmall(item, trade);
+                    break;
             }
 
             // 杀掉上期开出的号，为了节省开销
@@ -1013,13 +1019,21 @@ namespace LotteryAnalyze
                         continue;
 
                     MACDPoint mp = mpm.macdpMap[cdt];
+                    // macd快线和慢线是否都在0轴上
                     bool isMacdUpon0 = mp.DIF > 0 && mp.DEA > 0;
+                    // 5期平均线高于10期平均线
                     bool is5H10 = apm5.apMap[cdt].avgKValue > apm10.apMap[cdt].avgKValue;
+                    // 10期平均线高于布林中轨
                     bool is10HBM = apm10.apMap[cdt].avgKValue > bpm.bpMap[cdt].midValue;
+                    // k线高于5期平均线
                     bool isKH5 = kdm.dataDict[cdt].KValue > apm5.apMap[cdt].avgKValue;
+                    // k线在5期平均线或者之上
                     bool isKFH5 = (kdm.dataDict[cdt].DownValue - apm5.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    // k线在10期平均线或者之上
                     bool isKFH10 = (kdm.dataDict[cdt].DownValue - apm10.apMap[cdt].avgKValue) / GraphDataManager.GetMissRelLength(cdt) > -0.2f;
+                    // k线低于10期均线
                     bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
+                    // k线到布林上轨的距离
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
 
                     PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
@@ -1027,6 +1041,7 @@ namespace LotteryAnalyze
                     if (prevValue <= 0)
                     {
                         //if (is5H10 && is10HBM && isKFH5 && budist <= 0.5f && isMacdUpon0)
+                        // 出现强提升信号
                         if (is5H10 && is10HBM && isKFH10 && isMacdUpon0)
                             pci.pathValue = 1;
                         else
@@ -1042,16 +1057,16 @@ namespace LotteryAnalyze
                     
                     if(pci.pathValue > 0)
                     {
-                        bool findBetter = dstNumID == -1;
-                        if(!findBetter && dstMissCount >= 0)
+                        bool notFindBetter = dstNumID == -1;
+                        if(!notFindBetter && dstMissCount >= 0)
                         {
                             int missCmp = missCount < dstMissCount ? -1 : (dstMissCount == missCount ? 0 : 1);
                             if (missCmp == -1)
-                                findBetter = true;
+                                notFindBetter = true;
                             else if(missCmp == 0 && dstPathValue < pci.pathValue)
-                                findBetter = true;
+                                notFindBetter = true;
                         }
-                        if (findBetter)
+                        if (notFindBetter)
                         {
                             dstNumID = numID;
                             dstPathIndex = i;
@@ -1465,7 +1480,120 @@ namespace LotteryAnalyze
                         numPosCurTradeIndexs[numID] = 0;
                 }
             }
+        }
 
+
+        int[] LastTradePathIndex = new int[] { -1, -1, -1, -1, -1 };
+        void TradeOnMissCountBecomeSmall(DataItem item, TradeDataOneStar trade)
+        {
+            int startID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath0);
+            int endID = GraphDataManager.S_CDT_LIST.IndexOf(CollectDataType.ePath2);
+
+            bool[] sim_flag = new bool[]
+            {
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_0,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_1,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_2,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_3,
+                GlobalSetting.G_SIM_SEL_NUM_AT_POS_4,
+            };
+            for (int numID = 0; numID < 5; ++numID)
+            {
+                if (!sim_flag[numID])
+                    continue;
+                
+                int tradeCount = defaultTradeCount;
+                if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
+                {
+                    if (tradeCountList.Count > 0)
+                    {
+                        if (numPosCurTradeIndexs[numID] >= tradeCountList.Count)
+                            numPosCurTradeIndexs[numID] = 0;
+                        tradeCount = tradeCountList[numPosCurTradeIndexs[numID]];
+                    }
+                }
+                else
+                    tradeCount = 0;
+
+                bool findBetterPath = false;
+                List<PathCmpInfo> res = trade.pathCmpInfos[numID];
+                res.Clear();
+
+                StatisticUnitMap sum = item.statisticInfo.allStatisticInfo[numID];
+                for (int i = startID; i <= endID; ++i)
+                {
+                    CollectDataType pcdt = GraphDataManager.S_CDT_LIST[i];
+                    StatisticUnit su = sum.statisticUnitMap[pcdt];
+                    PathCmpInfo pci = new PathCmpInfo(i, 0);
+                    int missCount = su.missCount;
+                    pci.pathValue = 0;
+                    pci.paramMap["MissCount"] = missCount;
+                    res.Add(pci);
+
+                    int pathID = i - startID;
+                    int[] missCounts = new int[3] { 0, 0, 0, };
+                    int curMCIndex = 0;
+                    DataItem pItem = item;
+                    while(curMCIndex < 3 && pItem != null)
+                    {
+                        if (su.missCount > 0)
+                        {
+                            missCounts[curMCIndex++] = su.missCount;
+                        }
+                        pItem = DataManager.GetInst().FindDataItem(pItem.idGlobal - su.missCount - 1);
+                        if (pItem == null)
+                            break;
+                        su = pItem.statisticInfo.allStatisticInfo[numID].statisticUnitMap[pcdt];
+                    }
+                    if(curMCIndex > 1 && missCounts[0] <= missCounts[1] && missCounts[0] <= tradeCountList.Count)
+                    {
+                        pci.pathValue = 1;
+                        findBetterPath = true;
+                    }
+                }
+                if (findBetterPath)
+                {
+                    int selPathID = -1;
+                    if (LastTradePathIndex[numID] != -1)
+                    {
+                        if(res[LastTradePathIndex[numID]].pathValue > 0)
+                        {
+                            selPathID = LastTradePathIndex[numID];
+                        }
+                    }
+                    if (selPathID == -1)
+                    {
+                        res.Sort((a, b) =>
+                        {
+                            if (a.pathValue > b.pathValue)
+                                return -1;
+                            if (a.pathValue < b.pathValue)
+                                return 1;
+                            if ((int)a.paramMap["MissCount"] < (int)b.paramMap["MissCount"])
+                                return -1;
+                            return 1;
+                        });
+                        selPathID = res[0].pathIndex;
+                    }
+                    bool changePath = LastTradePathIndex[numID] != selPathID;
+                    LastTradePathIndex[numID] = selPathID;
+
+                    if (selPathID != -1)
+                    {
+                        FindOverTheoryProbabilityNums(item, numID, ref maxProbilityNums);
+                        TradeNumbers tn = new TradeNumbers();
+                        tn.tradeCount = tradeCount;
+                        tn.SelPath012Number(selPathID, tradeCount, ref maxProbilityNums);
+                        trade.tradeInfo.Add(numID, tn);
+                    }
+                    if (numPosCurTradeIndexs[numID] == tradeCountList.Count - 1 /*|| changePath*/)
+                        numPosCurTradeIndexs[numID] = 0;
+                }
+                else
+                {
+                    LastTradePathIndex[numID] = -1;
+                }
+            }
         }
 
         void TradeSinglePositionBestPath(DataItem item, TradeDataOneStar trade)
