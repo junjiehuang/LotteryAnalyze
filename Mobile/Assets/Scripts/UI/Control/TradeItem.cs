@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatisticItem : MonoBehaviour
+public class TradeItem : MonoBehaviour
 {
     public Button btnExpand;
     public Text txtInfo;
@@ -33,7 +33,15 @@ public class StatisticItem : MonoBehaviour
                 btnText.text = "-";
             else
                 btnText.text = "+";
-            txtInfo.text = item.Text;
+            
+            if (item.isLeafNode == false)
+            {
+                txtInfo.text = "连错[" + item.Tag + "] " + item.SubNodes.Count + " / " + PanelTrade.Instance.totalValidTradeCount;
+            }
+            else
+            {
+                txtInfo.text = item.Text;
+            }
 
             btnView.gameObject.SetActive(_item.showViewBtn);
             btnExpand.gameObject.SetActive(!item.isLeafNode);
@@ -44,27 +52,30 @@ public class StatisticItem : MonoBehaviour
     {
         rtSelf = transform as RectTransform;
         btnText = btnExpand.GetComponentInChildren<Text>();
-        btnExpand.onClick.AddListener(() => 
+        btnExpand.onClick.AddListener(() =>
         {
             item.Expand = !item.Expand;
             if (item.Expand)
                 btnText.text = "-";
             else
                 btnText.text = "+";
-            PanelStatisticCollect.Instance.RefreshView();
+            PanelTrade.Instance.RefreshView();
+            //PanelStatisticCollect.Instance.RefreshView();
         });
 
         btnView.onClick.AddListener(() =>
         {
-            if (item.Tag != null)
+            if (item.showViewBtn && item.Tag != null)
             {
-                string idtag = item.Text;
-                if (item.Text.Contains(","))
-                {
-                    idtag = item.Text.Split(',')[0];
-                }
-                PanelDataView.Instance.ReadSpecDateData(idtag, (int)item.Tag);
-                PanelAnalyze.Instance.ChangeNumIndexAndCdtIndex(item.numIndex, item.cdtIndex);
+                int tradeIndex = (int)item.Tag;
+                PanelTrade.Instance.ScrollToData(tradeIndex);
+                //string idtag = item.Text;
+                //if (item.Text.Contains(","))
+                //{
+                //    idtag = item.Text.Split(',')[0];
+                //}
+                //PanelDataView.Instance.ReadSpecDateData(idtag, (int)item.Tag);
+                //PanelAnalyze.Instance.ChangeNumIndexAndCdtIndex(item.numIndex, item.cdtIndex);
             }
         });
     }
@@ -78,31 +89,12 @@ public class StatisticItem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(item != null)
+        {
+            if(item.isLeafNode == false)
+            {
+                txtInfo.text = "连错[" + item.Tag + "] " + item.SubNodes.Count + " / " + PanelTrade.Instance.totalValidTradeCount;
+            }
+        }
     }
-
-}
-
-
-public class ItemWrapper
-{
-    public List<ItemWrapper> SubNodes = new List<ItemWrapper>();
-    public bool Expand = false;
-    public string Text;
-    public object Tag;
-    public int numIndex;
-    public int cdtIndex;
-    public bool isLeafNode;
-    public bool showViewBtn;
-    public int globalID = -1;
-    public int barUpCount = 0;
-    public int missCount = 0;
-
-    public ItemWrapper(string info)
-    {
-        Text = info;
-        isLeafNode = false;
-        showViewBtn = false;
-    }
-
 }

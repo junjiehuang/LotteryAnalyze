@@ -65,14 +65,20 @@ public class PanelTrade : MonoBehaviour
     }
     public List<SingleTradeInfo> allTradeInfos = new List<SingleTradeInfo>();
 
+    float ITEM_W = 0;
+    float ITEM_H = 0;
     // 统计连续交易失败的次数
-    Dictionary<int, int> continueWrongTradeInfos = new Dictionary<int, int>();
+    List<TradeItem> statisticItems = new List<TradeItem>();
+    List<TradeItem> freePool = new List<TradeItem>();
+    List<ItemWrapper> treeInfos = new List<ItemWrapper>();
+    Dictionary<int, int> tradeMissCountIndexMap = new Dictionary<int, int>();
+    //Dictionary<int, int> continueWrongTradeInfos = new Dictionary<int, int>();
     // 当前连续交易失败的次数
-    int currentMissTradeCount = 0;
+    public int currentMissTradeCount = 0;
     // 总有效交易的次数
-    int totalValidTradeCount = 0;
+    public int totalValidTradeCount = 0;
     // 总忽略交易的次数
-    int totalIgnoreTradeCount = 0;
+    public int totalIgnoreTradeCount = 0;
 
     [System.Serializable]
     public class UIMain
@@ -88,7 +94,10 @@ public class PanelTrade : MonoBehaviour
         public RectTransform rtProgressLocal;
         public RectTransform rtProgressGlobal;
         public GameObject briefView;
-        public Text txtBriefView;
+        //public Text txtBriefView;
+
+        public RectTransform rtContent;
+        public RectTransform rtPrefab;
     }
 
     [System.Serializable]
@@ -151,7 +160,17 @@ public class PanelTrade : MonoBehaviour
 
     void Init()
     {
-        uiMain.txtBriefView.text = "";
+        ITEM_W = uiMain.rtPrefab.rect.width;
+        ITEM_H = uiMain.rtPrefab.rect.height;
+        if(ITEM_W == 0)
+        {
+            ITEM_W = (uiMain.briefView.transform as RectTransform).rect.width;
+        }
+
+        uiMain.rtPrefab.gameObject.SetActive(false);
+        freePool.Add(uiMain.rtPrefab.GetComponent<TradeItem>());
+
+        //uiMain.txtBriefView.text = "";
         uiMain.briefView.SetActive(false);
         uiMain.btnViewBrief.onClick.AddListener(() =>
         {
@@ -330,7 +349,9 @@ public class PanelTrade : MonoBehaviour
         uiSetting.inputEndDate.text = endDate.ToString();
 
         allTradeInfos.Clear();
-        continueWrongTradeInfos.Clear();
+        //continueWrongTradeInfos.Clear();
+        treeInfos.Clear();
+        tradeMissCountIndexMap.Clear();
         currentMissTradeCount = 0;
         totalIgnoreTradeCount = 0;
         totalValidTradeCount = 0;
@@ -355,7 +376,9 @@ public class PanelTrade : MonoBehaviour
         GraphDataManager.ResetCurKValueMap();
 
         allTradeInfos.Clear();
-        continueWrongTradeInfos.Clear();
+        //continueWrongTradeInfos.Clear();
+        treeInfos.Clear();
+        tradeMissCountIndexMap.Clear();
         currentMissTradeCount = 0;
         totalIgnoreTradeCount = 0;
         totalValidTradeCount = 0;
@@ -440,36 +463,142 @@ public class PanelTrade : MonoBehaviour
 
     void RecordMissWrongTradeInfo()
     {
-        if(continueWrongTradeInfos.ContainsKey(currentMissTradeCount))
+        //if(continueWrongTradeInfos.ContainsKey(currentMissTradeCount))
+        //{
+        //    continueWrongTradeInfos[currentMissTradeCount] = continueWrongTradeInfos[currentMissTradeCount] + 1;
+        //}
+        //else
+        //{
+        //    continueWrongTradeInfos.Add(currentMissTradeCount, 1);
+        //}
+
+        ItemWrapper iwParent = null;
+        if (tradeMissCountIndexMap.ContainsKey(currentMissTradeCount) == false)
         {
-            continueWrongTradeInfos[currentMissTradeCount] = continueWrongTradeInfos[currentMissTradeCount] + 1;
+            iwParent = new ItemWrapper(currentMissTradeCount.ToString());
+            iwParent.Tag = currentMissTradeCount;
+            iwParent.showViewBtn = false;
+            iwParent.Expand = false;
+            treeInfos.Add(iwParent);
+
+            treeInfos.Sort((a, b) => 
+            {
+                if ((int)a.Tag > (int)b.Tag)
+                    return -1;
+                return 1;
+            });
+            tradeMissCountIndexMap.Clear();
+            for(int i = 0; i < treeInfos.Count; ++i)
+            {
+                tradeMissCountIndexMap.Add((int)treeInfos[i].Tag, i);
+            }
         }
         else
         {
-            continueWrongTradeInfos.Add(currentMissTradeCount, 1);
+            iwParent = treeInfos[tradeMissCountIndexMap[currentMissTradeCount]];
         }
+
+        int tradeID = allTradeInfos.Count - 1;
+        ItemWrapper iwChild = new ItemWrapper(tradeID.ToString());
+        iwChild.isLeafNode = true;
+        iwChild.showViewBtn = true;
+        iwChild.Tag = tradeID;
+        iwParent.SubNodes.Add(iwChild);
+
         currentMissTradeCount = 0;
     }
 
 
-    List<int> keys = new List<int>();
+    void RecycleAllItems()
+    {
+        for (int i = 0; i < statisticItems.Count; ++i)
+        {
+            statisticItems[i].SetItem(null);
+            statisticItems[i].gameObject.SetActive(false);
+            freePool.Add(statisticItems[i]);
+        }
+        statisticItems.Clear();
+    }
+
+    TradeItem CreateItem(ItemWrapper item)
+    {
+        TradeItem si = null;
+        if (freePool.Count > 0)
+        {
+            si = freePool[freePool.Count - 1];
+            freePool.RemoveAt(freePool.Count - 1);
+        }
+        else
+        {
+            GameObject go = GameObject.Instantiate(uiMain.rtPrefab.gameObject);
+            si = go.GetComponent<TradeItem>();
+        }
+        si.gameObject.SetActive(true);
+        si.rtSelf.SetParent(uiMain.rtContent, true);
+        statisticItems.Add(si);
+        si.SetItem(item);
+        si.rtSelf.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, ITEM_W);
+        si.rtSelf.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ITEM_H);
+        return si;
+    }
+
+    public void RefreshView()
+    {
+        RecycleAllItems();
+
+        float height = 0;
+        int layer = 0;
+        for (int i = 0; i < treeInfos.Count; ++i)
+        {
+            RefreshItem(treeInfos[i], ref height, ref layer);
+        }
+        uiMain.rtContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+    }
+
+    public void RefreshItem(ItemWrapper item, ref float height, ref int layer)
+    {
+        TradeItem si = CreateItem(item);
+        si.rtSelf.anchoredPosition = new Vector2(0, -height);
+        si.rtInfo.anchoredPosition = new Vector2(layer * ITEM_H, 0);
+        height += ITEM_H;
+
+        if (item.Expand)
+        {
+            ++layer;
+            for (int i = 0; i < item.SubNodes.Count; ++i)
+            {
+                RefreshItem(item.SubNodes[i], ref height, ref layer);
+            }
+            --layer;
+        }
+    }
+
+
+    //List<int> keys = new List<int>();
     void RefreshBriefView()
     {
-        string info = "";
-        keys.Clear();
-        foreach(int key in continueWrongTradeInfos.Keys)
-        {
-            keys.Add(key);
-        }
-        keys.Sort((a, b) =>
-        {
-            if (a > b) return -1;
-            return 1;
-        });
-        for(int i = 0; i < keys.Count; ++i)
-        {
-            info += keys[i] + "\t" + continueWrongTradeInfos[keys[i]] + "/" + totalValidTradeCount + "\n";
-        }
-        uiMain.txtBriefView.text = info;
+        RefreshView();
+        //string info = "";
+        //keys.Clear();
+        //foreach(int key in continueWrongTradeInfos.Keys)
+        //{
+        //    keys.Add(key);
+        //}
+        //keys.Sort((a, b) =>
+        //{
+        //    if (a > b) return -1;
+        //    return 1;
+        //});
+        //for(int i = 0; i < keys.Count; ++i)
+        //{
+        //    info += keys[i] + "\t" + continueWrongTradeInfos[keys[i]] + "/" + totalValidTradeCount + "\n";
+        //}
+        //uiMain.txtBriefView.text = info;
+    }
+
+    public void ScrollToData(int tradeIndex)
+    {
+        curPainter.selectedIndex = tradeIndex;
+        curPainter.OnScrollToData(tradeIndex);
     }
 }
