@@ -65,6 +65,15 @@ public class PanelTrade : MonoBehaviour
     }
     public List<SingleTradeInfo> allTradeInfos = new List<SingleTradeInfo>();
 
+    // 统计连续交易失败的次数
+    Dictionary<int, int> continueWrongTradeInfos = new Dictionary<int, int>();
+    // 当前连续交易失败的次数
+    int currentMissTradeCount = 0;
+    // 总有效交易的次数
+    int totalValidTradeCount = 0;
+    // 总忽略交易的次数
+    int totalIgnoreTradeCount = 0;
+
     [System.Serializable]
     public class UIMain
     {
@@ -73,10 +82,13 @@ public class PanelTrade : MonoBehaviour
         public Button btnStart;
         public Button btnPause;
         public Button btnStop;
+        public Button btnViewBrief;
 
         public Text txtBtnPause;
         public RectTransform rtProgressLocal;
         public RectTransform rtProgressGlobal;
+        public GameObject briefView;
+        public Text txtBriefView;
     }
 
     [System.Serializable]
@@ -139,6 +151,13 @@ public class PanelTrade : MonoBehaviour
 
     void Init()
     {
+        uiMain.txtBriefView.text = "";
+        uiMain.briefView.SetActive(false);
+        uiMain.btnViewBrief.onClick.AddListener(() =>
+        {
+            uiMain.briefView.SetActive(!uiMain.briefView.activeSelf);
+        });
+
         ProgreeBarMaxW = (uiMain.rtProgressGlobal.parent as RectTransform).rect.width;
         uiMain.rtProgressGlobal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
         uiMain.rtProgressLocal.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
@@ -311,6 +330,10 @@ public class PanelTrade : MonoBehaviour
         uiSetting.inputEndDate.text = endDate.ToString();
 
         allTradeInfos.Clear();
+        continueWrongTradeInfos.Clear();
+        currentMissTradeCount = 0;
+        totalIgnoreTradeCount = 0;
+        totalValidTradeCount = 0;
 
         NotifyRepaint();
     }
@@ -332,6 +355,11 @@ public class PanelTrade : MonoBehaviour
         GraphDataManager.ResetCurKValueMap();
 
         allTradeInfos.Clear();
+        continueWrongTradeInfos.Clear();
+        currentMissTradeCount = 0;
+        totalIgnoreTradeCount = 0;
+        totalValidTradeCount = 0;
+
         NotifyRepaint();
     }
 
@@ -391,6 +419,57 @@ public class PanelTrade : MonoBehaviour
 
         curPainter.selectedIndex = allTradeInfos.Count - 1;
         curPainter.ScrollLatestItemToMiddle(curPainter.upPainter, uiTrade.graphTrade.rectTransform);
+
+        if(trade.reward > 0)
+        {
+            RecordMissWrongTradeInfo();
+            ++totalValidTradeCount;
+        }
+        else if(trade.cost > 0)
+        {
+            ++currentMissTradeCount;
+            ++totalValidTradeCount;
+        }
+        else
+        {
+            ++totalIgnoreTradeCount;
+        }
+        RefreshBriefView();
         //NotifyRepaint();
+    }
+
+    void RecordMissWrongTradeInfo()
+    {
+        if(continueWrongTradeInfos.ContainsKey(currentMissTradeCount))
+        {
+            continueWrongTradeInfos[currentMissTradeCount] = continueWrongTradeInfos[currentMissTradeCount] + 1;
+        }
+        else
+        {
+            continueWrongTradeInfos.Add(currentMissTradeCount, 1);
+        }
+        currentMissTradeCount = 0;
+    }
+
+
+    List<int> keys = new List<int>();
+    void RefreshBriefView()
+    {
+        string info = "";
+        keys.Clear();
+        foreach(int key in continueWrongTradeInfos.Keys)
+        {
+            keys.Add(key);
+        }
+        keys.Sort((a, b) =>
+        {
+            if (a > b) return -1;
+            return 1;
+        });
+        for(int i = 0; i < keys.Count; ++i)
+        {
+            info += keys[i] + "\t" + continueWrongTradeInfos[keys[i]] + "/" + totalValidTradeCount + "\n";
+        }
+        uiMain.txtBriefView.text = info;
     }
 }
