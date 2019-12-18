@@ -959,6 +959,7 @@ namespace LotteryAnalyze
         int lastTradePathIndex = -1;
         float lastTradePathValue = -1;
         int lastTradeMissCount = -1;
+        float lastTradeBMDist = -1;
 
         void TradeSinglePositionBestPathByAvgLine(DataItem item, TradeDataOneStar trade)
         {
@@ -981,6 +982,8 @@ namespace LotteryAnalyze
             int dstPathIndex = -1;
             int dstMissCount = -1;
             float dstPathValue = -1;
+            float dstBMDist = -1;
+
             for(int numID = 0; numID < 5; ++numID)
             {
                 if (numID == 0 && GlobalSetting.G_SIM_SEL_NUM_AT_POS_0 == false)
@@ -1035,6 +1038,9 @@ namespace LotteryAnalyze
                     bool isKL10 = kdm.dataDict[cdt].UpValue < apm10.apMap[cdt].avgKValue;
                     // k线到布林上轨的距离
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
+                    // k线到布林中轨的距离
+                    float bmdist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].midValue);
+                    pci.paramMap["BMDIST"] = bmdist;
 
                     PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
                     float prevValue = prevCmp.pathValue;
@@ -1072,6 +1078,7 @@ namespace LotteryAnalyze
                             dstPathIndex = i;
                             dstPathValue = pci.pathValue;
                             dstMissCount = missCount;
+                            dstBMDist = bmdist;
                         }
                     }
                 }
@@ -1080,18 +1087,21 @@ namespace LotteryAnalyze
             {
                 if(lastTradeNumID != -1)
                 {
-                    PathCmpInfo lastPci = trade.pathCmpInfos[lastTradeNumID][dstPathIndex];
-                    if (lastPci.pathValue < 1 || (int)lastPci.paramMap["MissCount"] > 2)
+                    PathCmpInfo lastTradePathPci = trade.pathCmpInfos[lastTradeNumID][lastTradePathIndex];
+                    if (lastTradePathPci.pathValue < 1 || //(float)lastTradePathPci.paramMap["BMDIST"] > 0.5f)
+                        ((int)lastTradePathPci.paramMap["MissCount"] > 2 && Math.Abs((float)lastTradePathPci.paramMap["BMDIST"]) > 0.5f))
                     {
                         lastTradeNumID = dstNumID;
                         lastTradePathIndex = dstPathIndex;
                         lastTradePathValue = dstPathValue;
                         lastTradeMissCount = dstMissCount;
+                        lastTradeBMDist = dstBMDist;
                     }
                     else
                     {
-                        lastTradePathValue = lastPci.pathValue;
-                        lastTradeMissCount = (int)lastPci.paramMap["MissCount"];
+                        lastTradePathValue = lastTradePathPci.pathValue;
+                        lastTradeMissCount = (int)lastTradePathPci.paramMap["MissCount"];
+                        lastTradeBMDist = (float)lastTradePathPci.paramMap["BMDIST"];
                     }
                 }
                 else
@@ -1100,6 +1110,7 @@ namespace LotteryAnalyze
                     lastTradePathIndex = dstPathIndex;
                     lastTradePathValue = dstPathValue;
                     lastTradeMissCount = dstMissCount;
+                    lastTradeBMDist = dstBMDist;
                 }
             }
             else
@@ -1108,8 +1119,9 @@ namespace LotteryAnalyze
                 lastTradePathIndex = -1;
                 lastTradePathValue = -1;
                 lastTradeMissCount = -1;
+                lastTradeBMDist = -1;
             }
-            if (lastTradeNumID >= 0 && lastTradeMissCount < 3)
+            if (lastTradeNumID >= 0 && (lastTradeMissCount < 3 || Math.Abs(lastTradeBMDist) < 0.5f))
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
