@@ -59,7 +59,7 @@ public class PanelCollectData : MonoBehaviour
         int em = int.Parse(txtEM.text);
         int ed = int.Parse(txtED.text);
 
-        console.text = "";
+        console.text = "start collect data ...";
         SetProgress(0);
 
         //LotteryManager.Instance.CollectData(sy, sm, sd, ey, em, ed);
@@ -89,7 +89,7 @@ public class PanelCollectData : MonoBehaviour
 
     private void TickJobs()
     {
-        if (jobLst.Count == 0 || curJobIndex == -1)
+        if (jobLst.Count == 0 || curJobIndex == -1 || curJobIndex >= jobLst.Count)
             return;
         DateTime date = jobLst[curJobIndex];
         ++curJobIndex;

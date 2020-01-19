@@ -813,7 +813,10 @@ namespace LotteryAnalyze
         public static int FetchData(bool newUrl, string fileName, string webUrl, ref string error, int fileID)
         {
             Console.WriteLine("Fetch weburl : " + webUrl);
-
+#if UNITY_ANDROID || UNITY_EDITOR
+            UnityEngine.Debug.Log("Fetch weburl: " + webUrl);
+#endif
+            
             int validCount = 0;
             // load web page
             ECType t = ECType.Default;
@@ -832,11 +835,19 @@ namespace LotteryAnalyze
             {
                 error = "Request url <" + webUrl + "> failed! info = " + e.ToString();
                 Console.WriteLine(error);
+#if UNITY_ANDROID || UNITY_EDITOR
+                UnityEngine.Debug.LogError(error);
+#endif
                 return 0;
             }
 
             if (response == null)
+            {
+#if UNITY_ANDROID || UNITY_EDITOR
+                UnityEngine.Debug.LogError("Web no response!");
+#endif
                 return 0;
+            }
 
             bool isZipCont = response.ContentEncoding == "gzip";
             //先把响应流以gzip形式解码，然后再读取。结果success.......
@@ -869,6 +880,9 @@ namespace LotteryAnalyze
             catch(Exception e)
             {
                 Console.WriteLine("FetchData failed on read web stream - " + e.ToString());
+#if UNITY_ANDROID || UNITY_EDITOR
+                UnityEngine.Debug.LogError("FetchData failed on read web stream - " + e.ToString());
+#endif
             }
             reader.Close();
             reader.Dispose();

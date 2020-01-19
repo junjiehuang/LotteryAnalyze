@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -1086,8 +1087,9 @@ namespace LotteryAnalyze
 #if UNITY_EDITOR_WIN || UNITY_EDITOR_WIN
                 path = Application.persistentDataPath + "/LotteryAnalyze";
 #elif UNITY_ANDROID
-                path = "/mnt/sdcard/LotteryAnalyze";
+                path = "/storage/emulated/0/LotteryAnalyze"; //"/mnt/sdcard/LotteryAnalyze";
 #endif
+                path = Application.persistentDataPath + "/LotteryAnalyze";
                 return path;
             }
         }
@@ -1325,13 +1327,19 @@ namespace LotteryAnalyze
         static GlobalSetting()
         {
             string CFG_FILE = ROOT_FOLDER + "\\GlobalSetting.ini";
-//#if UNITY_ANDROID
-//            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
-//#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-//            CFG_FILE =  "/mnt/sdcard/LotteryAnalyze" + "\\GlobalSetting.ini";
-//#else
-//            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
-//#endif
+            CFG_FILE = CFG_FILE.Replace('\\', '/');
+
+            //#if UNITY_ANDROID
+            //            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
+            //#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            //            CFG_FILE =  "/mnt/sdcard/LotteryAnalyze" + "\\GlobalSetting.ini";
+            //#else
+            //            CFG_FILE = Environment.CurrentDirectory + "\\GlobalSetting.ini";
+            //#endif
+
+            if (!Directory.Exists(ROOT_FOLDER))
+                Directory.CreateDirectory(ROOT_FOLDER);
+
             cfg = new IniFile(CFG_FILE);
             if(System.IO.File.Exists(CFG_FILE) == false)
             {

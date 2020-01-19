@@ -1039,7 +1039,7 @@ namespace LotteryAnalyze
                     // k线到布林上轨的距离
                     float budist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].upValue);
                     // k线到布林中轨的距离
-                    float bmdist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].midValue);
+                    float bmdist = kdm.dataDict[cdt].RelateDistTo(bpm.bpMap[cdt].midValue) / GraphDataManager.GetMissRelLength(cdt);
                     pci.paramMap["BMDIST"] = bmdist;
 
                     PathCmpInfo prevCmp = GetPathInfo(prevTrade, numID, i);
@@ -1055,7 +1055,8 @@ namespace LotteryAnalyze
                     }
                     else
                     {
-                        if (!is5H10 || isKL10)
+                        //if (!is5H10 || isKL10)
+                        if(bmdist >= 1)
                             pci.pathValue = 0;
                         else
                             pci.pathValue = prevValue + 1;
@@ -1088,8 +1089,9 @@ namespace LotteryAnalyze
                 if(lastTradeNumID != -1)
                 {
                     PathCmpInfo lastTradePathPci = trade.pathCmpInfos[lastTradeNumID][lastTradePathIndex];
-                    if (lastTradePathPci.pathValue < 1 || //(float)lastTradePathPci.paramMap["BMDIST"] > 0.5f)
-                        ((int)lastTradePathPci.paramMap["MissCount"] > 2 && Math.Abs((float)lastTradePathPci.paramMap["BMDIST"]) > 0.5f))
+                    //if (lastTradePathPci.pathValue < 1 || //(float)lastTradePathPci.paramMap["BMDIST"] > 0.5f)
+                    //    ((int)lastTradePathPci.paramMap["MissCount"] > 2 && Math.Abs((float)lastTradePathPci.paramMap["BMDIST"]) > 0.5f))
+                    if(lastTradePathPci.pathValue < 1)
                     {
                         lastTradeNumID = dstNumID;
                         lastTradePathIndex = dstPathIndex;
@@ -1121,7 +1123,7 @@ namespace LotteryAnalyze
                 lastTradeMissCount = -1;
                 lastTradeBMDist = -1;
             }
-            if (lastTradeNumID >= 0 && (lastTradeMissCount < 3 || Math.Abs(lastTradeBMDist) < 0.5f))
+            if (lastTradeNumID >= 0)// && (lastTradeMissCount < 3 || Math.Abs(lastTradeBMDist) < 0.5f))
             {
                 TradeNumbers tn = new TradeNumbers();
                 tn.tradeCount = tradeCount;
