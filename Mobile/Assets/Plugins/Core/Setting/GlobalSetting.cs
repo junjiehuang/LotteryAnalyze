@@ -32,6 +32,12 @@ namespace LotteryAnalyze
         eUseFastAndShort,
     }
 
+    public enum LotteryType
+    {
+        eCQSSC, // 重庆时时彩
+        eXJSSC, // 新疆时时彩
+    }
+
     public enum HotNumPredictType
     {
         ePath012,
@@ -64,7 +70,10 @@ namespace LotteryAnalyze
             set { sIsCurrentFetchingLatestData = value; }
         }
         static bool HAS_MODIFY = false;
-        
+
+        [Parameter("彩票类型", LotteryType.eCQSSC)]   
+        private static LotteryType g_LotteryType = LotteryType.eCQSSC;
+
         [Parameter("数据收集设定/数据源类型", AutoUpdateUtil.DataSourceType.eCaiBow)]
         private static AutoUpdateUtil.DataSourceType g_DATA_SOURCE_TYPE = AutoUpdateUtil.DataSourceType.e360;
         [Parameter("数据收集设定/是否自动刷新最新数据", true)]
@@ -1320,6 +1329,19 @@ namespace LotteryAnalyze
             set
             {
                 g_SIM_TRADE_PLANS = value;
+                HAS_MODIFY = true;
+            }
+        }
+
+        public static LotteryType G_LotteryType
+        {
+            get
+            {
+                return g_LotteryType;
+            }
+            set
+            {
+                g_LotteryType = value;
                 HAS_MODIFY = true;
             }
         }

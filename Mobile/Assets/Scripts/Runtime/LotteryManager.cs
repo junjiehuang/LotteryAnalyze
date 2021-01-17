@@ -112,14 +112,24 @@ public class LotteryManager : MonoBehaviour
         LOG_PATH = LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER + "/log.txt";
         LOG_PATH = LOG_PATH.Replace('\\', '/');
         Application.logMessageReceived += OnLog;
-        if(File.Exists(LOG_PATH))
+        if (File.Exists(LOG_PATH))
+        {
             File.Delete(LOG_PATH);
-        Debug.Log("Create Log File : " + LOG_PATH);
+        }
+        Debug.Log("Create Log File : " + LOG_PATH);        
 
         LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER += "/Data/";
         if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER))
+        {
             Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
-        Debug.Log("Create Data Folder : " + LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
+            Debug.Log("Create Data Folder : " + LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
+        }
+
+        if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH))
+        {
+            Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+            Debug.Log("Create Lottery Data Folder : " + LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+        }
 
         LotteryAnalyze.GlobalSetting.ReadCfg();
     }

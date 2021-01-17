@@ -600,7 +600,20 @@ namespace LotteryAnalyze
         static string S_163_NEW_CURRENT_URL = "http://caipiao.163.com/award/cqssc/";
         static string S_163_NEW_DATE_URL = "http://caipiao.163.com/award/cqssc/";
 
-        static string S_CAIBOW_DATE_URL = "https://www.caibow.com/kj/cqssc/";
+        static string S_CAIBOW_DATE_URL_CQSSC = "https://www.caibow.com/kj/cqssc/";
+        static string S_CAIBOW_DATA_URL_XJSSC = "https://www.caibow.com/kj/xjssc/";
+
+        static Dictionary<LotteryType, string> S_CAIBOW_URLS = new Dictionary<LotteryType, string>();
+        static Dictionary<LotteryType, string> S_COLLECT_DATA_FOLDERS = new Dictionary<LotteryType, string>();
+
+        static AutoUpdateUtil()
+        {
+            S_CAIBOW_URLS.Add(LotteryType.eCQSSC, S_CAIBOW_DATE_URL_CQSSC);
+            S_CAIBOW_URLS.Add(LotteryType.eXJSSC, S_CAIBOW_DATA_URL_XJSSC);
+
+            S_COLLECT_DATA_FOLDERS.Add(LotteryType.eCQSSC, "CQSSC/");
+            S_COLLECT_DATA_FOLDERS.Add(LotteryType.eXJSSC, "XJSSC/");
+        }
 
         public delegate void OnCollecting(string info);
         public static OnCollecting sCallBackOnCollecting;
@@ -660,9 +673,17 @@ namespace LotteryAnalyze
 
         public static string DATA_PATH_FOLDER = "..\\data\\";
 
+        public static string LOTTERY_DATA_PATH
+        {
+            get
+            {
+                return DATA_PATH_FOLDER + S_COLLECT_DATA_FOLDERS[GlobalSetting.G_LotteryType];
+            }
+        }
+
         public static string combineFileName(int y, int m, int d)
         {
-            string fileName = DATA_PATH_FOLDER + y;
+            string fileName = DATA_PATH_FOLDER + S_COLLECT_DATA_FOLDERS[GlobalSetting.G_LotteryType] + y;
             if (m < 10)
                 fileName += "0";
             fileName += m;
@@ -687,7 +708,7 @@ namespace LotteryAnalyze
             }
             else if(GlobalSetting.G_DATA_SOURCE_TYPE == DataSourceType.eCaiBow)
             {
-                url = S_CAIBOW_DATE_URL + y + "-";
+                url = S_CAIBOW_URLS[GlobalSetting.G_LotteryType] + y + "-";
                 if (m < 10)
                     url += "0";
                 url += m + "-";

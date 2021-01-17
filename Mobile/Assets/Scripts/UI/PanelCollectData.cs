@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PanelCollectData : MonoBehaviour
@@ -52,6 +53,12 @@ public class PanelCollectData : MonoBehaviour
 
     public void OnBtnClick_StartCollect()
     {
+        if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH))
+        {
+            Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+            Debug.Log("Create Lottery Data Folder : " + LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+        }
+
         int sy = int.Parse(txtSY.text);
         int sm = int.Parse(txtSM.text);
         int sd = int.Parse(txtSD.text);

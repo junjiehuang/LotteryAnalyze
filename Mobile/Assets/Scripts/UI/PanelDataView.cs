@@ -533,7 +533,13 @@ public class PanelDataView : MonoBehaviour
 
     public void OnBtnClickImportData()
     {
-        DirectoryInfo di = new DirectoryInfo(LotteryAnalyze.AutoUpdateUtil.DATA_PATH_FOLDER);
+        if (!Directory.Exists(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH))
+        {
+            Directory.CreateDirectory(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+            Debug.Log("Create Lottery Data Folder : " + LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
+        }
+
+        DirectoryInfo di = new DirectoryInfo(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
         LoopSearchFolder(di);
         scrollBar.SetHandleRatio(Mathf.Clamp01((float)(btns.Length) / (float)DataManager.GetInst().fileKeys.Count));
         RefreshFileList();
