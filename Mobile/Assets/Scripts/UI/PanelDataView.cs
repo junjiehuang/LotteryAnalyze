@@ -541,7 +541,10 @@ public class PanelDataView : MonoBehaviour
 
         DirectoryInfo di = new DirectoryInfo(LotteryAnalyze.AutoUpdateUtil.LOTTERY_DATA_PATH);
         LoopSearchFolder(di);
-        scrollBar.SetHandleRatio(Mathf.Clamp01((float)(btns.Length) / (float)DataManager.GetInst().fileKeys.Count));
+        float ratio = Mathf.Clamp01((float)(btns.Length) / (float)DataManager.GetInst().fileKeys.Count);
+        if (ratio < 0.1f)
+            ratio = 0.1f;
+        scrollBar.SetHandleRatio(ratio);
         RefreshFileList();
         scrollBar.gameObject.SetActive(DataManager.GetInst().fileKeys.Count > btns.Length);
         trPanelControl.gameObject.SetActive(DataManager.GetInst().fileKeys.Count > 0);
