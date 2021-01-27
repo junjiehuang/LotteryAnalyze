@@ -1514,8 +1514,8 @@ namespace LotteryAnalyze
             for (int numID = 0; numID < 5; ++numID)
             {
                 if (!sim_flag[numID])
-                    continue;
-                
+                    continue;                
+               
                 int tradeCount = defaultTradeCount;
                 if (item.idGlobal >= LotteryStatisticInfo.SAMPLE_COUNT_10)
                 {
@@ -1529,6 +1529,9 @@ namespace LotteryAnalyze
                 else
                     tradeCount = 0;
 
+                int posTradeID = numPosCurTradeIndexs[numID];
+                int tradeLeft = tradeCountList.Count - posTradeID;
+
                 bool findBetterPath = false;
                 List<PathCmpInfo> res = trade.pathCmpInfos[numID];
                 res.Clear();
@@ -1540,19 +1543,27 @@ namespace LotteryAnalyze
                     StatisticUnit su = sum.statisticUnitMap[pcdt];
                     PathCmpInfo pci = new PathCmpInfo(i, 0);
                     int missCount = su.missCount;
-                    pci.pathValue = 0;
+                    pci.pathValue = -1;
                     pci.paramMap["MissCount"] = missCount;
                     res.Add(pci);
 
+                    if (tradeCount == 0)
+                        continue;
+                    
                     int pathID = i - startID;
                     int[] missCounts = new int[3] { 0, 0, 0, };
                     int curMCIndex = 0;
                     DataItem pItem = item;
+
                     while(curMCIndex < 3 && pItem != null)
                     {
-                        if (su.missCount > 0)
+                        if(su.missCount > 0)
                         {
                             missCounts[curMCIndex++] = su.missCount;
+                        }
+                        else
+                        {
+                            break;
                         }
                         pItem = DataManager.GetInst().FindDataItem(pItem.idGlobal - su.missCount - 1);
                         if (pItem == null)
@@ -1561,23 +1572,42 @@ namespace LotteryAnalyze
                     }
                     if(curMCIndex > 2)
                     {
-                        int CHECK_COUNT = 5;
-                        int preMaxMC = Math.Max(missCounts[1], missCounts[2]);//Math.Max(Math.Max(missCounts[1], missCounts[2]), CHECK_COUNT);// 
-                        bool isSmallEnough = missCounts[0] < CHECK_COUNT && preMaxMC < CHECK_COUNT && missCounts[0] <= preMaxMC;
-                        bool isMissCountBecomeSmall = missCounts[0] <= missCounts[1] && missCounts[0] <= tradeCountList.Count;
-                        if (isSmallEnough || isMissCountBecomeSmall)
+                        if(missCounts[0] <= missCounts[1]+1 && missCounts[1] < missCounts[2])
                         {
-                            pci.pathValue = 1;
+                            pci.pathValue = missCounts[1] + 1 - missCounts[0];
                             findBetterPath = true;
                         }
                     }
+                    //while(curMCIndex < 3 && pItem != null)
+                    //{
+                    //    if (su.missCount > 0)
+                    //    {
+                    //        missCounts[curMCIndex++] = su.missCount;
+                    //    }
+                    //    pItem = DataManager.GetInst().FindDataItem(pItem.idGlobal - su.missCount - 1);
+                    //    if (pItem == null)
+                    //        break;
+                    //    su = pItem.statisticInfo.allStatisticInfo[numID].statisticUnitMap[pcdt];
+                    //}
+                    //if(curMCIndex > 2)
+                    //{
+                    //    int CHECK_COUNT = 5;
+                    //    int preMaxMC = Math.Max(missCounts[1], missCounts[2]);//Math.Max(Math.Max(missCounts[1], missCounts[2]), CHECK_COUNT);// 
+                    //    bool isSmallEnough = missCounts[0] < CHECK_COUNT && preMaxMC < CHECK_COUNT && missCounts[0] <= preMaxMC;
+                    //    bool isMissCountBecomeSmall = missCounts[0] <= missCounts[1] && missCounts[0] <= tradeCountList.Count;
+                    //    if (isSmallEnough || isMissCountBecomeSmall)
+                    //    {
+                    //        pci.pathValue = 1;
+                    //        findBetterPath = true;
+                    //    }
+                    //}
                 }
                 if (findBetterPath)
                 {
                     int selPathID = -1;
                     if (LastTradePathIndex[numID] != -1)
                     {
-                        if(res[LastTradePathIndex[numID]].pathValue > 0)
+                        if(res[LastTradePathIndex[numID]].pathValue >= 0)
                         {
                             selPathID = LastTradePathIndex[numID];
                         }
@@ -1586,11 +1616,16 @@ namespace LotteryAnalyze
                     {
                         res.Sort((a, b) =>
                         {
-                            if (a.pathValue > b.pathValue)
+                            if (a.pathValue >= 0 && b.pathValue < 0)
                                 return -1;
-                            if (a.pathValue < b.pathValue)
+                            else if (a.pathValue < 0 && b.pathValue >= 0)
                                 return 1;
-                            if ((int)a.paramMap["MissCount"] < (int)b.paramMap["MissCount"])
+
+                            if (a.pathValue < b.pathValue)
+                                return -1;
+                            if (a.pathValue > b.pathValue)
+                                return 1;
+                            if ((int)a.paramMap["MissCount"] > (int)b.paramMap["MissCount"])
                                 return -1;
                             return 1;
                         });
