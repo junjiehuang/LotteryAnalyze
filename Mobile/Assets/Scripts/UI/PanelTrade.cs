@@ -13,6 +13,7 @@ public class PanelTrade : MonoBehaviour
         public string lastDataItemNums;
         public string targetDataItemIdTag;
         public string targetDataItemNums;
+        public string extraInfo;
         public float moneyLeft;
         public float cost;
         public float reward;
@@ -26,6 +27,11 @@ public class PanelTrade : MonoBehaviour
                 info =
                     "目标期: " + lastDataItemIdTag + " 出号: " + lastDataItemNums + "\n" +
                     "结果期: " + targetDataItemIdTag + " 出号: " + targetDataItemNums + "\n";
+                if (string.IsNullOrEmpty(extraInfo) == false)
+                {
+                    info += "判断数据 : \n" + extraInfo + "\n";
+                }
+
                 if (tradeDetail == null)
                 {
                 }
@@ -98,6 +104,9 @@ public class PanelTrade : MonoBehaviour
 
         public RectTransform rtContent;
         public RectTransform rtPrefab;
+
+        public GameObject tradeInfoBG;
+        public Button toggleTradeInfoBG;
     }
 
     [System.Serializable]
@@ -302,6 +311,20 @@ public class PanelTrade : MonoBehaviour
             }
         });
 
+        if(uiMain.tradeInfoBG != null)
+        {
+            uiMain.tradeInfoBG.SetActive(false);
+        }
+        if(uiMain.toggleTradeInfoBG != null)
+        {
+            uiMain.toggleTradeInfoBG.onClick.AddListener(() => {
+                if(uiMain.tradeInfoBG != null)
+                {
+                    uiMain.tradeInfoBG.SetActive(!uiMain.tradeInfoBG.activeSelf);
+                }
+            });
+        }
+
         TradeDataManager.Instance.evtOneTradeCompleted += OnOneTradeCompleted;
     }
 
@@ -421,6 +444,7 @@ public class PanelTrade : MonoBehaviour
         info.moneyLeft = trade.moneyAtferTrade;
         info.cost = trade.cost;
         info.reward = trade.reward;
+        info.extraInfo = trade.GetDbgInfo();
         if (trade.tradeInfo.Count > 0)
         {
             info.tradeDetail = new Dictionary<int, TradeNumbers>();
